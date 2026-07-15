@@ -2,8 +2,11 @@ name: UI fix agent
 
 # Closes the self-healing UI loop: reads the visual-qa findings and, if there are
 # real rendering problems, fixes the frontend ON A BRANCH, re-screenshots to prove
-# the fix + no regressions, runs the tests, and opens a PR for a human to merge.
-# It never changes the live site directly.
+# the fix + no regressions, runs the tests, and opens a PR. The workflow then
+# re-runs the tests AND checks the PR stays out of protected paths before
+# auto-merging + deploying (scripts/merge-gate.js — shared with self-repair and
+# improve); a protected-path change is left open for a human. The agent itself
+# never changes the live site directly.
 
 on:
   schedule:
@@ -51,30 +54,38 @@ jobs:
             into a screenshot-verified frontend fix and open a PR (do not merge; the
             workflow re-gates the tests and auto-merges it).
 
-      # Auto-merge the fix the agent just opened — but only after re-running the
-      # tests ourselves (a deterministic hard gate we don't delegate to the agent).
-      # If tests fail, the merge is skipped and the PR stays open + the run fails
-      # loudly, so a bad fix never reaches the live site.
-      - name: Re-gate tests + auto-merge
+      # Persist the run log to main — the prompt writes docs/data/ui-fix-log.json
+      # on EVERY run (the improve agent mines it as evidence), but the agent never
+      # pushes to main itself, so on no-op runs the log used to be discarded with
+      # the workspace. Runs before the merge gate so the log survives a failed gate.
+      - name: Commit run log
+        if: steps.usage.outputs.run == 'true'
+        run: |
+          LOG=docs/data/ui-fix-log.json
+          [ -n "$(git status --porcelain -- "$LOG")" ] || { echo "Run log unchanged — nothing to commit."; exit 0; }
+          cp "$LOG" "$RUNNER_TEMP/run-log.json"
+          git checkout -f main # the agent may have left the workspace on its fix branch
+          cp "$RUNNER_TEMP/run-log.json" "$LOG"
+          [ -n "$(git status --porcelain -- "$LOG")" ] || { echo "Run log matches main — nothing to commit."; exit 0; }
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git add "$LOG"
+          git commit -m "ui-fix: run log"
+          git push || (git pull --rebase -X theirs origin main && git push)
+
+      # Auto-merge the fix the agent just opened — via the shared merge gate
+      # (scripts/merge-gate.js, same invariant for ui-fix/self-repair/improve):
+      # re-runs the tests as a deterministic hard gate we don't delegate to the
+      # agent, and NEVER auto-merges a PR touching a protected path (workflows,
+      # actions, hooks, interests.json, .claude/settings.json) — that PR is left
+      # open + labelled needs-review. If tests fail, the merge is skipped and the
+      # run fails loudly, so a bad fix never reaches the live site.
+      - name: Merge gate (re-test + protected paths + auto-merge)
         id: automerge
         if: steps.usage.outputs.run == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          PR=$(gh pr list --state open --json number,headRefName \
-                --jq '[.[] | select(.headRefName | startswith("ui-autofix/"))] | sort_by(.number) | last | .number // empty')
-          if [ -z "$PR" ]; then
-            echo "No ui-autofix PR was opened (nothing to fix / abandoned) — done."
-            echo "merged=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-          echo "Re-gating PR #$PR with a fresh test run before auto-merge…"
-          gh pr checkout "$PR"
-          npm ci
-          npm test
-          gh pr merge "$PR" --merge --delete-branch
-          echo "Auto-merged PR #$PR."
-          echo "merged=true" >> "$GITHUB_OUTPUT"
+        run: node scripts/merge-gate.js ui-autofix/
 
   # Publish the merged fix. The merge is a GITHUB_TOKEN push (can't trigger the
   # deploy on its own), so we call preview-deploy directly — same pattern as the

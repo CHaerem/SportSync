@@ -68,14 +68,16 @@ Nine workflows run `anthropics/claude-code-action@v1` with a prompt file:
 
 The self-fixing loops (ui-fix, self-repair, improve) each fix on a branch, open a
 PR, and the **workflow re-runs `npm test` as a hard gate and then auto-merges +
-deploys** — fully hands-off. The ONLY exception is three **protected paths** that
+deploys** — fully hands-off. The ONLY exception is five **protected paths** that
 are never auto-merged (a change touching them is left open, labelled
-`needs-review`):
+`needs-review`; enforced in one place, `scripts/merge-gate.js`):
 
 - `.github/workflows/**` — the automation's own definitions and gates; auto-merging
   a broken change here could disable the test-gate or break the fixer itself.
+- `.github/actions/**` — composite actions the workflows invoke.
 - `scripts/hooks/**` — the safety hooks (interests protection, post-write validate).
 - `scripts/config/interests.json` — user-owned; "AI never writes here" (also hook-enforced).
+- `.claude/settings.json` — wires the safety hooks into the harness.
 
 Everything else — fetchers, libs, agent prompts, skills, other config, docs, tests,
 `package.json` — auto-merges once tests pass. Every auto-merge is a revertable
@@ -192,7 +194,7 @@ or schema drifts from the code, CI fails.
 
 - **Never modify `scripts/config/interests.json`** — it is user-owned.
 - Agents commit only their contracted outputs (see each prompt's output contract).
-- **Protected paths — never auto-merged** (self-fixing loops leave them as an open PR for review): `.github/workflows/**`, `scripts/hooks/**`, `scripts/config/interests.json`. Everything else the loops touch auto-merges once tests pass (see Autonomy model).
+- **Protected paths — never auto-merged** (self-fixing loops leave them as an open PR for review; enforced by `scripts/merge-gate.js`): `.github/workflows/**`, `.github/actions/**`, `scripts/hooks/**`, `scripts/config/interests.json`, `.claude/settings.json`. Everything else the loops touch auto-merges once tests pass (see Autonomy model).
 - Run `npm test` before committing code changes; run `node scripts/validate-events.js` after writing events.
 - Always `git pull --rebase` before pushing — the static pipeline and agents commit to main on schedules.
 

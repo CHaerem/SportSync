@@ -50,40 +50,39 @@ jobs:
             Read scripts/agents/self-repair.md and execute it — find real breakage,
             fix it on a branch, prove it, open a PR. Do not merge.
 
-      # Re-gate the fix ourselves, then auto-merge ONLY if it stays in safe paths.
-      - name: Re-gate + auto-merge
+      # Persist the run log to main — the prompt writes docs/data/self-repair-log.json
+      # on EVERY run (the improve agent mines it as evidence), but the agent never
+      # pushes to main itself, so on no-op runs the log used to be discarded with
+      # the workspace. Runs before the merge gate so the log survives a failed gate.
+      - name: Commit run log
+        if: steps.usage.outputs.run == 'true'
+        run: |
+          LOG=docs/data/self-repair-log.json
+          [ -n "$(git status --porcelain -- "$LOG")" ] || { echo "Run log unchanged — nothing to commit."; exit 0; }
+          cp "$LOG" "$RUNNER_TEMP/run-log.json"
+          git checkout -f main # the agent may have left the workspace on its fix branch
+          cp "$RUNNER_TEMP/run-log.json" "$LOG"
+          [ -n "$(git status --porcelain -- "$LOG")" ] || { echo "Run log matches main — nothing to commit."; exit 0; }
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git add "$LOG"
+          git commit -m "self-repair: run log"
+          git push || (git pull --rebase -X theirs origin main && git push)
+
+      # Re-gate the fix ourselves via the shared merge gate (scripts/merge-gate.js,
+      # same invariant for ui-fix/self-repair/improve): auto-merge everything EXCEPT
+      # protected paths that must never change unattended — the workflows (the
+      # automation's own defs + gates), the composite actions, the safety hooks,
+      # the hook wiring (.claude/settings.json), and the user-owned interests.json.
+      # A change touching any of those is left OPEN + labelled needs-review so the
+      # system can't disable its own recovery or rewrite the user's data.
+      # Everything else is test-gated only (npm test + validate-events).
+      - name: Merge gate (re-test + protected paths + auto-merge)
         id: automerge
         if: steps.usage.outputs.run == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          PR=$(gh pr list --state open --json number,headRefName \
-                --jq '[.[] | select(.headRefName | startswith("self-repair/"))] | sort_by(.number) | last | .number // empty')
-          if [ -z "$PR" ]; then
-            echo "No self-repair PR (nothing broken / abandoned)."; echo "merged=false" >> "$GITHUB_OUTPUT"; exit 0
-          fi
-          # Auto-merge everything EXCEPT three protected paths that must never be
-          # changed unattended: the workflows (the automation's own defs + gates),
-          # the safety hooks, and the user-owned interests.json. A change touching
-          # any of those is left OPEN for review so the system can't disable its own
-          # recovery or rewrite the user's data. Everything else is test-gated only.
-          BLOCK='^(\.github/workflows/|scripts/hooks/|scripts/config/interests\.json$)'
-          BLOCKED=0
-          for f in $(gh pr view "$PR" --json files --jq '.files[].path'); do
-            echo "$f" | grep -qE "$BLOCK" && { echo "protected path: $f"; BLOCKED=1; }
-          done
-          if [ "$BLOCKED" = "1" ]; then
-            echo "PR #$PR touches a protected path (workflows/hooks/interests) — leaving OPEN for review."
-            gh pr edit "$PR" --add-label needs-review 2>/dev/null || true
-            echo "merged=false" >> "$GITHUB_OUTPUT"; exit 0
-          fi
-          echo "Re-gating PR #$PR with fresh tests…"
-          gh pr checkout "$PR"
-          npm ci
-          npm test
-          node scripts/validate-events.js
-          gh pr merge "$PR" --merge --delete-branch
-          echo "Auto-merged PR #$PR."; echo "merged=true" >> "$GITHUB_OUTPUT"
+        run: node scripts/merge-gate.js self-repair/ --validate-events
 
   deploy:
     needs: self-repair
