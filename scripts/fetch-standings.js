@@ -12,6 +12,7 @@ import path from "path";
 import { pathToFileURL } from "url";
 import { fetchJson, iso, rootDataPath, readJsonIfExists, writeJsonPretty } from "./lib/helpers.js";
 import { validateESPNStandings, validateESPNScoreboard } from "./lib/response-validator.js";
+import { golfCompetitorFields } from "./lib/golf.js";
 
 const ESPN_BASE = "https://site.api.espn.com/apis/v2/sports";
 const ESPN_SITE = "https://site.api.espn.com/apis/site/v2/sports";
@@ -85,13 +86,14 @@ function isTrackedPlayer(competitorName, tourTracked) {
 }
 
 function mapCompetitor(c, idx) {
+	const f = golfCompetitorFields(c, idx);
 	return {
-		position: c.order || parseInt(c.status?.position?.displayName || "0", 10) || (idx + 1),
+		position: f.position,
 		positionDisplay: c.status?.position?.displayName || null,
-		player: c.athlete?.displayName || c.athlete?.fullName || "Unknown",
-		score: typeof c.score === "object" ? (c.score?.displayValue || "E") : (c.score?.toString() || "E"),
-		today: c.linescores?.[c.linescores.length - 1]?.displayValue || "-",
-		thru: c.status?.thru?.toString() || "-",
+		player: f.player,
+		score: f.score,
+		today: f.round,
+		thru: f.thru,
 		headshot: c.id ? `https://a.espncdn.com/i/headshots/golf/players/full/${c.id}.png` : null,
 	};
 }
