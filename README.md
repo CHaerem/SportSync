@@ -6,7 +6,7 @@
 [![Static pipeline](https://github.com/CHaerem/zenji/workflows/Static%20data%20pipeline/badge.svg)](https://github.com/CHaerem/zenji/actions)
 [![Live Site](https://img.shields.io/badge/Live-Dashboard-blue)](https://zenji.app/)
 
-**See it live**: [chaerem.github.io/Zenji](https://zenji.app/)
+**See it live**: [zenji.app](https://zenji.app/)
 
 <!-- STATUS:START -->
 ## AI-budsjett
@@ -86,7 +86,7 @@ eleven scheduled jobs, with their models, are in the table below.
 | Job | When | Model | What it does |
 |---|---|---|---|
 | **Static pipeline** | hourly | — | Fetch ESPN · fotball.no · Liquipedia CS2 · tvkampen · RSS → `events.json`; auto-publish to Pages on change |
-| **Research** | every 4h | Fable 5 → Opus 4.8 | Find events the APIs miss; append to `events.json`, rewrite `tracked.json` with a reason per entry |
+| **Research** | every 4h | Opus (deep runs: Fable 5) | Find events the APIs miss; append to `events.json`, rewrite `tracked.json` with a reason per entry |
 | **Scout** | hourly | Haiku | Triage RSS + coverage gaps → escalate to research (max 2/day) |
 | **Coverage critic** | daily | Opus | Audit what's missing — an imminent pass + a 4-week horizon, trusting no single source |
 | **Verify** | daily | Opus | Re-check events against the web; log the calibration ledger + source-quirks |
@@ -119,10 +119,12 @@ utilization + reset times) — writes `usage-state.json`, keeps an append-only
 `usage-history.jsonl`, and rolls it into the trend shown in the **AI-budsjett**
 block at the top of this README. Every agent gates on it: critical ones (research,
 verify, scout) run unless the budget is nearly gone; nice-to-haves (editorial,
-coverage-critic, visual-qa) step aside first when it runs low. Research also
-prefers Fable 5 and auto-falls back to Opus 4.8 if Fable is unavailable. The
-dashboard shows a quiet "AI-budsjett" line too. Fail-open by design — the governor
-throttles only on fresh, confident quota data.
+coverage-critic, visual-qa) step aside first when it runs low. Research runs on a
+tiered model: the every-4h workhorse is Opus 4.8 (the `standard` tier), and only the
+heavier `deep` runs — escalations and the weekly sweep — prefer Fable 5, auto-falling
+back to Opus 4.8 if Fable is unavailable. The dashboard shows a quiet "AI-budsjett"
+line too. Fail-open by design — the governor throttles only on fresh, confident quota
+data.
 
 ### Transparent tracking
 
@@ -157,7 +159,7 @@ to fit iPhone widths, installable on iOS/Android.
 npm ci
 npm run build      # fetch data + build events + calendar
 npm run dev        # localhost:8000
-npm test           # ~20 focused test files (~160 tests), <5s
+npm test           # 35 focused test files (~460 tests), a few seconds
 npm run screenshot # Playwright visual check
 ```
 

@@ -77,7 +77,7 @@ mennesket, aldri av en agent.
 | WP-49 | Repo-vekt: skjermbilde-sanering + policy | 0D | – | ✅ merget (#264) — 57 PNG-er slettet (docs-design/, ios/docs/variants/, enso-grids; alle ureferert), enso-icon.swift beholdt med header for valgt variant v3-grov-contig (hash-bevist = shippet ikon), regel 8 (bevis-policy) lagt til; sporede PNG-er 12 MB → 8,3 MB |
 | WP-50 | iOS: README-restrukturering | 0D | WP-48,WP-49 | ✅ merget (#275) — `ios/README.md` 1446 → 495 linjer, kronologisk bygglogg → delsystem-kart (én seksjon per `Zenji/`-katalog + targets/signering + testing); katalogoversikt regenerert mot treet, talldrift rettet (42 testfiler/376 tester, iOS 26.0, 4 targets/3 schemes), design-v2-skjermbilder (reset/onboarding/profil-deling m.fl.) referert fra riktig seksjon; signering/free-account + sync-arkitektur + fixture-policy bevart |
 | WP-51 | Testdekning: eksporterte pure-funksjoner | 0D | – | ✅ merget (#266) — 32 nye tester (fetch-rss 23, buildDriverTeamMap 9), 405/405 grønt, kjøretid uendret ~5,3 s |
-| WP-52 | Dok-resynk (kjøres sist) | 0D | alle 0D | ⬜ køet |
+| WP-52 | Dok-resynk (kjøres sist) | 0D | alle 0D | 🔬 PR åpnet (#276) — CLAUDE.md (Frontend→Tekst-TV+DESIGN.md-peker, dashboard.js-splitt, Testing 35 filer/463 tester, datafil-liste +entities/manifest/interests, nye avsnitt ios/·PLAN/DESIGN·follow-request·gate-tier·CI-only-hook), README (research=Opus/deep=Fable, testtall, lenketekst), package.json-desc, copilot-instructions DESIGN.md+edit.js, prompter (research-logg-begrunnelse, verify+cs2-sources, editorial-guardrail), koherens-tester (alle prompter skannes, follow-request.yml), schema-tittel→Zenji, DIVERGENCES-linjerefs; 463/463 serielt |
 
 ---
 

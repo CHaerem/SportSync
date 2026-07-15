@@ -178,10 +178,11 @@ log honestly, never loop).
 
 **Always write `research-log.json` — every run, even a no-op.** If you found nothing
 new (no events added or removed), still write it with `eventsAdded: 0` and a `notes`
-entry saying what you checked and why nothing changed. A run that ran but wrote no
-files produces no commit, and the workflow reads "no commit" as total quota
-exhaustion and fails loudly. The log is your proof the run happened, so it must never
-be skipped.
+entry saying what you checked and why nothing changed. A quiet no-op run is legitimate
+(the standard tier does not fail on an empty run — see the quota governor), but the log
+is the transparent, auditable record that the run happened and what it examined: it is
+what the `improve` agent mines to tune sources and schedules, and what lets a human
+confirm the agent is alive rather than silently stalled. So it must never be skipped.
 
 After writing files, run `node scripts/validate-events.js` and fix any errors it reports.
 

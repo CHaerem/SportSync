@@ -22,7 +22,10 @@ string/null when there's no one to name.
 the `streaming` field against the `norwegian-rights` skill
 (`.claude/skills/norwegian-rights/SKILL.md`) and `docs/data/tv-listings.json`
 (football ground truth). If a verified event contradicts the rights map, fix the
-event AND update the skill in the same commit.
+event AND update the skill in the same commit. For CS2/esports (100 Thieves / rain
+matches), use the `cs2-sources` skill (`.claude/skills/cs2-sources/SKILL.md`) — it
+maps the ground-truth schedule sources (Liquipedia/HLTV/official X) and the
+Twitch/Kick viewing options for the late-announced matches the fetcher misses.
 
 **Resolve tentative channels to the real one.** A `streaming` entry marked
 `"tentative": true` (e.g. World Cup `NRK / TV 2`) means we know the rights are
