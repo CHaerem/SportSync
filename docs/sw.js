@@ -1,5 +1,5 @@
 // Zenji v2 Service Worker — fresh data always, network-first shell
-const CACHE_NAME = 'zenji-v2-19';
+const CACHE_NAME = 'zenji-v2-20';
 const DATA_PATH_FRAGMENT = '/data/';
 
 const SHELL_FILES = [
@@ -17,6 +17,10 @@ const SHELL_FILES = [
     '/js/shared-constants.js',
     '/js/theme.js',
     '/js/dashboard.js',
+    '/js/live.js',
+    '/js/detail.js',
+    '/js/followed.js',
+    '/js/chrome.js',
     '/rediger.html',
     '/js/edit.js',
     '/activity.html'
