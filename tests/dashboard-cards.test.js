@@ -8,6 +8,10 @@ beforeAll(() => {
 	const sandbox = createClientSandbox();
 	loadClientScript(sandbox, "shared-constants.js");
 	loadClientScript(sandbox, "dashboard.js");
+	loadClientScript(sandbox, "live.js");
+	loadClientScript(sandbox, "detail.js");
+	loadClientScript(sandbox, "followed.js");
+	loadClientScript(sandbox, "chrome.js");
 	dash = sandbox.window.dashboard;
 });
 
@@ -360,6 +364,10 @@ describe("loadData: stable id from the server, index fallback for old payloads",
 		const sandbox = createClientSandbox();
 		loadClientScript(sandbox, "shared-constants.js");
 		loadClientScript(sandbox, "dashboard.js");
+		loadClientScript(sandbox, "live.js");
+		loadClientScript(sandbox, "detail.js");
+		loadClientScript(sandbox, "followed.js");
+		loadClientScript(sandbox, "chrome.js");
 		sandbox.fetch = (url) => {
 			const name = String(url).split("data/")[1]?.split("?")[0];
 			if (name === "events.json") return Promise.resolve({ ok: true, json: () => Promise.resolve(events) });
