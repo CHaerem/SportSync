@@ -409,6 +409,10 @@ struct ContentView: View {
         #endif
         let previousEvents = dataStore.loadEvents()
         _ = await syncClient.sync()
+        // WP-60: this view drives its own sync (it also reconciles notifications
+        // below), so it must invalidate the agenda's cached entity index too —
+        // the sync may have rewritten entities.json.
+        agenda.invalidateEntityCache()
         agenda.reloadFromCache(now: now)
         #if DEBUG
         // The screenshot harness must not trip the first-launch notification

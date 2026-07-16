@@ -144,17 +144,23 @@ final class AssistantViewModel {
         profileStore: ProfileStore = ProfileStore(),
         misunderstoodLog: MisunderstoodLogStore = MisunderstoodLogStore()
     ) {
+        // WP-60: build the entity index ONCE and share it between grounding and
+        // the answer arm's feed provider. The provider previously built a NEW
+        // EntityIndex on every submit (a full entities.json decode + by-id map +
+        // resolver substrate); reuse this one. Only events/interests/profile are
+        // re-read per submit — so a just-confirmed follow is still reflected —
+        // while the (unchanged) entity index is no longer rebuilt each time.
+        let index = EntityIndex(dataStore.loadEntities())
         self.init(
             assistant: assistant,
             profileStore: profileStore,
-            index: EntityIndex(dataStore.loadEntities()),
+            index: index,
             misunderstoodLog: misunderstoodLog,
             feedProvider: {
                 let events = dataStore.loadEvents()
                 let base = dataStore.loadInterests() ?? Interests()
-                let idx = EntityIndex(dataStore.loadEntities())
                 let profile = profileStore.load()
-                let effective = EffectiveInterests.merge(profile: profile, into: base, index: idx)
+                let effective = EffectiveInterests.merge(profile: profile, into: base, index: index)
                 return FeedQuery.build(events: events, interests: effective, now: Date())
             }
         )

@@ -47,6 +47,29 @@ final class AgendaViewModel {
     /// with AssistantViewModel via ContentView.
     private let profileStore: ProfileStore
 
+    // MARK: - WP-60 — off-main reload plumbing
+
+    /// The single in-flight reload. `reloadFromCache` starts one and coalesces
+    /// every further request that lands while it runs into ONE trailing recompile
+    /// (so a burst of N rapid profile changes never fans out into N recompiles).
+    /// nil means "nothing running" — the next request starts fresh.
+    private var reloadTask: Task<Void, Never>?
+    /// The `now` of the most recent request that arrived while a reload was in
+    /// flight. When the running reload finishes it recompiles once more against
+    /// this (the latest state) rather than painting the now-stale result — "siste
+    /// vinner", with only one compute ever running at a time.
+    private var pendingReloadNow: Date?
+    /// WP-60 — the decoded entity index, cached across reloads. `entities.json`
+    /// only changes on a sync (which calls `invalidateEntityCache`), so profile
+    /// toggles reuse this instead of rebuilding the by-id map + resolver substrate
+    /// every time. nil = rebuild on the next reload.
+    private var cachedEntityIndex: EntityIndex?
+    /// WP-60 — how many times the compile pipeline has actually run. The proof
+    /// that a burst of rapid `reloadFromCache` calls coalesces to ≤2 recompiles
+    /// (AgendaReloadConcurrencyTests reads this). Incremented on the main actor,
+    /// once per compute the running reload performs.
+    private(set) var recompileCount = 0
+
     init(dataStore: DataStore = DataStore(), syncClient: SyncClient = SyncClient(), profileStore: ProfileStore = ProfileStore()) {
         self.dataStore = dataStore
         self.syncClient = syncClient
@@ -60,22 +83,128 @@ final class AgendaViewModel {
     func refresh(now: Date = Date()) async {
         reloadFromCache(now: now)
         _ = await syncClient.sync()
+        // WP-60: a sync may have rewritten entities.json — drop the cached index
+        // so the post-sync reload rebuilds it from fresh data.
+        invalidateEntityCache()
         reloadFromCache(now: now)
+        // Pull-to-refresh awaits this method — end the spinner only once the
+        // recompiled board is actually applied (not merely scheduled).
+        await awaitReloadsQuiescent()
     }
 
-    /// Recompiles from whatever DataStore currently has cached, with no
-    /// network access — this is what pull-to-refresh's completion and the
-    /// initial "show cache first" step both call. `loadInterests()` (WP-15)
-    /// returns `nil` when interests.json has never synced or is corrupt;
-    /// `?? Interests()` falls back to FeedCompiler's own default
-    /// `followBroadly` list (see FeedCompiler.defaultFollowBroadly) rather
-    /// than tracking nothing at all, so the agenda is never blank just
-    /// because interests.json hasn't synced yet.
+    /// Recompiles from whatever DataStore currently has cached, with no network
+    /// access — pull-to-refresh's completion, the initial "show cache first"
+    /// step, and every `onProfileChanged` all call this.
+    ///
+    /// WP-60: the heavy work (cache read + JSON decode + `buildSections`) runs
+    /// OFF the main actor (`computeReload` is `nonisolated async`), and we hop
+    /// back to `@MainActor` only to assign the results — this is the likely fix
+    /// for the hang the owner saw (disk I/O + decode + compile were running on
+    /// the main actor). Requests are COALESCED: only one compute runs at a time,
+    /// and a request that arrives mid-compute schedules exactly one trailing
+    /// recompile against the latest state ("siste vinner"). The pure core
+    /// (`buildSections`/`liveRows`) and every field it reads are unchanged, so
+    /// the output — including the golden vectors — is byte-for-byte identical.
     func reloadFromCache(now: Date = Date()) {
+        guard reloadTask == nil else {
+            // A reload is already running — remember to recompile once more with
+            // the latest state when it finishes, and return. This is what keeps a
+            // burst of rapid onProfileChanged calls (the starter-pack scenario) to
+            // ≤2 recompiles.
+            pendingReloadNow = now
+            return
+        }
+        startReload(now: now)
+    }
+
+    /// Invalidate the cached entity index so the next reload rebuilds it from
+    /// disk. Call after a sync that may have rewritten `entities.json`.
+    func invalidateEntityCache() { cachedEntityIndex = nil }
+
+    /// Await any in-flight (coalesced) reload — pull-to-refresh and tests use
+    /// this to wait until the board has actually been recompiled and applied.
+    func awaitReloadsQuiescent() async {
+        while let task = reloadTask { await task.value }
+    }
+
+    /// Drives the coalescing loop on the main actor: increment the recompile
+    /// counter, run the heavy pipeline off-main, then either supersede (a newer
+    /// request arrived) or apply the result. Exactly one of these loops runs at
+    /// a time (guarded by `reloadTask == nil` in `reloadFromCache`).
+    private func startReload(now: Date) {
+        reloadTask = Task { @MainActor in
+            var current = now
+            while true {
+                self.recompileCount &+= 1
+                let cached = self.cachedEntityIndex
+                let result = await Self.computeReload(
+                    now: current, dataStore: self.dataStore,
+                    profileStore: self.profileStore, cachedIndex: cached
+                )
+                if let next = self.pendingReloadNow {
+                    // A newer request landed while we were computing — throw this
+                    // stale result away and recompile against the latest state.
+                    self.pendingReloadNow = nil
+                    current = next
+                    continue
+                }
+                self.apply(result)
+                break
+            }
+            self.reloadTask = nil
+        }
+    }
+
+    /// Assigns a finished reload's results — the ONLY place the published state
+    /// is written, always on the main actor.
+    private func apply(_ result: Reload) {
+        sections = result.sections
+        liveNow = result.liveNow
+        lastSync = result.lastSync
+        profileIsEmpty = result.profileIsEmpty
+        cachedEntityIndex = result.index
+    }
+
+    /// Everything one reload produces, computed off-main and handed to `apply`
+    /// in a single main-actor hop.
+    struct Reload {
+        var sections: [AgendaSection]
+        var liveNow: [AgendaLiveRow]
+        var lastSync: Date?
+        var profileIsEmpty: Bool
+        /// The index the compute used (the cached one, or a freshly built one) —
+        /// stored back so the next reload reuses it.
+        var index: EntityIndex
+    }
+
+    /// The off-main entry: `nonisolated async` so awaiting it from the main actor
+    /// runs the body on the cooperative pool and transfers the fresh result back.
+    /// Delegates to the synchronous, DEBUG-guarded `computeReloadSync`.
+    nonisolated static func computeReload(now: Date, dataStore: DataStore, profileStore: ProfileStore, cachedIndex: EntityIndex?) async -> sending Reload {
+        computeReloadSync(now: now, dataStore: dataStore, profileStore: profileStore, cachedIndex: cachedIndex)
+    }
+
+    /// The agenda reload pipeline: cache read → JSON decode → `buildSections` /
+    /// `liveRows`. WP-60 keeps this OFF the main actor; the `MainThreadGuard`
+    /// below trips in DEBUG if a regression ever runs it on main (proven by
+    /// AgendaReloadConcurrencyTests). `loadInterests()` (WP-15) returns `nil`
+    /// when interests.json has never synced or is corrupt; `?? Interests()` falls
+    /// back to FeedCompiler's own default `followBroadly` list so the agenda is
+    /// never blank just because interests.json hasn't synced yet.
+    nonisolated static func computeReloadSync(now: Date, dataStore: DataStore, profileStore: ProfileStore, cachedIndex: EntityIndex?) -> sending Reload {
+        MainThreadGuard.assertOffMain("AgendaViewModel reload (cache read + JSON decode + compile)")
         let events = dataStore.loadEvents()
         let baseInterests = dataStore.loadInterests() ?? Interests()
-        let profile = profileStore.load()
-        let index = EntityIndex(dataStore.loadEntities())
+        // WP-60: decode the profile file ONCE. The follow-profile and personal
+        // memory both live in the same on-disk ProfileSyncState — reading it a
+        // single time here removes the double decode (was `profileStore.load()`
+        // PLUS `MemoryStore(profileStore:).load()`, each decoding the same file).
+        let syncState = profileStore.loadSyncState()
+        let profile = syncState.profile
+        // WP-60: reuse the cached entity index when present (entities.json only
+        // changes on a sync, which invalidates the cache) instead of rebuilding
+        // it on every reload/toggle.
+        let index = cachedIndex ?? EntityIndex(dataStore.loadEntities())
         // WP-16.4: fold the local profile in, so the board reflects what the
         // assistant just changed — this is the visible half of "Bekreft →
         // agendaen re-kompileres synlig med det samme".
@@ -84,16 +213,18 @@ final class AgendaViewModel {
         // WP-30: the spoiler shield from personal memory (same shared profile
         // file). A pure PRESENTATION layer — it masks result/score at display
         // time and never touches the five predicates / golden vectors.
-        let shield = SpoilerShield(memory: MemoryStore(profileStore: profileStore).load())
+        let shield = SpoilerShield(memory: MemoryState(from: syncState))
         // WP-18: the raw profile is passed ALONGSIDE the merged interests because
         // EffectiveInterests.merge folds a rule's entity into the tracked buckets
         // but drops its `lens` — and the lens is exactly what the lens-rendering
         // layer needs. So the merged `interests` drive the five predicates
         // (unchanged), and `profile` carries the per-rule lens on top.
-        sections = Self.buildSections(events: events, interests: interests, now: now, index: index, followedIds: followedIds, profile: profile, shield: shield)
-        liveNow = Self.liveRows(events: events, interests: interests, now: now)
-        lastSync = dataStore.lastSync
-        profileIsEmpty = profile.isEmpty
+        let sections = buildSections(events: events, interests: interests, now: now, index: index, followedIds: followedIds, profile: profile, shield: shield)
+        let liveNow = liveRows(events: events, interests: interests, now: now)
+        return Reload(
+            sections: sections, liveNow: liveNow, lastSync: dataStore.lastSync,
+            profileIsEmpty: profile.isEmpty, index: index
+        )
     }
 
     // MARK: - Pure core
@@ -411,4 +542,55 @@ final class AgendaViewModel {
             ))
         }
     }
+}
+
+/// WP-60 — a loud DEBUG guard that the agenda reload pipeline (disk read + JSON
+/// decode + compile) never runs on the main thread. A regression that moves that
+/// work back onto the main actor — the likely cause of the hang WP-60 fixes —
+/// trips `assertionFailure` in a debug build, so it fails loudly the moment it
+/// happens rather than silently janking in production.
+///
+/// It is testable WITHOUT a death test: `recordViolationsForTesting` swaps the
+/// trap for a recorder, so a test can drive the pipeline on the main thread and
+/// assert the guard fired (see AgendaReloadConcurrencyTests). Compiled to a
+/// no-op in release.
+enum MainThreadGuard {
+    #if DEBUG
+    /// Recorded violations while `recordViolationsForTesting` is active. Guarded
+    /// by "only writes when already on the main thread" (see `assertOffMain`), so
+    /// there is no cross-thread access in practice.
+    nonisolated(unsafe) static var violations: [String] = []
+    /// When true (the default), a violation traps; a test flips it to record.
+    nonisolated(unsafe) static var trapsInsteadOfRecording = true
+    #endif
+
+    /// Trip if called on the main thread. `label` is an autoclosure so building
+    /// the message costs nothing on the (overwhelmingly common) off-main path.
+    static func assertOffMain(_ label: @autoclosure () -> String) {
+        #if DEBUG
+        guard Thread.isMainThread else { return }
+        let message = "WP-60: \(label()) ran on the main thread — decode/compile must stay off the main actor"
+        if trapsInsteadOfRecording {
+            assertionFailure(message)
+        } else {
+            violations.append(message)
+        }
+        #endif
+    }
+
+    #if DEBUG
+    /// Run `body` with the guard recording (not trapping) and return whatever it
+    /// recorded, restoring the previous mode afterwards. For tests only.
+    static func recordViolationsForTesting(_ body: () -> Void) -> [String] {
+        let previous = trapsInsteadOfRecording
+        trapsInsteadOfRecording = false
+        violations = []
+        defer {
+            violations = []
+            trapsInsteadOfRecording = previous
+        }
+        body()
+        return violations
+    }
+    #endif
 }
