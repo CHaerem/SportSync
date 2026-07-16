@@ -35,16 +35,17 @@ properties, never the generated plists).
 
 ## Targets, schemes & signing
 
-`project.yml` (checked-in source of truth) declares four targets + three schemes:
+`project.yml` (checked-in source of truth) declares five targets + four schemes:
 
 | Target | Type | Scheme | Notes |
 |---|---|---|---|
 | `Zenji` | application | `Zenji` | The Simulator app; embeds `ZenjiWidgetExtension`. Sources: the whole `Zenji/` tree. |
 | `ZenjiWidgetExtension` | app-extension | `ZenjiWidgetExtension` | The widget. Compiles a deliberate subset of `Zenji/` (see [Widget](#widget)). |
 | `ZenjiTests` | unit-test bundle | (runs under `Zenji`) | Hostless logic bundle — see [Testing](#testing). |
+| `ZenjiUITests` | ui-test bundle | `ZenjiUITests` | XCUITest that drives the app in the Simulator — see [UI-flyter](#ui-flyter-wp-70--xcuitest-i-simulator). |
 | `ZenjiDeviceDev` | application | `ZenjiDeviceDev` | Device build under a **free** Apple team — see below. |
 
-- **Bundle ids:** `app.zenji.ios` (app + `ZenjiDeviceDev`), `.widget`, `.tests`.
+- **Bundle ids:** `app.zenji.ios` (app + `ZenjiDeviceDev`), `.widget`, `.tests`, `.uitests`.
   **Deployment target:** iOS 26.0 everywhere; Swift 6.0.
 - **Deep-link scheme:** `zenji://` (`CFBundleURLTypes`) — the custom scheme the
   profile-share QR / link opens, so no Associated-Domains entitlement (and no paid
@@ -474,6 +475,43 @@ xcodebuild test -project Zenji.xcodeproj -scheme Zenji \
 ```
 
 `npm test` (the repo-root JS suite) is unaffected by anything under `ios/`.
+
+### UI-flyter (WP-70) — XCUITest i simulator
+
+`ZenjiUITests/` er et **UI-test-bundle** (`bundle.ui-testing`, `TEST_TARGET_NAME:
+Zenji`) som DRIVER den kjørende appen via `XCUIApplication` — motsatt av det
+hostløse `ZenjiTests`. Det ligger i sin **egen scheme** (`ZenjiUITests`) så det
+raske unit-runet (`Zenji`-scheme, kommandoen over) er uendret; `Zenji`-scheme
+kjører fortsatt kun `ZenjiTests`.
+
+Appen kjøres mot et deterministisk harness — miljøvariabelen `ZENJI_DEMO=uitest`
+(en verdi av det eksisterende demo-harnesset) + `ZENJI_UITEST_STATE`
+(`onboarding` | `agenda`). `UITestSeed` (i `Zenji/Demo/`, `#if DEBUG`) seeder en
+fast cache (events/entities/interests + synket klokke), nullstiller onboarding-/
+tema-flaggene, og backer assistenten med `MockInterestAssistant` — så ingen nett,
+ingen Apple Intelligence, ingen flakiness. Flytene slår opp via **additive
+accessibility-identifiers** og seedede fikstur-strenger, og venter kun med
+`waitForExistence`/predikat (ingen `sleep`).
+
+Dekker seks hovedflyter (onboarding quick-picks + samtale, følg via kommandolinja
+→ diff → Bekreft, N raske starter-pack-toggles uten heng — vokter WP-60-
+koalesceringen, event-detalj + «Hvorfor vises denne?», tema-toggle, nullstill-
+flyten) pluss en `XCTApplicationLaunchMetric` kaldstart-baseline
+(`LaunchMetricsUITests`). Kjør hele suiten:
+
+```sh
+cd ios && xcodegen generate
+xcodebuild test -project Zenji.xcodeproj -scheme ZenjiUITests \
+  -destination 'platform=iOS Simulator,name=iPhone 17'
+```
+
+CI-kravet er kun at targeten **bygger** (den bygges av `ZenjiUITests`-scheme);
+flytene kjøres lokalt / på PR-agentens Mac. NB: launch-metrikk-**baselinen** lagres
+i `.xcodeproj` (xcbaselines), som genereres av xcodegen og bevisst IKKE sjekkes
+inn (`ios/.gitignore`) — det innsjekkede artefaktet er testen selv; det målte
+tallet (~0,97 s på iPhone 17-simulatoren) rapporteres i PR-en. Under tung last
+(flere parallelle `xcodebuild`) kan simulatoren gi forbigående «Busy»/«server
+died» ved oppstart — kjør på nytt før du konkluderer med reell feil.
 
 ### FM-eval harness (WP-69) — measuring real assistant quality
 

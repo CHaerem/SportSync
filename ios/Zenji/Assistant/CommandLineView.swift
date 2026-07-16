@@ -40,6 +40,9 @@ struct CommandLineView: View {
                     .foregroundStyle(ZenjiTokens.muted)
             }
             .accessibilityLabel("Åpne assistenten")
+            // WP-70: a stable handle for the XCUITest that opens the assistant ark
+            // (reset flow) without typing.
+            .accessibilityIdentifier("command.browse")
             // WP-14.3: same glyph, ≥44×44pt hit area.
             .zenjiTapTarget()
 
@@ -51,6 +54,8 @@ struct CommandLineView: View {
                 .submitLabel(.send)
                 .disabled(viewModel.isThinking)
                 .onSubmit(submit)
+                // WP-70: stable handle for the follow-via-command-line flow.
+                .accessibilityIdentifier("command.field")
 
             trailing
         }
@@ -85,6 +90,9 @@ struct CommandLineView: View {
                     .foregroundStyle(ZenjiTokens.accent)
             }
             .accessibilityLabel("Send")
+            // WP-70: a distinct id — the `submitLabel(.send)` keyboard key ALSO
+            // carries the "Send" label, so the XCUITest needs an unambiguous handle.
+            .accessibilityIdentifier("command.send")
             .zenjiTapTarget()
         } else {
             // Idle: the blinking prompt cursor IS the whole affordance.

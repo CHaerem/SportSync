@@ -302,7 +302,44 @@ targets:
         CODE_SIGN_IDENTITY: "Apple Development"
         DEVELOPMENT_TEAM: "9LVCB72DT8"
 
+  # WP-70: the XCUITest bundle — end-to-end regression of the main UX flows in
+  # the Simulator (onboarding, follow-via-command-line, starter-pack toggles,
+  # event detail + "hvorfor vises denne", theme toggle, reset) plus a cold-start
+  # `XCTApplicationLaunchMetric` baseline. Unlike ZenjiTests (a hostless LOGIC
+  # bundle) a UI-test bundle DRIVES the running app through XCUIApplication, so
+  # it needs `TEST_TARGET_NAME: Zenji` (the app under test) + a dependency on it
+  # — the runner installs and launches that app in the Simulator. It compiles
+  # ONLY its own Swift (ZenjiUITests/); it never links the app's sources (the
+  # opposite of the hostless bundles), so there is no `path: Zenji` here. The app
+  # is driven against the deterministic `ZENJI_DEMO=uitest` harness (UITestSeed)
+  # — mock assistant + seeded cache, no network, no Apple Intelligence — so the
+  # flows are stable in CI/Simulator. CI requirement is only that this target
+  # BUILDS (it is in the Zenji scheme's build set below); the flows are run from
+  # the dedicated ZenjiUITests scheme locally / on the PR agent's Mac.
+  ZenjiUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    deploymentTarget: "26.0"
+    sources:
+      - path: ZenjiUITests
+    dependencies:
+      - target: Zenji
+    info:
+      path: ZenjiUITests/Info.plist
+      properties:
+        CFBundleDevelopmentRegion: nb
+    settings:
+      base:
+        PRODUCT_NAME: ZenjiUITests
+        PRODUCT_BUNDLE_IDENTIFIER: app.zenji.ios.uitests
+        # The app the runner installs + launches + attaches to. XcodeGen turns
+        # this into the TEST_TARGET_NAME / test-host wiring a UI-test bundle needs.
+        TEST_TARGET_NAME: Zenji
+
 schemes:
+  # Unchanged from before WP-70: the fast, hostless unit run. `xcodebuild test
+  # -scheme Zenji` stays unit-only (ZenjiTests) so the ios/README command and CI
+  # gate are exactly as documented — the UI suite lives in its own scheme below.
   Zenji:
     build:
       targets:
@@ -335,3 +372,22 @@ schemes:
       config: Debug
     archive:
       config: Release
+  # WP-70: the UI-test scheme. Builds the app + the widget it embeds (the app
+  # can't launch in the Simulator without its embedded extension) and runs the
+  # XCUITest bundle. Kept SEPARATE from the Zenji scheme so the everyday unit run
+  # stays fast; this scheme is what proves the UI target builds ("alle schemes
+  # bygger") and is the entry point for running the flows + the launch metric:
+  #   xcodebuild test -project Zenji.xcodeproj -scheme ZenjiUITests \
+  #     -destination 'platform=iOS Simulator,name=iPhone 17'
+  ZenjiUITests:
+    build:
+      targets:
+        Zenji: all
+        ZenjiWidgetExtension: all
+        ZenjiUITests: [test]
+    test:
+      config: Debug
+      targets:
+        - ZenjiUITests
+    run:
+      config: Debug

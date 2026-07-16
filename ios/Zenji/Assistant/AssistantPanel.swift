@@ -257,6 +257,9 @@ struct AssistantPanel: View {
                     .font(.zenjiMono(size: 13, weight: .bold))
                     .foregroundStyle(ZenjiTokens.diffAdd)
                     .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.diffAdd))
+                    // WP-70: stable handle for the follow-via-command-line flow's
+                    // Bekreft (the test uses .firstMatch — a single-mutation diff).
+                    .accessibilityIdentifier("assistant.confirm")
                 Button("Avvis") { viewModel.reject(mutation); dismissIfDone() }
                     .font(.zenjiMono(size: 13))
                     .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
@@ -456,11 +459,13 @@ struct AssistantPanel: View {
                     resetRow(
                         title: "Nullstill det du følger",
                         detail: "Fjerner alt du følger og viser onboarding på nytt. Det jeg vet om deg beholdes.",
+                        identifier: "reset.followedOnly",
                         action: { confirmingReset = .followedOnly }
                     )
                     resetRow(
                         title: "Slett alt om meg",
                         detail: "Det du følger OG alt jeg vet om deg, pluss loggen over det jeg ikke forsto.",
+                        identifier: "reset.everything",
                         action: { confirmingReset = .everything }
                     )
                 }
@@ -475,7 +480,7 @@ struct AssistantPanel: View {
         .tint(ZenjiTokens.muted)
     }
 
-    private func resetRow(title: String, detail: String, action: @escaping () -> Void) -> some View {
+    private func resetRow(title: String, detail: String, identifier: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
@@ -490,6 +495,13 @@ struct AssistantPanel: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        // An explicit label collapses the two-line VStack into a SINGLE
+        // accessible button element (same pattern as the onboarding pack rows) —
+        // better VoiceOver AND a stable, tappable handle for the XCUITest reset
+        // flow (a plain-style button with only child texts otherwise exposes the
+        // texts, not an actionable button).
+        .accessibilityLabel("\(title). \(detail)")
+        .accessibilityIdentifier(identifier)
     }
 
     /// The rolig confirm ark (DESIGN.md — never a system alert): the exact,
@@ -510,10 +522,14 @@ struct AssistantPanel: View {
                 .font(.zenjiMono(size: 13, weight: .bold))
                 .foregroundStyle(ZenjiTokens.diffRemove)
                 .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.diffRemove))
+                // WP-70: stable handles for the reset flow (cancel + confirm) —
+                // the labels ("Nullstill"/"Avbryt") also appear elsewhere.
+                .accessibilityIdentifier("reset.confirm")
                 Button("Avbryt") { confirmingReset = nil }
                     .font(.zenjiMono(size: 13))
                     .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
                     .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.foreground))
+                    .accessibilityIdentifier("reset.cancel")
             }
         }
         .padding(12)
