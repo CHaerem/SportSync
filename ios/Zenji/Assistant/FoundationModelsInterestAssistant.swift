@@ -172,6 +172,25 @@ struct ProfileTool: Tool {
     }
 }
 
+// MARK: - getHelp tool (WP-68 — the curated app-help knowledge)
+
+/// A read-only tool exposing the versioned `AssistantHelp` capability document,
+/// so a "hva kan du?" / "hvordan gjør jeg X?" question is answered from CURATED
+/// fact (what the app actually does + which action to take), never from
+/// guesswork or general world knowledge. The mirror of `getProfile`: the model
+/// reads it; the deterministic mock answers from `AssistantHelp.answer(for:)`.
+struct HelpTool: Tool {
+    let name = "getHelp"
+    let description = "Slå opp hva assistenten og appen kan gjøre, og hvordan brukeren gjør vanlige ting: følge noe, spørre om agendaen, bytte tema, nullstille, styre varsler, dele profil, og se/glemme det appen vet om dem. Bruk dette når brukeren spør «hva kan du?» eller «hvordan gjør jeg X?» i appen — ikke gjett."
+
+    @Generable
+    struct Arguments {}
+
+    func call(arguments: Arguments) async throws -> String {
+        AssistantHelp.document()
+    }
+}
+
 // MARK: - saveMemory tool (WP-30 — persist a durable personal fact)
 
 /// The tool the model calls to remember something DURABLE about the user (their
@@ -258,7 +277,7 @@ struct FoundationModelsInterestAssistant: InterestAssistant {
 
         // WP-30 — the saveMemory tool lets the model persist a durable, personal
         // thing it learns; only wired when a write sink is provided.
-        var tools: [any Tool] = [EntitySearchTool(index: index), EventSearchTool(feed: feed), ProfileTool(profile: profile)]
+        var tools: [any Tool] = [EntitySearchTool(index: index), EventSearchTool(feed: feed), ProfileTool(profile: profile), HelpTool()]
         if let sink = memory.sink { tools.append(SaveMemoryTool(sink: sink)) }
 
         let session = LanguageModelSession(
@@ -425,8 +444,9 @@ struct FoundationModelsInterestAssistant: InterestAssistant {
             (følg, slutt, prioriter, mer/mindre) OG deklarative utsagn om hva de bryr seg om
             («jeg liker …», «jeg følger …», «jeg er interessert i …», «vil gjerne ha med …»). Alle
             disse er 'mutations' — å nevne en interesse ER å be om å følge den.
-          • intent = 'answer' når brukeren STILLER ET SPØRSMÅL om agendaen (hva/når/hvor — «hva bør jeg
-            se i kveld?», «når går neste etappe?», «hvor kan jeg se X?»).
+          • intent = 'answer' når brukeren STILLER ET SPØRSMÅL — enten om agendaen (hva/når/hvor — «hva bør jeg
+            se i kveld?», «når går neste etappe?», «hvor kan jeg se X?»), ELLER om selve appen/deg («hva kan
+            du?», «hvordan følger jeg noe?», «hvordan nullstiller jeg?»).
           • intent = 'command' når brukeren vil at APPEN skal GJØRE noe: bytte tema, nullstille, kjøre
             onboarding på nytt, dele profilen/vise QR, vise «hva du vet om meg», glemme noe om dem, skru
             varsel-ledetid på/av, eller åpne en bestemt hendelse («vis Brann-kampen»).
@@ -439,11 +459,16 @@ struct FoundationModelsInterestAssistant: InterestAssistant {
         - «vis bare golf denne uka» er IKKE en kommando (det er et framtidig presentasjonsfilter) — bruk vanlig flyt.
 
         NÅR intent = 'answer':
-        - Bruk verktøyet searchEvents for å finne hva som faktisk står på agendaen (i dag/kommende).
-        - Bruk getProfile hvis det hjelper å vite hva brukeren allerede følger.
-        - Skriv et kort, rolig svar på norsk som refererer til radene med tid, tittel og kanal.
-        - Fyll referencedEventIds med eventId-ene (kolonne 1 fra searchEvents) du refererer til.
-        - Ikke finn på hendelser. Finner du ingenting, si det ærlig. La mutations være tom.
+        - Spørsmål om AGENDAEN (hva/når/hvor): bruk verktøyet searchEvents for å finne hva som faktisk står på
+          agendaen (i dag/kommende). Bruk getProfile hvis det hjelper å vite hva brukeren allerede følger.
+        - Spørsmål om APPEN / deg selv («hva kan du?», «hvordan gjør jeg X?»): bruk verktøyet getHelp og svar
+          KUN ut fra det. Referer den konkrete handlingen brukeren kan gjøre (f.eks. «si 'nullstill'» eller
+          «trykk TEMA-chippen»). La referencedEventIds være tom for app-hjelp (ingen agendarader).
+        - Skriv et kort, rolig svar på norsk. For agendasvar: referer til radene med tid, tittel og kanal.
+        - SITER RAD-ID-ENE: for agendasvar MÅ du fylle referencedEventIds med eventId-ene (kolonne 1 fra
+          searchEvents) du refererer til — et agendasvar uten rad-id-er regnes som ugrunnet.
+        - Ikke finn på hendelser, og ikke svar på generelle kunnskapsspørsmål utenfor appen og din egen agenda —
+          si ærlig at det er utenfor det du kan. Finner du ingenting, si det ærlig. La mutations være tom.
 
         NÅR intent = 'mutations':
         - FAN UT: én ytring kan nevne FLERE interesser (skilt med komma eller «og»). Lag ÉN mutasjon PER ledd; kall searchEntities per ledd. Utelat ALDRI et ledd.
