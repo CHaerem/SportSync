@@ -250,6 +250,9 @@ final class AgendaViewModel {
     nonisolated static func buildSections(events: [Event], interests: Interests, now: Date, index: EntityIndex = EntityIndex([]), followedIds: Set<String> = [], profile: InterestProfile = InterestProfile(), shield: SpoilerShield = SpoilerShield()) -> [AgendaSection] {
         let (feedEvents, lookup) = EventBridge.bridge(events)
         let feed = FeedCompiler.compile(events: feedEvents, interests: interests, now: now)
+        // WP-61: one memo per compile, shared by every row's `followableEntities`
+        // so a recurring team/tournament name resolves once, not once per row.
+        let nameCache = NameResolveCache()
         let todayKey = FeedCompiler.osloDayKey(now)
         let tomorrowKey = FeedCompiler.osloDayKey(now.addingTimeInterval(24 * 60 * 60))
 
@@ -266,7 +269,7 @@ final class AgendaViewModel {
                 guard case .event(let feedEvent, let mustWatch, let mustSee) = compiled else {
                     // Series rows never lens (they are already the collapsed,
                     // athlete-agnostic view) — pass through on their own day.
-                    if let item = makeItem(compiled, lookup: lookup, interests: interests, now: now, index: index, followedIds: followedIds, shield: shield) {
+                    if let item = makeItem(compiled, lookup: lookup, interests: interests, now: now, index: index, followedIds: followedIds, shield: shield, cache: nameCache) {
                         placed.append(Placed(dayKey: day.key, sortTime: compiled.time, item: item))
                     }
                     continue
@@ -278,10 +281,10 @@ final class AgendaViewModel {
                     // brief) and re-home to the athlete's effective day/time.
                     for lensRow in lensRows {
                         let (dayKey, sortTime) = place(lensRow, event: feedEvent, compiledDay: day.key, todayKey: todayKey)
-                        let row = makeLensRow(lensRow, event: event, feedEvent: feedEvent, mustWatch: mustWatch, mustSee: mustSee, interests: interests, now: now, index: index, followedIds: followedIds, shield: shield)
+                        let row = makeLensRow(lensRow, event: event, feedEvent: feedEvent, mustWatch: mustWatch, mustSee: mustSee, interests: interests, now: now, index: index, followedIds: followedIds, shield: shield, cache: nameCache)
                         placed.append(Placed(dayKey: dayKey, sortTime: sortTime, item: .event(row)))
                     }
-                } else if let item = makeItem(compiled, lookup: lookup, interests: interests, now: now, index: index, followedIds: followedIds, shield: shield) {
+                } else if let item = makeItem(compiled, lookup: lookup, interests: interests, now: now, index: index, followedIds: followedIds, shield: shield, cache: nameCache) {
                     // No lens applies → the ordinary WP-16.4 row, untouched.
                     placed.append(Placed(dayKey: day.key, sortTime: feedEvent.time, item: item))
                 }
@@ -382,7 +385,8 @@ final class AgendaViewModel {
         now: Date,
         index: EntityIndex,
         followedIds: Set<String>,
-        shield: SpoilerShield
+        shield: SpoilerShield,
+        cache: NameResolveCache? = nil
     ) -> AgendaEventRow {
         let timeLabel = lensRow.effectiveTime.map { AgendaFormat.timeLabel(time: $0, endTime: nil) }
             ?? AgendaFormat.timeLabel(time: feedEvent.time, endTime: feedEvent.endTime)
@@ -404,7 +408,7 @@ final class AgendaViewModel {
             isAIResearch: event.source == "ai-research",
             event: event,
             whyShown: FeedCompiler.whyShown(feedEvent, interests: interests),
-            followable: followableEntities(for: event, index: index, followedIds: followedIds),
+            followable: followableEntities(for: event, index: index, followedIds: followedIds, cache: cache),
             spoilerSafe: spoilerSafe
         )
     }
@@ -419,7 +423,12 @@ final class AgendaViewModel {
     /// an id). De-duplicated, already-followed dropped, capped at three so the
     /// sheet stays calm. Empty when the index hasn't synced. Pure — testable
     /// with a hand-built index.
-    nonisolated static func followableEntities(for event: Event, index: EntityIndex, followedIds: Set<String>) -> [Entity] {
+    /// WP-61: `cache` (default nil) memoizes the name→served resolutions WITHIN
+    /// one `buildSections` pass. The same team/tournament names recur across many
+    /// rows, so a shared cache collapses them to a single lookup; nil (the unit
+    /// tests' path) simply resolves each name directly — identical result, just
+    /// no memoization.
+    nonisolated static func followableEntities(for event: Event, index: EntityIndex, followedIds: Set<String>, cache: NameResolveCache? = nil) -> [Entity] {
         guard !index.isEmpty else { return [] }
         var ids: [String] = []
         func add(_ id: String?) { if let id, !id.isEmpty { ids.append(id) } }
@@ -427,7 +436,8 @@ final class AgendaViewModel {
         add(event.awayTeamEntityId)
         for player in event.norwegianPlayers { add(player.entityId) }
         for name in [event.homeTeam, event.awayTeam, event.tournament].compactMap({ $0 }) {
-            if let served = index.resolve(name).served { ids.append(served.id) }
+            let served = cache.map { $0.servedEntity(for: name, in: index) } ?? index.servedEntity(for: name)
+            if let served { ids.append(served.id) }
         }
         var seen = Set<String>()
         var out: [Entity] = []
@@ -491,7 +501,8 @@ final class AgendaViewModel {
         now: Date,
         index: EntityIndex,
         followedIds: Set<String>,
-        shield: SpoilerShield
+        shield: SpoilerShield,
+        cache: NameResolveCache? = nil
     ) -> AgendaItem? {
         switch item {
         case .event(let feedEvent, let mustWatch, let mustSee):
@@ -512,7 +523,7 @@ final class AgendaViewModel {
                 isAIResearch: event.source == "ai-research",
                 event: event,
                 whyShown: FeedCompiler.whyShown(feedEvent, interests: interests),
-                followable: followableEntities(for: event, index: index, followedIds: followedIds),
+                followable: followableEntities(for: event, index: index, followedIds: followedIds, cache: cache),
                 spoilerSafe: shield.spoilerSafe(event: event)
             ))
 
@@ -593,4 +604,27 @@ enum MainThreadGuard {
         return violations
     }
     #endif
+}
+
+/// WP-61 — a per-`buildSections` memo for `followableEntities`' name→served
+/// resolutions. One compile resolves the same home/away/tournament NAMES over
+/// and over (once per row that carries them); this collapses each distinct name
+/// to a SINGLE `EntityIndex.servedEntity` call. A reference type so one instance
+/// threads through the (value-passing) compile without `inout` churn. It is
+/// created fresh inside `buildSections`, used only within that one synchronous
+/// call, and never escapes — so despite being non-`Sendable` it never crosses an
+/// isolation boundary. The stored `Entity?` value distinguishes a cached "no
+/// served entity" (a legitimate miss) from "not yet resolved".
+final class NameResolveCache {
+    private var served: [String: Entity?] = [:]
+
+    /// The served entity for `name`, resolved once and reused. Keyed on the raw
+    /// name string the caller holds (identical string ⇒ identical result), so no
+    /// normalization needs to happen before the cache is consulted.
+    func servedEntity(for name: String, in index: EntityIndex) -> Entity? {
+        if let cached = served[name] { return cached }
+        let resolved = index.servedEntity(for: name)
+        served[name] = resolved
+        return resolved
+    }
 }
