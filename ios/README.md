@@ -556,6 +556,36 @@ RAPPORT** and share the JSON. Each assistant WP (WP-65/66/68) adds its cases to
 the corpus in the same PR, so the pass-rate is the regression signal that
 replaces manual exploratory testing.
 
+**Running the real eval from the CLI (an AI-enabled Mac).** The same corpus runs
+through the real FM in the Simulator (which proxies the host Mac's Apple
+Intelligence) via `RealFMEvalTests`, opt-in and reporting+threshold-guarding:
+
+```
+TEST_RUNNER_ZENJI_REALFM_EVAL=1 xcodebuild test -scheme Zenji \
+  -destination 'platform=iOS Simulator,name=iPhone 17' \
+  -only-testing:ZenjiTests/RealFMEvalTests
+```
+
+The report prints between `REALFM-EVAL-REPORT-BEGIN/END`. A full run (55 cases)
+is ~25 min, so for **cheap single-category / single-case iteration** two DEBUG
+env filters narrow the corpus (a filtered run reports only — it never asserts a
+threshold): `TEST_RUNNER_ZENJI_EVAL_CATEGORY=canon,command` and/or
+`TEST_RUNNER_ZENJI_EVAL_CASE=canon-02-magnus-carlsen`.
+
+**Prompt budget (WP-71).** The on-device context is **4096 tokens** and must
+hold the prompt + the tool definitions + the `@Generable` schema + the whole
+tool-calling conversation. WP-66/67/68 grew ONE monolithic prompt (all four
+arms) + one `GeneratedTurn` schema (every arm's fields) + four tools onto every
+generation, which overran that window (~95 «Context length of 4096 exceeded»,
+eval 10/55). The fix splits each interpretation into **two small generations**:
+a tiny **tool-less intent classifier** (phase 1), then a **focused per-arm
+session** (phase 2) that carries only that arm's schema and only the tools it
+needs (mutations→`searchEntities`, answer→`searchEvents`/`getProfile`/`getHelp`,
+command & present→no tools). The prompts live in the FoundationModels-free
+`AssistantInstructions` so `AssistantInstructionsTests` can length-guard each
+phase in CI (a documented ~3.5 chars/token proxy) — the tripwire that fails a
+future prompt inflation in CI, not 25 minutes into a device eval.
+
 ## Ytelse: signposts + MetricKit (WP-63)
 
 `Zenji/Perf/` instruments the two hotpaths the WP-60 audit flagged — **local and
