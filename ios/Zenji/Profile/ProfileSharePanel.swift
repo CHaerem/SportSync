@@ -18,6 +18,11 @@ struct ProfileSharePanel: View {
 
     @State private var expanded = false
     @State private var importDraft = ""
+    /// WP-62 — the QR bitmap, computed ONCE per share payload in `.task` rather
+    /// than rebuilt in `body` on every re-render (each render spun up a fresh
+    /// CoreImage render — a real jank source). Keyed on the payload string so it
+    /// recomputes only when what's shared actually changes.
+    @State private var qrImage: UIImage?
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
@@ -63,7 +68,7 @@ struct ProfileSharePanel: View {
                     .font(.zenjiMono(size: 12))
                     .foregroundStyle(ZenjiTokens.foreground.opacity(0.55))
             } else if let url = viewModel.profileShareURL {
-                if let image = ProfileQRCode.image(for: url.absoluteString) {
+                if let image = qrImage {
                     Image(uiImage: image)
                         .interpolation(.none)
                         .resizable()
@@ -85,6 +90,13 @@ struct ProfileSharePanel: View {
                 }
                 .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.accent, fullWidth: true))
             }
+        }
+        // WP-62 — render the QR bitmap ONCE per share payload (not per body
+        // re-render). Keyed on the link string so it recomputes only when what's
+        // shared actually changes; the CoreImage render reuses one static
+        // CIContext (ProfileQRCode).
+        .task(id: viewModel.profileShareURL?.absoluteString) {
+            qrImage = viewModel.profileShareURL.flatMap { ProfileQRCode.image(for: $0.absoluteString) }
         }
     }
 

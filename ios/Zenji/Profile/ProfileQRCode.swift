@@ -18,6 +18,12 @@ import CoreImage.CIFilterBuiltins
 import UIKit
 
 enum ProfileQRCode {
+    /// WP-62 — one shared `CIContext` for every QR render. A `CIContext` is
+    /// expensive to build (it spins up a Metal/CoreImage pipeline), so making a
+    /// fresh one per render was a real jank source; it is stateless and
+    /// thread-safe to reuse, so a single static instance serves the whole app.
+    private static let ciContext = CIContext()
+
     /// A monochrome QR image encoding `string`, upscaled by `scale` with nearest-
     /// neighbour so the modules stay razor-sharp (never blurred). `nil` only if
     /// CoreImage can't build the code (e.g. an empty string).
@@ -31,8 +37,7 @@ enum ProfileQRCode {
         guard let output = filter.outputImage else { return nil }
 
         let scaled = output.transformed(by: CGAffineTransform(scaleX: scale, y: scale))
-        let context = CIContext()
-        guard let cgImage = context.createCGImage(scaled, from: scaled.extent) else { return nil }
+        guard let cgImage = ciContext.createCGImage(scaled, from: scaled.extent) else { return nil }
         return UIImage(cgImage: cgImage)
     }
 }
