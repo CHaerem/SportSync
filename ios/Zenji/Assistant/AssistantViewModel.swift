@@ -140,7 +140,12 @@ final class AssistantViewModel {
     /// interests, so the answer arm sees exactly the agenda on screen.
     convenience init(
         dataStore: DataStore = DataStore(),
-        assistant: any InterestAssistant = FoundationModelsInterestAssistant(),
+        // WP-62 — the real FM assistant is wrapped in a deadline so a stuck
+        // generation can't leave the command line blinking "tenker …" forever;
+        // on timeout it surfaces a calm "tok for lang tid" via the same
+        // `.generationFailed` flow. Tests inject the fast mock directly, so the
+        // deadline never bites there.
+        assistant: any InterestAssistant = TimeoutInterestAssistant(wrapping: FoundationModelsInterestAssistant()),
         profileStore: ProfileStore = ProfileStore(),
         misunderstoodLog: MisunderstoodLogStore = MisunderstoodLogStore()
     ) {

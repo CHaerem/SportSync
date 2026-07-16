@@ -35,7 +35,6 @@ struct ContentView: View {
 
     @State private var agenda: AgendaViewModel
     @State private var assistant: AssistantViewModel
-    @State private var now = Date()
     /// WP-16.4 — the assistant "ark" is up (a result or a browse).
     @State private var panelShown = false
     @FocusState private var commandFocused: Bool
@@ -73,8 +72,6 @@ struct ContentView: View {
     private var themeOverride: ThemeOverride {
         ThemeOverride(rawValue: themeOverrideRaw) ?? .system
     }
-
-    private let clock = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     init(
         syncClient: SyncClient = SyncClient(),
@@ -142,26 +139,12 @@ struct ContentView: View {
         return f
     }()
 
-    private static let clockFormatter: DateFormatter = {
-        let f = DateFormatter()
-        f.locale = Locale(identifier: "nb_NO")
-        f.timeZone = FeedCompiler.osloTimeZone
-        f.dateFormat = "HH:mm:ss"
-        return f
-    }()
-
-    private static let clockFormatterNoSeconds: DateFormatter = {
-        let f = DateFormatter()
-        f.locale = Locale(identifier: "nb_NO")
-        f.timeZone = FeedCompiler.osloTimeZone
-        f.dateFormat = "HH:mm"
-        return f
-    }()
-
-    private var dateLabel: String { Self.dateFormatter.string(from: now).uppercased() }
-    private var clockLabel: String {
-        (reduceMotion ? Self.clockFormatterNoSeconds : Self.clockFormatter).string(from: now)
-    }
+    // WP-62 — the date is read from `Date()` at render time (not a per-second
+    // `@State`): the ticking clock now lives in its own leaf (`TekstTVClock`)
+    // that owns its timer, so ContentView's body is no longer invalidated every
+    // second. The date string only changes at midnight and is fresh on any
+    // re-render (agenda reload, foreground, panel toggle).
+    private var dateLabel: String { Self.dateFormatter.string(from: Date()).uppercased() }
 
     var body: some View {
         ZStack {
@@ -307,7 +290,6 @@ struct ContentView: View {
             // WP-19 — one profile sync round at launch (no-op on LocalOnly).
             await assistant.runBackgroundSync(using: profileSync)
         }
-        .onReceive(clock) { now = $0 }
         // A fresh assistant result raises the ark (≤150 ms fade, move 5's calm).
         // WP-31: while onboarding is up it renders its OWN diff/answer inline, so
         // don't also raise the ark behind the overlay.
@@ -400,7 +382,7 @@ struct ContentView: View {
     }
 
     private func refresh() async {
-        agenda.reloadFromCache(now: now)
+        agenda.reloadFromCache(now: Date())
         #if DEBUG
         // WP-18: the lens screenshot demo runs entirely off its seeded cache —
         // a live sync would clobber it, so don't fetch (and don't schedule
@@ -413,7 +395,7 @@ struct ContentView: View {
         // below), so it must invalidate the agenda's cached entity index too —
         // the sync may have rewritten entities.json.
         agenda.invalidateEntityCache()
-        agenda.reloadFromCache(now: now)
+        agenda.reloadFromCache(now: Date())
         #if DEBUG
         // The screenshot harness must not trip the first-launch notification
         // permission alert over the design it's capturing.
@@ -485,10 +467,7 @@ struct ContentView: View {
                     .accessibilityLabel("Skriv til assistenten")
                     .zenjiTapTarget()
                 }
-                Text(clockLabel)
-                    .font(.zenjiMono(size: 13))
-                    .monospacedDigit()
-                    .foregroundStyle(ZenjiTokens.accent)
+                TekstTVClock()
             }
         }
         .padding(20)
@@ -526,6 +505,46 @@ struct ContentView: View {
                 .fill(ZenjiTokens.hairline)
                 .frame(height: 1)
         }
+    }
+}
+
+/// WP-62 — the header's stille tikkende klokke, extracted into its own leaf so
+/// its per-second tick invalidates ONLY this ~13pt label, never the whole
+/// ContentView body (which hosts the agenda List). It owns its timer + `now`.
+/// Under Reduce Motion it ticks once a minute and drops the seconds — the calm
+/// cadence DESIGN.md asks for — otherwise once a second; each tick is aligned to
+/// the wall-clock boundary so the digits flip exactly on the second/minute.
+private struct TekstTVClock: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var now = Date()
+
+    private static let withSeconds: DateFormatter = formatter("HH:mm:ss")
+    private static let noSeconds: DateFormatter = formatter("HH:mm")
+
+    private static func formatter(_ format: String) -> DateFormatter {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "nb_NO")
+        f.timeZone = FeedCompiler.osloTimeZone
+        f.dateFormat = format
+        return f
+    }
+
+    var body: some View {
+        Text((reduceMotion ? Self.noSeconds : Self.withSeconds).string(from: now))
+            .font(.zenjiMono(size: 13))
+            .monospacedDigit()
+            .foregroundStyle(ZenjiTokens.accent)
+            // Re-armed if Reduce Motion flips mid-session (rare) — the id change
+            // restarts the loop at the new cadence.
+            .task(id: reduceMotion) {
+                let step: TimeInterval = reduceMotion ? 60 : 1
+                while !Task.isCancelled {
+                    now = Date()
+                    let current = Date().timeIntervalSinceReferenceDate
+                    let delay = max((floor(current / step) + 1) * step - current, 0)
+                    try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+                }
+            }
     }
 }
 
