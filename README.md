@@ -15,11 +15,11 @@ Kvoten er **konto-bred** (delt med interaktiv Claude-bruk) — samlet kvote-tryk
 
 | Vindu | Brukt | Detaljer |
 |---|---|---|
-| Uke (7d) | **5%** 🟢 | ↓ −86pp siste 24t · nullstilles 2026-07-22 |
-| Sesjon (5t) | 37% | nullstilles 22:40 UTC |
+| Uke (7d) | **6%** 🟢 | ↓ −87pp siste 24t · nullstilles 2026-07-22 |
+| Sesjon (5t) | 52% | nullstilles 11:10 UTC |
 | Siste 7 dager | topp 100% · snitt 36% | 11t i sparemodus |
 
-<sub>Oppdatert 2026-07-15 22:25 UTC av `usage-monitor` · kilde: `docs/data/usage-summary.json` · [Self-throttling on quota](#self-throttling-on-quota)</sub>
+<sub>Oppdatert 2026-07-16 07:32 UTC av `usage-monitor` · kilde: `docs/data/usage-summary.json` · [Self-throttling on quota](#self-throttling-on-quota)</sub>
 <!-- STATUS:END -->
 
 ## The idea
