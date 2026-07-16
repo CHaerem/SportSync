@@ -156,6 +156,7 @@ struct OnboardingView: View {
             promptLine
 
             if let error = assistant.errorMessage { errorRow(error) }
+            if let tally = assistant.mutationTally { tallyBlock(tally) }
             if !assistant.pending.isEmpty { diffBlock }
             if !assistant.rejected.isEmpty { rejectionsBlock }
             if let explanation = assistant.explanation { explanationBlock(explanation) }
@@ -222,6 +223,24 @@ struct OnboardingView: View {
         guard !trimmed.isEmpty, !assistant.isThinking else { return }
         inputFocused = false
         assistant.run()
+    }
+
+    /// WP-65 — the per-clause regnskap for a bulk utterance said during
+    /// onboarding ("golf, Hovland, all vintersport …"): what landed and what
+    /// wasn't found, in one calm line, so saying several things at once never
+    /// hides a dropped clause. Same flow as the always-present assistant.
+    private func tallyBlock(_ tally: MutationTally) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            sectionLabel("REGNSKAP")
+            Text(tally.summary)
+                .font(.zenjiMono(size: 13))
+                .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(ZenjiTokens.foreground.opacity(0.04))
+        .overlay(Rectangle().stroke(ZenjiTokens.foreground.opacity(0.15), lineWidth: 1))
     }
 
     /// The proposal diff — the same before/after language as the assistant ark,

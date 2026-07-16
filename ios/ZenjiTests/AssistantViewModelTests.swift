@@ -35,6 +35,56 @@ final class AssistantViewModelTests: XCTestCase {
         XCTAssertEqual(makeVM(behavior: .unavailable("av")).availability, .unavailable(message: "av"))
     }
 
+    // MARK: - WP-65 — bulk-fangst + per-clause reporting
+
+    func test_submit_bulkUtterance_reportsEveryClauseInTally() async {
+        let vm = makeVM()
+        vm.utterance = "Jeg liker golf, spesielt Hovland, all vintersport, følger Brann og litt F1"
+        await vm.submit()
+
+        // The four resolvable clauses become confirmable proposals.
+        XCTAssertEqual(
+            Set(vm.pending.map(\.entity.id)),
+            ["sport-golf", "viktor-hovland", "category-winter-sports", "sport-f1"]
+        )
+        // The unresolvable one is shown as a rejection, not dropped.
+        XCTAssertEqual(vm.rejected.map { $0.query.lowercased() }, ["brann"])
+
+        // The per-clause tally names ALL of it — added AND not-found — so nothing
+        // is silently swallowed. (The mock normalises a residual query to lower
+        // case; the tally faithfully reflects the rejection's query.)
+        let tally = vm.mutationTally
+        XCTAssertNotNil(tally, "a multi-clause utterance publishes a tally")
+        XCTAssertEqual(Set(tally?.added ?? []), ["Golf", "Viktor Hovland", "Vintersport", "Formel 1"])
+        XCTAssertEqual(tally?.updated ?? [], [])
+        XCTAssertEqual(tally?.notFound.map { $0.lowercased() }, ["brann"])
+        XCTAssertTrue(tally?.summary.lowercased().contains("brann") ?? false, "the summary names the not-found clause")
+    }
+
+    func test_submit_singleClause_hasNoTally() async {
+        let vm = makeVM()
+        vm.utterance = "Følg Casper Ruud"
+        await vm.submit()
+        XCTAssertNil(vm.mutationTally, "a single-clause utterance needs no per-clause regnskap")
+    }
+
+    func test_tallyBuilder_isNilForTrivialAndNamesEveryClause() {
+        // Pure builder: nil for a single outcome, structured for several.
+        let ruud = index.entity(id: "casper-ruud")!
+        let one = GroundedMutation(kind: .add, entity: ruud, scope: nil, weight: 0.5, reason: "r", previousRule: nil)
+        XCTAssertNil(AssistantExplanation.tally(grounded: [one], rejected: []))
+
+        let hov = index.entity(id: "viktor-hovland")!
+        let two = GroundedMutation(kind: .add, entity: hov, scope: nil, weight: 0.5, reason: "r", previousRule: nil)
+        let reject = RejectedMutation(query: "Brann", explanation: "x", suggestions: [],
+                                      proposal: ProposedMutation(kind: .add, entityId: "", entityQuery: "Brann", reason: "r"))
+        let tally = AssistantExplanation.tally(grounded: [one, two], rejected: [reject])
+        XCTAssertEqual(tally?.added, ["Casper Ruud", "Viktor Hovland"])
+        XCTAssertEqual(tally?.notFound, ["Brann"])
+        XCTAssertTrue(tally?.summary.contains("la til") ?? false)
+        XCTAssertTrue(tally?.summary.contains("fant ikke") ?? false)
+    }
+
     func test_submit_groundsIntoPending_withoutApplying() async {
         let vm = makeVM()
         vm.utterance = "Følg Casper Ruud bare i Grand Slams"

@@ -72,6 +72,7 @@ struct AssistantPanel: View {
                     if let message = viewModel.availability.message { unavailableBanner(message) }
                     if let error = viewModel.errorMessage { errorRow(error) }
                     if let answer = viewModel.answer { answerSection(answer) }
+                    if let tally = viewModel.mutationTally { tallySection(tally) }
                     if !viewModel.pending.isEmpty { proposalsSection }
                     if !viewModel.rejected.isEmpty { rejectionsSection }
                     if let explanation = viewModel.explanation { explanationSection(explanation) }
@@ -190,6 +191,26 @@ struct AssistantPanel: View {
                     .foregroundStyle(row.channelLabel == "–" ? ZenjiTokens.muted.opacity(0.5) : ZenjiTokens.muted)
             }
         }
+    }
+
+    // MARK: - Per-clause accounting (WP-65 — the bulk-utterance regnskap)
+
+    /// A calm one-line account of a bulk utterance: what landed and what wasn't
+    /// found. Sits above the diff so the user sees, at a glance, that every
+    /// clause was handled — the "aldri stille ledd-dropp" guarantee made visible.
+    /// The detail (Bekreft/Avvis, «mente du …?») still lives in the sections below.
+    private func tallySection(_ tally: MutationTally) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            sectionTitle("REGNSKAP")
+            Text(tally.summary)
+                .font(.zenjiMono(size: 13))
+                .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(ZenjiTokens.foreground.opacity(0.04))
+        .overlay(Rectangle().stroke(ZenjiTokens.foreground.opacity(0.15), lineWidth: 1))
     }
 
     // MARK: - Proposals (the DIFF)

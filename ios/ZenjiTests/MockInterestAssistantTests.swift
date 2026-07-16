@@ -66,7 +66,9 @@ final class MockInterestAssistantTests: XCTestCase {
         let p = parse("Mer sykkel i juli")
         XCTAssertEqual(p.count, 1)
         XCTAssertEqual(p[0].kind, .update)              // "mer" = increase
-        XCTAssertEqual(p[0].entityId, "tour-de-france-2026") // representative cycling entity
+        // WP-65 — a bare sport word grounds to the SPORT-LEVEL entity (the whole
+        // sport), not an arbitrary flagship tournament.
+        XCTAssertEqual(p[0].entityId, "sport-cycling")
         XCTAssertEqual(p[0].scope, "i juli")
         XCTAssertEqual(p[0].weight, 0.8)
     }
@@ -216,11 +218,82 @@ final class MockInterestAssistantTests: XCTestCase {
         }
     }
 
-    func test16_wholeSportCommand_stillPrefersRealTournamentOverSportEntity() {
-        // Regression guard: adding a low-priority "Sykkel" sport entity must not
-        // hijack "mer sykkel" — the real tournament still wins.
-        let p = parse("Mer sykkel i juli")
-        XCTAssertEqual(p.map(\.entityId), ["tour-de-france-2026"])
+    func test16_wholeSportCommand_prefersSportEntity() {
+        // WP-65 re-calibration: a bare sport word ("golf", "sykkel", "F1") means
+        // the WHOLE sport, so it grounds to the sport-level entity — the honest
+        // reading, and what the real FM proposes. (Superseded the earlier WP-64
+        // guard that preferred a flagship tournament; grounding "golf" to one
+        // random event was wrong.)
+        XCTAssertEqual(parse("Mer sykkel i juli").map(\.entityId), ["sport-cycling"])
+        XCTAssertEqual(parse("Følg golf").map(\.entityId), ["sport-golf"])
+        XCTAssertEqual(parse("Litt F1").map(\.entityId), ["sport-f1"])
+    }
+
+    // MARK: - WP-65: bulk-fangst (many interests in one utterance)
+
+    /// The owner's real utterance class — the acceptance case. Five clauses
+    /// (golf, Hovland, all vintersport, Brann, litt F1) must ALL be caught: four
+    /// ground to the right ids, and the unresolvable "Brann" is reported as a
+    /// not-found proposal — never silently dropped.
+    func test20_ownerUtterance_fiveClauses_noneDropped() {
+        let p = parse("Jeg liker golf, spesielt Hovland, all vintersport, følger Brann og litt F1")
+        XCTAssertEqual(p.count, 5, "every clause becomes a proposal — none dropped")
+
+        let r = ground(p)
+        XCTAssertEqual(
+            Set(r.grounded.map(\.entity.id)),
+            ["sport-golf", "viktor-hovland", "category-winter-sports", "sport-f1"],
+            "the four resolvable clauses ground to the right ids"
+        )
+        XCTAssertEqual(r.rejected.map { $0.query.lowercased() }, ["brann"],
+                       "the unresolvable clause is reported as not-found, not swallowed")
+    }
+
+    func test21_multiPart_explicitEntities_bothLand() {
+        XCTAssertEqual(parse("Følg Viktor Hovland og Casper Ruud").map(\.entityId),
+                       ["viktor-hovland", "casper-ruud"])
+        XCTAssertEqual(parse("Følg Viktor Hovland, Magnus Carlsen og Casper Ruud").map(\.entityId),
+                       ["viktor-hovland", "magnus-carlsen", "casper-ruud"])
+    }
+
+    func test22_multiPart_mixesSpecificAndBareSports() {
+        // A specific team + a bare sport: fk-lyn-oslo (specific) + sport-f1 (whole sport).
+        XCTAssertEqual(parse("Følg Lyn og litt F1").map(\.entityId), ["fk-lyn-oslo", "sport-f1"])
+        // Declarative cue + two bare sports.
+        XCTAssertEqual(parse("Jeg liker fotball og sykkel").map(\.entityId),
+                       ["sport-football", "sport-cycling"])
+    }
+
+    func test23_multiPart_dedupesRepeatedClause() {
+        // The same entity named twice yields a single proposal.
+        XCTAssertEqual(parse("Følg Magnus Carlsen og Magnus Carlsen").map(\.entityId), ["magnus-carlsen"])
+    }
+
+    func test24_scopeAndLensTail_isNotASeparateClause() {
+        // The comma tail "bare de norske" is a lens modifier, not a new interest —
+        // it must merge back into "Mer sykkel", staying ONE clause (regression on
+        // the split not breaking the lens case).
+        let p = parse("Mer sykkel, bare de norske")
+        XCTAssertEqual(p.count, 1)
+        XCTAssertEqual(p[0].entityId, "sport-cycling")
+        XCTAssertEqual(p[0].lens, .throughNorwegians)
+    }
+
+    func test25_unknownClause_inBulk_isReportedNotDropped() {
+        // A resolvable team + an unknown sport: the team grounds, the unknown is
+        // carried as a not-found proposal (the per-clause honesty contract).
+        let p = parse("Følg 100 Thieves og cricket")
+        XCTAssertEqual(p.count, 2)
+        let r = ground(p)
+        XCTAssertEqual(r.grounded.map(\.entity.id), ["100-thieves"])
+        XCTAssertEqual(r.rejected.map { $0.query.lowercased() }, ["cricket"])
+    }
+
+    func test26_singleClause_isUnaffectedBySplitter() {
+        // No connector → exactly one clause → identical to the pre-WP-65 path.
+        XCTAssertEqual(parse("Følg Casper Ruud bare i Grand Slams").map(\.entityId), ["casper-ruud"])
+        XCTAssertEqual(parse("Følg Tour de France med fokus på norske utøvere").map(\.entityId),
+                       ["tour-de-france-2026"])
     }
 
     // MARK: - Availability + async surface

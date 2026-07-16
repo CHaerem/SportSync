@@ -264,6 +264,58 @@ struct AssistantExplanation: Codable, Equatable, Sendable {
         case .remove: return "Du vil slutte å følge \(subject)."
         }
     }
+
+    /// WP-65 — the per-clause accounting for a BULK utterance. When a long
+    /// utterance names several interests ("golf, spesielt Hovland, all
+    /// vintersport, Brann og litt F1"), the assistant must report EACH clause's
+    /// fate: what landed (grounded) and what it couldn't place (rejected) — never
+    /// a silent drop, and never a single collective "bom". This is the structured
+    /// tally the calm "REGNSKAP" line renders ("la til golf, Hovland, F1 · fant
+    /// ikke «Brann»"). Returns nil for a trivial (single-outcome) utterance, where
+    /// the existing diff / "ikke funnet" / "ingen endring" sections already say
+    /// everything — the tally is the accounting a MULTI-clause utterance needs.
+    static func tally(grounded: [GroundedMutation], rejected: [RejectedMutation]) -> MutationTally? {
+        let tally = MutationTally(
+            added: grounded.filter { $0.kind == .add }.map { $0.entity.name },
+            updated: grounded.filter { $0.kind == .update }.map { $0.entity.name },
+            removed: grounded.filter { $0.kind == .remove }.map { $0.entity.name },
+            notFound: rejected.map(\.query)
+        )
+        return tally.total > 1 ? tally : nil
+    }
+}
+
+/// WP-65 — the per-clause accounting of a bulk utterance: which named interests
+/// landed as a proposed change, and which couldn't be placed. Purely structural
+/// + FoundationModels-free, so the "never a silent clause-drop" contract is
+/// unit-tested directly. The UI renders `summary` as one calm line.
+struct MutationTally: Codable, Equatable, Sendable {
+    /// Display names of clauses that grounded as an add.
+    var added: [String]
+    /// …as a weight/scope update (prioriter / mer / mindre).
+    var updated: [String]
+    /// …as a remove (slutt / fjern).
+    var removed: [String]
+    /// The raw phrases that couldn't be grounded — reported honestly, with
+    /// "mente du …?" suggestions shown separately in the diff.
+    var notFound: [String]
+
+    /// The number of clauses accounted for.
+    var total: Int { added.count + updated.count + removed.count + notFound.count }
+
+    /// A calm Norwegian one-liner: what landed · what didn't. Always names every
+    /// clause, so a dropped one is impossible to hide.
+    var summary: String {
+        var parts: [String] = []
+        if !added.isEmpty { parts.append("la til \(added.joined(separator: ", "))") }
+        if !updated.isEmpty { parts.append("justerte \(updated.joined(separator: ", "))") }
+        if !removed.isEmpty { parts.append("fjernet \(removed.joined(separator: ", "))") }
+        if !notFound.isEmpty {
+            let names = notFound.map { "«\($0)»" }.joined(separator: ", ")
+            parts.append("fant ikke \(names)")
+        }
+        return parts.joined(separator: " · ")
+    }
 }
 
 /// WP-16.4 — the top-level INTENT the command line routes on. One utterance is

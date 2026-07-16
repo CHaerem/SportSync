@@ -102,6 +102,38 @@ enum MockInterestParser {
         let trimmed = utterance.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return [] }
 
+        // WP-65 — bulk-fangst: a long, natural utterance may name SEVERAL
+        // interests ("golf, spesielt Hovland, all vintersport, Brann og litt
+        // F1"). Split it into clauses, parse each on its own, and combine — so
+        // no clause is ever silently dropped (the WP-65 bug). A single-clause
+        // utterance decomposes to exactly one clause, so the ten canonical
+        // cases behave identically to before.
+        var out: [ProposedMutation] = []
+        var seenIds = Set<String>()
+        var seenQueries = Set<String>()
+        for clause in clauses(in: trimmed, index: index) {
+            for m in parseClause(clause, profile: profile, index: index) {
+                if m.entityId.isEmpty {
+                    // An unresolved (not-found) clause — deduped by its query so
+                    // the same miss isn't reported twice, but NEVER dropped.
+                    let key = TextMatch.normalize(m.entityQuery)
+                    guard !key.isEmpty, seenQueries.insert(key).inserted else { continue }
+                    out.append(m)
+                } else if seenIds.insert(m.entityId).inserted {
+                    out.append(m)
+                }
+            }
+        }
+        return out
+    }
+
+    /// Parse ONE clause (the whole utterance when it has no connectors) into its
+    /// mutation(s) — the WP-16→WP-64 single-utterance logic, unchanged apart from
+    /// the WP-65 sport-level grounding preference in `sportProposals`.
+    static func parseClause(_ clause: String, profile: InterestProfile, index: EntityIndex) -> [ProposedMutation] {
+        let trimmed = clause.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return [] }
+
         let intent = detectIntent(trimmed)
         let scope = extractScope(from: trimmed)
         let weight = weight(for: intent)
@@ -155,6 +187,71 @@ enum MockInterestParser {
         )]
     }
 
+    // MARK: - Clause splitting (WP-65 — deterministic bulk-fangst)
+
+    /// Norwegian connectors that separate interests in a bulk utterance. A run
+    /// like ", og" collapses to one boundary (the empty fragment is dropped).
+    private static let clausePattern = "\\s*(?:,|;|\\bog\\b|\\bsamt\\b|\\bpluss\\b)\\s*"
+
+    /// Words a MODIFIER fragment starts with — a scope/lens tail like "bare de
+    /// norske", "mest de norske", or "med fokus på …" that belongs to the
+    /// PREVIOUS clause, not a new interest. Normalised (TextMatch): «på»→"pa",
+    /// «når»→"nar". A fragment that carries its OWN target (entity/sport/category)
+    /// is never a modifier regardless of its lead word — the strong signal
+    /// short-circuits — so intensifiers ("mest", "spesielt") are safe here: they
+    /// only merge a target-less tail like "mest de norske".
+    private static let modifierLeadWords: Set<String> = [
+        "bare", "kun", "i", "med", "under", "nar", "pa", "for", "de", "den", "det", "som", "hvis",
+        "mest", "mer", "mindre", "helst", "gjerne", "spesielt", "saerlig", "primaert", "hovedsakelig"
+    ]
+
+    /// Decompose an utterance into interest clauses. Modifier fragments (a
+    /// scope/lens phrase with no target of its own) are re-attached to the clause
+    /// they qualify, so "Mer sykkel, bare de norske" stays ONE clause while
+    /// "golf, Hovland og F1" becomes three.
+    static func clauses(in utterance: String, index: EntityIndex) -> [String] {
+        let frags = rawFragments(utterance)
+        guard frags.count > 1 else { return frags.isEmpty ? [utterance] : frags }
+        var merged: [String] = []
+        for frag in frags {
+            if !merged.isEmpty, isModifierFragment(frag, index: index) {
+                merged[merged.count - 1] += " " + frag
+            } else {
+                merged.append(frag)
+            }
+        }
+        return merged
+    }
+
+    /// Split on the connector pattern, trimming and dropping empty fragments.
+    private static func rawFragments(_ s: String) -> [String] {
+        guard let re = try? NSRegularExpression(pattern: clausePattern, options: [.caseInsensitive]) else { return [s] }
+        let ns = s as NSString
+        var parts: [String] = []
+        var last = 0
+        for m in re.matches(in: s, range: NSRange(location: 0, length: ns.length)) {
+            if m.range.location > last {
+                parts.append(ns.substring(with: NSRange(location: last, length: m.range.location - last)))
+            }
+            last = m.range.location + m.range.length
+        }
+        if last < ns.length { parts.append(ns.substring(from: last)) }
+        return parts.map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+    }
+
+    /// A fragment is a MODIFIER (merge into the previous clause) when it carries
+    /// NO target of its own (no entity, sport, or category) AND opens with a
+    /// scope/lens word. An unresolvable-but-intended target like "Brann" opens
+    /// with a real noun, so it stays its own clause and is honestly reported as
+    /// not-found rather than swallowed.
+    static func isModifierFragment(_ frag: String, index: EntityIndex) -> Bool {
+        if !index.detectEntities(in: frag).isEmpty { return false }
+        if EntityIndex.sportKeyword(in: frag) != nil { return false }
+        if EntityIndex.categoryKeyword(in: frag) != nil { return false }
+        guard let first = EntityIndex.tokens(frag).first else { return true }
+        return modifierLeadWords.contains(first)
+    }
+
     // MARK: - Sport-level commands
 
     private static func sportProposals(intent: Intent, sport: String, scope: String?, weight: Double?, lens: Lens, profile: InterestProfile, index: EntityIndex) -> [ProposedMutation] {
@@ -176,7 +273,15 @@ enum MockInterestParser {
                 }
 
         case .add, .increase, .decrease:
-            guard let entity = index.representativeEntity(forSport: sport, preferredIn: profile) else { return [] }
+            // WP-65 — a BARE sport word ("golf", "litt F1", "mer sykkel") means
+            // the WHOLE sport, so ground to the sport-level entity (sport-<tag>)
+            // when one exists. This mirrors what the real FM proposes and is
+            // genuinely more correct than picking an arbitrary flagship
+            // tournament (following "golf" must not silently become one random
+            // event). Sports with no published sport entity (tennis, athletics)
+            // fall back to the most-headline real entity.
+            guard let entity = index.entity(id: "sport-\(sport)")
+                ?? index.representativeEntity(forSport: sport, preferredIn: profile) else { return [] }
             return [ProposedMutation(
                 kind: kind(for: intent),
                 entityId: entity.id,
