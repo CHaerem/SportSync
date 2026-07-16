@@ -1,14 +1,16 @@
 {
-  "runAt": "2026-07-15T05:30:00.000Z",
-  "checked": 3,
-  "confirmed": 1,
+  "runAt": "2026-07-16T05:30:00.000Z",
+  "checked": 5,
+  "confirmed": 2,
   "amended": 2,
   "removed": 0,
   "notes": [
-    "Window: 15-22 Jul 2026. Prioritised the most time-sensitive in-window items; TdF stages 12-16, London/Warholm (18 Jul), WC bronze (18 Jul) + final (19 Jul), BLAST Bounty (from 21 Jul) and The Open (16 Jul) were freshly verified 8-14 Jul and remain consistent, so not re-fetched to stay within budget.",
-    "CONFIRMED Gstaad ATP R16 (Casper Ruud, Thu 16 Jul): Jaime Faria beat Wawrinka 6-7,6-4,6-4 in R32 (Tue 14 Jul), so Ruud (No.2 seed, R1 bye) meets Faria in R16 as listed. Exact court time still not in the published Thursday order of play (ATP daily-schedule + swissopengstaad draws pages don't yet show the slot) — kept provisional 08:00 UTC (~10:00 CEST). Matchup re-confirmed via ATP + Tennis Majors.",
-    "AMENDED Corales Puntacana Championship (16-19 Jul): streaming Viaplay -> HBO Max (Sport)/Eurosport. WBD holds the regular PGA Tour rights in Norway from 2026 (dedicated hbomax.com/no PGA Tour page + golferen.no); majors The Open/US Open + DP World Tour stay Viaplay. This is the SAME silent revert flagged 11 + 14 Jul: research re-adds the event each rebuild with the sport-config Viaplay golf default, clobbering the fix. Durable fix needs the golf streaming default and/or research prompt corrected — verify can only re-patch events.json.",
-    "AMENDED TdF stage 17 (22 Jul, Chambery-Voiron): estimated start 11:00 UTC -> confirmed reel start 13:20 CEST = 11:20 UTC (cyclingstage), finish ~17:30 CEST; 174.7 km, ASO-flat but ~2400m climbing. Added verifiedAt (was previously unverified).",
-    "PENDING (skill write blocked again): the norwegian-rights golf line still reads 'all PGA Tour -> Viaplay'. It needs the 2026 WBD split (regular PGA Tour + Masters/PGA Championship -> HBO Max/Eurosport; The Open/US Open + DP World Tour -> Viaplay). Edit to .claude/skills/norwegian-rights/SKILL.md was blocked by the permission gate this run, as on 14 Jul — needs a run with write access to that path."
+    "Window: 16-23 Jul 2026. Prioritised the most time-sensitive / not-yet-verified in-window items. TdF stages 12-17, London/Warholm (18 Jul), WC bronze (18 Jul) + final (19 Jul), and BLAST Bounty (from 21 Jul) were freshly verified 8-15 Jul against stable sources and remain consistent, so not re-fetched to stay within budget.",
+    "CONFIRMED Gstaad ATP R16 Ruud v Faria (today, Thu 16 Jul): Thursday order of play now published (10sballs) - match is 2nd on court, 'not before 12:00 CEST' = 10:00 UTC, matching events.json. Matchup re-confirmed via Tennis Majors. Kept 10:00 UTC, refreshed verifiedAt + swapped stale ATP daily-schedule source for the published order-of-play page.",
+    "AMENDED TdF stage 18 (23 Jul, Voiron-Orcieres-Merlette): was previously UNVERIFIED with estimated 13:00 CEST/11:00 UTC start. Official ASO route time now out (cyclingstage + alpes-isere): reel start 12:35 CEST = 10:35 UTC, finish ~17:25 CEST, 185 km / ~3950 m, final climb Orcieres-Merlette 7.1 km @ 6.7%. Amended time to 10:35 UTC, endTime to 15:25 UTC, updated summary.",
+    "CONFIRMED NM friidrett 2026 Trondheim (23-25 Jul): official dagsprogram confirms competition runs 13:00-23:00 local all three days; day 1 opens Thu 13:00 norsk = 11:00 UTC, matching events.json. NRK broadcasts (NFIF rights). Added verifiedAt (was previously unverified).",
+    "AMENDED Corales Puntacana Championship (16-19 Jul): streaming had reverted to Viaplay AGAIN - re-patched to HBO Max (Sport)/Eurosport. WBD holds ordinary PGA Tour rights in Norway from 2026 (majors The Open/US Open + DP World Tour stay Viaplay). This is the 3rd consecutive run patching the SAME silent revert: build-events re-applies the sport-config Viaplay golf default every rebuild, clobbering the fix. DURABLE FIX needed in the golf streaming default (sports-config.js) and/or research prompt - verify can only re-patch events.json each run. Recommend escalating to self-repair/improve.",
+    "OPPORTUNISTIC (out of strict scope, but F1 quirk zone): Belgian GP 2026 (Spa, Sun 19 Jul) - formula1.com confirms race 15:00 CEST = 13:00 UTC; events.json f1 event dated 13:00 UTC is correct. The ESPN F1 Friday-mis-date quirk (source-quirks) did NOT bite this weekend - board shows the right race day. No change needed.",
+    "PENDING (skill write blocked AGAIN, 3rd run): the norwegian-rights golf line still reads 'all PGA Tour -> Viaplay'. It needs the 2026 WBD split (regular PGA Tour -> HBO Max/Eurosport; The Open/US Open + DP World Tour + Ryder Cup -> Viaplay; Masters/PGA Championship verify-per-event). Edit to .claude/skills/norwegian-rights/SKILL.md was blocked by the permission gate this run, as on 14 + 15 Jul - needs a run with write access to that path."
   ]
 }
