@@ -1,27 +1,31 @@
 {
-  "generatedAt": "2026-07-16T07:21:22.823Z",
+  "generatedAt": "2026-07-16T10:06:01.838Z",
   "windowDays": 180,
   "records": {
-    "used": 55,
+    "used": 60,
     "skipped": 0
   },
   "sources": {
     "formula1.com": {
-      "checks": 1,
-      "agreed": 1,
+      "checks": 2,
+      "agreed": 2,
       "bySport": {
         "f1": {
-          "checks": 1,
-          "agreed": 1
+          "checks": 2,
+          "agreed": 2
         }
       },
       "byField": {
         "time": {
           "checks": 1,
           "agreed": 1
+        },
+        "existence": {
+          "checks": 1,
+          "agreed": 1
         }
       },
-      "lastChecked": "2026-07-03T18:56:29.000Z",
+      "lastChecked": "2026-07-16T05:30:00.000Z",
       "reliability": null
     },
     "viaplay.no": {
@@ -43,17 +47,17 @@
       "reliability": null
     },
     "cyclingstage.com": {
-      "checks": 9,
+      "checks": 10,
       "agreed": 3,
       "bySport": {
         "cycling": {
-          "checks": 9,
+          "checks": 10,
           "agreed": 3
         }
       },
       "byField": {
         "time": {
-          "checks": 8,
+          "checks": 9,
           "agreed": 2
         },
         "existence": {
@@ -61,8 +65,8 @@
           "agreed": 1
         }
       },
-      "lastChecked": "2026-07-15T05:30:00.000Z",
-      "reliability": 0.33
+      "lastChecked": "2026-07-16T05:30:00.000Z",
+      "reliability": 0.3
     },
     "tvkampen.com": {
       "checks": 2,
@@ -405,21 +409,21 @@
       "reliability": null
     },
     "hbomax.com": {
-      "checks": 1,
+      "checks": 2,
       "agreed": 0,
       "bySport": {
         "golf": {
-          "checks": 1,
+          "checks": 2,
           "agreed": 0
         }
       },
       "byField": {
         "streaming": {
-          "checks": 1,
+          "checks": 2,
           "agreed": 0
         }
       },
-      "lastChecked": "2026-07-11T09:30:00.000Z",
+      "lastChecked": "2026-07-16T05:30:00.000Z",
       "reliability": null
     },
     "britishathletics.org.uk": {
@@ -546,6 +550,42 @@
         }
       },
       "lastChecked": "2026-07-15T05:30:00.000Z",
+      "reliability": null
+    },
+    "10sballs.com": {
+      "checks": 1,
+      "agreed": 1,
+      "bySport": {
+        "tennis": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "byField": {
+        "time": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "lastChecked": "2026-07-16T05:30:00.000Z",
+      "reliability": null
+    },
+    "nmfriidrett2026.no": {
+      "checks": 1,
+      "agreed": 1,
+      "bySport": {
+        "athletics": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "byField": {
+        "time": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "lastChecked": "2026-07-16T05:30:00.000Z",
       "reliability": null
     }
   }
