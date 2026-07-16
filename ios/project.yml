@@ -34,6 +34,13 @@ targets:
     deploymentTarget: "26.0"
     sources:
       - path: Zenji
+      # WP-69: the versioned eval corpus lives with the tests (one source of
+      # truth — the CI XCTest loads it from the test bundle), but the DEBUG
+      # on-device eval screen (Zenji/Eval/EvalView) loads it from the app
+      # bundle, so bundle just this one JSON as an app resource. The widget
+      # target deliberately does NOT list it (no eval code in the widget).
+      - path: ZenjiTests/Fixtures/eval-corpus.json
+        buildPhase: resources
     info:
       path: Zenji/Info.plist
       properties:
@@ -175,6 +182,13 @@ targets:
       # @testable import" pattern). App + ZenjiDeviceDev pick these up via
       # `path: Zenji`; the widget deliberately does NOT (onboarding is app-only).
       - path: Zenji/Onboarding
+      # WP-69: the FM-eval harness — the pure corpus/scorer/runner + the
+      # DEBUG-only eval screen — compiled into the hostless bundle so
+      # EvalCorpusTests can drive the SAME corpus through MockInterestAssistant
+      # that the on-device screen drives through the real FoundationModels one
+      # (same "no @testable import" pattern). App + ZenjiDeviceDev pick these up
+      # via `path: Zenji`; the corpus JSON they bundle as a resource (above).
+      - path: Zenji/Eval
       # WP-13: the SAME golden feed-vector fixtures the JS reference test
       # (tests/feed-vectors.test.js) replays — referenced directly at the repo
       # root, never copied, so the two runners can never drift. XcodeGen
@@ -227,6 +241,11 @@ targets:
         # Zenji/Info.plist (auto-excluded). Exclude it explicitly here.
         excludes:
           - Info.plist
+      # WP-69: the eval corpus as an app resource, so the DEBUG on-device eval
+      # screen (Zenji/Eval/EvalView) can load it from Bundle.main on the
+      # physical iPhone — this is the build the owner actually runs the eval on.
+      - path: ZenjiTests/Fixtures/eval-corpus.json
+        buildPhase: resources
     info:
       path: ZenjiDeviceDev/Info.plist
       properties:

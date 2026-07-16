@@ -460,7 +460,7 @@ request, the Foundation Models tests drive `MockInterestAssistant`/`MockAnswerer
 only, and they reuse the frozen `ZenjiTests/Fixtures/*` snapshots as decode input
 and mock-server responses.
 
-There are **42 `*Tests.swift` files (376 tests)**, at least one per subsystem —
+There are **43 `*Tests.swift` files (385 tests)**, at least one per subsystem —
 e.g. `SyncClientTests` (304 / changed-manifest / offline / corrupt-download),
 `CacheStoreTests` (App Group fallback), the `FeedCompilerUnit`/`FeedVector` pair,
 `AgendaViewModelTests`, `NotificationPlannerTests`, and the Assistant / Profile /
@@ -473,6 +473,49 @@ xcodebuild test -project Zenji.xcodeproj -scheme Zenji \
 ```
 
 `npm test` (the repo-root JS suite) is unaffected by anything under `ios/`.
+
+### FM-eval harness (WP-69) — measuring real assistant quality
+
+Apple Intelligence can't run in CI, so assistant quality is measured two ways
+against **one versioned corpus** (`ZenjiTests/Fixtures/eval-corpus.json`, ≥20
+cases: WP-16 canon, the owner's multi-clause class, winter sport, feed
+questions). The corpus scores **structure, never prose**: an entity id-SET for
+mutations; a row/claim rubric for answers (must-reference-rows, referenced
+sport, must-contain-any, forbidden-claims, no phantom rows). Cases flagged
+`knownGap` are targets for a named future WP (WP-64 winter entities, WP-65 bulk
+capture), not failures.
+
+- **CI (mock).** `EvalCorpusTests` runs the SAME corpus through
+  `MockInterestAssistant` and asserts every deterministic case; `knownGap` cases
+  are skipped with a printed marker. The pure `EvalScorer`/`EvalRunner`/`EvalReport`
+  (in `Zenji/Eval/`) are shared with the device path, so the two can't drift.
+- **On device (real FM).** A **DEBUG-only** eval screen (`Zenji/Eval/EvalView.swift`)
+  is reached from the assistant ark's foot ("EVAL (DEBUG)", next to "Det jeg ikke
+  forsto"). It runs the corpus through the real `FoundationModelsInterestAssistant`
+  on a physical iPhone (`ZenjiDeviceDev` scheme — the corpus is bundled as an app
+  resource), shows a **pass-rate per category**, and exports an **anonymised JSON
+  report** via the share sheet (same privacy posture as the MisunderstoodLog
+  export — never any network, no device id). A second button exports the local
+  "forsto ikke"-log as **corpus candidates** (utterance + note) for the human to
+  curate — an export, never an auto-incorporation. There is **no new target** and
+  only a minimal `project.yml` change (the corpus as a resource + `Zenji/Eval` in
+  the test sources).
+
+**Report format** — the shared JSON (`EvalReport`): `corpusVersion`,
+`generatedAt`, `assistant` (`"mock"`/`"foundation-models"`), `available`,
+`totals` (`total` / `passed` / `evaluated` / `knownGap` / `knownGapPassed`),
+`categories[]` (per-category `total` / `evaluated` / `passed` / `knownGap` /
+`knownGapPassed`), and `cases[]` (each with `caseId`, `category`, `utterance`,
+`kind`, `knownGap`, `knownGapRef`, and its `checks[]` of `{label, passed,
+detail}`). `evaluated` excludes `knownGap` cases; `knownGapPassed` counts gaps
+that *unexpectedly* passed (a gap closed — promote it out of `knownGap`).
+
+**Running a real eval (the owner's one manual step):** build & run the
+`ZenjiDeviceDev` scheme on a physical iPhone with Apple Intelligence on → open
+the assistant (`»_`) → its foot → **EVAL (DEBUG)** → **KJØR EVAL** → **DEL
+RAPPORT** and share the JSON. Each assistant WP (WP-65/66/68) adds its cases to
+the corpus in the same PR, so the pass-rate is the regression signal that
+replaces manual exploratory testing.
 
 ## Data contract
 

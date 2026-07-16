@@ -1,0 +1,222 @@
+{
+  "version": 1,
+  "description": "WP-69 — versioned assistant eval corpus. Golden STRUCTURED expectations (entity id-sets for mutations; row/claim rubric for answers), NEVER exact prose. Runs two ways: through MockInterestAssistant as a deterministic XCTest (CI), and through the REAL FoundationModelsInterestAssistant on a physical iPhone via the DEBUG eval screen. `clock` is the fixed `now` CI evaluates the answer arm against (the checked-in events fixture); the on-device run uses the live feed and real time. `knownGap` cases are EXPECTED to fail until the named work package lands — CI skips them (marked), the device run reports them as known gaps.",
+  "clock": "2026-07-13T05:00:00Z",
+  "cases": [
+    {
+      "id": "canon-01-ruud-grand-slams",
+      "category": "canon",
+      "utterance": "Følg Casper Ruud bare i Grand Slams",
+      "kind": "mutation",
+      "expect": { "mutationEntityIds": ["casper-ruud"] }
+    },
+    {
+      "id": "canon-02-magnus-carlsen",
+      "category": "canon",
+      "utterance": "Følg Magnus Carlsen",
+      "kind": "mutation",
+      "expect": { "mutationEntityIds": ["magnus-carlsen"] }
+    },
+    {
+      "id": "canon-03-lyn-obosligaen",
+      "category": "canon",
+      "utterance": "Følg Lyn i OBOS-ligaen",
+      "kind": "mutation",
+      "expect": { "mutationEntityIds": ["fk-lyn-oslo"] }
+    },
+    {
+      "id": "canon-04-mer-sykkel-juli",
+      "category": "canon",
+      "utterance": "Mer sykkel i juli",
+      "kind": "mutation",
+      "expect": { "mutationEntityIds": ["tour-de-france-2026"] }
+    },
+    {
+      "id": "canon-05-slutt-med-tennis",
+      "category": "canon",
+      "utterance": "Slutt med tennis",
+      "kind": "mutation",
+      "seedProfile": [{ "entityId": "casper-ruud", "scope": "bare i Grand Slams" }],
+      "expect": { "mutationEntityIds": ["casper-ruud"] }
+    },
+    {
+      "id": "canon-06-fjern-hovland",
+      "category": "canon",
+      "utterance": "Fjern Hovland",
+      "kind": "mutation",
+      "expect": { "mutationEntityIds": ["viktor-hovland"] }
+    },
+    {
+      "id": "canon-07-karsten-warholm",
+      "category": "canon",
+      "utterance": "Følg Karsten Warholm",
+      "kind": "mutation",
+      "expect": { "mutationEntityIds": ["karsten-warholm"] }
+    },
+    {
+      "id": "canon-08-tour-de-france",
+      "category": "canon",
+      "utterance": "Følg Tour de France",
+      "kind": "mutation",
+      "expect": { "mutationEntityIds": ["tour-de-france-2026"] }
+    },
+    {
+      "id": "canon-09-prioriter-100thieves",
+      "category": "canon",
+      "utterance": "Prioriter 100 Thieves høyere",
+      "kind": "mutation",
+      "expect": { "mutationEntityIds": ["100-thieves"] }
+    },
+    {
+      "id": "canon-10-cricket-unresolved",
+      "category": "canon",
+      "utterance": "Følg cricket",
+      "kind": "mutation",
+      "note": "Free-text entity NOT in the index → grounding rejects it → nothing applied. The honest-rejection contract: an empty grounded set is the correct outcome.",
+      "expect": { "mutationEntityIds": [] }
+    },
+    {
+      "id": "canon-11-tdf-norsk-fokus",
+      "category": "canon",
+      "utterance": "Følg Tour de France med fokus på norske utøvere",
+      "kind": "mutation",
+      "note": "The lens case (WP-16.1). Scored on the entity id-set only; the Norwegian lens itself is covered by MutationGrounderTests.",
+      "expect": { "mutationEntityIds": ["tour-de-france-2026"] }
+    },
+    {
+      "id": "canon-12-mer-sykkel-norske",
+      "category": "canon",
+      "utterance": "Mer sykkel, bare de norske",
+      "kind": "mutation",
+      "expect": { "mutationEntityIds": ["tour-de-france-2026"] }
+    },
+    {
+      "id": "multi-01-hovland-og-ruud",
+      "category": "multiPart",
+      "utterance": "Følg Viktor Hovland og Casper Ruud",
+      "kind": "mutation",
+      "note": "Two explicit index entities in one utterance — the id-set must contain BOTH (a clause dropped silently is the bug WP-65 guards against).",
+      "expect": { "mutationEntityIds": ["viktor-hovland", "casper-ruud"] }
+    },
+    {
+      "id": "multi-02-carlsen-og-warholm",
+      "category": "multiPart",
+      "utterance": "Følg Magnus Carlsen og Karsten Warholm",
+      "kind": "mutation",
+      "expect": { "mutationEntityIds": ["magnus-carlsen", "karsten-warholm"] }
+    },
+    {
+      "id": "multi-03-lyn-og-carlsen",
+      "category": "multiPart",
+      "utterance": "Følg FK Lyn Oslo og Magnus Carlsen",
+      "kind": "mutation",
+      "expect": { "mutationEntityIds": ["fk-lyn-oslo", "magnus-carlsen"] }
+    },
+    {
+      "id": "multi-04-owner-full-utterance",
+      "category": "multiPart",
+      "utterance": "Jeg liker golf, spesielt Hovland, og all vintersport, og følger Brann og litt F1",
+      "kind": "mutation",
+      "knownGap": true,
+      "knownGapRef": "WP-65",
+      "note": "The owner's real utterance class. Single-generation keyword parsing catches only the first explicit clause; WP-65 (bulk-fangst + delvis rapportering) is what makes every clause land. The golden id-set is provisional — WP-64 mints the 'vintersport' + 'Brann' ids and WP-65 finalizes this expectation in the same PR.",
+      "expect": { "mutationEntityIds": ["viktor-hovland", "vintersport", "sk-brann", "f1-world-championship-2026"] }
+    },
+    {
+      "id": "multi-05-owner-declarative-variant",
+      "category": "multiPart",
+      "utterance": "Jeg følger Hovland og Ruud, og vil gjerne ha med litt sjakk og F1 også",
+      "kind": "mutation",
+      "knownGap": true,
+      "knownGapRef": "WP-65",
+      "note": "Declarative «jeg følger …» phrasing with a mix of entities and whole-sports. WP-65 routes declarative cues to the mutation arm and fans out per clause; finalizes this expectation.",
+      "expect": { "mutationEntityIds": ["viktor-hovland", "casper-ruud", "magnus-carlsen", "f1-world-championship-2026"] }
+    },
+    {
+      "id": "winter-01-all-vintersport",
+      "category": "winter",
+      "utterance": "Følg all vintersport",
+      "kind": "mutation",
+      "knownGap": true,
+      "knownGapRef": "WP-64/65",
+      "note": "«vintersport» is ungroundable today: no winter entities in the index and no umbrella term in SportVocabulary. WP-64 publishes sport/category entities for the followBroadly winter sports; the golden ids below are provisional and finalized by WP-64/65.",
+      "expect": { "mutationEntityIds": ["skiskyting", "langrenn", "alpint", "hopp"] }
+    },
+    {
+      "id": "winter-02-skiskyting",
+      "category": "winter",
+      "utterance": "Følg skiskyting",
+      "kind": "mutation",
+      "knownGap": true,
+      "knownGapRef": "WP-64",
+      "note": "A single broadly-followed winter sport. Expected to ground to a sport/category follow once WP-64 lands the entity.",
+      "expect": { "mutationEntityIds": ["skiskyting"] }
+    },
+    {
+      "id": "q-01-neste-tour-de-france",
+      "category": "question",
+      "utterance": "Når er neste Tour de France?",
+      "kind": "answer",
+      "note": "Entity-resolve branch — the next matching agenda row for a resolved tournament. Must cite a real cycling row.",
+      "expect": {
+        "answer": {
+          "minReferencedRows": 1,
+          "referencedSportsAnyOf": ["cycling"],
+          "requireNoPhantomRows": true
+        }
+      }
+    },
+    {
+      "id": "q-02-kommende-sykkel",
+      "category": "question",
+      "utterance": "Hva er kommende innen sykkel",
+      "kind": "answer",
+      "note": "Sport-keyword branch — what's coming up in a whole sport.",
+      "expect": {
+        "answer": {
+          "minReferencedRows": 1,
+          "referencedSportsAnyOf": ["cycling"],
+          "requireNoPhantomRows": true
+        }
+      }
+    },
+    {
+      "id": "q-03-hva-i-kveld",
+      "category": "question",
+      "utterance": "Hva skjer i kveld",
+      "kind": "answer",
+      "note": "The «i kveld» calendar question. An empty evening is a legitimate honest answer, so no row count is required — but the reply must be about tonight and must not invent rows.",
+      "expect": {
+        "answer": {
+          "mustContainAny": ["kveld"],
+          "requireNoPhantomRows": true
+        }
+      }
+    },
+    {
+      "id": "q-04-hva-i-dag",
+      "category": "question",
+      "utterance": "Hva er på i dag",
+      "kind": "answer",
+      "expect": {
+        "answer": {
+          "mustContainAny": ["dag"],
+          "requireNoPhantomRows": true
+        }
+      }
+    },
+    {
+      "id": "q-05-spoiler-result",
+      "category": "question",
+      "utterance": "Hvem vant sykkeletappen i går?",
+      "kind": "answer",
+      "note": "The assistant answers over the LOCAL agenda (when/where), never past results. It must not fabricate an outcome — the forbidden-claims guard is the real-FM signal here.",
+      "expect": {
+        "answer": {
+          "forbiddenClaims": ["vant", "vinner", "seier", "slo"],
+          "requireNoPhantomRows": true
+        }
+      }
+    }
+  ]
+}
