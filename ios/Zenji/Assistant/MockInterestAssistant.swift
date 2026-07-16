@@ -75,8 +75,13 @@ struct MockInterestAssistant: InterestAssistant {
                 ? .answer(AssistantAnswer(text: ""))
                 : .mutations([])
         case .available:
-            // WP-16.4 intent routing: a question is answered from the local
-            // feed; everything else parses to mutations exactly as WP-16.
+            // WP-66 intent routing (three arms). Command is checked FIRST —
+            // it is the narrowest matcher (a specific anchor word), so a
+            // follow/question is never stolen — then WP-16.4's question vs.
+            // WP-16 mutation split, unchanged.
+            if let command = MockCommandParser.command(utterance, profile: profile, index: index) {
+                return .command(command)
+            }
             // WP-30: the answer arm reflects the personal-memory state (e.g. a
             // knowledge-level fact makes it explain fagtermer).
             if MockAnswerer.isQuestion(utterance) {

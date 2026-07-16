@@ -49,6 +49,18 @@ final class AssistantViewModel {
     /// clause, so a dropped clause is impossible to hide; nil for single-clause
     /// utterances (the existing diff/explanation already covers those).
     private(set) var mutationTally: MutationTally?
+    /// WP-66 — a calm confirmation shown after a direct command executed
+    /// ("Tema: mørkt.", "Åpner Brann–X."). Nil unless the last turn ran a command.
+    private(set) var commandReceipt: String?
+    /// WP-66 — a command awaiting the user's Bekreft/Avbryt. Only the destructive
+    /// reset uses this (reusing the WP-32 confirm semantics); the harmless
+    /// commands execute directly. Nil otherwise.
+    private(set) var pendingCommand: AssistantCommand?
+    /// WP-66 — bumped when a command asks a HOST surface to reveal itself ("del
+    /// profil" / "hva vet du om meg"): ProfileSharePanel / AssistantPanel observe
+    /// these and open the matching disclosure/page, the same idiom as `presentToken`.
+    private(set) var shareRequestToken = 0
+    private(set) var memoryRequestToken = 0
 
     /// Bound to the command-line text field.
     var utterance: String = ""
@@ -69,6 +81,14 @@ final class AssistantViewModel {
     /// WP-16.4 — called after any mutation is APPLIED, so the host can recompile
     /// the agenda immediately ("umiddelbar konsekvens"). Set by ContentView.
     var onProfileChanged: (() -> Void)?
+    /// WP-66 — performs the HOST-owned side of a command: the theme override
+    /// (@AppStorage), raising onboarding, opening an event's detail sheet, and
+    /// the CONFIRMED reset (+ re-onboard). Set by ContentView. VM-owned effects
+    /// (memory-forget, notification lead time, the share/memory disclosures) are
+    /// handled inside the view model directly. When `.openEvent` is delivered
+    /// through this closure its associated value is the RESOLVED event id (the
+    /// view model resolved the phrase against the local agenda first).
+    var onCommand: ((AssistantCommand) -> Void)?
 
     /// The local "forsto ikke"-log (WP-16.3): every submit that ended without
     /// an applied mutation, most-recent first.
@@ -85,6 +105,7 @@ final class AssistantViewModel {
     /// Anything worth raising the panel for.
     var hasPresentableResult: Bool {
         !pending.isEmpty || !rejected.isEmpty || explanation != nil || answer != nil || errorMessage != nil
+            || commandReceipt != nil || pendingCommand != nil
             || lastImportSummary != nil || shareImportMessage != nil
     }
 
@@ -230,6 +251,8 @@ final class AssistantViewModel {
                 applyMutations(text: text, proposals: proposals)
             case .answer(let ans):
                 applyAnswer(text: text, answer: ans, feed: feed)
+            case .command(let command):
+                applyCommand(command, feed: feed)
             }
             // WP-30 — the model may have written a fact via saveMemory; reflect it.
             refreshMemory()
@@ -300,6 +323,140 @@ final class AssistantViewModel {
             return
         }
         self.answer = AssistantAnswerResult(text: trimmed, rows: feed.rows(forIds: answer.referencedEventIds))
+    }
+
+    // MARK: - Command arm (WP-66)
+
+    /// The assistant-ark chips run through the SAME path a typed command does:
+    /// validate → hold-for-confirmation (destructive) or execute (harmless) →
+    /// calm receipt. Raises the ark so the receipt/confirmation is seen.
+    func runCommand(_ command: AssistantCommand) {
+        resetResults()
+        resetBatch()
+        applyCommand(command, feed: nil)
+        if hasPresentableResult { presentToken &+= 1 }
+    }
+
+    /// Route one command. A destructive command (reset) is HELD for the user's
+    /// Bekreft (WP-32 confirm reuse); a harmless one executes now. `feed` is the
+    /// already-built agenda when we have one (submit), else built lazily and only
+    /// for `openEvent`.
+    private func applyCommand(_ command: AssistantCommand, feed: FeedQuery?) {
+        guard !command.needsConfirmation else {
+            pendingCommand = command
+            return
+        }
+        execute(command, feed: feed)
+    }
+
+    /// Perform a validated, non-destructive command and set its calm receipt.
+    private func execute(_ command: AssistantCommand, feed: FeedQuery?) {
+        switch command {
+        case let .setTheme(theme):
+            onCommand?(command)
+            commandReceipt = "Tema: \(themeLabel(theme))."
+        case .rerunOnboarding:
+            onCommand?(command)
+            commandReceipt = "Åpner oppsettet på nytt."
+        case .shareProfile:
+            shareRequestToken &+= 1
+            commandReceipt = profile.isEmpty
+                ? "Du følger ingenting å dele ennå — begynn i linjen."
+                : "Her er QR-koden og delingslenken din."
+        case .showMemory:
+            memoryRequestToken &+= 1
+            commandReceipt = "Åpner det jeg vet om deg (\(memoryItemCount))."
+        case let .forgetMemory(query):
+            commandReceipt = forgetMemory(matching: query)
+        case let .setNotificationLeadTime(enabled):
+            NotificationLeadPreference.setLeadTimeEnabled(enabled)
+            commandReceipt = enabled
+                ? "Varsler kommer i god tid før hendelsen."
+                : "Varsler kommer når hendelsen starter."
+        case let .openEvent(query):
+            openEvent(matching: query, feed: feed ?? feedProvider())
+        case .resetProfile:
+            break // destructive — held for confirmation in applyCommand, never here
+        }
+    }
+
+    /// The user confirmed a held (destructive) command — carry it out. The reset
+    /// itself is performed by the host (ContentView.performReset via onCommand),
+    /// which also re-raises onboarding, exactly like the WP-32 disclosure path.
+    func confirmCommand() {
+        guard let command = pendingCommand else { return }
+        pendingCommand = nil
+        onCommand?(command)
+        utterance = ""
+    }
+
+    /// The user cancelled a held command — nothing changes.
+    func cancelCommand() { pendingCommand = nil }
+
+    /// Forget personal memory matching `query` (empty ⇒ everything). Deletes
+    /// through the SAME `MemoryStore` CRUD the "Hva jeg vet om deg" page uses, so
+    /// tombstones replicate identically. Returns a calm Norwegian receipt naming
+    /// what was forgotten (or that nothing matched — honest, never silent).
+    private func forgetMemory(matching query: String) -> String {
+        let q = TextMatch.normalize(query)
+        guard !q.isEmpty else {
+            forgetAllMemory()
+            return "Glemte alt jeg visste om deg. Det du følger er urørt."
+        }
+        var forgotten = 0
+        for fact in memory.facts where memoryFactMatches(fact, q: q) {
+            memoryStore.deleteFact(id: fact.id); forgotten += 1
+        }
+        for note in memory.episodic where TextMatch.normalize(note.summary).contains(q) {
+            memoryStore.deleteEpisodic(id: note.id); forgotten += 1
+        }
+        for stat in memory.behavior where TextMatch.normalize(behaviorDisplayName(stat)).contains(q) {
+            memoryStore.deleteBehavior(key: stat.key); forgotten += 1
+        }
+        refreshMemory()
+        return forgotten == 0
+            ? "Jeg har ingenting lagret om «\(query)» å glemme."
+            : "Glemte \(forgotten) ting jeg visste om «\(query)»."
+    }
+
+    private func memoryFactMatches(_ fact: MemoryFact, q: String) -> Bool {
+        // Include the sport's Norwegian DISPLAY name so a Norwegian query
+        // ("sjakk") matches an English-tagged fact ("chess" → "Sjakk").
+        [fact.value, fact.reason, fact.sport ?? "",
+         fact.sport.map(SportVocabulary.display(for:)) ?? "",
+         fact.entityId.map(entityName) ?? ""]
+            .map(TextMatch.normalize)
+            .contains { $0.contains(q) }
+    }
+
+    private func behaviorDisplayName(_ stat: BehaviorStat) -> String {
+        stat.isSport ? SportVocabulary.display(for: stat.token) : entityName(stat.token)
+    }
+
+    /// Resolve `query` against the LOCAL agenda and open the matching row's
+    /// detail via the host; explain honestly when nothing matches (never a dead
+    /// end — the WP-16.1 contract, applied to the command arm).
+    private func openEvent(matching query: String, feed: FeedQuery) {
+        let hit = feed.search(query, limit: 1).first
+            ?? index.resolve(query).served.flatMap { feed.next(matching: $0) }
+        guard let hit else {
+            explanation = AssistantExplanation(
+                understood: "Jeg forsto «\(query)» som en hendelse du ville åpne.",
+                reason: "Jeg fant ingen kamp eller hendelse som matcher «\(query)» i agendaen din akkurat nå."
+            )
+            return
+        }
+        // The host opens the detail sheet for this resolved id (see onCommand).
+        onCommand?(.openEvent(query: hit.id))
+        commandReceipt = "Åpner \(hit.title)."
+    }
+
+    private func themeLabel(_ theme: ThemeOverride) -> String {
+        switch theme {
+        case .system: return "automatisk"
+        case .dark: return "mørkt"
+        case .light: return "lyst"
+        }
     }
 
     // MARK: - Context follow (WP-16.4 — the detail sheet's «Følg X»)
@@ -519,6 +676,10 @@ final class AssistantViewModel {
         case let .answer(answer): return answer.text
         case let .mutations(proposals):
             return proposals.map { "\($0.kind.rawValue) \($0.entityQuery)" }.joined(separator: "; ")
+        case let .command(command):
+            // A command is an app action, not durable personal context; give the
+            // distiller only its short token (it records nothing durable from it).
+            return command.evalToken
         }
     }
 
@@ -588,6 +749,8 @@ final class AssistantViewModel {
         rejected = []
         answer = nil
         mutationTally = nil
+        commandReceipt = nil
+        pendingCommand = nil
         lastImportSummary = nil
         shareImportMessage = nil
     }

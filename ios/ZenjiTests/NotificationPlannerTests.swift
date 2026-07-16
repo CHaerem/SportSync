@@ -316,4 +316,32 @@ final class NotificationPlannerTests: XCTestCase {
         XCTAssertEqual(operations, [])
         XCTAssertEqual(scheduler.authorizationRequestCount, 0)
     }
+
+    // MARK: - WP-66 — notification lead-time preference (the assistant's control)
+
+    func testLeadTimeDisabled_firesAtEventStart_noLead() {
+        let now = iso("2026-07-13T12:00:00Z")
+        let kickoff = iso("2026-07-13T14:00:00Z")
+        let plan = NotificationPlanner.plan(
+            previousEvents: [], newEvents: [lynEvent(time: kickoff)], interests: interestsTrackingLyn,
+            now: now, lastSync: now, leadTimeEnabled: false
+        )
+        guard case .scheduleNew(let request) = plan.first else {
+            return XCTFail("expected a single .scheduleNew operation")
+        }
+        XCTAssertEqual(request.fireDate, kickoff, "lead time OFF ⇒ fire at the event's start (no lead)")
+    }
+
+    func testLeadTimeEnabled_matchesTheDefaultLead() {
+        let now = iso("2026-07-13T12:00:00Z")
+        let kickoff = iso("2026-07-13T14:00:00Z")
+        let plan = NotificationPlanner.plan(
+            previousEvents: [], newEvents: [lynEvent(time: kickoff)], interests: interestsTrackingLyn,
+            now: now, lastSync: now, leadTimeEnabled: true
+        )
+        guard case .scheduleNew(let request) = plan.first else {
+            return XCTFail("expected a single .scheduleNew operation")
+        }
+        XCTAssertEqual(request.fireDate, iso("2026-07-13T13:30:00Z"), "lead time ON ⇒ 30 min before, the interests lead")
+    }
 }
