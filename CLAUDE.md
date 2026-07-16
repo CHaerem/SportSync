@@ -183,6 +183,7 @@ DESIGN.md is the source of intent behind them.
 `scout-log.json`, `calibration.json` + `calibration-ledger.jsonl`, `tv-listings.json`,
 `entities.json` (stable-id index of known athletes/teams/tournaments/leagues, published by `build-entities.js`; `build-events.js` uses it to stamp `entityId` onto matched events),
 `manifest.json` (per-file `bytes` + `sha256`, published by `build-manifest.js` — the sync contract that lets a client diff its cache without re-downloading everything),
+`app-version.json` (siste ios/-commit, published by `build-events.js` via `scripts/lib/app-version.js` — the iOS app compares its build-time stamp against it and shows «SISTE / NYERE FINNES»),
 `interests.json` (a published read-only copy of `scripts/config/interests.json` so the dashboard's "Hva vi følger" can render it),
 per-sport source files (`football.json` …), `events.ics`.
 
@@ -217,7 +218,7 @@ matrisen per flate). Les den relevante FØR du planlegger/bygger.
 - `npm run build` — fetch data + build events + calendar
 - `npm run build:events` / `npm run validate:data` / `npm run build:calendar`
 - `npm run fetch:results`
-- `npm test` — vitest, 35 focused files (~460 tests), a few seconds
+- `npm test` — vitest, 36 focused files (~470 tests), a few seconds
 - `npm run screenshot` — Playwright dashboard screenshot (`node scripts/screenshot.js out.png --width=1280 --full-page`)
 
 ## Conventions
@@ -230,7 +231,7 @@ matrisen per flate). Les den relevante FØR du planlegger/bygger.
 
 ## Testing
 
-`tests/` — 35 files / ~460 tests, all fast and network-free:
+`tests/` — 36 files / ~470 tests, all fast and network-free:
 - Pipeline: `build-events`, `build-events-schema`, `events-schema`, `validate-events`, `build-ics`, `build-entities`, `build-manifest`, `detect-coverage-gaps`, `aggregate-calibration`, `integration-pipeline` (spawn scripts against temp `SPORTSYNC_DATA_DIR`/`SPORTSYNC_CONFIG_DIR`)
 - Fetchers: `fetch-results`, `fetch-results-golden` (byte-identical output freeze), `fetch-rss`, `fetch-standings`, `f1-fetcher`, `esports`, `golf`
 - Libs: `helpers`, `event-normalizer`, `response-validator`, `llm-client` (mocked fetch), `tvkampen-scraper`, `pgatour-scraper`, `norwegian-rights`, `usage`, `readme-status`, `merge-gate`, `apply-follow-request`

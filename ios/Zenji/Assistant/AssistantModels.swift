@@ -322,7 +322,7 @@ struct MutationTally: Codable, Equatable, Sendable {
 /// either a request to CHANGE what's followed (mutations, exactly as WP-16) OR
 /// a QUESTION about the agenda ("hva bør jeg se i kveld?", "når går neste
 /// TdF-etappe?") the assistant answers from LOCAL data. The model decides which
-/// in a single generation (`GeneratedTurn.intent`); the mock decides
+/// via the tiny WP-71 intent classifier (`GeneratedIntent`); the mock decides
 /// deterministically (`MockAnswerer.isQuestion`). The grounding/diff pipeline is
 /// unchanged for the mutation arm — this only adds the answer arm alongside it.
 ///

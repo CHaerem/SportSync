@@ -276,6 +276,17 @@ final class AssistantCommandViewModelTests: XCTestCase {
         XCTAssertTrue(vm.commandReceipt?.contains("Glemte alt") ?? false)
     }
 
+    // A leading «hvordan» is a how-to QUESTION — it must fall through to the
+    // help/answer arm, never execute the command (── the «varsler»-collision:
+    // asking how to enable notifications used to flip the setting).
+    func test_hvordanQuestion_isNeverACommand() {
+        let index = AssistantTestSupport.liveIndex()
+        XCTAssertNil(MockCommandParser.command("hvordan slår jeg på varsler?", profile: InterestProfile(), index: index))
+        XCTAssertNil(MockCommandParser.command("hvordan nullstiller jeg?", profile: InterestProfile(), index: index))
+        // …while the question-SHAPED command stays a command:
+        XCTAssertEqual(MockCommandParser.command("Hva vet du om meg?", profile: InterestProfile(), index: index), .showMemory)
+    }
+
     func test_forgetMemory_nothingMatches_isHonest() {
         let vm = makeVM()
         vm.runCommand(.forgetMemory(query: "cricket"))

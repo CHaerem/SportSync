@@ -35,6 +35,13 @@ enum MockCommandParser {
         guard !tokens.isEmpty else { return nil }
         let set = Set(tokens)
 
+        // A leading «hvordan» is a HOW-TO question, never an order — fall
+        // through to the answer arm so AssistantHelp explains instead of us
+        // executing (── «hvordan slår jeg på varsler?» must not flip the
+        // setting). Deliberately NOT a blanket question-guard: «Hva vet du om
+        // meg?» is an intentional question-shaped command (showMemory).
+        if tokens.first == "hvordan" { return nil }
+
         // 1) THEME — «bytt til mørkt tema», «lyst tema», «bruk systemtema».
         if let theme = theme(tokens: tokens, set: set) { return .setTheme(theme) }
 

@@ -436,7 +436,7 @@ struct FoundationModelsInterestAssistant: InterestAssistant {
         }
     }
 
-    /// GeneratedTurn(command,commandArgument) → AssistantCommand (WP-66).
+    /// GeneratedCommand(command, commandArgument) → AssistantCommand (WP-66).
     /// Defensive/normalising, like `convert`: an unrecognised name/argument
     /// returns nil (so the turn falls through to the mutation arm rather than
     /// doing nothing). AssistantViewModel still validates every command
