@@ -31,10 +31,53 @@ import Foundation
 struct EntityIndex: Sendable {
     let entities: [Entity]
     private let byId: [String: Entity]
+    /// WP-61 — the exact-match lookup, built ONCE per index. Maps a normalized
+    /// term (name / alias / spaced-id, plus its edition-stripped form) to the
+    /// ids of every entity that would score a perfect 100 for that query in
+    /// `matchScore`. Lets `servedEntity(for:)` answer the common "the name is a
+    /// known entity" case in O(1) instead of scanning all entities + running
+    /// Levenshtein against each. Ids are de-duplicated so `.count` is a distinct
+    /// entity count.
+    private let exactTermIds: [String: [String]]
+    /// WP-61 — the stored-initials lookup, likewise built once: a normalized
+    /// `initials` value → the ids scoring 96 for it. `servedEntity`'s fast path
+    /// needs this because 96 is the ONLY score strictly between the exact 100
+    /// and the 88 prefix tier, so it is the only thing that can deny a lone
+    /// exact match its clear lead (see the proof on `servedEntity`).
+    private let initialsIds: [String: [String]]
 
     init(_ entities: [Entity]) {
         self.entities = entities
         self.byId = Dictionary(entities.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+
+        // Build the WP-61 exact/initials maps with EXACTLY the normalization
+        // `matchScore` applies, so a fast-path hit is byte-identical to what the
+        // full scan would have found. `exact` keys mirror the `termNorm == q`
+        // branch (both the plain-normalized and edition-stripped forms of every
+        // name/alias/spaced-id term); `initials` keys mirror the
+        // `TextMatch.normalize(ini) == q` branch. Ids stay de-duplicated per key.
+        var exact: [String: [String]] = [:]
+        var inits: [String: [String]] = [:]
+        func append(_ id: String, forKey key: String, into map: inout [String: [String]]) {
+            guard !key.isEmpty else { return }
+            if map[key]?.contains(id) == true { return }
+            map[key, default: []].append(id)
+        }
+        for e in entities {
+            var terms = [e.name] + e.aliases
+            terms.append(e.id.replacingOccurrences(of: "-", with: " "))
+            for raw in terms {
+                let tn = TextMatch.normalize(raw)
+                for termNorm in Set([tn, Self.editionStripped(tn)]) {
+                    append(e.id, forKey: termNorm, into: &exact)
+                }
+            }
+            for ini in e.initials {
+                append(e.id, forKey: TextMatch.normalize(ini), into: &inits)
+            }
+        }
+        self.exactTermIds = exact
+        self.initialsIds = inits
     }
 
     // MARK: - Exact lookup (the grounding gate)
@@ -99,6 +142,39 @@ struct EntityIndex: Sendable {
             if clearLead { served = top.entity }
         }
         return Resolution(candidates: Array(candidates), served: served)
+    }
+
+    /// WP-61 — the served winner ONLY (`resolve(query).served`), but O(1) on the
+    /// common path via the prebuilt exact-match maps. `followableEntities` calls
+    /// this once per home/away/tournament NAME on every agenda row; the full
+    /// `resolve` scans all entities + runs Levenshtein per one, which is O(events
+    /// × entities) across a compile. This is proven byte-identical to
+    /// `resolve(query).served` (see EntityServedParityTests):
+    ///
+    ///   • An exact term match scores 100 (auto). Because the ONLY scores
+    ///     strictly above 88 that `matchScore` can emit are 100 (exact term) and
+    ///     96 (stored initials == q), the runner-up needed for the ≥12-point
+    ///     "clear lead" is fully knowable from the two maps alone — no scan:
+    ///       – two+ exact matches ⇒ a 100–100 tie ⇒ no clear lead ⇒ not served;
+    ///       – one exact match with ANOTHER entity's initials == q ⇒ 100 vs 96 ⇒
+    ///         lead 4 < 12 ⇒ not served;
+    ///       – one exact match and nothing else at 96/100 ⇒ runner-up ≤ 88 ⇒
+    ///         lead ≥ 12 ⇒ that entity is served.
+    ///   • With NO exact term match, a served result can still arise from the
+    ///     lower auto tiers (initials 96, same-shape typo 84/80), so we fall back
+    ///     to the unchanged full resolver — identical by construction.
+    func servedEntity(for query: String) -> Entity? {
+        let q = TextMatch.normalize(query)
+        guard !q.isEmpty else { return nil }
+        if let exact = exactTermIds[q], !exact.isEmpty {
+            guard exact.count == 1 else { return nil }        // 100–100 tie
+            let winner = exact[0]
+            if let ini = initialsIds[q], ini.contains(where: { $0 != winner }) {
+                return nil                                    // another entity at 96 denies the lead
+            }
+            return byId[winner]
+        }
+        return resolve(query).served
     }
 
     // MARK: - Tool-facing search
