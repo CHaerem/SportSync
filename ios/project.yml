@@ -30,6 +30,23 @@ settings:
 targets:
   Zenji:
     type: application
+    postBuildScripts:
+      # «Har jeg siste versjon?» — stamp the BUILT Info.plist with the short
+      # hash of the last commit touching ios/ in the tree this build came from
+      # («-dirty» appended when ios/ has uncommitted changes) + a build date.
+      # Build-time only: no source file is generated, so ZenjiTests' direct
+      # source compilation is unaffected. The app compares the stamp against
+      # the published app-version.json (BuildStamp/AppVersionCheck).
+      - name: Stamp build version
+        script: |
+          STAMP=$(git -C "$SRCROOT/.." log -1 --format=%h -- ios/ 2>/dev/null || echo ukjent)
+          if ! git -C "$SRCROOT/.." diff --quiet -- ios/ 2>/dev/null; then STAMP="${STAMP}-dirty"; fi
+          PLIST="$TARGET_BUILD_DIR/$INFOPLIST_PATH"
+          /usr/libexec/PlistBuddy -c "Delete :ZenjiBuildStamp" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :ZenjiBuildStamp string $STAMP" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Delete :ZenjiBuildDate" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :ZenjiBuildDate string $(date '+%d.%m %H:%M')" "$PLIST"
+        basedOnDependencyAnalysis: false
     platform: iOS
     deploymentTarget: "26.0"
     sources:
@@ -95,6 +112,9 @@ targets:
       - path: Zenji/Sync/CacheStore.swift
       - path: Zenji/Sync/SyncState.swift
       - path: Zenji/Sync/DataStore.swift
+      # AppVersion is part of DataStore's read surface (loadAppVersion) — a
+      # tiny Codable + pure check, no networking, so it stays widget-safe.
+      - path: Zenji/Sync/AppVersion.swift
       - path: Zenji/Widget/WidgetTimelineBuilder.swift
     info:
       path: ZenjiWidget/Info.plist
@@ -239,6 +259,23 @@ targets:
   # this target is purely additive and lives in its own `ZenjiDeviceDev` scheme.
   ZenjiDeviceDev:
     type: application
+    postBuildScripts:
+      # «Har jeg siste versjon?» — stamp the BUILT Info.plist with the short
+      # hash of the last commit touching ios/ in the tree this build came from
+      # («-dirty» appended when ios/ has uncommitted changes) + a build date.
+      # Build-time only: no source file is generated, so ZenjiTests' direct
+      # source compilation is unaffected. The app compares the stamp against
+      # the published app-version.json (BuildStamp/AppVersionCheck).
+      - name: Stamp build version
+        script: |
+          STAMP=$(git -C "$SRCROOT/.." log -1 --format=%h -- ios/ 2>/dev/null || echo ukjent)
+          if ! git -C "$SRCROOT/.." diff --quiet -- ios/ 2>/dev/null; then STAMP="${STAMP}-dirty"; fi
+          PLIST="$TARGET_BUILD_DIR/$INFOPLIST_PATH"
+          /usr/libexec/PlistBuddy -c "Delete :ZenjiBuildStamp" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :ZenjiBuildStamp string $STAMP" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Delete :ZenjiBuildDate" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :ZenjiBuildDate string $(date '+%d.%m %H:%M')" "$PLIST"
+        basedOnDependencyAnalysis: false
     platform: iOS
     deploymentTarget: "26.0"
     sources:

@@ -44,6 +44,14 @@ struct DataStore: Sendable {
         return try? ZenjiJSON.decoder.decode(Interests.self, from: data)
     }
 
+    /// «Har jeg siste versjon?»-fasiten (app-version.json, published by the
+    /// pipeline, delivered by the ordinary manifest sync). `nil` when never
+    /// synced or corrupt — callers show the build stamp without a verdict.
+    func loadAppVersion() -> AppVersion? {
+        guard let data = cache.read("app-version.json") else { return nil }
+        return try? ZenjiJSON.decoder.decode(AppVersion.self, from: data)
+    }
+
     /// `nil` means "never synced" — see the type-level doc above for why
     /// this is the flag callers should check, not an empty `loadEvents()`.
     var lastSync: Date? {

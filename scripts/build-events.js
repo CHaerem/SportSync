@@ -5,6 +5,8 @@ import crypto from "crypto";
 import { readJsonIfExists, rootDataPath, MS_PER_DAY, matchInterest, mustWatchEntity, normalizeParticipants, normalizeNorwegianPlayers, normalizeText, containsName, entityTerms } from "./lib/helpers.js";
 import { resolveStreaming } from "./lib/norwegian-rights.js";
 import { writeManifest } from "./build-manifest.js";
+import { readIosCommit, buildAppVersion } from "./lib/app-version.js";
+import { fileURLToPath } from "url";
 import { writeEntities } from "./build-entities.js";
 
 const dataDir = rootDataPath();
@@ -537,6 +539,17 @@ for (const name of ["tracked.json", "interests.json"]) {
 		fs.copyFileSync(src, path.join(dataDir, name));
 		console.log(`Published ${name} to docs/data/`);
 	}
+}
+
+// Publish app-version.json — the short hash of the last commit touching
+// ios/ — so a sideloaded build can tell whether it is stale (it compares its
+// build-time stamp against this; the manifest sync delivers the file). Runs
+// before writeManifest so the manifest covers it. Skipped gracefully when
+// git/history is unavailable.
+const appVersion = buildAppVersion(readIosCommit(fileURLToPath(new URL("..", import.meta.url))));
+if (appVersion) {
+	fs.writeFileSync(path.join(dataDir, "app-version.json"), JSON.stringify(appVersion, null, 2) + "\n");
+	console.log(`Published app-version.json (ios @ ${appVersion.iosCommit}).`);
 }
 
 // WP-03: publish manifest.json (bytes + sha256 per published data file) —

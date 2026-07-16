@@ -34,7 +34,7 @@ struct SyncClient: Sendable {
 
     /// The published files this iOS client actually consumes. See the
     /// type-level doc above for why the rest of the manifest is ignored.
-    static let defaultFilesOfInterest: Set<String> = ["events.json", "entities.json", "tracked.json", "interests.json"]
+    static let defaultFilesOfInterest: Set<String> = ["events.json", "entities.json", "tracked.json", "interests.json", "app-version.json"]
 
     private static let manifestFilename = "manifest.json"
 

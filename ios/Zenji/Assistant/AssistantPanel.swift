@@ -36,6 +36,10 @@ struct AssistantPanel: View {
     /// when there ARE other devices to mention. Defaults to off (the free-
     /// account build's `LocalOnlyProfileSync`).
     var syncEnabled: Bool = false
+    /// «Har jeg siste versjon?» — the published truth (synced
+    /// app-version.json); ContentView passes it, default nil so previews /
+    /// standalone use still compile (the line then shows the stamp alone).
+    var publishedAppVersion: AppVersion? = nil
 
     @State private var misunderstoodExpanded = false
     @State private var profileExpanded = false
@@ -92,6 +96,7 @@ struct AssistantPanel: View {
                     evalEntry
                     #endif
                     ProfileSharePanel(viewModel: viewModel)
+                    versionLine
                 }
                 .padding(20)
                 .frame(maxWidth: 640, alignment: .leading)
@@ -719,6 +724,18 @@ struct AssistantPanel: View {
         }
     }
     #endif
+
+    /// The quiet version foot: which build is installed, and — when the
+    /// synced app-version.json says so — whether a newer one exists. Muted
+    /// mono, never a badge; the calmest possible «oppdater meg»-signal.
+    private var versionLine: some View {
+        Text(AppVersionCheck.footLine(published: publishedAppVersion))
+            .font(.zenjiMono(size: 11))
+            .foregroundStyle(ZenjiTokens.muted)
+            .tracking(1.0)
+            .padding(.top, 8)
+            .accessibilityIdentifier("versionLine")
+    }
 
     // MARK: - Small helpers
 

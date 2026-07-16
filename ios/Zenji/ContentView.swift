@@ -178,6 +178,7 @@ struct ContentView: View {
                     AssistantPanel(
                         viewModel: assistant, dismiss: closePanel, onRerunOnboarding: rerunOnboarding,
                         onReset: performReset, syncEnabled: profileSync.backend.isEnabled,
+                        publishedAppVersion: dataStore.loadAppVersion(),
                         initialResetState: resetDemoState
                     )
                         .transition(.opacity)
