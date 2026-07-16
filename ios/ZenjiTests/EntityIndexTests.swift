@@ -78,4 +78,30 @@ final class EntityIndexTests: XCTestCase {
         XCTAssertEqual(EntityIndex.sportKeyword(in: "slutt med tennis"), "tennis")
         XCTAssertNil(EntityIndex.sportKeyword(in: "følg cricket"))
     }
+
+    // WP-64: winter sports + the umbrella category.
+    func test_sportKeyword_winterSports() {
+        XCTAssertEqual(EntityIndex.sportKeyword(in: "følg skiskyting"), "biathlon")
+        XCTAssertEqual(EntityIndex.sportKeyword(in: "mer langrenn"), "cross-country")
+        XCTAssertEqual(EntityIndex.sportKeyword(in: "alpint til vinteren"), "alpine")
+        XCTAssertEqual(EntityIndex.sportKeyword(in: "følg skihopp"), "ski jumping")
+    }
+
+    func test_categoryKeyword_vintersport() {
+        XCTAssertEqual(EntityIndex.categoryKeyword(in: "følg vintersport"), "winter-sports")
+        XCTAssertEqual(EntityIndex.categoryKeyword(in: "alle vinteridretter"), "winter-sports")
+        XCTAssertNil(EntityIndex.categoryKeyword(in: "følg fotball"))
+    }
+
+    func test_categoryEntity_lookup() {
+        XCTAssertEqual(index.categoryEntity(for: "winter-sports")?.id, "category-winter-sports")
+        XCTAssertNil(index.categoryEntity(for: "no-such-category"))
+    }
+
+    func test_detectEntities_ignoresSportAndCategoryEntities() {
+        // A whole-sport / umbrella word is routed via the keyword paths, so it
+        // must NOT surface as an explicit entity target here.
+        XCTAssertTrue(index.detectEntities(in: "Følg vintersport").isEmpty)
+        XCTAssertTrue(index.detectEntities(in: "Mer langrenn").isEmpty)
+    }
 }
