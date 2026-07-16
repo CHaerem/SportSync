@@ -1,6 +1,6 @@
 {
-  "version": 3,
-  "description": "WP-69/65/66 — versioned assistant eval corpus. Golden STRUCTURED expectations (entity id-sets for mutations; row/claim rubric for answers), NEVER exact prose. Runs two ways: through MockInterestAssistant as a deterministic XCTest (CI), and through the REAL FoundationModelsInterestAssistant on an AI-enabled Mac/iPhone via RealFMEvalTests / the DEBUG eval screen. `clock` is the fixed `now` CI evaluates the answer arm against; the on-device run uses the live feed and real time. `knownGap` cases are EXPECTED to fail until the named work package lands — CI skips them (marked), the device run reports them as known gaps. SPORT-LEVEL vs SPECIFIC ENTITY (WP-65 principle): when the user names a BARE sport ('golf', 'litt F1', 'mer sykkel', 'skiskyting') the correct grounding is the SPORT-LEVEL entity (sport-golf, sport-f1, sport-cycling, sport-biathlon) — following the whole sport, not an arbitrary flagship tournament (grounding 'golf' to one random event is wrong). When the user names a SPECIFIC tournament/team/athlete ('Tour de France', 'Lyn', 'Hovland') the specific entity is correct. An umbrella term ('all vintersport') grounds to the single category entity (category-winter-sports). Sports with no published sport entity (tennis, athletics) fall back to their most-headline real entity. COMMAND ARM (WP-66): the `command` cases pin the parsed AssistantCommand's canonical token — enum-argument commands exact ('theme:dark', 'reset:everything', 'notify:off'), free-text commands ('open', 'forget') on the ARM only (a free-generating model can't be held to an exact phrase).",
+  "version": 4,
+  "description": "WP-69/65/66/68 — versioned assistant eval corpus. Golden STRUCTURED expectations (entity id-sets for mutations; row/claim rubric for answers), NEVER exact prose. Runs two ways: through MockInterestAssistant as a deterministic XCTest (CI), and through the REAL FoundationModelsInterestAssistant on an AI-enabled Mac/iPhone via RealFMEvalTests / the DEBUG eval screen. `clock` is the fixed `now` CI evaluates the answer arm against; the on-device run uses the live feed and real time. `knownGap` cases are EXPECTED to fail until the named work package lands — CI skips them (marked), the device run reports them as known gaps. SPORT-LEVEL vs SPECIFIC ENTITY (WP-65 principle): when the user names a BARE sport ('golf', 'litt F1', 'mer sykkel', 'skiskyting') the correct grounding is the SPORT-LEVEL entity (sport-golf, sport-f1, sport-cycling, sport-biathlon) — following the whole sport, not an arbitrary flagship tournament (grounding 'golf' to one random event is wrong). When the user names a SPECIFIC tournament/team/athlete ('Tour de France', 'Lyn', 'Hovland') the specific entity is correct. An umbrella term ('all vintersport') grounds to the single category entity (category-winter-sports). Sports with no published sport entity (tennis, athletics) fall back to their most-headline real entity. COMMAND ARM (WP-66): the `command` cases pin the parsed AssistantCommand's canonical token — enum-argument commands exact ('theme:dark', 'reset:everything', 'notify:off'), free-text commands ('open', 'forget') on the ARM only (a free-generating model can't be held to an exact phrase).",
   "clock": "2026-07-13T05:00:00Z",
   "cases": [
     {
@@ -377,6 +377,71 @@
       "kind": "command",
       "note": "Open an event's detail by name. Scored on the ARM ('open') — the phrase is free text, and «vis bare …» (WP-67 filter) is deliberately NOT routed here.",
       "expect": { "command": "open" }
+    },
+    {
+      "id": "help-01-hva-kan-du",
+      "category": "help",
+      "utterance": "Hva kan du?",
+      "kind": "answer",
+      "note": "WP-68 — the capability overview, answered from the curated AssistantHelp document (not the agenda feed). Must reference a concrete action the user can take, e.g. «Følg …».",
+      "expect": {
+        "answer": {
+          "mustContainAny": ["Følg", "følg"],
+          "requireNoPhantomRows": true
+        }
+      }
+    },
+    {
+      "id": "help-02-hvordan-nullstille",
+      "category": "help",
+      "utterance": "Hvordan nullstiller jeg?",
+      "kind": "answer",
+      "note": "WP-68 — how-to for the reset command. Answered from curated help; must reference the action («nullstill»).",
+      "expect": {
+        "answer": {
+          "mustContainAny": ["nullstill"],
+          "requireNoPhantomRows": true
+        }
+      }
+    },
+    {
+      "id": "help-03-hvordan-folge",
+      "category": "help",
+      "utterance": "Hvordan følger jeg noe?",
+      "kind": "answer",
+      "note": "WP-68 — how-to for the follow (mutation) arm. Must reference typing «Følg …».",
+      "expect": {
+        "answer": {
+          "mustContainAny": ["Følg", "følg"],
+          "requireNoPhantomRows": true
+        }
+      }
+    },
+    {
+      "id": "help-04-hvordan-bytte-tema",
+      "category": "help",
+      "utterance": "Hvordan bytter jeg tema?",
+      "kind": "answer",
+      "note": "WP-68 — how-to for the theme command. Must reference tema (say «bytt til mørkt tema» / the TEMA chip).",
+      "expect": {
+        "answer": {
+          "mustContainAny": ["tema"],
+          "requireNoPhantomRows": true
+        }
+      }
+    },
+    {
+      "id": "help-05-out-of-scope-honesty",
+      "category": "help",
+      "utterance": "Hvordan spiller man sjakk?",
+      "kind": "answer",
+      "note": "WP-68 ikke-mål — a GENERAL world-knowledge question, not about the app or the agenda. The honesty rule holds: the assistant must NOT explain the rules of chess. The forbidden-claims guard is the real-FM signal (the mock never fabricates rules).",
+      "expect": {
+        "answer": {
+          "forbiddenClaims": ["sjakkmatt", "brikke", "bonde", "løper", "sjakkbrett"],
+          "requireNoPhantomRows": true
+        }
+      }
     }
   ]
 }

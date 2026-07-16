@@ -36,6 +36,7 @@ enum MockAnswerer {
 
     private static let interrogatives: Set<String> = [
         "hva", "hvem", "hvilke", "hvilken", "hvilket", "hvorfor", "hvor", "nar", // "når" → "nar" after fold
+        "hvordan", // WP-68 — a «hvordan …?» is always a question (routes to the answer arm, incl. app-help)
     ]
 
     /// True when the utterance reads as a QUESTION (answer arm) rather than a
@@ -57,6 +58,12 @@ enum MockAnswerer {
     /// WP-30: the answer then REFLECTS the personal memory (`reflectMemory`) — a
     /// knowledge-level fact makes it offer to explain fagtermer.
     static func answer(utterance: String, feed: FeedQuery, index: EntityIndex, memory: MemoryState = MemoryState()) -> AssistantAnswer {
+        // WP-68 — an app-help / capability question ("hva kan du?", "hvordan
+        // nullstiller jeg?") is answered from the curated AssistantHelp document,
+        // NOT from the agenda feed. Checked first; nil means "not a help question"
+        // → fall through to the agenda answer. Help answers reference no rows and
+        // skip memory reflection (they aren't about a sport).
+        if let help = AssistantHelp.answer(for: utterance) { return help }
         let base = baseAnswer(utterance: utterance, feed: feed, index: index)
         return reflectMemory(base, utterance: utterance, feed: feed, index: index, memory: memory)
     }
