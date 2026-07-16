@@ -239,6 +239,12 @@ struct EntityIndex: Sendable {
         let hayTokens = Set(Self.tokens(utterance))
         var scored: [(Entity, Int)] = []
         for e in entities {
+            // WP-64: sport-/category-level entities are NOT matched as explicit
+            // targets here — a whole-sport command ("mer langrenn") routes
+            // through sportKeyword → representativeEntity, and an umbrella term
+            // ("vintersport") through categoryKeyword, so the plain sport word
+            // never out-competes the real tournament/team for that sport.
+            if e.type == "sport" || e.type == "category" { continue }
             var score = 0
             for term in [e.name] + e.aliases {
                 if TextMatch.containsName(utterance, term) { score = max(score, 3) }
@@ -301,6 +307,20 @@ struct EntityIndex: Sendable {
         return nil
     }
 
+    /// Canonical umbrella-category key for a keyword found in the query, if any
+    /// (e.g. "vintersport" → "winter-sports"). WP-64: lets a bare umbrella term
+    /// ground to the published category entity as one broad-scope following.
+    static func categoryKeyword(in query: String) -> String? {
+        for token in tokens(query) {
+            if let cat = SportVocabulary.keywordToCategory[token] { return cat }
+        }
+        return nil
+    }
+
+    /// The published category (umbrella) entity for a category key, if any —
+    /// e.g. "winter-sports" → the "Vintersport" entity (id `category-winter-sports`).
+    func categoryEntity(for category: String) -> Entity? { byId["category-\(category)"] }
+
     // MARK: - Similarity
 
     /// 0…100 similarity used only by `nearestMatches`. Cheap, deterministic:
@@ -361,13 +381,44 @@ enum SportVocabulary {
         "sykkel": "cycling", "sykling": "cycling", "landeveissykling": "cycling", "cycling": "cycling",
         "friidrett": "athletics", "athletics": "athletics", "løping": "athletics",
         "f1": "f1", "formel1": "f1", "formel": "f1", "formula1": "f1", "formula": "f1",
-        "esport": "esports", "esports": "esports", "cs2": "esports", "cs": "esports", "counterstrike": "esports"
+        "esport": "esports", "esports": "esports", "cs2": "esports", "cs": "esports", "counterstrike": "esports",
+        // WP-64: winter sports — the datahull that made "all vintersport"
+        // ungroundable. Each maps to the canonical tag build-entities.js
+        // publishes a sport entity under (sport-biathlon, sport-cross-country …).
+        "skiskyting": "biathlon", "biathlon": "biathlon",
+        "langrenn": "cross-country", "crosscountry": "cross-country",
+        "alpint": "alpine", "alpine": "alpine", "slalam": "alpine", "utfor": "alpine",
+        "hopp": "ski jumping", "skihopp": "ski jumping", "hopprenn": "ski jumping",
+        "kombinert": "nordic", "nordic": "nordic"
     ]
 
     static let sportDisplay: [String: String] = [
         "football": "fotball", "golf": "golf", "tennis": "tennis", "chess": "sjakk",
-        "cycling": "sykkel", "athletics": "friidrett", "f1": "Formel 1", "esports": "CS2/esport"
+        "cycling": "sykkel", "athletics": "friidrett", "f1": "Formel 1", "esports": "CS2/esport",
+        "biathlon": "skiskyting", "cross-country": "langrenn", "alpine": "alpint",
+        "nordic": "kombinert", "ski jumping": "hopp"
     ]
 
     static func display(for sport: String) -> String { sportDisplay[sport] ?? sport }
+
+    // MARK: - WP-64: umbrella categories
+
+    /// A free-text umbrella keyword ("vintersport") → the canonical category key
+    /// build-entities.js publishes a category entity under (category-<key>).
+    static let keywordToCategory: [String: String] = [
+        "vintersport": "winter-sports", "vintersporter": "winter-sports",
+        "vinteridrett": "winter-sports", "vinteridretter": "winter-sports"
+    ]
+
+    /// A category key → the member sports it expands to («vintersport» → settet).
+    /// This is the app-side expansion the server's category entity stands in for.
+    static let categoryToSports: [String: [String]] = [
+        "winter-sports": ["biathlon", "cross-country", "nordic", "alpine", "ski jumping"]
+    ]
+
+    static let categoryDisplayNames: [String: String] = [
+        "winter-sports": "vintersport"
+    ]
+
+    static func categoryDisplay(for category: String) -> String { categoryDisplayNames[category] ?? category }
 }

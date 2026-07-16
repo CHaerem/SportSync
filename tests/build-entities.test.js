@@ -59,7 +59,7 @@ describe("buildEntityIndex", () => {
 			expect(typeof e.id).toBe("string");
 			expect(typeof e.name).toBe("string");
 			expect(Array.isArray(e.aliases)).toBe(true);
-			expect(["athlete", "team", "tournament", "league"]).toContain(e.type);
+			expect(["athlete", "team", "tournament", "league", "sport", "category"]).toContain(e.type);
 		}
 		fs.rmSync(configDir, { recursive: true, force: true });
 	});
@@ -204,6 +204,66 @@ describe("buildEntityIndex", () => {
 		expect(tdf.aliases).not.toContain("TdF");
 		expect(entityTerms(tdf)).not.toContain("TdF");
 		expect(entityTerms(tdf)).toEqual([tdf.name, ...tdf.aliases]);
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	// WP-64: sport-/category-level coverage entities (the winter-sport datahull).
+	it("publishes one sport entity per followBroadly sport with a Norwegian name + aliases", () => {
+		const configDir = tmpDir("ss-entities-broad-");
+		// No interests.json → the default followBroadly set (incl. winter sports).
+		const entities = buildEntityIndex(configDir, {});
+
+		const biathlon = entities.find((e) => e.id === "sport-biathlon");
+		expect(biathlon).toMatchObject({ name: "Skiskyting", sport: "biathlon", type: "sport" });
+		expect(biathlon.aliases).toContain("biathlon");
+
+		const langrenn = entities.find((e) => e.id === "sport-cross-country");
+		expect(langrenn).toMatchObject({ name: "Langrenn", sport: "cross-country", type: "sport" });
+
+		const alpint = entities.find((e) => e.id === "sport-alpine");
+		expect(alpint).toMatchObject({ name: "Alpint", sport: "alpine", type: "sport" });
+
+		const hopp = entities.find((e) => e.id === "sport-ski-jumping");
+		expect(hopp).toMatchObject({ name: "Hopp", sport: "ski jumping", type: "sport" });
+
+		// Non-winter followBroadly sports get a sport entity too (as a low-priority
+		// fallback; existing tournaments/teams still win representativeEntity).
+		expect(entities.find((e) => e.id === "sport-football")).toMatchObject({ name: "Fotball", type: "sport" });
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("publishes a groundable «Vintersport» umbrella category covering the winter set", () => {
+		const configDir = tmpDir("ss-entities-cat-");
+		const entities = buildEntityIndex(configDir, {});
+		const cat = entities.find((e) => e.id === "category-winter-sports");
+		expect(cat).toMatchObject({ name: "Vintersport", type: "category" });
+		expect(cat.aliases).toEqual(expect.arrayContaining(["vinteridrett", "vinteridretter"]));
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("honours interests.followBroadly — only listed sports get a sport entity, category dropped when no winter member", () => {
+		const configDir = tmpDir("ss-entities-fb-");
+		fs.writeFileSync(
+			path.join(configDir, "interests.json"),
+			JSON.stringify({ followBroadly: ["golf", "tennis"] })
+		);
+		const entities = buildEntityIndex(configDir, {});
+		expect(entities.find((e) => e.id === "sport-golf")).toBeDefined();
+		expect(entities.find((e) => e.id === "sport-tennis")).toBeDefined();
+		expect(entities.find((e) => e.id === "sport-biathlon")).toBeUndefined();
+		// No winter member in scope → no umbrella category.
+		expect(entities.find((e) => e.id === "category-winter-sports")).toBeUndefined();
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("sport/category entities are server-inert — never stamped onto an event by build-events", () => {
+		// enrichEntityIds only pools athlete/team/league; assert no sport/category
+		// entity is in those pools (so a "Golf"/"Vintersport" name can't false-match).
+		const configDir = tmpDir("ss-entities-inert-");
+		const entities = buildEntityIndex(configDir, {});
+		const pooled = entities.filter((e) => ["athlete", "team", "league"].includes(e.type));
+		expect(pooled.some((e) => e.type === "sport" || e.type === "category")).toBe(false);
+		expect(entities.some((e) => e.type === "sport")).toBe(true);
 		fs.rmSync(configDir, { recursive: true, force: true });
 	});
 

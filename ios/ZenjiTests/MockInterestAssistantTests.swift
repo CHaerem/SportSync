@@ -165,6 +165,64 @@ final class MockInterestAssistantTests: XCTestCase {
         XCTAssertEqual(p[0].lens, .sportAsSuch)
     }
 
+    // MARK: - WP-64: winter-sport category + broad sport coverage
+
+    private func ground(_ proposals: [ProposedMutation], profile: InterestProfile = InterestProfile()) -> GroundingResult {
+        MutationGrounder.ground(proposals, index: index, profile: profile)
+    }
+
+    func test12_følgSkiskyting_groundsToSportEntity() {
+        // "skiskyting" was ungroundable before WP-64 (no biathlon entity existed).
+        let p = parse("Følg skiskyting")
+        XCTAssertEqual(p.count, 1)
+        XCTAssertEqual(p[0].kind, .add)
+        XCTAssertEqual(p[0].entityId, "sport-biathlon")
+        let r = ground(p)
+        XCTAssertTrue(r.rejected.isEmpty, "a followed winter sport must ground, not be rejected")
+        XCTAssertEqual(r.grounded.map(\.entity.id), ["sport-biathlon"])
+    }
+
+    func test13_følgVintersport_groundsToUmbrellaCategory() {
+        // The umbrella term grounds to ONE broad-scope category following — the
+        // "all vintersport" mutation WP-65's bulk utterance counts as a single
+        // suggestion.
+        let p = parse("Følg vintersport")
+        XCTAssertEqual(p.count, 1)
+        XCTAssertEqual(p[0].kind, .add)
+        XCTAssertEqual(p[0].entityId, "category-winter-sports")
+        let r = ground(p)
+        XCTAssertTrue(r.rejected.isEmpty, "«vintersport» must ground, not be rejected")
+        XCTAssertEqual(r.grounded.map(\.entity.id), ["category-winter-sports"])
+    }
+
+    func test14_merLangrenn_representativeIsSportEntity() {
+        let p = parse("Mer langrenn")
+        XCTAssertEqual(p.count, 1)
+        XCTAssertEqual(p[0].kind, .update)          // "mer" = increase
+        XCTAssertEqual(p[0].entityId, "sport-cross-country")
+        XCTAssertEqual(p[0].weight, 0.8)
+    }
+
+    func test15_everyWinterCategoryMemberIsGroundable() {
+        // «vintersport» → settet: each member sport must have a real, groundable
+        // entity, so expanding the umbrella never yields a dead reference.
+        let members = SportVocabulary.categoryToSports["winter-sports"] ?? []
+        XCTAssertEqual(members.count, 5)
+        for sport in members {
+            XCTAssertNotNil(
+                index.representativeEntity(forSport: sport, preferredIn: InterestProfile()),
+                "\(sport) must have a groundable entity"
+            )
+        }
+    }
+
+    func test16_wholeSportCommand_stillPrefersRealTournamentOverSportEntity() {
+        // Regression guard: adding a low-priority "Sykkel" sport entity must not
+        // hijack "mer sykkel" — the real tournament still wins.
+        let p = parse("Mer sykkel i juli")
+        XCTAssertEqual(p.map(\.entityId), ["tour-de-france-2026"])
+    }
+
     // MARK: - Availability + async surface
 
     func test_availability_reflectsBehavior() {

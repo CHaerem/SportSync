@@ -17,7 +17,13 @@
  *      a stable kebab-case slug is generated from the name.
  *
  * Entry shape: { id, name, aliases: [], sport, type }
- * type ∈ "athlete" | "team" | "tournament" | "league"
+ * type ∈ "athlete" | "team" | "tournament" | "league" | "sport" | "category"
+ *
+ * WP-64: "sport" (one per followBroadly sport) and "category" (umbrella terms
+ * like "Vintersport") entities are appended last. They make a broadly-followed
+ * sport and an umbrella term groundable by the app-side assistant, and are
+ * server-inert — NOT in build-events.js's athlete/team/league enrichment pools,
+ * so they never stamp an entityId onto an event.
  *
  * Dedup rule: a candidate merges into an already-registered entity of the
  * SAME sport AND SAME type when any (name|alias) term of one word-boundary-
@@ -57,6 +63,87 @@ import { sportsConfig as defaultSportsConfig } from "./config/sports-config.js";
 
 function configDirDefault() {
 	return process.env.SPORTSYNC_CONFIG_DIR || path.resolve(process.cwd(), "scripts", "config");
+}
+
+/**
+ * WP-64: the sports shown broadly on the board even without a specific tracked
+ * entity. Read from interests.json's `followBroadly`, else this default — kept
+ * deliberately in sync with build-events.js (both derive the same "broad
+ * coverage" set the same way). Winter sports are the datahull this WP closes:
+ * "all vintersport" was ungroundable because these sports had NO entity to
+ * ground to.
+ */
+export const DEFAULT_FOLLOW_BROADLY = [
+	"football", "golf", "f1", "cycling", "chess", "esports",
+	"biathlon", "cross-country", "alpine", "nordic", "ski jumping",
+];
+
+/**
+ * WP-64: Norwegian display name + aliases for each canonical sport tag. Used to
+ * publish one sport-level entity per followBroadly sport so a bare "skiskyting"
+ * / "mer langrenn" grounds to a real entity. Aliases carry the English tag and
+ * common Norwegian variants so the app resolver matches either.
+ */
+const SPORT_LABELS = {
+	football: { name: "Fotball", aliases: ["football", "soccer"] },
+	golf: { name: "Golf", aliases: [] },
+	tennis: { name: "Tennis", aliases: [] },
+	f1: { name: "Formel 1", aliases: ["F1", "Formula 1", "Formula One"] },
+	cycling: { name: "Sykkel", aliases: ["sykling", "landeveissykling", "cycling"] },
+	chess: { name: "Sjakk", aliases: ["chess"] },
+	esports: { name: "Esport", aliases: ["esports", "e-sport", "CS2"] },
+	athletics: { name: "Friidrett", aliases: ["athletics"] },
+	biathlon: { name: "Skiskyting", aliases: ["biathlon"] },
+	"cross-country": { name: "Langrenn", aliases: ["langrennsski", "cross-country skiing"] },
+	alpine: { name: "Alpint", aliases: ["utfor", "slalåm", "alpine skiing"] },
+	nordic: { name: "Nordisk kombinert", aliases: ["kombinert", "nordic combined"] },
+	"ski jumping": { name: "Hopp", aliases: ["skihopp", "ski jumping"] },
+};
+
+/**
+ * WP-64: umbrella categories → the member sports they expand to. Publishing a
+ * category entity ("Vintersport") makes the umbrella term itself groundable as
+ * ONE broad-scope following; the member expansion (category → set of sports)
+ * lives app-side in SportVocabulary (EntityIndex.swift). A category is only
+ * published when at least one member is in followBroadly.
+ */
+const CATEGORIES = {
+	"winter-sports": {
+		name: "Vintersport",
+		aliases: ["vinteridrett", "vinteridretter", "vintersporter", "winter sports"],
+		members: ["biathlon", "cross-country", "nordic", "alpine", "ski jumping"],
+	},
+};
+
+/** followBroadly set (lowercased), from interests.json or the default. */
+function readFollowBroadly(configDir) {
+	const interests = readJsonIfExists(path.join(configDir, "interests.json"));
+	const list = Array.isArray(interests?.followBroadly) && interests.followBroadly.length
+		? interests.followBroadly
+		: DEFAULT_FOLLOW_BROADLY;
+	return list.map((s) => String(s).toLowerCase());
+}
+
+/**
+ * WP-64: append one sport-level entity per followBroadly sport, plus each
+ * umbrella category whose members intersect followBroadly. These carry type
+ * "sport"/"category" — deliberately OUTSIDE build-events.js's athlete/team/
+ * league enrichment pools, so they are server-inert (never stamp an entityId
+ * onto an event) and exist purely for the app-side resolver to ground a broad
+ * sport-/category-following through the normal diff/confirm flow.
+ */
+function addBroadCoverageEntities(builder, configDir) {
+	const followBroadly = readFollowBroadly(configDir);
+	const inScope = new Set(followBroadly);
+	for (const sport of followBroadly) {
+		const label = SPORT_LABELS[sport];
+		if (!label) continue;
+		builder.upsert({ id: `sport-${slugify(sport)}`, name: label.name, aliases: [...label.aliases], sport, type: "sport" });
+	}
+	for (const [key, cat] of Object.entries(CATEGORIES)) {
+		if (!cat.members.some((m) => inScope.has(m))) continue;
+		builder.upsert({ id: `category-${key}`, name: cat.name, aliases: [...cat.aliases], sport: "winter", type: "category" });
+	}
 }
 
 /**
@@ -234,6 +321,9 @@ export function buildEntityIndex(configDir = configDirDefault(), sportsConfigDat
 			builder.upsert({ name, sport, type: "athlete" });
 		}
 	}
+
+	// 4. WP-64 — sport-/category-level entities (broad-coverage grounding).
+	addBroadCoverageEntities(builder, configDir);
 
 	return decorateAliases(builder.entities).map((e) => {
 		const out = { id: e.id, name: e.name, aliases: e.aliases, sport: e.sport, type: e.type };

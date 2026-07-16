@@ -125,13 +125,22 @@ enum MockInterestParser {
             }
         }
 
-        // 2) A whole-sport command ("mer sykkel", "slutt med tennis").
+        // 2) A whole-category command ("følg vintersport") — WP-64. Grounds to
+        //    the published umbrella entity as ONE broad-scope following (the
+        //    "all vintersport" mutation), checked BEFORE the sport path since an
+        //    umbrella term is not itself a single sport.
+        if let category = EntityIndex.categoryKeyword(in: trimmed) {
+            let lens: Lens = intent == .remove ? .sportAsSuch : detectLens(in: trimmed)
+            return categoryProposals(intent: intent, category: category, scope: scope, weight: weight, lens: lens, profile: profile, index: index)
+        }
+
+        // 3) A whole-sport command ("mer sykkel", "slutt med tennis", "følg skiskyting").
         if let sport = EntityIndex.sportKeyword(in: trimmed) {
             let lens: Lens = intent == .remove ? .sportAsSuch : detectLens(in: trimmed)
             return sportProposals(intent: intent, sport: sport, scope: scope, weight: weight, lens: lens, profile: profile, index: index)
         }
 
-        // 3) Nothing recognised → one unresolved proposal; grounding rejects it
+        // 4) Nothing recognised → one unresolved proposal; grounding rejects it
         //    with a "mente du …?" suggestion. This is how free-text entities are
         //    caught rather than invented.
         let query = residualQuery(trimmed)
@@ -175,6 +184,46 @@ enum MockInterestParser {
                 scope: scope,
                 weight: weight,
                 reason: sportReason(intent: intent, display: display, entityName: entity.name, scope: scope, lens: lens),
+                lens: lens
+            )]
+        }
+    }
+
+    // MARK: - Category-level commands (WP-64)
+
+    /// A whole-category command ("følg vintersport"). Grounds to the published
+    /// umbrella entity as ONE broad-scope following (so a bulk utterance counts
+    /// "all vintersport" as a single suggestion), through the normal diff/confirm
+    /// flow. Removal drops the category rule when the profile holds it. If the
+    /// category entity is somehow absent (older index), falls back to expanding
+    /// into the member sports so the intent is never silently dropped.
+    private static func categoryProposals(intent: Intent, category: String, scope: String?, weight: Double?, lens: Lens, profile: InterestProfile, index: EntityIndex) -> [ProposedMutation] {
+        let display = SportVocabulary.categoryDisplay(for: category)
+        guard let entity = index.categoryEntity(for: category) else {
+            return (SportVocabulary.categoryToSports[category] ?? []).flatMap {
+                sportProposals(intent: intent, sport: $0, scope: scope, weight: weight, lens: lens, profile: profile, index: index)
+            }
+        }
+
+        switch intent {
+        case .remove:
+            guard profile.rule(for: entity.id) != nil else { return [] }
+            return [ProposedMutation(
+                kind: .remove,
+                entityId: entity.id,
+                entityQuery: display,
+                reason: "Du ba om å slutte med \(display)."
+            )]
+
+        case .add, .increase, .decrease:
+            let members = SportVocabulary.categoryToSports[category]?.count ?? 0
+            return [ProposedMutation(
+                kind: kind(for: intent),
+                entityId: entity.id,
+                entityQuery: display,
+                scope: scope,
+                weight: weight,
+                reason: categoryReason(intent: intent, display: display, memberCount: members, scope: scope, lens: lens),
                 lens: lens
             )]
         }
@@ -284,6 +333,18 @@ enum MockInterestParser {
         switch intent {
         case .add, .increase: base = "Du vil se mer \(display)\(s). Legger til \(entityName)."
         case .decrease: base = "Du vil se mindre \(display). Nedprioriterer \(entityName)."
+        case .remove: base = "Du ba om å slutte med \(display)."
+        }
+        return lens.isDefault ? base : "\(base) Fokus: \(lens.label)."
+    }
+
+    static func categoryReason(intent: Intent, display: String, memberCount: Int, scope: String?, lens: Lens) -> String {
+        let s = scope.map { " \($0)" } ?? ""
+        let grener = memberCount > 0 ? " (dekker \(memberCount) grener)" : ""
+        let base: String
+        switch intent {
+        case .add, .increase: base = "Du vil følge \(display)\(s)\(grener)."
+        case .decrease: base = "Du vil nedprioritere \(display)."
         case .remove: base = "Du ba om å slutte med \(display)."
         }
         return lens.isDefault ? base : "\(base) Fokus: \(lens.label)."

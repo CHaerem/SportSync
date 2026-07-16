@@ -82,7 +82,7 @@ mennesket, aldri av en agent.
 | WP-61 | iOS-ytelse: matching-skalering + perf-porter | 0E | WP-60 | ⬜ køet |
 | WP-62 | iOS-responsivitet: QR/klokke/FM-timeout | 0E | – | ⬜ køet |
 | WP-63 | iOS-instrumentering: signposts + MetricKit | 0E | WP-60 | ⬜ køet |
-| WP-64 | Entitets-/kategoridekning (vintersport m.m.) | 0E | – | ⬜ køet |
+| WP-64 | Entitets-/kategoridekning (vintersport m.m.) | 0E | – | 🔬 PR åpnet — `build-entities.js` publiserer nå sport-/kategori-entiteter for alle `followBroadly`-sporter: 11 `type:"sport"` (bl.a. `sport-biathlon`/Skiskyting, `sport-cross-country`/Langrenn, `sport-alpine`/Alpint, `sport-nordic`/Nordisk kombinert, `sport-ski-jumping`/Hopp) + 1 `type:"category"` `category-winter-sports`/Vintersport (aliaser vinteridrett(er)/vintersporter) — norske navn+aliaser, server-inerte (utenfor athlete/team/league-enrichment). iOS `SportVocabulary` fikk vintersport-nøkler + `categoryToSports`/`keywordToCategory`; `EntityIndex.categoryKeyword`/`categoryEntity`; `detectEntities` ignorerer sport/kategori-typer; mock-parseren grounder «følg skiskyting»→`sport-biathlon` og «følg vintersport»→`category-winter-sports` (én bred kategorifølging) via vanlig diff/bekreft. entities.json 40→52; fixtures re-frosset (entities+manifest). Tester: JS 467/467 (+4), iOS 385/385 (+9); begge schemes bygger. Eval-cases beskrevet i PR-body (WP-69 bygges parallelt). |
 | WP-65 | Assistent: bulk-fangst + delvis rapportering | 0E | WP-64,WP-69 | ⬜ køet |
 | WP-66 | Assistent: app-kommando-arm + hurtigknapper | 0E | WP-62,WP-65 | ⬜ køet |
 | WP-67 | Assistent: presentasjonsfilter | 0E | WP-66 | ⬜ køet |
