@@ -32,6 +32,12 @@ struct AgendaView: View {
     /// stat for it (personal memory, layer 3). No-op default keeps previews/
     /// standalone use compiling.
     var onOpen: (Event) -> Void = { _ in }
+    /// WP-66 — an event id the host asks to open (the assistant's «vis
+    /// Brann-kampen» command, resolved against the agenda by AssistantViewModel).
+    /// Set to a real event id ⇒ this view raises its detail sheet, then clears it
+    /// back to nil so the same row can be re-opened later. Default constant keeps
+    /// previews / standalone use compiling.
+    var openEventID: Binding<String?> = .constant(nil)
 
     /// A single optional target drives both sheets. The event case carries the
     /// whole `AgendaEventRow` (not just the `Event`) so the detail sheet has the
@@ -84,6 +90,23 @@ struct AgendaView: View {
                 SeriesDetailSheet(series: series)
             }
         }
+        // WP-66 — open a specific event's detail on the assistant's command.
+        .onChange(of: openEventID.wrappedValue) { _, id in
+            guard let id, let row = eventRow(id: id) else { return }
+            detailTarget = .event(row)
+            onOpen(row.event)
+            openEventID.wrappedValue = nil
+        }
+    }
+
+    /// The compiled agenda row for an event id (WP-66 openEvent), or nil.
+    private func eventRow(id: String) -> AgendaEventRow? {
+        for section in viewModel.sections {
+            for item in section.items {
+                if case let .event(row) = item, row.event.id == id { return row }
+            }
+        }
+        return nil
     }
 
     // MARK: - Day section header (28pt before, 10pt after — DESIGN.md "Rytme")

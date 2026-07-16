@@ -66,7 +66,7 @@ struct GeneratedMutation {
 /// enums/optionals) for a simple, robust generated schema.
 @Generable
 struct GeneratedTurn {
-    @Guide(description: "Intent: 'mutations' hvis brukeren vil ENDRE hva som følges (følg/slutt/prioriter), 'answer' hvis brukeren STILLER ET SPØRSMÅL om hva/når/hvor (f.eks. «hva bør jeg se i kveld?», «når går neste etappe?»).")
+    @Guide(description: "Intent: 'mutations' hvis brukeren vil ENDRE hva som følges (følg/slutt/prioriter), 'answer' hvis brukeren STILLER ET SPØRSMÅL om hva/når/hvor, 'command' hvis brukeren vil at APPEN skal GJØRE noe (tema, nullstill, onboarding, dele profil/QR, «hva vet du om meg», glem, varsel-ledetid, eller åpne en hendelse).")
     var intent: String
 
     @Guide(description: "Kun når intent = 'mutations': alle foreslåtte endringer utledet fra ytringen. Tom liste ellers.")
@@ -77,6 +77,12 @@ struct GeneratedTurn {
 
     @Guide(description: "Kun når intent = 'answer': eventId-ene (kolonne 1 fra searchEvents) til radene svaret refererer til. Bruk kun ekte id-er fra verktøyet. Tom liste ellers.")
     var referencedEventIds: [String]
+
+    @Guide(description: "Kun når intent = 'command': hvilken handling. Én av: 'theme', 'reset', 'onboarding', 'share', 'memory', 'forget', 'notifications', 'open'. Tom streng ellers.")
+    var command: String
+
+    @Guide(description: "Argument til kommandoen når det trengs: 'theme' → 'dark'/'light'/'system'; 'reset' → 'everything' (alt om meg) eller 'followed' (det jeg følger); 'notifications' → 'on'/'off'; 'open' → navnet på hendelsen; 'forget' → hva som skal glemmes ('alt' for alt). Tom streng ellers.")
+    var commandArgument: String
 }
 
 // MARK: - searchEntities tool
@@ -263,7 +269,12 @@ struct FoundationModelsInterestAssistant: InterestAssistant {
 
         do {
             let turn = try await session.respond(to: utterance, generating: GeneratedTurn.self).content
-            if turn.intent.lowercased().contains("answer") {
+            let intent = turn.intent.lowercased()
+            if (intent.contains("command") || intent.contains("kommando")),
+               let command = Self.command(name: turn.command, argument: turn.commandArgument) {
+                return .command(command)
+            }
+            if intent.contains("answer") {
                 return .answer(AssistantAnswer(
                     text: turn.answer.trimmingCharacters(in: .whitespacesAndNewlines),
                     referencedEventIds: turn.referencedEventIds
@@ -346,6 +357,43 @@ struct FoundationModelsInterestAssistant: InterestAssistant {
         }
     }
 
+    /// GeneratedTurn(command,commandArgument) → AssistantCommand (WP-66).
+    /// Defensive/normalising, like `convert`: an unrecognised name/argument
+    /// returns nil (so the turn falls through to the mutation arm rather than
+    /// doing nothing). AssistantViewModel still validates every command
+    /// downstream (an openEvent phrase against the agenda, a forget against
+    /// memory) — the same defence-in-depth as MutationGrounder for mutations.
+    static func command(name: String, argument: String) -> AssistantCommand? {
+        let arg = argument.trimmingCharacters(in: .whitespacesAndNewlines)
+        let a = arg.lowercased()
+        switch name.lowercased().trimmingCharacters(in: .whitespaces) {
+        case "theme", "tema":
+            if a.contains("system") || a.contains("auto") { return .setTheme(.system) }
+            if a.contains("dark") || a.contains("mørk") || a.contains("mork") { return .setTheme(.dark) }
+            if a.contains("light") || a.contains("lys") { return .setTheme(.light) }
+            return nil
+        case "reset", "nullstill":
+            let everything = a.contains("everything") || a.contains("alt") || a.contains("meg") || a.contains("minne")
+            return .resetProfile(everything ? .everything : .followedOnly)
+        case "onboarding":
+            return .rerunOnboarding
+        case "share", "del", "qr":
+            return .shareProfile
+        case "memory", "minne":
+            return .showMemory
+        case "forget", "glem":
+            let all = arg.isEmpty || a.contains("alt") || a.contains("alle")
+            return .forgetMemory(query: all ? "" : arg)
+        case "notifications", "notify", "varsel", "varsling":
+            let off = a.contains("off") || a.contains("av") || a.contains("ingen") || a.contains("uten")
+            return .setNotificationLeadTime(enabled: !off)
+        case "open", "vis", "apne", "åpne":
+            return arg.isEmpty ? nil : .openEvent(query: arg)
+        default:
+            return nil
+        }
+    }
+
     static func instructions(profile: InterestProfile, digest: String = "", canSaveMemory: Bool = false) -> String {
         let following: String
         if profile.rules.isEmpty {
@@ -379,6 +427,16 @@ struct FoundationModelsInterestAssistant: InterestAssistant {
             disse er 'mutations' — å nevne en interesse ER å be om å følge den.
           • intent = 'answer' når brukeren STILLER ET SPØRSMÅL om agendaen (hva/når/hvor — «hva bør jeg
             se i kveld?», «når går neste etappe?», «hvor kan jeg se X?»).
+          • intent = 'command' når brukeren vil at APPEN skal GJØRE noe: bytte tema, nullstille, kjøre
+            onboarding på nytt, dele profilen/vise QR, vise «hva du vet om meg», glemme noe om dem, skru
+            varsel-ledetid på/av, eller åpne en bestemt hendelse («vis Brann-kampen»).
+
+        NÅR intent = 'command':
+        - Sett command til ÉN av: 'theme', 'reset', 'onboarding', 'share', 'memory', 'forget', 'notifications', 'open'.
+        - Sett commandArgument når det trengs: theme → 'dark'/'light'/'system'; reset → 'everything' (alt om meg)
+          eller 'followed' (det jeg følger); notifications → 'on'/'off'; open → navnet på hendelsen; forget → hva
+          som skal glemmes ('alt' for alt). La mutations og answer være tomme.
+        - «vis bare golf denne uka» er IKKE en kommando (det er et framtidig presentasjonsfilter) — bruk vanlig flyt.
 
         NÅR intent = 'answer':
         - Bruk verktøyet searchEvents for å finne hva som faktisk står på agendaen (i dag/kommende).

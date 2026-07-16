@@ -325,9 +325,15 @@ struct MutationTally: Codable, Equatable, Sendable {
 /// in a single generation (`GeneratedTurn.intent`); the mock decides
 /// deterministically (`MockAnswerer.isQuestion`). The grounding/diff pipeline is
 /// unchanged for the mutation arm — this only adds the answer arm alongside it.
+///
+/// WP-66 adds a third arm, `command`: an APP action (theme/reset/re-onboard/
+/// share/memory/notification-lead/open-event) the assistant performs after
+/// deterministic validation — so "alt kan gjøres via assistenten". The model
+/// (or the mock, `MockCommandParser`) decides the arm in a single generation.
 enum AssistantTurn: Equatable, Sendable {
     case mutations([ProposedMutation])
     case answer(AssistantAnswer)
+    case command(AssistantCommand)
 }
 
 /// A calm, Norwegian answer to a question about the agenda, plus the stable ids

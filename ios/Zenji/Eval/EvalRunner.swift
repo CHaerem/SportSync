@@ -63,8 +63,9 @@ struct EvalRunner: Sendable {
         case let (.mutation, .mutations(proposals)):
             let grounded = MutationGrounder.ground(proposals, index: index, profile: profile).grounded
             return .mutation(groundedEntityIds: grounded.map { $0.entity.id })
-        case (.mutation, .answer):
-            // The case wanted a change but the model answered — nothing grounds.
+        case (.mutation, .answer), (.mutation, .command):
+            // The case wanted a change but the model answered / ran a command —
+            // nothing grounds.
             return .mutation(groundedEntityIds: [])
         case let (.answer, .answer(answer)):
             let byId = Dictionary(feed.events.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
@@ -75,10 +76,16 @@ struct EvalRunner: Sendable {
                 resolvedRowCount: resolved.count,
                 resolvedRowSports: resolved.map { $0.sport }
             )
-        case (.answer, .mutations):
-            // The case asked a question but the model proposed changes — no
-            // answer text, no rows.
+        case (.answer, .mutations), (.answer, .command):
+            // The case asked a question but the model proposed changes / ran a
+            // command — no answer text, no rows.
             return .answer(text: "", citedRowCount: 0, resolvedRowCount: 0, resolvedRowSports: [])
+        case let (.command, .command(command)):
+            // WP-66 — score the PARSED command's canonical token.
+            return .command(token: command.evalToken)
+        case (.command, .mutations), (.command, .answer):
+            // The case expected a command but the model routed elsewhere.
+            return .command(token: "")
         }
     }
 

@@ -64,6 +64,9 @@ struct ContentView: View {
     /// Always nil outside DEBUG (only ever assigned inside a `ZENJI_DEMO`
     /// branch, same convention as `onboardingInitialStep` below).
     @State private var resetDemoState: AssistantPanel.ResetDemoState?
+    /// WP-66 — an event id the assistant's «vis <hendelse>» command resolved;
+    /// handed to AgendaView to raise its detail sheet, then cleared by it.
+    @State private var requestedEventID: String?
 
     @AppStorage(ThemeOverride.storageKey) private var themeOverrideRaw = ThemeOverride.system.rawValue
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -168,7 +171,8 @@ struct ContentView: View {
                 .frame(height: 1)
             liveNowLine
             ZStack {
-                AgendaView(viewModel: agenda, onFollow: follow, onOpen: { assistant.recordOpened($0) })
+                AgendaView(viewModel: agenda, onFollow: follow, onOpen: { assistant.recordOpened($0) },
+                           openEventID: $requestedEventID)
                 if panelShown {
                     AssistantPanel(
                         viewModel: assistant, dismiss: closePanel, onRerunOnboarding: rerunOnboarding,
@@ -205,6 +209,10 @@ struct ContentView: View {
             // Recompile the agenda the instant the assistant applies a change
             // (move 4). Set here (not in init) so it can capture `agenda`.
             assistant.onProfileChanged = { agenda.reloadFromCache(now: Date()) }
+            // WP-66 — the assistant's command arm's HOST-owned side effects
+            // (theme override, re-onboarding, the confirmed reset, opening an
+            // event's detail). VM-owned effects run inside the view model.
+            assistant.onCommand = { performCommand($0) }
             #if DEBUG
             if let mode = ProcessInfo.processInfo.environment["ZENJI_DEMO"] {
                 // WP-18: seed a deterministic lensed golf agenda + the profile
@@ -350,6 +358,27 @@ struct ContentView: View {
         assistant.proposeFollow(entity)
     }
 
+    /// WP-66 — the HOST-owned side of an assistant command. Theme, re-onboarding,
+    /// the confirmed reset, and opening an event's detail live here (they own
+    /// @AppStorage / the onboarding overlay / the agenda's detail sheet); the
+    /// share/memory/forget/notification commands are performed inside the view
+    /// model and never reach this closure. When `.openEvent` arrives here its
+    /// associated value is the RESOLVED event id (see AssistantViewModel).
+    private func performCommand(_ command: AssistantCommand) {
+        switch command {
+        case let .setTheme(theme):
+            themeOverrideRaw = theme.rawValue
+        case .rerunOnboarding:
+            rerunOnboarding()
+        case let .resetProfile(level):
+            performReset(level)
+        case let .openEvent(id):
+            requestedEventID = id
+        case .shareProfile, .showMemory, .forgetMemory, .setNotificationLeadTime:
+            break
+        }
+    }
+
     // MARK: - WP-31 — onboarding
 
     /// Finish or skip onboarding: mark it done (persistent flag) and fade the
@@ -420,7 +449,9 @@ struct ContentView: View {
             previousEvents: previousEvents,
             newEvents: dataStore.loadEvents(),
             interests: dataStore.loadInterests() ?? Interests(),
-            lastSync: dataStore.lastSync
+            lastSync: dataStore.lastSync,
+            // WP-66 — honour the assistant-set notification lead-time preference.
+            leadTimeEnabled: NotificationLeadPreference.isLeadTimeEnabled()
         )
     }
 

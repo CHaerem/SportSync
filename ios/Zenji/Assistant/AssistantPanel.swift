@@ -46,6 +46,9 @@ struct AssistantPanel: View {
     /// confirmation (nil = the two calm entry rows, non-nil = the confirm ark).
     @State private var resetExpanded = false
     @State private var confirmingReset: ResetLevel?
+    /// WP-66 — read the current theme so the quick chip can show its glyph and
+    /// cycle to the next state (the SAME @AppStorage key ContentView writes).
+    @AppStorage(ThemeOverride.storageKey) private var themeRaw = ThemeOverride.system.rawValue
     #if DEBUG
     /// WP-69 — the DEBUG-only FM-eval screen, reached from this same foot (the
     /// existing debug surface). Never compiled into a Release build.
@@ -73,10 +76,13 @@ struct AssistantPanel: View {
                     if let error = viewModel.errorMessage { errorRow(error) }
                     if let answer = viewModel.answer { answerSection(answer) }
                     if let tally = viewModel.mutationTally { tallySection(tally) }
+                    if let pendingCommand = viewModel.pendingCommand { commandConfirmSection(pendingCommand) }
+                    if let receipt = viewModel.commandReceipt { commandReceiptSection(receipt) }
                     if !viewModel.pending.isEmpty { proposalsSection }
                     if !viewModel.rejected.isEmpty { rejectionsSection }
                     if let explanation = viewModel.explanation { explanationSection(explanation) }
                     Rectangle().fill(ZenjiTokens.hairline).frame(height: 1).padding(.vertical, 2)
+                    quickChipsRow
                     profileSection
                     rerunOnboardingRow
                     memoryEntry
@@ -101,6 +107,9 @@ struct AssistantPanel: View {
                 confirmingReset = initialResetState.confirming
             }
         }
+        // WP-66 — the «hva vet du om meg» command opens the memory page (the same
+        // sheet the memoryEntry row opens), via a token the view model bumps.
+        .onChange(of: viewModel.memoryRequestToken) { _, _ in memoryPageShown = true }
     }
 
     // MARK: - Header
@@ -211,6 +220,96 @@ struct AssistantPanel: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(ZenjiTokens.foreground.opacity(0.04))
         .overlay(Rectangle().stroke(ZenjiTokens.foreground.opacity(0.15), lineWidth: 1))
+    }
+
+    // MARK: - Command arm (WP-66)
+
+    /// The rolig confirm ark for a DESTRUCTIVE command (reset) — reuses the WP-32
+    /// confirmation semantics: the exact consequence in one sentence, then
+    /// Bekreft/Avbryt at comfortable size. Only `.resetProfile` ever gets here.
+    private func commandConfirmSection(_ command: AssistantCommand) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            sectionTitle("BEKREFT")
+            Text(command.confirmationPrompt ?? "Vil du gjøre dette?")
+                .font(.zenjiMono(size: 12))
+                .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
+                .fixedSize(horizontal: false, vertical: true)
+            HStack(spacing: 10) {
+                Button("Bekreft") { viewModel.confirmCommand(); dismissIfDone() }
+                    .font(.zenjiMono(size: 13, weight: .bold))
+                    .foregroundStyle(ZenjiTokens.diffRemove)
+                    .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.diffRemove))
+                    .accessibilityIdentifier("command.confirm")
+                Button("Avbryt") { viewModel.cancelCommand(); dismissIfDone() }
+                    .font(.zenjiMono(size: 13))
+                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
+                    .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.foreground))
+                    .accessibilityIdentifier("command.cancel")
+            }
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(ZenjiTokens.diffRemove.opacity(0.06))
+        .overlay(Rectangle().stroke(ZenjiTokens.diffRemove.opacity(0.3), lineWidth: 1))
+    }
+
+    /// A calm one-line receipt after a harmless command executed ("Tema: mørkt.",
+    /// "Åpner Brann–X.") — the "rolig kvittering" the brief asks for.
+    private func commandReceiptSection(_ receipt: String) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            sectionTitle("UTFØRT")
+            Text(receipt)
+                .font(.zenjiMono(size: 13))
+                .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(ZenjiTokens.accent.opacity(0.08))
+        .overlay(Rectangle().stroke(ZenjiTokens.accent.opacity(0.3), lineWidth: 1))
+    }
+
+    // MARK: - Quick chips (WP-66)
+
+    /// A FEW, quiet chips for the main app actions — flat hairline boxes in the
+    /// accent (never filled pills; DESIGN.md forbudsliste), ≥44 pt tall. They run
+    /// the SAME command path a typed command does (`runCommand`), so the chip and
+    /// the utterance are one code path. Wraps to two rows on a narrow width so the
+    /// body never scrolls horizontally.
+    private var quickChipsRow: some View {
+        let theme = ThemeOverride(rawValue: themeRaw) ?? .system
+        let leadOn = NotificationLeadPreference.isLeadTimeEnabled()
+        return VStack(alignment: .leading, spacing: 8) {
+            sectionTitle("HURTIG")
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 8) { chipButtons(theme: theme, leadOn: leadOn) }
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 8) { chip("TEMA \(theme.glyph)") { viewModel.runCommand(.setTheme(theme.next)) }
+                        chip("VARSEL \(leadOn ? "●" : "○")") { viewModel.runCommand(.setNotificationLeadTime(enabled: !leadOn)) } }
+                    HStack(spacing: 8) { chip("DEL PROFIL") { viewModel.runCommand(.shareProfile) }
+                        chip("MITT MINNE") { viewModel.runCommand(.showMemory) } }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func chipButtons(theme: ThemeOverride, leadOn: Bool) -> some View {
+        chip("TEMA \(theme.glyph)") { viewModel.runCommand(.setTheme(theme.next)) }
+        chip("VARSEL \(leadOn ? "●" : "○")") { viewModel.runCommand(.setNotificationLeadTime(enabled: !leadOn)) }
+        chip("DEL PROFIL") { viewModel.runCommand(.shareProfile) }
+        chip("MITT MINNE") { viewModel.runCommand(.showMemory) }
+    }
+
+    private func chip(_ label: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(label)
+                .font(.zenjiMono(size: 12, weight: .bold))
+                .foregroundStyle(ZenjiTokens.accent)
+                .tracking(1)
+        }
+        .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.accent))
+        .accessibilityIdentifier("chip.\(label.split(separator: " ").first.map(String.init)?.lowercased() ?? "")")
     }
 
     // MARK: - Proposals (the DIFF)

@@ -1,6 +1,6 @@
 {
-  "version": 2,
-  "description": "WP-69/65 — versioned assistant eval corpus. Golden STRUCTURED expectations (entity id-sets for mutations; row/claim rubric for answers), NEVER exact prose. Runs two ways: through MockInterestAssistant as a deterministic XCTest (CI), and through the REAL FoundationModelsInterestAssistant on an AI-enabled Mac/iPhone via RealFMEvalTests / the DEBUG eval screen. `clock` is the fixed `now` CI evaluates the answer arm against; the on-device run uses the live feed and real time. `knownGap` cases are EXPECTED to fail until the named work package lands — CI skips them (marked), the device run reports them as known gaps. SPORT-LEVEL vs SPECIFIC ENTITY (WP-65 principle): when the user names a BARE sport ('golf', 'litt F1', 'mer sykkel', 'skiskyting') the correct grounding is the SPORT-LEVEL entity (sport-golf, sport-f1, sport-cycling, sport-biathlon) — following the whole sport, not an arbitrary flagship tournament (grounding 'golf' to one random event is wrong). When the user names a SPECIFIC tournament/team/athlete ('Tour de France', 'Lyn', 'Hovland') the specific entity is correct. An umbrella term ('all vintersport') grounds to the single category entity (category-winter-sports). Sports with no published sport entity (tennis, athletics) fall back to their most-headline real entity.",
+  "version": 3,
+  "description": "WP-69/65/66 — versioned assistant eval corpus. Golden STRUCTURED expectations (entity id-sets for mutations; row/claim rubric for answers), NEVER exact prose. Runs two ways: through MockInterestAssistant as a deterministic XCTest (CI), and through the REAL FoundationModelsInterestAssistant on an AI-enabled Mac/iPhone via RealFMEvalTests / the DEBUG eval screen. `clock` is the fixed `now` CI evaluates the answer arm against; the on-device run uses the live feed and real time. `knownGap` cases are EXPECTED to fail until the named work package lands — CI skips them (marked), the device run reports them as known gaps. SPORT-LEVEL vs SPECIFIC ENTITY (WP-65 principle): when the user names a BARE sport ('golf', 'litt F1', 'mer sykkel', 'skiskyting') the correct grounding is the SPORT-LEVEL entity (sport-golf, sport-f1, sport-cycling, sport-biathlon) — following the whole sport, not an arbitrary flagship tournament (grounding 'golf' to one random event is wrong). When the user names a SPECIFIC tournament/team/athlete ('Tour de France', 'Lyn', 'Hovland') the specific entity is correct. An umbrella term ('all vintersport') grounds to the single category entity (category-winter-sports). Sports with no published sport entity (tennis, athletics) fall back to their most-headline real entity. COMMAND ARM (WP-66): the `command` cases pin the parsed AssistantCommand's canonical token — enum-argument commands exact ('theme:dark', 'reset:everything', 'notify:off'), free-text commands ('open', 'forget') on the ARM only (a free-generating model can't be held to an exact phrase).",
   "clock": "2026-07-13T05:00:00Z",
   "cases": [
     {
@@ -286,6 +286,97 @@
           "requireNoPhantomRows": true
         }
       }
+    },
+    {
+      "id": "cmd-01-theme-dark",
+      "category": "command",
+      "utterance": "Bytt til mørkt tema",
+      "kind": "command",
+      "note": "Theme command with an explicit target → the full enum token.",
+      "expect": { "command": "theme:dark" }
+    },
+    {
+      "id": "cmd-02-theme-light",
+      "category": "command",
+      "utterance": "Bruk lyst tema",
+      "kind": "command",
+      "expect": { "command": "theme:light" }
+    },
+    {
+      "id": "cmd-03-theme-system",
+      "category": "command",
+      "utterance": "Bruk systemets tema",
+      "kind": "command",
+      "expect": { "command": "theme:system" }
+    },
+    {
+      "id": "cmd-04-reset-everything",
+      "category": "command",
+      "utterance": "Slett alt om meg",
+      "kind": "command",
+      "note": "The GDPR level — «alt om meg» ⇒ reset:everything. DESTRUCTIVE: the arm holds it for confirmation before acting.",
+      "expect": { "command": "reset:everything" }
+    },
+    {
+      "id": "cmd-05-reset-followed",
+      "category": "command",
+      "utterance": "Nullstill det jeg følger",
+      "kind": "command",
+      "note": "Bare «nullstill (det jeg følger)» ⇒ the follow-only reset level.",
+      "expect": { "command": "reset:followed" }
+    },
+    {
+      "id": "cmd-06-rerun-onboarding",
+      "category": "command",
+      "utterance": "Kjør onboarding på nytt",
+      "kind": "command",
+      "expect": { "command": "onboarding" }
+    },
+    {
+      "id": "cmd-07-share-profile",
+      "category": "command",
+      "utterance": "Del profilen min",
+      "kind": "command",
+      "expect": { "command": "share" }
+    },
+    {
+      "id": "cmd-08-show-memory",
+      "category": "command",
+      "utterance": "Hva vet du om meg?",
+      "kind": "command",
+      "note": "«hva vet du om meg» reads like a question but is the memory-open command — checked BEFORE the question arm.",
+      "expect": { "command": "memory" }
+    },
+    {
+      "id": "cmd-09-forget-all",
+      "category": "command",
+      "utterance": "Glem alt om meg",
+      "kind": "command",
+      "note": "Memory-forget (all). Scored on the ARM ('forget') — the target is free text.",
+      "expect": { "command": "forget" }
+    },
+    {
+      "id": "cmd-10-notify-lead-off",
+      "category": "command",
+      "utterance": "Skru av varsel-ledetid",
+      "kind": "command",
+      "note": "Notification lead-time OFF (fire at start). «på» would be on.",
+      "expect": { "command": "notify:off" }
+    },
+    {
+      "id": "cmd-11-notify-lead-on",
+      "category": "command",
+      "utterance": "Skru på varsel-ledetid",
+      "kind": "command",
+      "expect": { "command": "notify:on" }
+    },
+    {
+      "id": "cmd-12-open-event",
+      "category": "command",
+      "utterance": "Vis Brann-kampen",
+      "kind": "command",
+      "note": "Open an event's detail by name. Scored on the ARM ('open') — the phrase is free text, and «vis bare …» (WP-67 filter) is deliberately NOT routed here.",
+      "expect": { "command": "open" }
     }
   ]
 }

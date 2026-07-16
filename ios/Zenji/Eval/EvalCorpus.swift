@@ -90,6 +90,9 @@ struct EvalCase: Codable, Sendable, Identifiable {
 enum EvalKind: String, Codable, Sendable {
     case mutation
     case answer
+    /// WP-66 — the command arm: the golden pins the parsed `AssistantCommand`'s
+    /// canonical token (`AssistantCommand.evalToken`).
+    case command
 }
 
 /// A rule to seed into the profile before interpreting. `scope` is optional
@@ -107,6 +110,20 @@ struct EvalExpectation: Codable, Sendable {
     var mutationEntityIds: [String]?
     /// For `.answer`: the row/claim rubric.
     var answer: AnswerExpectation?
+    /// For `.command` (WP-66): the expected `AssistantCommand.evalToken`. An
+    /// enum-argument command pins the full `arm:value` ("theme:dark"); a
+    /// free-text command may pin the ARM alone ("open", "forget"), which the
+    /// scorer matches on the actual token's arm (a free-generating model can't
+    /// be held to an exact phrase).
+    var command: String?
+
+    /// Explicit initialiser so the existing (mutation/answer) call sites and the
+    /// synthesised Codable both keep working while `command` is added.
+    init(mutationEntityIds: [String]? = nil, answer: AnswerExpectation? = nil, command: String? = nil) {
+        self.mutationEntityIds = mutationEntityIds
+        self.answer = answer
+        self.command = command
+    }
 }
 
 /// The answer-arm rubric. Every populated field is a check; a case passes only

@@ -47,6 +47,9 @@ struct ProfileSharePanel: View {
         .onChange(of: viewModel.presentToken) { _, _ in
             if viewModel.lastImportSummary != nil || viewModel.shareImportMessage != nil { expanded = true }
         }
+        // WP-66 — the assistant's «del profil / vis QR» command reveals this
+        // disclosure (the same idiom as an import bumping presentToken above).
+        .onChange(of: viewModel.shareRequestToken) { _, _ in expanded = true }
         #if DEBUG
         // Screenshot harness: open the disclosure so `ZENJI_DEMO=share` captures
         // the export/import UI directly (never compiled into a release build).

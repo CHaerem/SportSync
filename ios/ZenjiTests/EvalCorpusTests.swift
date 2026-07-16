@@ -33,7 +33,7 @@ final class EvalCorpusTests: XCTestCase {
     func test_corpus_coversTheRequiredCategories() throws {
         let corpus = try loadCorpus()
         let categories = Set(corpus.cases.map(\.category))
-        for required in ["canon", "multiPart", "winter", "question"] {
+        for required in ["canon", "multiPart", "winter", "question", "command"] {
             XCTAssertTrue(categories.contains(required), "corpus must cover the '\(required)' category")
         }
     }

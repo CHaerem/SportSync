@@ -60,12 +60,18 @@ struct NotificationPlanner: Sendable {
         newEvents: [Event],
         interests: Interests,
         now: Date,
-        lastSync: Date?
+        lastSync: Date?,
+        // WP-66 — the assistant's `setNotificationLeadTime` command's control
+        // surface (persisted per-device in NotificationLeadPreference). ON (the
+        // default) fires reminders AHEAD of the event (the interests lead); OFF
+        // fires them AT start (no lead). Defaulted so every existing caller/test
+        // is unaffected.
+        leadTimeEnabled: Bool = true
     ) -> [NotificationOperation] {
         let previousByID = byID(previousEvents)
         let newByID = byID(newEvents)
         let stale = isStale(lastSync: lastSync, now: now)
-        let leadSeconds = leadTime(interests) * 60
+        let leadSeconds = leadTimeEnabled ? leadTime(interests) * 60 : 0
 
         func plannedRequest(for event: Event) -> NotificationRequest? {
             guard let id = event.id else { return nil }               // WP-02 contract: no id, not trackable
@@ -161,9 +167,10 @@ struct NotificationPlanner: Sendable {
         newEvents: [Event],
         interests: Interests,
         now: Date = Date(),
-        lastSync: Date?
+        lastSync: Date?,
+        leadTimeEnabled: Bool = true
     ) async -> [NotificationOperation] {
-        let operations = Self.plan(previousEvents: previousEvents, newEvents: newEvents, interests: interests, now: now, lastSync: lastSync)
+        let operations = Self.plan(previousEvents: previousEvents, newEvents: newEvents, interests: interests, now: now, lastSync: lastSync, leadTimeEnabled: leadTimeEnabled)
         guard !operations.isEmpty else { return operations }
 
         let wantsToScheduleSomething = operations.contains {
