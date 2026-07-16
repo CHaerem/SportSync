@@ -93,6 +93,9 @@ enum EvalKind: String, Codable, Sendable {
     /// WP-66 — the command arm: the golden pins the parsed `AssistantCommand`'s
     /// canonical token (`AssistantCommand.evalToken`).
     case command
+    /// WP-67 — the present arm: the golden pins the parsed `AgendaFilter`'s
+    /// structure (sports set / entity-id set / date window, or a reset flag).
+    case present
 }
 
 /// A rule to seed into the profile before interpreting. `scope` is optional
@@ -116,14 +119,31 @@ struct EvalExpectation: Codable, Sendable {
     /// scorer matches on the actual token's arm (a free-generating model can't
     /// be held to an exact phrase).
     var command: String?
+    /// For `.present` (WP-67): the expected filter structure.
+    var filter: FilterExpectation?
 
-    /// Explicit initialiser so the existing (mutation/answer) call sites and the
-    /// synthesised Codable both keep working while `command` is added.
-    init(mutationEntityIds: [String]? = nil, answer: AnswerExpectation? = nil, command: String? = nil) {
+    /// Explicit initialiser so the existing (mutation/answer/command) call sites
+    /// and the synthesised Codable both keep working while `filter` is added.
+    init(mutationEntityIds: [String]? = nil, answer: AnswerExpectation? = nil, command: String? = nil, filter: FilterExpectation? = nil) {
         self.mutationEntityIds = mutationEntityIds
         self.answer = answer
         self.command = command
+        self.filter = filter
     }
+}
+
+/// The present-arm rubric (WP-67). Every populated field is a check; a case
+/// passes only if ALL its checks pass. Structural, never prose — so it holds for
+/// the deterministic mock and a free-generating model alike.
+struct FilterExpectation: Codable, Sendable {
+    /// The exact set of canonical sport tags the filter must carry (order-free).
+    var sports: [String]?
+    /// The exact set of entity ids the filter must carry (order-free).
+    var entityIds: [String]?
+    /// The date window's rawValue ("today"/"tomorrow"/"this-week"/"this-weekend").
+    var window: String?
+    /// True ⇒ the filter must be EMPTY (the «vis alt igjen» reset).
+    var reset: Bool?
 }
 
 /// The answer-arm rubric. Every populated field is a check; a case passes only

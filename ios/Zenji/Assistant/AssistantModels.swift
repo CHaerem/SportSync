@@ -330,10 +330,17 @@ struct MutationTally: Codable, Equatable, Sendable {
 /// share/memory/notification-lead/open-event) the assistant performs after
 /// deterministic validation — so "alt kan gjøres via assistenten". The model
 /// (or the mock, `MockCommandParser`) decides the arm in a single generation.
+///
+/// WP-67 adds a fourth arm, `present`: an EPHEMERAL presentation filter over the
+/// agenda («vis bare golf denne uka»). It changes only what the board SHOWS —
+/// never the follow-profile, never persisted (an `AgendaFilter` applied as a pure
+/// view layer). The model (or the mock, via `AgendaFilterParser`) decides the arm;
+/// crucially a «vis …»-cue routes here instead of being mis-read as a follow.
 enum AssistantTurn: Equatable, Sendable {
     case mutations([ProposedMutation])
     case answer(AssistantAnswer)
     case command(AssistantCommand)
+    case present(AgendaFilter)
 }
 
 /// A calm, Norwegian answer to a question about the agenda, plus the stable ids

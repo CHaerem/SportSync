@@ -75,9 +75,17 @@ struct MockInterestAssistant: InterestAssistant {
                 ? .answer(AssistantAnswer(text: ""))
                 : .mutations([])
         case .available:
-            // WP-66 intent routing (three arms). Command is checked FIRST —
-            // it is the narrowest matcher (a specific anchor word), so a
-            // follow/question is never stolen — then WP-16.4's question vs.
+            // WP-67 intent routing (four arms). PRESENT is checked FIRST: a
+            // «vis …»-cue must win over the mutation cue («vis bare golf» is a
+            // presentation filter, not *follg golf*). It is anchored on a leading
+            // present verb + a groundable subject, so a «følg …» (no cue) and a
+            // «vis <hendelse>» openEvent (no sport/entity/window) both fall
+            // through untouched.
+            if let filter = AgendaFilterParser.parse(utterance, index: index) {
+                return .present(filter)
+            }
+            // WP-66 command arm — the narrowest matcher (a specific anchor word),
+            // so a follow/question is never stolen — then WP-16.4's question vs.
             // WP-16 mutation split, unchanged.
             if let command = MockCommandParser.command(utterance, profile: profile, index: index) {
                 return .command(command)

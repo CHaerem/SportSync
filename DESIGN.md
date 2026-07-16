@@ -49,6 +49,15 @@ overskrift, 10pt etter. Én kolonnebredde (maks 640pt på store flater, sentrert
    HH:MM», ekspanderes ved tapp.
 4. **Live nå**: egen stille linje øverst under headeren når noe pågår
    (`▌ LIVE` i live-farge + tittel + kanal), maks to; ellers usynlig.
+5. **Presentasjonsfilter (WP-67 — iOS)**: sier du «vis bare golf denne uka»,
+   vises en stille linje over agendaen — dempet `VISER:` + amber emne
+   (`GOLF · DENNE UKA`) + ett-trykks `✕` som nullstiller. MIDLERTIDIG og ærlig:
+   det endrer bare hva agendaen VISER, aldri hva du følger, og lagres aldri (et
+   rent visningslag over de kompilerte seksjonene — de fem predikatene og de
+   gylne vektorene er urørt). En kategori («vintersport») kollapser til
+   kategorinavnet i linja. Tomt treff sier «Ingen treff for filteret.» (aldri
+   «ingenting på»). Linja er usynlig når intet filter er satt — rolig standard
+   er en ufiltrert agenda.
 
 ## Radens anatomi
 
