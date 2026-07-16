@@ -87,7 +87,7 @@ mennesket, aldri av en agent.
 | WP-66 | Assistent: app-kommando-arm + hurtigknapper | 0E | WP-62,WP-65 | ⬜ køet |
 | WP-67 | Assistent: presentasjonsfilter | 0E | WP-66 | ⬜ køet |
 | WP-68 | Assistent: app-hjelp-kunnskap | 0E | WP-66 | ⬜ køet |
-| WP-69 | FM-eval-harness på enhet + korpus | 0E | – | ⬜ køet |
+| WP-69 | FM-eval-harness på enhet + korpus | 0E | – | 🔬 PR åpnet (`wp-69-fm-eval`) — versjonert korpus `ios/ZenjiTests/Fixtures/eval-corpus.json` (24 cases: 12 canon + 5 multiPart + 2 winter + 5 question; 4 `knownGap` mot WP-64/65); delt pure `EvalCorpus`/`EvalScorer`/`EvalRunner`/`EvalReport` (id-sett for mutasjoner, rad/påstand-rubrikk for svar) i `Zenji/Eval/`; CI: `EvalCorpusTests` kjører samme korpus mot mocken (20 asserted grønne, 4 gap skippet med markering); DEBUG-only eval-skjerm (`Zenji/Eval/EvalView`, nås fra assistent-arkets fot) kjører ekte FM på enhet, pass-rate per kategori, anonymisert JSON-rapport via delesheet + eksport av forsto-ikke-loggen som korpus-kandidater; ingen ny target (korpus bundlet som ressurs i Zenji + ZenjiDeviceDev, `Zenji/Eval` i test-sources); 385/385 iOS-tester grønne (+9), begge schemes + ZenjiDeviceDev bygger. Eier kjører første reelle runde på fysisk iPhone og deler rapporten |
 | WP-70 | XCUITest: hovedflyter + launch-metrikk | 0E | – | ⬜ køet |
 
 ---

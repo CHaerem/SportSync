@@ -46,6 +46,11 @@ struct AssistantPanel: View {
     /// confirmation (nil = the two calm entry rows, non-nil = the confirm ark).
     @State private var resetExpanded = false
     @State private var confirmingReset: ResetLevel?
+    #if DEBUG
+    /// WP-69 — the DEBUG-only FM-eval screen, reached from this same foot (the
+    /// existing debug surface). Never compiled into a Release build.
+    @State private var evalShown = false
+    #endif
 
     /// DEBUG screenshot harness only: force the "Nullstill" disclosure open
     /// (and optionally jump straight to one level's confirmation ark) so each
@@ -76,6 +81,9 @@ struct AssistantPanel: View {
                     memoryEntry
                     resetSection
                     misunderstoodSection
+                    #if DEBUG
+                    evalEntry
+                    #endif
                     ProfileSharePanel(viewModel: viewModel)
                 }
                 .padding(20)
@@ -551,6 +559,30 @@ struct AssistantPanel: View {
     private var misunderstoodExportText: String {
         String(data: viewModel.misunderstoodExportPayload(), encoding: .utf8) ?? "[]"
     }
+
+    #if DEBUG
+    // MARK: - Eval (WP-69, DEBUG only)
+
+    /// A quiet entry to the on-device FM-eval screen at the same foot as the
+    /// other developer surfaces. Compiled out of Release builds entirely (the
+    /// whole EvalView + its model are `#if DEBUG`).
+    private var evalEntry: some View {
+        Button { evalShown = true } label: {
+            HStack {
+                Text("EVAL (DEBUG)")
+                    .font(.zenjiMono(size: 12, weight: .bold))
+                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                    .tracking(1.5)
+                Spacer()
+            }
+            .frame(minHeight: 44)
+            .contentShape(Rectangle())
+        }
+        .sheet(isPresented: $evalShown) {
+            EvalView()
+        }
+    }
+    #endif
 
     // MARK: - Small helpers
 
