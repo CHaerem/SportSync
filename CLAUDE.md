@@ -206,6 +206,13 @@ by default) or the agents' `git add` silently skips them.
 
 ## Development commands
 
+**Arbeidsflyt-skills for Claude-økter** (`.claude/skills/`, lastes ved behov):
+`ios-dev` — bygg/test/FM-eval/enhets-installering av iOS-appen + fallgruvene
+(DerivedData, target-medlemskap, prompt-budsjettet, kabel-vs-wifi);
+`wp-flow` — arbeidspakke-driften (bølgeplanlegging uten filkollisjoner,
+delegering til worktree-agenter, merge-/konfliktoppskrifter, verifiserings-
+matrisen per flate). Les den relevante FØR du planlegger/bygger.
+
 - `npm run dev` — local server on port 8000
 - `npm run build` — fetch data + build events + calendar
 - `npm run build:events` / `npm run validate:data` / `npm run build:calendar`
