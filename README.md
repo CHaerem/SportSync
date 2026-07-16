@@ -37,9 +37,9 @@ UI-fix agent that self-heals rendering bugs (fix → verify → auto-merge), a
 self-repair "mechanic" that fixes its own broken code/tests, and a weekly improve
 agent that evolves its own behavior — do real research, write transparent JSON,
 and explain their reasoning. The self-fixing loops auto-merge their own verified
-changes (test-gated), stopping short only at three protected paths (workflows,
-hooks, your interests file). Every loop is narrow and test-gated — the deliberate
-opposite of v1's sprawling autopilot.
+changes (test-gated), stopping short only at five protected paths (workflows,
+composite actions, hooks, hook wiring, your interests file). Every loop is narrow
+and test-gated — the deliberate opposite of v1's sprawling autopilot.
 
 ## Architecture
 
@@ -98,8 +98,10 @@ eleven scheduled jobs, with their models, are in the table below.
 | **Usage monitor** | hourly | — | Real account-wide quota gauge; gates every agent |
 
 The self-fixing loops (UI-fix, self-repair, improve) auto-merge behind a re-run test
-gate, stopping only at three **protected paths** that always wait for review:
-`.github/workflows/**`, `scripts/hooks/**`, and `scripts/config/interests.json`.
+gate (one shared enforcement, `scripts/merge-gate.js`), stopping only at five
+**protected paths** that always wait for review: `.github/workflows/**`,
+`.github/actions/**`, `scripts/hooks/**`, `scripts/config/interests.json`, and
+`.claude/settings.json`.
 
 ### Correct "where to watch"
 
@@ -144,10 +146,11 @@ replacing workflow YAML only.
 
 ## Frontend
 
-Static PWA, no build step. **Calm design**: one quiet, scannable column (max 640px) —
-no dashboard grid, no competing panels. A single day-grouped agenda where every row
-answers only **when · what · where to watch**, with club crests / national flags and
-always-Norwegian channels. Must-see events (favorite / Norwegian / high importance) get
+Static PWA, no build step. **Calm design** with a Tekst-TV (teletext) identity —
+monospace type, amber as the single accent, a near-black page; no dashboard grid,
+no competing panels, no logos or emoji. A single day-grouped agenda where every row
+answers only **when · what · where to watch**, with always-Norwegian channels.
+Must-see events (favorite / Norwegian / high importance) get
 the gentlest possible accent; details (standings, results, AI sources) are a tap away,
 never in your face. Near-black dark default with a warm-paper light mode that follows the
 system theme, live ESPN score polling (60s), one quiet editorial headline on top, tuned
@@ -159,11 +162,20 @@ to fit iPhone widths, installable on iOS/Android.
 npm ci
 npm run build      # fetch data + build events + calendar
 npm run dev        # localhost:8000
-npm test           # 35 focused test files (~460 tests), a few seconds
+npm test           # 36 focused test files (~470 tests), a few seconds
 npm run screenshot # Playwright visual check
 ```
 
 See [CLAUDE.md](CLAUDE.md) for the full architecture reference.
+
+## iOS app
+
+`ios/` holds a native SwiftUI companion app (agenda + widget, on-device
+Foundation Models assistant that edits your interests, answers questions and
+runs app commands in Norwegian — all local, no accounts). It consumes the same
+published data contract (`manifest.json`-driven sync) and is verified by its
+own test suite (500+ unit tests, UI flows, and a versioned real-model eval
+corpus). See [ios/README.md](ios/README.md).
 
 ## License
 
