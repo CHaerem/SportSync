@@ -1,6 +1,6 @@
 {
-  "version": 1,
-  "description": "WP-69 — versioned assistant eval corpus. Golden STRUCTURED expectations (entity id-sets for mutations; row/claim rubric for answers), NEVER exact prose. Runs two ways: through MockInterestAssistant as a deterministic XCTest (CI), and through the REAL FoundationModelsInterestAssistant on a physical iPhone via the DEBUG eval screen. `clock` is the fixed `now` CI evaluates the answer arm against (the checked-in events fixture); the on-device run uses the live feed and real time. `knownGap` cases are EXPECTED to fail until the named work package lands — CI skips them (marked), the device run reports them as known gaps.",
+  "version": 2,
+  "description": "WP-69/65 — versioned assistant eval corpus. Golden STRUCTURED expectations (entity id-sets for mutations; row/claim rubric for answers), NEVER exact prose. Runs two ways: through MockInterestAssistant as a deterministic XCTest (CI), and through the REAL FoundationModelsInterestAssistant on an AI-enabled Mac/iPhone via RealFMEvalTests / the DEBUG eval screen. `clock` is the fixed `now` CI evaluates the answer arm against; the on-device run uses the live feed and real time. `knownGap` cases are EXPECTED to fail until the named work package lands — CI skips them (marked), the device run reports them as known gaps. SPORT-LEVEL vs SPECIFIC ENTITY (WP-65 principle): when the user names a BARE sport ('golf', 'litt F1', 'mer sykkel', 'skiskyting') the correct grounding is the SPORT-LEVEL entity (sport-golf, sport-f1, sport-cycling, sport-biathlon) — following the whole sport, not an arbitrary flagship tournament (grounding 'golf' to one random event is wrong). When the user names a SPECIFIC tournament/team/athlete ('Tour de France', 'Lyn', 'Hovland') the specific entity is correct. An umbrella term ('all vintersport') grounds to the single category entity (category-winter-sports). Sports with no published sport entity (tennis, athletics) fall back to their most-headline real entity.",
   "clock": "2026-07-13T05:00:00Z",
   "cases": [
     {
@@ -29,7 +29,8 @@
       "category": "canon",
       "utterance": "Mer sykkel i juli",
       "kind": "mutation",
-      "expect": { "mutationEntityIds": ["tour-de-france-2026"] }
+      "note": "Bare sport word → the SPORT-LEVEL entity (WP-65 principle). Re-calibrated from tour-de-france-2026: 'mer sykkel' means the whole sport, not one flagship race.",
+      "expect": { "mutationEntityIds": ["sport-cycling"] }
     },
     {
       "id": "canon-05-slutt-med-tennis",
@@ -58,6 +59,7 @@
       "category": "canon",
       "utterance": "Følg Tour de France",
       "kind": "mutation",
+      "note": "A SPECIFIC named tournament → the specific entity (not sport-cycling).",
       "expect": { "mutationEntityIds": ["tour-de-france-2026"] }
     },
     {
@@ -88,7 +90,8 @@
       "category": "canon",
       "utterance": "Mer sykkel, bare de norske",
       "kind": "mutation",
-      "expect": { "mutationEntityIds": ["tour-de-france-2026"] }
+      "note": "Bare sport + a Norwegian-focus lens. Sport-level entity (WP-65); the ', bare de norske' tail is a lens modifier, not a second clause.",
+      "expect": { "mutationEntityIds": ["sport-cycling"] }
     },
     {
       "id": "multi-01-hovland-og-ruud",
@@ -117,40 +120,106 @@
       "category": "multiPart",
       "utterance": "Jeg liker golf, spesielt Hovland, og all vintersport, og følger Brann og litt F1",
       "kind": "mutation",
-      "knownGap": true,
-      "knownGapRef": "WP-65",
-      "note": "The owner's real utterance class. Single-generation keyword parsing catches only the first explicit clause; WP-65 (bulk-fangst + delvis rapportering) is what makes every clause land. The golden id-set is provisional — WP-64 mints the 'vintersport' + 'Brann' ids and WP-65 finalizes this expectation in the same PR.",
-      "expect": { "mutationEntityIds": ["viktor-hovland", "vintersport", "sk-brann", "f1-world-championship-2026"] }
+      "note": "The owner's real utterance class (WP-65). FIVE clauses → five proposals: golf→sport-golf, Hovland→viktor-hovland, all vintersport→category-winter-sports, Brann→NOT in the index (honestly reported as not-found, NOT dropped), litt F1→sport-f1. The grounded id-set is the four that resolve; Brann is the per-clause 'fant ikke' the tally reports.",
+      "expect": { "mutationEntityIds": ["sport-golf", "viktor-hovland", "category-winter-sports", "sport-f1"] }
     },
     {
       "id": "multi-05-owner-declarative-variant",
       "category": "multiPart",
-      "utterance": "Jeg følger Hovland og Ruud, og vil gjerne ha med litt sjakk og F1 også",
+      "utterance": "Jeg følger Viktor Hovland og Casper Ruud, og vil gjerne ha med litt sjakk og F1 også",
       "kind": "mutation",
-      "knownGap": true,
-      "knownGapRef": "WP-65",
-      "note": "Declarative «jeg følger …» phrasing with a mix of entities and whole-sports. WP-65 routes declarative cues to the mutation arm and fans out per clause; finalizes this expectation.",
-      "expect": { "mutationEntityIds": ["viktor-hovland", "casper-ruud", "magnus-carlsen", "f1-world-championship-2026"] }
+      "note": "Declarative «jeg følger …» phrasing routed to the mutation arm (WP-65), mixing named athletes with bare sports. Bare 'sjakk'/'F1' → sport-level entities (WP-65 principle).",
+      "expect": { "mutationEntityIds": ["viktor-hovland", "casper-ruud", "sport-chess", "sport-f1"] }
+    },
+    {
+      "id": "multi-06-golf-og-sjakk",
+      "category": "multiPart",
+      "utterance": "Følg golf og sjakk",
+      "kind": "mutation",
+      "note": "Two bare sports → two sport-level entities.",
+      "expect": { "mutationEntityIds": ["sport-golf", "sport-chess"] }
+    },
+    {
+      "id": "multi-07-tre-utovere",
+      "category": "multiPart",
+      "utterance": "Følg Viktor Hovland, Magnus Carlsen og Casper Ruud",
+      "kind": "mutation",
+      "note": "Three explicit athletes, comma + og — none may be dropped.",
+      "expect": { "mutationEntityIds": ["viktor-hovland", "magnus-carlsen", "casper-ruud"] }
+    },
+    {
+      "id": "multi-08-liker-fotball-og-sykkel",
+      "category": "multiPart",
+      "utterance": "Jeg liker fotball og sykkel",
+      "kind": "mutation",
+      "note": "Declarative cue + two bare sports → two sport-level entities.",
+      "expect": { "mutationEntityIds": ["sport-football", "sport-cycling"] }
+    },
+    {
+      "id": "multi-09-lyn-og-f1",
+      "category": "multiPart",
+      "utterance": "Følg Lyn og litt F1",
+      "kind": "mutation",
+      "note": "A specific team + a bare sport in one utterance.",
+      "expect": { "mutationEntityIds": ["fk-lyn-oslo", "sport-f1"] }
+    },
+    {
+      "id": "multi-10-tdf-og-carlsen",
+      "category": "multiPart",
+      "utterance": "Følg Tour de France og Magnus Carlsen",
+      "kind": "mutation",
+      "note": "A specific tournament + a specific athlete — both specific, both kept.",
+      "expect": { "mutationEntityIds": ["tour-de-france-2026", "magnus-carlsen"] }
+    },
+    {
+      "id": "multi-11-declarative-tre-utovere",
+      "category": "multiPart",
+      "utterance": "Jeg følger Viktor Hovland, Casper Ruud og Karsten Warholm",
+      "kind": "mutation",
+      "note": "Declarative phrasing with three athletes across comma + og.",
+      "expect": { "mutationEntityIds": ["viktor-hovland", "casper-ruud", "karsten-warholm"] }
+    },
+    {
+      "id": "multi-12-skiskyting-og-langrenn",
+      "category": "multiPart",
+      "utterance": "Følg skiskyting og langrenn",
+      "kind": "mutation",
+      "note": "Two bare winter sports → two sport-level entities (WP-64 winter coverage + WP-65 fan-out).",
+      "expect": { "mutationEntityIds": ["sport-biathlon", "sport-cross-country"] }
+    },
+    {
+      "id": "multi-13-team-og-ukjent",
+      "category": "multiPart",
+      "utterance": "Følg 100 Thieves og cricket",
+      "kind": "mutation",
+      "note": "One resolvable team + one entity NOT in the index. The grounded set is just the team; cricket is the per-clause 'fant ikke' — a clause the tally reports, never silently drops.",
+      "expect": { "mutationEntityIds": ["100-thieves"] }
     },
     {
       "id": "winter-01-all-vintersport",
       "category": "winter",
       "utterance": "Følg all vintersport",
       "kind": "mutation",
-      "knownGap": true,
-      "knownGapRef": "WP-64/65",
-      "note": "«vintersport» is ungroundable today: no winter entities in the index and no umbrella term in SportVocabulary. WP-64 publishes sport/category entities for the followBroadly winter sports; the golden ids below are provisional and finalized by WP-64/65.",
-      "expect": { "mutationEntityIds": ["skiskyting", "langrenn", "alpint", "hopp"] }
+      "note": "The umbrella term grounds to ONE broad-scope category following (WP-64 lands the category entity; WP-65 finalizes the expectation). No longer a known gap.",
+      "expect": { "mutationEntityIds": ["category-winter-sports"] }
     },
     {
       "id": "winter-02-skiskyting",
       "category": "winter",
       "utterance": "Følg skiskyting",
       "kind": "mutation",
+      "note": "A single broadly-followed winter sport → its sport-level entity (WP-64). No longer a known gap.",
+      "expect": { "mutationEntityIds": ["sport-biathlon"] }
+    },
+    {
+      "id": "present-01-vis-bare-golf",
+      "category": "present",
+      "utterance": "Vis bare golf denne uka",
+      "kind": "mutation",
       "knownGap": true,
-      "knownGapRef": "WP-64",
-      "note": "A single broadly-followed winter sport. Expected to ground to a sport/category follow once WP-64 lands the entity.",
-      "expect": { "mutationEntityIds": ["skiskyting"] }
+      "knownGapRef": "WP-67",
+      "note": "A PRESENTATION filter, not a follow — «vis bare golf denne uka» should temporarily filter the agenda, not add a golf follow. Until WP-67 lands the present-intent arm, the assistant mis-reads it as a follow (grounds sport-golf), so this is a documented known gap: the empty golden marks the correct future outcome (no profile mutation).",
+      "expect": { "mutationEntityIds": [] }
     },
     {
       "id": "q-01-neste-tour-de-france",

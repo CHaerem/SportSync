@@ -41,12 +41,16 @@ final class EvalCorpusTests: XCTestCase {
     func test_corpus_knownGapCasesAreMarkedWithARef() throws {
         let corpus = try loadCorpus()
         let gaps = corpus.cases.filter(\.isKnownGap)
-        XCTAssertFalse(gaps.isEmpty, "the corpus documents at least one known gap (the winter case)")
+        XCTAssertFalse(gaps.isEmpty, "the corpus documents at least one known gap")
         for gap in gaps {
             XCTAssertNotNil(gap.knownGapRef, "known-gap case \(gap.id) must name the WP that closes it")
         }
-        // The winter umbrella case is the canonical known gap.
-        XCTAssertTrue(gaps.contains { $0.category == "winter" }, "the vintersport case must be a known gap until WP-64/65")
+        // WP-64/65 closed the original winter + bulk gaps; the presentation-filter
+        // case (WP-67) is the documented forward-looking gap now.
+        XCTAssertFalse(corpus.cases.contains { $0.category == "winter" && $0.isKnownGap },
+                       "the vintersport cases are no longer known gaps after WP-64/65")
+        XCTAssertTrue(gaps.contains { $0.knownGapRef == "WP-67" },
+                      "the presentation-filter case is the forward-looking known gap")
     }
 
     // MARK: - The mock run (deterministic cases asserted, gaps skipped)

@@ -44,6 +44,11 @@ final class AssistantViewModel {
     /// WP-16.4 — the answer to a question, resolved to displayable rows. Nil
     /// unless the last submit routed to the answer arm.
     private(set) var answer: AssistantAnswerResult?
+    /// WP-65 — the per-clause accounting for a BULK utterance (what landed · what
+    /// wasn't found). Set whenever an utterance decomposed into more than one
+    /// clause, so a dropped clause is impossible to hide; nil for single-clause
+    /// utterances (the existing diff/explanation already covers those).
+    private(set) var mutationTally: MutationTally?
 
     /// Bound to the command-line text field.
     var utterance: String = ""
@@ -261,6 +266,10 @@ final class AssistantViewModel {
         let result = MutationGrounder.ground(proposals, index: index, profile: profile)
         pending = result.grounded
         rejected = result.rejected
+        // WP-65 — publish the per-clause tally for a bulk utterance, so partial
+        // understanding is reported per clause (never a silent drop). Nil for a
+        // single-clause utterance, where the diff/explanation say it all.
+        mutationTally = AssistantExplanation.tally(grounded: result.grounded, rejected: result.rejected)
         if pending.isEmpty {
             let exp = AssistantExplanation.make(
                 utterance: text, proposals: proposals, result: result, hasEntities: hasEntities
@@ -578,6 +587,7 @@ final class AssistantViewModel {
         pending = []
         rejected = []
         answer = nil
+        mutationTally = nil
         lastImportSummary = nil
         shareImportMessage = nil
     }

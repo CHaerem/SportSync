@@ -25,6 +25,11 @@ final class RealFMEvalTests: XCTestCase {
 		guard ProcessInfo.processInfo.environment["ZENJI_REALFM_EVAL"] == "1" else {
 			throw XCTSkip("Opt-in eval — sett TEST_RUNNER_ZENJI_REALFM_EVAL=1 for å kjøre mot ekte FM.")
 		}
+		// The raw on-device assistant — NOT wrapped in TimeoutInterestAssistant:
+		// its deadline cancels the in-flight generation, and cancelling a
+		// FoundationModels inference mid-flight crashes the runtime (no report
+		// ever prints). The trimmed instructions keep generations well under the
+		// 4096-token context, which is the real fix for the stalls we saw.
 		let assistant = FoundationModelsInterestAssistant()
 		guard assistant.availability().isAvailable else {
 			throw XCTSkip("Apple Intelligence ikke tilgjengelig her — kjør på AI-aktivert Mac (Simulator) eller fysisk enhet.")
@@ -58,7 +63,18 @@ final class RealFMEvalTests: XCTestCase {
 			print("REALFM-FAIL[\(r.knownGap ? "kjent-hull" : "eval")] \(r.caseId) («\(r.utterance)») — \(failed)")
 		}
 
-		// Eneste harde krav: hele korpuset ble kjørt og scoret.
+		// Hele korpuset ble kjørt og scoret.
 		XCTAssertEqual(results.count, corpus.cases.count)
+
+		// WP-65 — FØRSTE regresjonsterskel mot den EKTE modellen. Målt 16.07.2026
+		// på korpus v2 (iPhone 17-simulator, AI-aktivert Mac): 19/32 evaluerte
+		// bestått (canon 7/12, multiPart 8/13, winter 2/2, question 2/5), opp fra
+		// v1-baselinen 8/20. On-device-modellen er IKKE-deterministisk (enkle
+		// ytringer bommer av og til), så terskelen er «målt minus margin», ikke
+		// målt verdi — den skal fange en EKTE regresjon (ødelagt prompt/grounding),
+		// ikke jage varians. Opt-in (gaten over), så den kjører aldri i vanlig CI.
+		let canonPassed = report.categories.first { $0.category == "canon" }?.passed ?? 0
+		XCTAssertGreaterThanOrEqual(canonPassed, 5, "canon-regresjon mot ekte FM (målt 7/12, terskel 5)")
+		XCTAssertGreaterThanOrEqual(report.totals.passed, 15, "total regresjon mot ekte FM (målt 19/32, terskel 15)")
 	}
 }
