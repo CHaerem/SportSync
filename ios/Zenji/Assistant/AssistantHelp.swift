@@ -83,23 +83,21 @@ enum AssistantHelp {
     /// references concrete actions. Mentions «Følg …», tema and nullstille so a
     /// capability question always points at something the user can do next.
     static let overview = """
-    Jeg er assistenten din i Zenji, og kan tre ting. \
-    1) Endre hva du følger — si «Følg Casper Ruud», «Jeg liker golf og sykkel» eller «Slutt med tennis» (du bekrefter før noe lagres). \
-    2) Svare på hva som er på agendaen din — spør «Hva er på i kveld?» eller «Når går neste etappe?». \
-    3) Styre appen — tema, varsler, nullstille, dele profil og det jeg vet om deg (de vanligste ligger som HURTIG-chips i arket: TEMA, VARSEL, DEL PROFIL, MITT MINNE). \
-    Spør «hvordan gjør jeg …?» så viser jeg vei. Jeg svarer bare om appen og din egen agenda — ikke generelle kunnskapsspørsmål.
+    Jeg kan tre ting: \
+    1) endre hva du følger — «Følg Casper Ruud», «Jeg liker golf og sykkel», «Slutt med tennis» (du bekrefter først); \
+    2) svare på hva som er på agendaen din — «Hva er på i kveld?», «Når går neste etappe?»; \
+    3) styre appen — tema, varsler, nullstille, dele profil og det jeg vet om deg (HURTIG-chips: TEMA, VARSEL, DEL PROFIL, MITT MINNE). \
+    Spør «hvordan gjør jeg …?». Jeg svarer bare om appen og din egen agenda, ikke generelle kunnskapsspørsmål.
     """
 
     /// How to CHANGE what you follow (the mutation arm).
     static let followHowTo = """
-    Skriv hvem eller hva du vil følge, f.eks. «Følg Viktor Hovland», «Følg Tour de France med fokus på norske» eller «Jeg liker golf og litt F1». \
-    Jeg viser deg endringen, og du bekrefter den før den lagres.
+    Skriv hva du vil følge — «Følg Viktor Hovland», «Følg Tour de France med fokus på norske», «Jeg liker golf og litt F1». Du bekrefter endringen før den lagres.
     """
 
     /// How to ASK about the agenda (the answer arm).
     static let askHowTo = """
-    Bare spør på vanlig norsk: «Hva er på i dag?», «Hva bør jeg se i kveld?» eller «Når går neste TdF-etappe?». \
-    Jeg svarer fra din egen agenda og viser tid, hva og hvor du kan se det.
+    Spør på vanlig norsk: «Hva er på i dag?», «Hva bør jeg se i kveld?», «Når går neste TdF-etappe?». Jeg svarer fra agendaen din med tid, hva og hvor.
     """
 
     // MARK: - Per-command help (one entry per CommandKind — no drift)

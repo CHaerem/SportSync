@@ -35,56 +35,75 @@ import FoundationModels
 /// schema simple and robust; the conversion below normalises them.
 @Generable
 struct GeneratedMutation {
-    @Guide(description: "Handlingen: 'add' for å begynne å følge, 'remove' for å slutte å følge, 'update' for å endre vekt eller omfang på noe du allerede følger.")
+    @Guide(description: "'add' (følg), 'remove' (slutt å følge), 'update' (endre vekt/omfang).")
     var action: String
 
-    @Guide(description: "entityId fra searchEntities-verktøyet. MÅ være en id verktøyet faktisk returnerte — aldri finn på en id. Tom streng hvis du ikke fant noe.")
+    @Guide(description: "entityId fra searchEntities — kun en id verktøyet faktisk returnerte, aldri oppdiktet. Tom ved ingen treff.")
     var entityId: String
 
-    @Guide(description: "Ordet eller navnet brukeren brukte, ordrett (f.eks. 'Ruud', 'tennis', 'sykkel').")
+    @Guide(description: "Ordet bruker brukte, ordrett (f.eks. 'Ruud', 'tennis').")
     var entityQuery: String
 
-    @Guide(description: "Valgfri norsk avgrensning, f.eks. 'bare i Grand Slams' eller 'i juli'. Tom streng hvis ingen avgrensning.")
+    @Guide(description: "Valgfri avgrensning ('bare i Grand Slams'). Tom hvis ingen.")
     var scope: String
 
-    @Guide(description: "Hvor viktig dette er, fra 0 til 1. Bruk 0.5 som standard, høyere hvis brukeren vil prioritere det.")
+    @Guide(description: "Viktighet 0–1. Standard 0.5, høyere ved prioritering.")
     var weight: Double
 
-    @Guide(description: "Kort begrunnelse på norsk for hvorfor denne endringen foreslås. Skal alltid fylles ut.")
+    @Guide(description: "Kort norsk begrunnelse. Alltid fylt.")
     var reason: String
 
-    @Guide(description: "Linse — hvilket perspektiv brukeren vil følge dette gjennom. Gjelder kun 'add' og 'update'. Bruk 'sport' for hele sporten/turneringen (standard), 'norwegians' når brukeren sier «med fokus på norske», «bare de norske» e.l., eller 'athletes' når brukeren vil følge bestemte utøvere (f.eks. «bare når Ruud spiller») — da MÅ du fylle lensAthleteIds.")
+    @Guide(description: "Kun add/update: 'sport' (hele sporten, standard), 'norwegians' («bare de norske»), 'athletes' (bestemte utøvere → fyll lensAthleteIds).")
     var lens: String
 
-    @Guide(description: "Kun når lens = 'athletes': entityId-ene (fra searchEntities) til utøverne brukeren vil følge dette gjennom. Ellers tom liste. Bruk kun ekte id-er fra verktøyet — aldri oppdiktede.")
+    @Guide(description: "Kun lens='athletes': entityId-ene (searchEntities) til utøverne. Ellers tom. Kun ekte id-er.")
     var lensAthleteIds: [String]
 }
 
-/// The top-level structure the session generates for a single utterance
-/// (WP-16.4). It carries a routing `intent` plus BOTH possible payloads; the
-/// conversion below reads only the one the intent selects. Kept flat (no nested
-/// enums/optionals) for a simple, robust generated schema.
+// WP-71 — the ONE big `GeneratedTurn` (routing intent + every arm's fields on
+// one flat schema) was split into a tiny intent classifier plus one focused
+// schema PER arm. No single generation carries all four arms' fields anymore,
+// which (with the per-arm tool sets) is what brings each generation back inside
+// the 4096-token context. See `AssistantInstructions` for the full rationale.
+
+/// Phase 1 — the routing decision, on its own tiny, tool-less generation.
 @Generable
-struct GeneratedTurn {
-    @Guide(description: "Intent: 'mutations' hvis brukeren vil ENDRE hva som følges (følg/slutt/prioriter), 'answer' hvis brukeren STILLER ET SPØRSMÅL om hva/når/hvor, 'command' hvis brukeren vil at APPEN skal GJØRE noe (tema, nullstill, onboarding, dele profil/QR, «hva vet du om meg», glem, varsel-ledetid, eller åpne en hendelse), 'present' hvis brukeren vil MIDLERTIDIG endre hva agendaen VISER («vis bare golf denne uka», «vis vintersport», «vis alt igjen») uten å endre hva som følges.")
+struct GeneratedIntent {
+    @Guide(description: "Én av: 'mutations' (endre hva som følges), 'answer' (spørsmål om agenda eller app), 'command' (appen skal gjøre noe), 'present' (midlertidig endre hva agendaen viser).")
     var intent: String
+}
 
-    @Guide(description: "Kun når intent = 'mutations': alle foreslåtte endringer utledet fra ytringen. Tom liste ellers.")
+/// Phase 2 — the mutation arm's output (fan-out over the utterance).
+@Generable
+struct GeneratedMutations {
+    @Guide(description: "Alle foreslåtte endringer, én per ledd i ytringen.")
     var mutations: [GeneratedMutation]
+}
 
-    @Guide(description: "Kun når intent = 'answer': et rolig, kort svar på norsk. Bruk searchEvents for å finne hva som faktisk står på agendaen, og referer til radene med tid, tittel og kanal. Ikke finn på hendelser. Tom streng ellers.")
+/// Phase 2 — the answer arm's output.
+@Generable
+struct GeneratedAnswer {
+    @Guide(description: "Kort, rolig norsk svar.")
     var answer: String
 
-    @Guide(description: "Kun når intent = 'answer': eventId-ene (kolonne 1 fra searchEvents) til radene svaret refererer til. Bruk kun ekte id-er fra verktøyet. Tom liste ellers.")
+    @Guide(description: "For agendasvar: eventId-ene (kolonne 1 fra searchEvents) svaret refererer. Kun ekte id-er. Tom for app-hjelp.")
     var referencedEventIds: [String]
+}
 
-    @Guide(description: "Kun når intent = 'command': hvilken handling. Én av: 'theme', 'reset', 'onboarding', 'share', 'memory', 'forget', 'notifications', 'open'. Tom streng ellers.")
+/// Phase 2 — the command arm's output (no tools).
+@Generable
+struct GeneratedCommand {
+    @Guide(description: "Én av theme/reset/onboarding/share/memory/forget/notifications/open.")
     var command: String
 
-    @Guide(description: "Argument til kommandoen når det trengs: 'theme' → 'dark'/'light'/'system'; 'reset' → 'everything' (alt om meg) eller 'followed' (det jeg følger); 'notifications' → 'on'/'off'; 'open' → navnet på hendelsen; 'forget' → hva som skal glemmes ('alt' for alt). Tom streng ellers.")
+    @Guide(description: "Argument: theme→dark/light/system; reset→everything/followed; notifications→on/off; open→hendelsesnavn; forget→hva (alt).")
     var commandArgument: String
+}
 
-    @Guide(description: "Kun når intent = 'present': hva agendaen skal vise, som en kort norsk frase — idretter/kategorier/turneringer/utøvere og evt. tidsvindu, f.eks. «golf, denne uka», «vintersport», «sykkel i dag». Bruk «alt» for å nullstille filteret (vis alt igjen). Tom streng ellers.")
+/// Phase 2 — the present arm's output (no tools).
+@Generable
+struct GeneratedPresent {
+    @Guide(description: "Kort frase for hva agendaen skal vise (idretter/utøvere + evt. vindu). «alt» nullstiller.")
     var presentFilter: String
 }
 
@@ -96,18 +115,18 @@ struct GeneratedTurn {
 /// `MutationGrounder`, which re-checks the model's output regardless).
 struct EntitySearchTool: Tool {
     let name = "searchEntities"
-    let description = "Søk i indeksen over utøvere, lag og turneringer brukeren kan følge. Returnerer ekte entityId-er. Bruk dette FØR du foreslår en mutasjon, og bruk kun id-er herfra."
+    let description = "Søk i indeksen over utøvere/lag/turneringer/idretter. Returnerer ekte entityId-er. Kall FØR en mutasjon; bruk kun id-er herfra."
 
     let index: EntityIndex
 
     @Generable
     struct Arguments {
-        @Guide(description: "Navn, lag, turnering eller idrett å søke etter, f.eks. 'Ruud', 'Lyn', 'tennis', 'sykkel'.")
+        @Guide(description: "Navn/lag/turnering/idrett, f.eks. 'Ruud', 'tennis'.")
         var query: String
     }
 
     func call(arguments: Arguments) async throws -> String {
-        let hits = index.search(arguments.query, limit: 8)
+        let hits = index.search(arguments.query, limit: 6)
         guard !hits.isEmpty else {
             return "Ingen treff for «\(arguments.query)». Ikke foreslå en mutasjon for dette."
         }
@@ -124,13 +143,13 @@ struct EntitySearchTool: Tool {
 /// is the eventId the model must put in `referencedEventIds`.
 struct EventSearchTool: Tool {
     let name = "searchEvents"
-    let description = "Søk i brukerens agenda (det som er på i dag/kommende dager). Bruk 'i kveld' eller 'i dag' for de spørsmålene, ellers et navn/idrett (f.eks. 'Tour de France', 'fotball'). Tom spørring gir det neste som kommer. Returnerer ekte eventId-er du MÅ bruke i referencedEventIds."
+    let description = "Søk i brukerens agenda (i dag/kommende). Bruk 'i kveld'/'i dag', et navn/idrett, eller tom for det neste. Returnerer eventId-er du MÅ bruke i referencedEventIds."
 
     let feed: FeedQuery
 
     @Generable
     struct Arguments {
-        @Guide(description: "Hva du vil finne: 'i kveld', 'i dag', et navn/en turnering/en idrett, eller tom for det neste som kommer.")
+        @Guide(description: "'i kveld', 'i dag', et navn/turnering/idrett, eller tom for det neste.")
         var query: String
     }
 
@@ -158,7 +177,7 @@ struct EventSearchTool: Tool {
 /// stuffing the whole profile into the instructions.
 struct ProfileTool: Tool {
     let name = "getProfile"
-    let description = "Hent hva brukeren følger nå (utøvere, lag, turneringer). Nyttig for å svare på hva brukeren bør se."
+    let description = "Hent hva brukeren følger nå. Nyttig for å svare på hva brukeren bør se."
 
     let profile: InterestProfile
 
@@ -184,7 +203,7 @@ struct ProfileTool: Tool {
 /// reads it; the deterministic mock answers from `AssistantHelp.answer(for:)`.
 struct HelpTool: Tool {
     let name = "getHelp"
-    let description = "Slå opp hva assistenten og appen kan gjøre, og hvordan brukeren gjør vanlige ting: følge noe, spørre om agendaen, bytte tema, nullstille, styre varsler, dele profil, og se/glemme det appen vet om dem. Bruk dette når brukeren spør «hva kan du?» eller «hvordan gjør jeg X?» i appen — ikke gjett."
+    let description = "Slå opp hva appen/assistenten kan og hvordan brukeren gjør vanlige ting. Bruk ved «hva kan du?»/«hvordan gjør jeg X?» — ikke gjett."
 
     @Generable
     struct Arguments {}
@@ -203,25 +222,25 @@ struct HelpTool: Tool {
 /// Intelligence. It never reads the agenda — it only records personal context.
 struct SaveMemoryTool: Tool {
     let name = "saveMemory"
-    let description = "Lagre en VARIG, personlig ting om brukeren selv: kunnskapsnivå, spoilervern (ser noe på opptak), varselsvindu, eller en preferanse. Bruk kun når brukeren uttrykker noe varig om SEG SELV, ikke for vanlige spørsmål."
+    let description = "Lagre noe VARIG om brukeren selv: kunnskapsnivå, spoilervern, varselsvindu eller en preferanse. Kun når bruker uttrykker noe varig om SEG SELV."
 
     let sink: any MemorySink
 
     @Generable
     struct Arguments {
-        @Guide(description: "Type: 'knowledgeLevel' (kunnskapsnivå), 'spoilerPolicy' (spoilervern/ser på opptak), 'notifyWindow' (når det er greit å varsle), 'preference' (generell preferanse) eller 'note' (annet varig notat).")
+        @Guide(description: "'knowledgeLevel', 'spoilerPolicy' (ser på opptak), 'notifyWindow', 'preference' eller 'note'.")
         var kind: String
 
-        @Guide(description: "Valgfri entityId fra searchEntities som dette gjelder. Tom streng hvis det gjelder en hel idrett eller generelt.")
+        @Guide(description: "Valgfri entityId fra searchEntities. Tom hvis hel idrett/generelt.")
         var entityId: String
 
-        @Guide(description: "Valgfri idrett dette gjelder (f.eks. 'chess', 'f1', 'golf'). Tom streng hvis det gjelder en bestemt entitet eller generelt.")
+        @Guide(description: "Valgfri idrett ('chess', 'f1', 'golf'). Tom hvis entitet/generelt.")
         var sport: String
 
-        @Guide(description: "Selve verdien, kort — f.eks. 'nybegynner', 'opptak', '08:00'.")
+        @Guide(description: "Verdien, kort — 'nybegynner', 'opptak', '08:00'.")
         var value: String
 
-        @Guide(description: "Kort norsk begrunnelse for hvorfor du lagrer dette.")
+        @Guide(description: "Kort norsk begrunnelse.")
         var reason: String
     }
 
@@ -278,47 +297,74 @@ struct FoundationModelsInterestAssistant: InterestAssistant {
         if let sport = EntityIndex.sportKeyword(in: utterance) { relevantSports.insert(sport) }
         let digest = MemoryDigest.build(memory: memory.state, relevantEntityIds: relevantEntityIds, relevantSports: relevantSports, now: Date())
 
-        // WP-30 — the saveMemory tool lets the model persist a durable, personal
-        // thing it learns; only wired when a write sink is provided.
-        var tools: [any Tool] = [EntitySearchTool(index: index), EventSearchTool(feed: feed), ProfileTool(profile: profile), HelpTool()]
-        if let sink = memory.sink { tools.append(SaveMemoryTool(sink: sink)) }
-
-        let session = LanguageModelSession(
-            model: model,
-            tools: tools,
-            instructions: Self.instructions(profile: profile, digest: digest, canSaveMemory: memory.sink != nil)
-        )
+        let canSaveMemory = memory.sink != nil
 
         do {
-            let turn = try await session.respond(to: utterance, generating: GeneratedTurn.self).content
-            let intent = turn.intent.lowercased()
-            if (intent.contains("command") || intent.contains("kommando")),
-               let command = Self.command(name: turn.command, argument: turn.commandArgument) {
-                return .command(command)
+            // WP-71 — PHASE 1: classify the intent on a tiny, tool-less session.
+            // A few hundred tokens total, so it never strains the context and the
+            // routing decision is made before any heavy schema/tools are loaded.
+            let classifier = LanguageModelSession(model: model, instructions: AssistantInstructions.classifier)
+            let intent = try await classifier.respond(to: utterance, generating: GeneratedIntent.self).content.intent.lowercased()
+
+            // WP-71 — PHASE 2: run ONLY the chosen arm, with ONLY its prompt, its
+            // own small schema, and the tools it actually needs. This is what
+            // keeps each generation inside the 4096-token on-device context.
+            if intent.contains("command") || intent.contains("kommando") {
+                let session = LanguageModelSession(model: model, instructions: AssistantInstructions.command)
+                let out = try await session.respond(to: utterance, generating: GeneratedCommand.self).content
+                if let command = Self.command(name: out.command, argument: out.commandArgument) {
+                    return .command(command)
+                }
+                // An unrecognised command falls through to the mutation arm rather
+                // than doing nothing (same defence-in-depth as before).
+                return try await self.mutate(utterance, model: model, profile: profile, index: index, digest: digest, canSaveMemory: canSaveMemory, memory: memory)
             }
             if intent.contains("present") {
+                let session = LanguageModelSession(model: model, instructions: AssistantInstructions.present)
+                let out = try await session.respond(to: utterance, generating: GeneratedPresent.self).content
                 // WP-67 — parse the model's short present phrase into an ephemeral
                 // filter (prepend the «vis» cue the parser anchors on), falling
                 // back to the raw utterance, then to an empty filter (reset). The
                 // filter never touches the profile — it is a pure view change.
-                let raw = turn.presentFilter.trimmingCharacters(in: .whitespacesAndNewlines)
+                let raw = out.presentFilter.trimmingCharacters(in: .whitespacesAndNewlines)
                 let filter = AgendaFilterParser.parse("vis \(raw)", index: index)
                     ?? AgendaFilterParser.parse(utterance, index: index)
                     ?? AgendaFilter()
                 return .present(filter)
             }
-            if intent.contains("answer") {
+            if intent.contains("answer") || intent.contains("spør") {
+                var tools: [any Tool] = [EventSearchTool(feed: feed), ProfileTool(profile: profile), HelpTool()]
+                if let sink = memory.sink { tools.append(SaveMemoryTool(sink: sink)) }
+                let session = LanguageModelSession(
+                    model: model, tools: tools,
+                    instructions: AssistantInstructions.answer(profile: profile, digest: digest, canSaveMemory: canSaveMemory)
+                )
+                let out = try await session.respond(to: utterance, generating: GeneratedAnswer.self).content
                 return .answer(AssistantAnswer(
-                    text: turn.answer.trimmingCharacters(in: .whitespacesAndNewlines),
-                    referencedEventIds: turn.referencedEventIds
+                    text: out.answer.trimmingCharacters(in: .whitespacesAndNewlines),
+                    referencedEventIds: out.referencedEventIds
                         .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
                         .filter { !$0.isEmpty }
                 ))
             }
-            return .mutations(turn.mutations.compactMap(Self.convert))
+            // Default: mutations (the most common intent).
+            return try await self.mutate(utterance, model: model, profile: profile, index: index, digest: digest, canSaveMemory: canSaveMemory, memory: memory)
         } catch {
             throw AssistantError.generationFailed(message: "Klarte ikke å tolke ytringen akkurat nå. Prøv å formulere den enklere.")
         }
+    }
+
+    /// Phase 2, mutation arm: a focused session carrying only the searchEntities
+    /// (+ optional saveMemory) tool and the mutation schema.
+    private func mutate(_ utterance: String, model: SystemLanguageModel, profile: InterestProfile, index: EntityIndex, digest: String, canSaveMemory: Bool, memory: MemoryContext) async throws -> AssistantTurn {
+        var tools: [any Tool] = [EntitySearchTool(index: index)]
+        if let sink = memory.sink { tools.append(SaveMemoryTool(sink: sink)) }
+        let session = LanguageModelSession(
+            model: model, tools: tools,
+            instructions: AssistantInstructions.mutations(profile: profile, digest: digest, canSaveMemory: canSaveMemory)
+        )
+        let out = try await session.respond(to: utterance, generating: GeneratedMutations.self).content
+        return .mutations(out.mutations.compactMap(Self.convert))
     }
 
     // MARK: - Mapping
@@ -427,88 +473,6 @@ struct FoundationModelsInterestAssistant: InterestAssistant {
         }
     }
 
-    static func instructions(profile: InterestProfile, digest: String = "", canSaveMemory: Bool = false) -> String {
-        let following: String
-        if profile.rules.isEmpty {
-            following = "Brukeren følger ingenting ennå."
-        } else {
-            following = "Brukeren følger allerede: " + profile.rules.map { rule in
-                rule.scope.map { "\(rule.entityName) (\($0))" } ?? rule.entityName
-            }.joined(separator: ", ") + "."
-        }
-
-        // WP-30: the retrieval digest + the saveMemory contract, appended only
-        // when there is something to say (empty memory / no sink → no change).
-        let memoryBlock = digest.isEmpty ? "" : "\n\n\(digest)"
-        let saveBlock = canSaveMemory ? """
-
-
-        MINNE (verktøyet saveMemory):
-        - Hvis brukeren uttrykker noe VARIG om SEG SELV — kunnskapsnivå («jeg er fersk i sjakk»),
-          spoilervern («jeg ser F1 på opptak, ikke røp resultatet»), varselsvindu («ikke varsle før 08:00»),
-          eller en preferanse — kall saveMemory ÉN gang med riktig kind, scope (entityId eller sport), value og en kort norsk reason.
-        - Bruk personlig kontekst du allerede vet (over) til å svare personlig, men LES DEN ALDRI OPP ordrett.
-        - Har brukeren spoilervern på noe: ikke avslør resultat, vinner eller stilling for det — svar på når/hvor uten utfall.
-        """ : ""
-
-        return """
-        Du er en rolig, presis assistent som hjelper en norsk sportsfan. Brukeren skriver på norsk.
-        Først: avgjør INTENT.
-          • intent = 'mutations' når brukeren vil ENDRE hva som følges. Det gjelder både kommandoer
-            (følg, slutt, prioriter, mer/mindre) OG deklarative utsagn om hva de bryr seg om
-            («jeg liker …», «jeg følger …», «jeg er interessert i …», «vil gjerne ha med …»). Alle
-            disse er 'mutations' — å nevne en interesse ER å be om å følge den.
-          • intent = 'answer' når brukeren STILLER ET SPØRSMÅL — enten om agendaen (hva/når/hvor — «hva bør jeg
-            se i kveld?», «når går neste etappe?», «hvor kan jeg se X?»), ELLER om selve appen/deg («hva kan
-            du?», «hvordan følger jeg noe?», «hvordan nullstiller jeg?»).
-          • intent = 'command' når brukeren vil at APPEN skal GJØRE noe: bytte tema, nullstille, kjøre
-            onboarding på nytt, dele profilen/vise QR, vise «hva du vet om meg», glemme noe om dem, skru
-            varsel-ledetid på/av, eller åpne en bestemt hendelse («vis Brann-kampen»).
-          • intent = 'present' når brukeren vil MIDLERTIDIG endre hva agendaen VISER uten å endre hva de
-            følger: «vis bare golf denne uka», «vis vintersport», «vis sykkel i dag», «vis alt igjen». Dette
-            er et rent visningsfilter — det legger IKKE til eller fjerner noe fra det brukeren følger.
-
-        NÅR intent = 'command':
-        - Sett command til ÉN av: 'theme', 'reset', 'onboarding', 'share', 'memory', 'forget', 'notifications', 'open'.
-        - Sett commandArgument når det trengs: theme → 'dark'/'light'/'system'; reset → 'everything' (alt om meg)
-          eller 'followed' (det jeg følger); notifications → 'on'/'off'; open → navnet på hendelsen; forget → hva
-          som skal glemmes ('alt' for alt). La mutations og answer være tomme.
-        - «vis bare golf denne uka» / «vis vintersport» er IKKE kommandoer — det er intent = 'present' (visningsfilter).
-          «vis Brann-kampen» (åpne én bestemt hendelse) er derimot command = 'open'.
-
-        NÅR intent = 'present':
-        - Sett presentFilter til en kort norsk frase for hva agendaen skal vise: idretter/kategorier/turneringer/
-          utøvere og evt. tidsvindu («golf, denne uka», «vintersport», «sykkel i dag»). «alt» nullstiller filteret.
-        - Dette endrer BARE visningen — la mutations, answer og command være tomme. Profilen røres aldri.
-
-        NÅR intent = 'answer':
-        - Spørsmål om AGENDAEN (hva/når/hvor): bruk verktøyet searchEvents for å finne hva som faktisk står på
-          agendaen (i dag/kommende). Bruk getProfile hvis det hjelper å vite hva brukeren allerede følger.
-        - Spørsmål om APPEN / deg selv («hva kan du?», «hvordan gjør jeg X?»): bruk verktøyet getHelp og svar
-          KUN ut fra det. Referer den konkrete handlingen brukeren kan gjøre (f.eks. «si 'nullstill'» eller
-          «trykk TEMA-chippen»). La referencedEventIds være tom for app-hjelp (ingen agendarader).
-        - Skriv et kort, rolig svar på norsk. For agendasvar: referer til radene med tid, tittel og kanal.
-        - SITER RAD-ID-ENE: for agendasvar MÅ du fylle referencedEventIds med eventId-ene (kolonne 1 fra
-          searchEvents) du refererer til — et agendasvar uten rad-id-er regnes som ugrunnet.
-        - Ikke finn på hendelser, og ikke svar på generelle kunnskapsspørsmål utenfor appen og din egen agenda —
-          si ærlig at det er utenfor det du kan. Finner du ingenting, si det ærlig. La mutations være tom.
-
-        NÅR intent = 'mutations':
-        - FAN UT: én ytring kan nevne FLERE interesser (skilt med komma eller «og»). Lag ÉN mutasjon PER ledd; kall searchEntities per ledd. Utelat ALDRI et ledd.
-        - Bart idrettsnavn («golf», «litt F1», «mer sykkel», «skiskyting») → idretts-entiteten (type 'sport'), ikke en enkelt-turnering. Bestemt turnering/lag/utøver («Tour de France», «Lyn», «Hovland») → den bestemte entiteten. «all vintersport» → kategori-entiteten (type 'category'), én mutasjon.
-        - Finner searchEntities ingenting for et ledd: ta det med med tom entityId og entityQuery = ordet, så det rapporteres som «ikke funnet» — dropp det ikke.
-        - «slutt med <idrett>» fjerner det brukeren følger i den idretten. Kort norsk reason på hver mutasjon. La answer være tom.
-
-        LINSE (perspektivet brukeren vil følge noe gjennom — felt: lens):
-        - «Følg Tour de France med fokus på norske utøvere» → add på Tour de France med lens = 'norwegians'.
-        - «Følg VM i friidrett, bare de norske» → add på turneringen med lens = 'norwegians'.
-        - «Følg Tour de France bare når Kristoff er med» → add på Tour de France med lens = 'athletes' og lensAthleteIds = [Kristoffs entityId fra searchEntities].
-        - «Følg hele Premier League» / uten noe fokus-uttrykk → lens = 'sport' (standard).
-        - Linse endrer ALDRI hvilken entitet du følger — den sier bare hvordan. Entiteten (turneringen/laget) må fortsatt være en ekte id fra verktøyet, og utøverne i 'athletes' likeså.
-
-        \(following)\(memoryBlock)\(saveBlock)
-        """
-    }
 }
 
 // MARK: - Episodic distiller (WP-30 — conversation → compact note)
