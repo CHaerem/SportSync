@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-07-16T16:21:22.137Z",
+  "generatedAt": "2026-07-16T18:04:01.787Z",
   "gapCount": 2,
-  "anomalyCount": 0,
+  "anomalyCount": 1,
   "gaps": [
     {
       "kind": "entity",
@@ -12,7 +12,7 @@
       "link": "https://www.nrk.no/sport/tour-de-france_-velt-pa-opplopet-_-flere-nordmenn-i-bakken-1.17960276",
       "feed": "nrk-sport",
       "matchCount": 3,
-      "detectedAt": "2026-07-16T16:21:21.874Z"
+      "detectedAt": "2026-07-16T18:04:01.519Z"
     },
     {
       "kind": "entity",
@@ -23,9 +23,17 @@
       "link": "https://www.nrk.no/sport/british-open_-hovland-apnet-pa-par-_-viaplay-slet-med-sendingen-1.17960511",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-16T16:21:21.874Z"
+      "detectedAt": "2026-07-16T18:04:01.519Z"
     }
   ],
-  "anomalies": [],
+  "anomalies": [
+    {
+      "sport": "chess",
+      "issue": "file-empty",
+      "detail": "docs/data/chess.json has no events and none on the board — source may be down or changed",
+      "severity": "low",
+      "detectedAt": "2026-07-16T18:04:01.786Z"
+    }
+  ],
   "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board. anomalies: a fetcher's own data looks unreliable."
 }
