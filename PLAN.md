@@ -78,6 +78,17 @@ mennesket, aldri av en agent.
 | WP-50 | iOS: README-restrukturering | 0D | WP-48,WP-49 | ✅ merget (#275) — `ios/README.md` 1446 → 495 linjer, kronologisk bygglogg → delsystem-kart (én seksjon per `Zenji/`-katalog + targets/signering + testing); katalogoversikt regenerert mot treet, talldrift rettet (42 testfiler/376 tester, iOS 26.0, 4 targets/3 schemes), design-v2-skjermbilder (reset/onboarding/profil-deling m.fl.) referert fra riktig seksjon; signering/free-account + sync-arkitektur + fixture-policy bevart |
 | WP-51 | Testdekning: eksporterte pure-funksjoner | 0D | – | ✅ merget (#266) — 32 nye tester (fetch-rss 23, buildDriverTeamMap 9), 405/405 grønt, kjøretid uendret ~5,3 s |
 | WP-52 | Dok-resynk (kjøres sist) | 0D | alle 0D | ✅ merget (#276) — CLAUDE.md (Frontend→Tekst-TV+DESIGN.md-peker, dashboard.js-splitt, Testing 35 filer/463 tester, datafil-liste +entities/manifest/interests, nye avsnitt ios/·PLAN/DESIGN·follow-request·gate-tier·CI-only-hook), README (research=Opus/deep=Fable, testtall, lenketekst), package.json-desc, copilot-instructions DESIGN.md+edit.js, prompter (research-logg-begrunnelse, verify+cs2-sources, editorial-guardrail), koherens-tester (alle prompter skannes, follow-request.yml), schema-tittel→Zenji, DIVERGENCES-linjerefs; 463/463 serielt |
+| WP-60 | iOS-ytelse: agenda-pipeline av main-tråden | 0E | – | ⬜ køet |
+| WP-61 | iOS-ytelse: matching-skalering + perf-porter | 0E | WP-60 | ⬜ køet |
+| WP-62 | iOS-responsivitet: QR/klokke/FM-timeout | 0E | – | ⬜ køet |
+| WP-63 | iOS-instrumentering: signposts + MetricKit | 0E | WP-60 | ⬜ køet |
+| WP-64 | Entitets-/kategoridekning (vintersport m.m.) | 0E | – | ⬜ køet |
+| WP-65 | Assistent: bulk-fangst + delvis rapportering | 0E | WP-64,WP-69 | ⬜ køet |
+| WP-66 | Assistent: app-kommando-arm + hurtigknapper | 0E | WP-62,WP-65 | ⬜ køet |
+| WP-67 | Assistent: presentasjonsfilter | 0E | WP-66 | ⬜ køet |
+| WP-68 | Assistent: app-hjelp-kunnskap | 0E | WP-66 | ⬜ køet |
+| WP-69 | FM-eval-harness på enhet + korpus | 0E | – | ⬜ køet |
+| WP-70 | XCUITest: hovedflyter + launch-metrikk | 0E | – | ⬜ køet |
 
 ---
 
@@ -613,6 +624,193 @@ bindende) håndheves strengt — pakkene er skåret for å unngå filkollisjoner
 - **Aksept:** utvidede koherens-tester grønne; stikkprøve: hver fil-/tall-påstand i
   CLAUDE.md §Frontend/§Testing/§Data files verifiserbar mot treet; grep «Schibsted»
   tomt.
+
+---
+
+## FASE 0E · iOS-kvalitet: snappy uten heng + full-kapabel assistent (audit 15.07.2026)
+
+Bakgrunn: eier-testing avdekket heng og at lang fritekst om interesser ikke ble tolket.
+To granskninger 15.07 fant årsakene. **Heng:** all datalasting + full rekompilering skjer
+synkront på main-aktøren og re-kjøres per profilendring (`AgendaViewModel.reloadFromCache`,
+`ContentView.swift:211`); matching er O(events × entiteter × Levenshtein); QR genereres i
+SwiftUI-body med fersk CIContext; 1 Hz-klokka invaliderer hele ContentView; FM-kall mangler
+timeout; null instrumentering. **Fritekst:** én FM-generering skal fange N interesser med
+kun én-entitets-eksempler («vær konservativ») så ledd droppes; «vintersport» er *ugroundbart*
+(null vintersport-entiteter i indeksen, intet paraplybegrep i `SportVocabulary`) enda
+serveren følger skiskyting/langrenn/alpint; deklarativ «jeg liker …» er off-script; delvis
+suksess rapporteres som bom. **Kapabilitet:** assistenten kan i dag KUN redigere følge-profil
++ svare på feed-spørsmål — tema, nullstill, re-onboard, deling, minne, varsler og all
+presentasjonskontroll er UI-only; «hva kan du?» har ingen kunnskapskilde. **Testbarhet:**
+ingenting tester ekte FM (kun mock i CI; FM finnes ikke i simulator).
+
+Mål: appen skal føles øyeblikkelig (aldri synkron IO/kompilering på main), assistenten skal
+fange interesser fra naturlig prosa og kunne utføre alt UI-et kan, og kvaliteten skal
+regresjonstestes uten manuell eier-testing — eierens rolle reduseres til å trykke «kjør eval»
+på iPhonen når en assistent-pakke lander.
+
+**Tverrgående regel for 0E:** hver assistent-pakke (WP-65–68) SKAL legge sine cases inn i
+eval-korpuset (WP-69) og mock-testene i samme PR. XcodeGen: target-endringer i `project.yml`
+følger husstilen med per-linje-begrunnelse.
+
+**Bølge-plan:** 1: WP-60, WP-62, WP-64, WP-69 · 2: WP-61, WP-63, WP-65, WP-70 ·
+3: WP-66 · 4: WP-67 + WP-68. (iOS-byggene er tunge — maks ~4 xcodebuild-agenter samtidig.)
+
+**Eierens rolle (eneste manuelle punkter):** kjøre eval-skjermen på fysisk iPhone etter
+WP-69/65/66/68 og dele rapporten; ellers ingenting.
+
+### WP-60 · iOS-ytelse: agenda-pipelinen av main-tråden
+- **Mål:** Aldri disk-IO/JSON-dekoding/kompilering på main-aktøren; profilendringer
+  koalesceres. Dette er den sannsynlige heng-årsaken.
+- **Innhold:** `AgendaViewModel.reloadFromCache` (`:74-97`) lastes/dekodes/`buildSections`
+  i bakgrunns-Task med hopp tilbake til @MainActor kun for tilordning av
+  `sections`/`liveNow`; dekodede entiteter + `EntityIndex` caches i stedet for å gjenbygges
+  per kall (også dobbel-dekodingen via `MemoryStore` `:87` og `feedProvider`-en i
+  `AssistantViewModel.swift:152-159` som bygger NY indeks per submit — gjenbruk VM-ens);
+  raske `onProfileChanged`-kall koalesceres/debounces (starter-pack-scenarioet);
+  DEBUG-assertions (`dispatchPrecondition`/MainActor-sjekk) i dekode-/kompileringshjelperne
+  så main-tråd-regresjon feiler høylytt i test.
+- **Ikke-mål:** matching-algoritmen (WP-61); signposts/MetricKit (WP-63); endre
+  kompileringens resultat (alle gylne vektorer bit-like).
+- **Aksept:** alle iOS-tester grønne + 13/13 vektorer bit-like; ny test: N raske
+  profilendringer ⇒ ≤2 rekompileringer; DEBUG-assertion-test som beviser at dekoding på
+  main feiler; begge schemes + ZenjiDeviceDev bygger.
+
+### WP-61 · iOS-ytelse: matching-skalering + perf-porter
+- **Mål:** Rekompilering skalerer til kommersiell datastørrelse; ytelse blir en testport.
+- **Innhold:** `followableEntities` (`AgendaViewModel.swift:291-307`) kaller
+  `EntityIndex.resolve` (full skann + Levenshtein, `EntityIndex.swift:79-102,152-186`)
+  ×3 per event — legg eksakt/ordgrense-oppslagskart bygget én gang per indeks, fuzzy kun
+  ved miss, memoisering per navn innen én kompilering; XCTest `measure {}`-baselines på
+  `buildSections` + `feedProvider` med skalert syntetisk fixture (~500 events / 2000
+  entiteter) som feiler ved O(n²)-regresjon.
+- **Avhenger av:** WP-60. **Ikke-mål:** endre match-semantikk (vektorene er dommer).
+- **Aksept:** identisk output på dagens data (vektorer + snapshot); measure-baseline
+  sjekket inn; skalert kompilering < 50 ms på CI-Mac.
+
+### WP-62 · iOS-responsivitet: QR/klokke/FM-timeout
+- **Mål:** Fjerne de tre gjenværende jank-kildene fra auditen.
+- **Innhold:** QR: `ProfileSharePanel.swift:66` genererer i body med fersk `CIContext`
+  (`ProfileQRCode.swift:34-35`) — beregn lenke+bilde én gang i `.task` keyed på payload,
+  del statisk CIContext. Klokke: `ContentView.swift:77,310` — flytt ticking til
+  liten bladvisning som eier timer + `now` (1-min kadens under Reduce Motion). FM-timeout:
+  `session.respond` (`FoundationModelsInterestAssistant.swift:265`) mangler frist — Task-race
+  med deadline, rolig norsk «tok for lang tid»-tilstand, behold Avbryt; unit-test med
+  fake assistent som sover (timeout-kontrakten er CI-testbar selv om FM ikke er).
+- **Ikke-mål:** øvrig AssistantViewModel-endring (WP-66).
+- **Aksept:** iOS-tester grønne inkl. ny timeout-test; skjermbilder uendret begge temaer.
+
+### WP-63 · iOS-instrumentering: signposts + MetricKit
+- **Mål:** Reelle heng på enhet gir telemetri i stedet for å måtte reproduseres for hånd.
+- **Innhold:** `os_signpost`-intervaller rundt last/kompiler/submit-preludium (hotpathene
+  fra auditen); MetricKit-abonnent (`MXHangDiagnostic`, `MXAppLaunchMetric`) som logger
+  lokalt til Application Support med diskret eksport fra debug-/innstillings-flate
+  (personvern: aldri nettverk, samme mønster som MisunderstoodLog); kort README-avsnitt
+  om hvordan Instruments-Hangs leses mot signpostene.
+- **Avhenger av:** WP-60 (instrumenterer de flyttede stiene). **Ikke-mål:** fjerntelemetri.
+- **Aksept:** iOS-tester grønne; signposts synlige i Instruments på simulatorkjøring;
+  MetricKit-abonnenten unit-testet med syntetisk payload.
+
+### WP-64 · Entitets-/kategoridekning (vintersport m.m.)
+- **Mål:** Paraplybegreper og bredt-fulgte sporter kan groundes — «all vintersport» skal
+  bli en gyldig, bekreftbar mutasjon.
+- **Innhold:** Server: `scripts/build-entities.js` publiserer sport-/kategori-entiteter
+  for alle `followBroadly`-sporter i interests.json (skiskyting, langrenn, alpint, hopp …)
+  med norske aliaser; `entities.json`-fixtures i `ios/ZenjiTests/Fixtures` re-fryses etter
+  policyen. iOS: `SportVocabulary` (`EntityIndex.swift:356-365`) får vintersport-nøkler +
+  kategori→sport-ekspansjon («vintersport» → settet), og resolveren kan servere en
+  kategorifølging (scope: bred sport) — samme diff/bekreft-flyt.
+- **Ikke-mål:** prompting (WP-65); nye fetchere (research-agenten eier vintersport-events).
+- **Aksept:** npm test grønt (entities-tester); iOS-tester grønne; «følg vintersport» og
+  «skiskyting» grounder i mock-testen; eval-case lagt til korpuset (når WP-69 er inne —
+  ellers i PR-beskrivelsen).
+
+### WP-65 · Assistent: bulk-fangst + delvis rapportering
+- **Mål:** Lang naturlig prosa om interesser gir korrekt sett av mutasjoner, og delvis
+  forståelse rapporteres per ledd — aldri som samlet bom.
+- **Innhold:** Dekomponering: FM-instruksjonene (`FoundationModelsInterestAssistant.swift:349-404`)
+  får eksplisitt fan-out (flerledds-eksempler, deklarativ «jeg liker/følger …»-cue →
+  mutasjonsarmen, én mutasjon per ledd, `searchEntities` per kandidat); vurder to-stegs
+  kandidat-ekstraksjon hvis én generering fortsatt underproduserer (mål mot eval).
+  Delvis rapportering: `AssistantExplanation` (`AssistantModels.swift:224-243`) utvides til
+  per-ledd-regnskap («la til golf, Hovland, F1 · fant ikke 'X' — mente du …?»); dropp
+  aldri ledd stille. Onboarding («Si gjerne flere ting», `OnboardingView.swift:149`)
+  bruker samme flyt. Mock-parseren utvides tilsvarende (deterministisk flerledds-split)
+  så alt er CI-testbart.
+- **Avhenger av:** WP-64 (vintersport må kunne grounde), WP-69 (målbart).
+- **Ikke-mål:** app-kommandoer (WP-66); presentasjonsfilter (WP-67).
+- **Aksept:** mock-tester: eierens faktiske ytring-klasse («jeg liker golf, spesielt
+  Hovland, all vintersport, følger Brann og litt F1») gir 5 forslag med riktige id-er;
+  per-ledd-forklaring verifisert; eval-korpuset utvidet med ≥8 flerledds-cases; alle
+  iOS-tester grønne.
+
+### WP-66 · Assistent: app-kommando-arm + hurtigknapper
+- **Mål:** «Alt» kan utføres via assistenten; hovedfunksjonalitet får i tillegg få,
+  intuitive knapper.
+- **Innhold:** Tredje intent-arm (`AssistantTurn.command`) + kommandokatalog med
+  bekreftelses-semantikk der det trengs: tema (system/mørk/lys), nullstill (gjenbruk
+  WP-32-flytens bekreftelse), kjør onboarding på nytt, del profil / vis QR, «hva vet du
+  om meg» (åpne minne) + «glem …», varsel-ledetid på/av (NotificationPlanner har i dag
+  INGEN kontrollflate — minimal innstilling innføres her), åpne event-detalj («vis
+  Brann-kampen»). Grounding-prinsippet består: kommandoer valideres deterministisk, farlige
+  krever bekreft. Hurtigknapper: stille chips i assistent-arket for hovedhandlingene
+  (DESIGN.md-tro, ingen dashboard-følelse). Mock-parser + tester for hver kommando.
+- **Avhenger av:** WP-62 (deler AssistantViewModel), WP-65 (deler FM-instruksjoner).
+- **Ikke-mål:** presentasjonsfilter (WP-67); nye features bak kommandoene.
+- **Aksept:** dekningsmatrisen fra auditen lukket (hver rad ✅ eller eksplisitt
+  besluttet-utenfor); mock-tester per kommando; eval-cases lagt til; iOS-tester grønne;
+  skjermbilder av chips i begge temaer.
+
+### WP-67 · Assistent: presentasjonsfilter
+- **Mål:** «Vis bare golf denne uka» endrer hva agendaen viser — midlertidig, ærlig, lett
+  å nullstille (i dag feiltolkes det som *følg golf*).
+- **Innhold:** Efemær `AgendaFilter { sports, entiteter, datovindu }` på `AgendaViewModel`
+  (aldri persistert, rører ikke profilen); `AssistantTurn.present(filter)`; stille
+  filterlinje over agendaen («Viser: golf · denne uka ✕») med ett-trykks reset;
+  `FeedQuery`-gjenbruk for filtersemantikk; mock + FM-instruksjoner + eval-cases.
+- **Avhenger av:** WP-66 (intent-arm-mønsteret). **Ikke-mål:** lagrede visninger.
+- **Aksept:** de 5 predikatene/vektorene urørt (filteret er et visningslag); mock-tester;
+  filterlinje-skjermbilder begge temaer; eval-cases.
+
+### WP-68 · Assistent: app-hjelp-kunnskap
+- **Mål:** «Hva kan du?» / «hvordan nullstiller jeg?» / generelle spørsmål om appen
+  besvares fra kuratert fakta — ikke fra tom feed.
+- **Innhold:** Versjonert norsk hjelpe-/kapabilitetsdokument (kort, vedlikeholdes som
+  kode ved siden av kommandokatalogen — WP-66-katalogen genererer gjerne deler av det);
+  eksponert som read-only FM-verktøy (à la `getProfile`) + i mock-answereren; svar
+  refererer handlinger brukeren kan ta («si 'nullstill' eller åpne …»). Koherens-test:
+  hver kommando i katalogen har hjelpe-omtale.
+- **Avhenger av:** WP-66. **Ikke-mål:** generell verdenskunnskap (on-device-modellen
+  svarer ikke på ting utenfor appen/feeden — ærlighetsregelen består).
+- **Aksept:** mock-tester for hjelpe-spørsmål; koherens-testen grønn; eval-cases.
+
+### WP-69 · FM-eval-harness på enhet + korpus
+- **Mål:** Ekte FM-kvalitet måles med ett trykk på eierens iPhone — erstatter manuell
+  utforskende testing som kvalitetssignal.
+- **Innhold:** DEBUG-only eval-skjerm (ingen ny target — minst mulig project.yml-endring):
+  kjører versjonert ytringskorpus (`ios/ZenjiTests/Fixtures/eval-corpus.json` e.l.:
+  WP-16-kanonene + eierens flerledds-klasse + vintersport + kommandoer/filter etter hvert)
+  gjennom den EKTE `FoundationModelsInterestAssistant`, scorer strukturert output mot
+  golden-forventninger (id-sett for mutasjoner; rad-id-er for svar; rubrikk for fuzzy
+  svar-tekst), viser pass-rate per kategori og eksporterer anonymisert JSON-rapport via
+  delesheet (samme personvernmønster som MisunderstoodLog-eksporten); import av
+  MisunderstoodLog-entries som nye korpus-kandidater. Samme korpus kjøres mot mocken som
+  vanlig XCTest i CI (deterministisk del).
+- **Ikke-mål:** kjøre FM i CI (umulig); auto-tuning.
+- **Aksept:** korpus-filen versjonert med ≥20 cases; mock-delen kjører i CI; eval-skjermen
+  bygger i DEBUG og er manuelt kjørbar (eieren kjører første reelle runde og deler
+  rapporten); rapportformatet dokumentert i ios/README.
+### WP-70 · XCUITest: hovedflyter + launch-metrikk
+- **Mål:** Hoved-UX-en regresjonstestes i simulator uten manuell testing.
+- **Innhold:** Ny UI-test-target i `project.yml` (per-linje-begrunnelse); flyter mot
+  mock-assistenten: onboarding (quick-picks + samtale), følg via kommandolinje +
+  bekreft-diff, starter-packs (N raske — vokter WP-60-koalesceringen), event-detalj +
+  «hvorfor vises denne», tema-toggle, nullstill-flyt; `XCTApplicationLaunchMetric` for
+  kaldstart + `XCTOSSignpostMetric` rundt følg-flyten (bruker WP-63-signpostene når de
+  finnes, ellers legges de inn her minimalt); kjøres lokalt/på PR-agentens Mac — CI-krav
+  er kun at targeten bygger.
+- **Ikke-mål:** eval av ekte FM (WP-69); visuell pixel-perfeksjon (visual-qa eier web).
+- **Aksept:** alle flytene grønne i simulator; launch-metrikk-baseline sjekket inn;
+  ios/README §testing oppdatert.
 
 ---
 
