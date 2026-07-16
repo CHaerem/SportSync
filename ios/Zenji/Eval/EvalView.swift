@@ -38,6 +38,9 @@ final class EvalScreenModel {
     private let index: EntityIndex
     private let feedProvider: () -> FeedQuery
     private let logStore: MisunderstoodLogStore
+    /// WP-63 — the local MetricKit log, exported from this same DEBUG surface
+    /// (same privacy pattern as the misunderstood-log / eval-report exports).
+    private let metricStore: MetricLogStore
 
     /// App wiring: the real on-device model + the live index/feed from the WP-12
     /// cache (the same construction `AssistantViewModel`'s app initializer uses),
@@ -46,11 +49,13 @@ final class EvalScreenModel {
         dataStore: DataStore = DataStore(),
         profileStore: ProfileStore = ProfileStore(),
         assistant: any InterestAssistant = FoundationModelsInterestAssistant(),
-        logStore: MisunderstoodLogStore = MisunderstoodLogStore()
+        logStore: MisunderstoodLogStore = MisunderstoodLogStore(),
+        metricStore: MetricLogStore = MetricLogStore()
     ) {
         self.assistant = assistant
         self.index = EntityIndex(dataStore.loadEntities())
         self.logStore = logStore
+        self.metricStore = metricStore
         self.feedProvider = {
             let events = dataStore.loadEvents()
             let base = dataStore.loadInterests() ?? Interests()
@@ -113,6 +118,23 @@ final class EvalScreenModel {
     }
 
     var candidateCount: Int { logStore.load().count }
+
+    // MARK: - WP-63 — MetricKit telemetry export
+
+    /// The anonymised MetricKit log JSON to share (launch-time summaries + hangs;
+    /// never a device id or raw call-stack — see MetricLog.exportPayload).
+    var metricLogJSON: String {
+        String(data: metricStore.exportPayload(), encoding: .utf8) ?? "{}"
+    }
+
+    /// Total records on disk (launches + hangs). Zero on the Simulator — MetricKit
+    /// only delivers on a real device, and only after it has gathered a window.
+    var metricLogCount: Int {
+        let log = metricStore.load()
+        return log.launches.count + log.hangs.count
+    }
+
+    func clearMetricLog() { metricStore.deleteAll() }
 }
 
 /// The DEBUG eval screen — calm Tekst-TV: monospace, amber accent, no charts.
@@ -133,6 +155,7 @@ struct EvalView: View {
                     controls
                     if let report = model.report { summary(report) }
                     if !model.results.isEmpty { caseList }
+                    metricSection
                 }
                 .padding(20)
                 .frame(maxWidth: 640, alignment: .leading)
@@ -274,6 +297,39 @@ struct EvalView: View {
             .disabled(model.candidateCount == 0)
             .zenjiTapTarget()
             Text("Eksporterer «forsto ikke»-loggen som korpus-kandidater. Du bestemmer selv hva som legges inn.")
+                .font(.zenjiMono(size: 10))
+                .foregroundStyle(ZenjiTokens.muted)
+        }
+    }
+
+    /// WP-63 — the local MetricKit telemetry (launch times + hangs), exported
+    /// with the SAME privacy pattern (anonymised JSON, no network, owner-initiated
+    /// share sheet). Always shown; empty on the Simulator (MetricKit is
+    /// device-only), which the honest note states.
+    private var metricSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Rectangle().fill(ZenjiTokens.hairline).frame(height: 1).padding(.top, 8)
+            Text("TELEMETRI (METRICKIT)")
+                .font(.zenjiMono(size: 12, weight: .bold))
+                .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                .tracking(1.5)
+            HStack(spacing: 16) {
+                ShareLink(item: model.metricLogJSON, preview: SharePreview("zenji-telemetri.json")) {
+                    Text("DEL TELEMETRI (\(model.metricLogCount))")
+                        .font(.zenjiMono(size: 11, weight: .bold))
+                        .foregroundStyle(ZenjiTokens.accent)
+                }
+                .disabled(model.metricLogCount == 0)
+                .zenjiTapTarget()
+                Spacer()
+                if model.metricLogCount > 0 {
+                    Button("Slett") { model.clearMetricLog() }
+                        .font(.zenjiMono(size: 11))
+                        .foregroundStyle(ZenjiTokens.diffRemove.opacity(0.75))
+                        .zenjiTapTarget()
+                }
+            }
+            Text("Lokale MetricKit-sammendrag: app-oppstartstid + heng. Aldri nettverk. Tomt i simulatoren — MetricKit leverer bare på ekte enhet.")
                 .font(.zenjiMono(size: 10))
                 .foregroundStyle(ZenjiTokens.muted)
         }

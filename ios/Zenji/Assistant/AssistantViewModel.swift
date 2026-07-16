@@ -205,10 +205,18 @@ final class AssistantViewModel {
         defer { isThinking = false }
         resetBatch()
 
+        // WP-63: os_signpost the submit preludium — the synchronous local prep
+        // that runs BEFORE the on-device model call: building the feed (events/
+        // entities/profile decode + merge + FeedQuery.build) and the memory
+        // context. A stuck prelude shows in Instruments as this named interval
+        // (Subsystem "app.zenji.perf") rather than merging into the model latency.
+        // Pure observation — nothing about the result changes.
+        let prelude = PerfSignpost.assistant.beginInterval("submit-prelude")
         let feed = feedProvider()
         // WP-30 — hand the assistant the personal-memory context: the live state
         // (injected as a retrieval digest) + the write sink (the saveMemory tool).
         let memoryContext = MemoryContext(state: memory, sink: memoryStore)
+        PerfSignpost.assistant.endInterval("submit-prelude", prelude)
         do {
             let turn = try await assistant.interpret(utterance: text, profile: profile, index: index, feed: feed, memory: memoryContext)
             guard !Task.isCancelled else { return }

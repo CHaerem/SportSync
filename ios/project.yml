@@ -189,6 +189,16 @@ targets:
       # (same "no @testable import" pattern). App + ZenjiDeviceDev pick these up
       # via `path: Zenji`; the corpus JSON they bundle as a resource (above).
       - path: Zenji/Eval
+      # WP-63: the perf-instrumentation sources — the os_signpost helper
+      # (PerfSignpost) plus the local MetricKit log + subscriber (MetricLog/
+      # MetricSubscriber). Needed in the hostless bundle because AgendaViewModel
+      # (Zenji/Agenda) and AssistantViewModel (Zenji/Assistant) — already compiled
+      # in above — now reference PerfSignpost, and MetricSubscriberTests /
+      # MetricLogStoreTests drive the store + summarizer directly (same "no
+      # @testable import" pattern). App + ZenjiDeviceDev pick these up via
+      # `path: Zenji`; the widget deliberately does NOT (no perf/telemetry code in
+      # the widget — it has no reload/assistant hotpath and no app lifecycle).
+      - path: Zenji/Perf
       # WP-13: the SAME golden feed-vector fixtures the JS reference test
       # (tests/feed-vectors.test.js) replays — referenced directly at the repo
       # root, never copied, so the two runners can never drift. XcodeGen

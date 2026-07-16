@@ -193,18 +193,48 @@ final class AgendaViewModel {
     /// never blank just because interests.json hasn't synced yet.
     nonisolated static func computeReloadSync(now: Date, dataStore: DataStore, profileStore: ProfileStore, cachedIndex: EntityIndex?) -> sending Reload {
         MainThreadGuard.assertOffMain("AgendaViewModel reload (cache read + JSON decode + compile)")
-        let events = dataStore.loadEvents()
-        let baseInterests = dataStore.loadInterests() ?? Interests()
-        // WP-60: decode the profile file ONCE. The follow-profile and personal
-        // memory both live in the same on-disk ProfileSyncState — reading it a
-        // single time here removes the double decode (was `profileStore.load()`
-        // PLUS `MemoryStore(profileStore:).load()`, each decoding the same file).
-        let syncState = profileStore.loadSyncState()
+        // WP-63: os_signpost the WP-60 hotpath so a real on-device stall surfaces
+        // in Instruments (Points of Interest, Subsystem "app.zenji.perf") as three
+        // named phases — load / index / compile — inside an outer `reload`, instead
+        // of one opaque main-thread blob. Pure observation: the intervals wrap the
+        // SAME work in the SAME order, so the golden vectors stay bit-identical.
+        // The outer `reload` interval OVERLAPS the inner load/index/compile ones,
+        // so it gets its own signpost id; the inner three never overlap each other
+        // (sequential), so the default `.exclusive` id is fine for them.
+        let signposter = PerfSignpost.reload
+        let reloadID = signposter.makeSignpostID()
+        let reloadState = signposter.beginInterval("reload", id: reloadID)
+        defer { signposter.endInterval("reload", reloadState) }
+
+        // WP-63 `load` — cache read + JSON decode. WP-60: decode the profile file
+        // ONCE. The follow-profile and personal memory both live in the same
+        // on-disk ProfileSyncState — reading it a single time here removes the
+        // double decode (was `profileStore.load()` PLUS
+        // `MemoryStore(profileStore:).load()`, each decoding the same file).
+        let events: [Event]
+        let baseInterests: Interests
+        let syncState: ProfileSyncState
+        do {
+            let loadState = signposter.beginInterval("load")
+            defer { signposter.endInterval("load", loadState) }
+            events = dataStore.loadEvents()
+            baseInterests = dataStore.loadInterests() ?? Interests()
+            syncState = profileStore.loadSyncState()
+        }
         let profile = syncState.profile
-        // WP-60: reuse the cached entity index when present (entities.json only
-        // changes on a sync, which invalidates the cache) instead of rebuilding
-        // it on every reload/toggle.
-        let index = cachedIndex ?? EntityIndex(dataStore.loadEntities())
+
+        // WP-63 `index` — the EntityIndex build (entities.json decode + resolver
+        // substrate). WP-60: reuse the cached entity index when present
+        // (entities.json only changes on a sync, which invalidates the cache)
+        // instead of rebuilding it on every reload/toggle — a cache hit shows here
+        // as a near-zero interval.
+        let index: EntityIndex
+        do {
+            let indexState = signposter.beginInterval("index")
+            defer { signposter.endInterval("index", indexState) }
+            index = cachedIndex ?? EntityIndex(dataStore.loadEntities())
+        }
+
         // WP-16.4: fold the local profile in, so the board reflects what the
         // assistant just changed — this is the visible half of "Bekreft →
         // agendaen re-kompileres synlig med det samme".
@@ -214,13 +244,22 @@ final class AgendaViewModel {
         // file). A pure PRESENTATION layer — it masks result/score at display
         // time and never touches the five predicates / golden vectors.
         let shield = SpoilerShield(memory: MemoryState(from: syncState))
-        // WP-18: the raw profile is passed ALONGSIDE the merged interests because
-        // EffectiveInterests.merge folds a rule's entity into the tracked buckets
-        // but drops its `lens` — and the lens is exactly what the lens-rendering
-        // layer needs. So the merged `interests` drive the five predicates
-        // (unchanged), and `profile` carries the per-rule lens on top.
-        let sections = buildSections(events: events, interests: interests, now: now, index: index, followedIds: followedIds, profile: profile, shield: shield)
-        let liveNow = liveRows(events: events, interests: interests, now: now)
+
+        // WP-63 `compile` — FeedCompiler + section building + the live-now scan,
+        // the CPU half of the hotpath. WP-18: the raw profile is passed ALONGSIDE
+        // the merged interests because EffectiveInterests.merge folds a rule's
+        // entity into the tracked buckets but drops its `lens` — and the lens is
+        // exactly what the lens-rendering layer needs. So the merged `interests`
+        // drive the five predicates (unchanged), and `profile` carries the per-rule
+        // lens on top.
+        let sections: [AgendaSection]
+        let liveNow: [AgendaLiveRow]
+        do {
+            let compileState = signposter.beginInterval("compile")
+            defer { signposter.endInterval("compile", compileState) }
+            sections = buildSections(events: events, interests: interests, now: now, index: index, followedIds: followedIds, profile: profile, shield: shield)
+            liveNow = liveRows(events: events, interests: interests, now: now)
+        }
         return Reload(
             sections: sections, liveNow: liveNow, lastSync: dataStore.lastSync,
             profileIsEmpty: profile.isEmpty, index: index
