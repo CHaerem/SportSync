@@ -59,10 +59,14 @@ struct AgendaView: View {
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 0) {
-                if viewModel.sections.isEmpty {
+                // WP-67: render the (possibly filtered) view of the board. The
+                // filter is a pure view layer — `sections` (and the golden
+                // vectors) are unchanged; `displayedSections` just hides rows.
+                let sections = viewModel.displayedSections
+                if sections.isEmpty {
                     emptyRow
                 } else {
-                    ForEach(Array(viewModel.sections.enumerated()), id: \.element.id) { index, section in
+                    ForEach(Array(sections.enumerated()), id: \.element.id) { index, section in
                         dayHeader(section.label, isFirst: index == 0)
                         ForEach(section.items) { item in
                             rowView(for: item)
@@ -151,7 +155,12 @@ struct AgendaView: View {
     /// skipped), point back at the command line instead of reading as "nothing on".
     @ViewBuilder
     private var emptyRow: some View {
-        if viewModel.lastSync == nil {
+        if viewModel.filter != nil {
+            // WP-67: a filter is active but nothing matches it — honest, and
+            // clearly the filter's doing (the ✕ line above resets it), never
+            // read as "nothing on".
+            emptyText("Ingen treff for filteret.")
+        } else if viewModel.lastSync == nil {
             emptyText("Henter data …")
         } else if viewModel.profileIsEmpty {
             VStack(alignment: .leading, spacing: 8) {

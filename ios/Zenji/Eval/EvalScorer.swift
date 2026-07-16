@@ -32,16 +32,24 @@ struct EvalActual: Sendable {
     // model routed to a different arm.
     var commandToken: String
 
+    // Present arm (WP-67) — the parsed presentation filter, or nil when the model
+    // routed to a different arm.
+    var presentFilter: AgendaFilter?
+
     static func mutation(groundedEntityIds: [String]) -> EvalActual {
-        EvalActual(groundedEntityIds: groundedEntityIds, answerText: "", citedRowCount: 0, resolvedRowCount: 0, resolvedRowSports: [], commandToken: "")
+        EvalActual(groundedEntityIds: groundedEntityIds, answerText: "", citedRowCount: 0, resolvedRowCount: 0, resolvedRowSports: [], commandToken: "", presentFilter: nil)
     }
 
     static func answer(text: String, citedRowCount: Int, resolvedRowCount: Int, resolvedRowSports: [String]) -> EvalActual {
-        EvalActual(groundedEntityIds: [], answerText: text, citedRowCount: citedRowCount, resolvedRowCount: resolvedRowCount, resolvedRowSports: resolvedRowSports, commandToken: "")
+        EvalActual(groundedEntityIds: [], answerText: text, citedRowCount: citedRowCount, resolvedRowCount: resolvedRowCount, resolvedRowSports: resolvedRowSports, commandToken: "", presentFilter: nil)
     }
 
     static func command(token: String) -> EvalActual {
-        EvalActual(groundedEntityIds: [], answerText: "", citedRowCount: 0, resolvedRowCount: 0, resolvedRowSports: [], commandToken: token)
+        EvalActual(groundedEntityIds: [], answerText: "", citedRowCount: 0, resolvedRowCount: 0, resolvedRowSports: [], commandToken: token, presentFilter: nil)
+    }
+
+    static func present(filter: AgendaFilter?) -> EvalActual {
+        EvalActual(groundedEntityIds: [], answerText: "", citedRowCount: 0, resolvedRowCount: 0, resolvedRowSports: [], commandToken: "", presentFilter: filter)
     }
 }
 
@@ -84,6 +92,8 @@ enum EvalScorer {
             checks = scoreAnswer(c, actual: actual)
         case .command:
             checks = scoreCommand(c, actual: actual)
+        case .present:
+            checks = scorePresent(c, actual: actual)
         }
         return EvalCaseResult(
             caseId: c.id,
@@ -196,6 +206,60 @@ enum EvalScorer {
             detail = "forventet \(expected), fikk \(token.isEmpty ? "(ingen kommando)" : token)"
         }
         return [EvalCheck(label: "kommando", passed: passed, detail: detail)]
+    }
+
+    // MARK: - Present (WP-67)
+
+    private static func scorePresent(_ c: EvalCase, actual: EvalActual) -> [EvalCheck] {
+        guard let exp = c.expect.filter else {
+            return [EvalCheck(label: "filter", passed: false, detail: "Korpusfeil: present-case mangler filter-forventning.")]
+        }
+        let filter = actual.presentFilter
+        // The model routed to a different arm → no filter at all.
+        guard let filter else {
+            return [EvalCheck(label: "filter", passed: false, detail: "forventet et visningsfilter, fikk ingen (routet til en annen arm)")]
+        }
+
+        var checks: [EvalCheck] = []
+        if exp.reset == true {
+            checks.append(EvalCheck(
+                label: "nullstiller",
+                passed: filter.isEmpty,
+                detail: filter.isEmpty ? "tomt filter (viser alt)" : "filteret var ikke tomt: \(filter.subjectLabel)"
+            ))
+        }
+        if let sports = exp.sports {
+            let expectedSet = Set(sports)
+            let passed = filter.sports == expectedSet
+            checks.append(EvalCheck(
+                label: "idretter",
+                passed: passed,
+                detail: passed ? "idretter: \(filter.sports.sorted().joined(separator: ", "))"
+                    : "forventet {\(expectedSet.sorted().joined(separator: ", "))}, fikk {\(filter.sports.sorted().joined(separator: ", "))}"
+            ))
+        }
+        if let ids = exp.entityIds {
+            let expectedSet = Set(ids)
+            let passed = filter.entityIds == expectedSet
+            checks.append(EvalCheck(
+                label: "entiteter",
+                passed: passed,
+                detail: passed ? "entiteter: \(filter.entityIds.sorted().joined(separator: ", "))"
+                    : "forventet {\(expectedSet.sorted().joined(separator: ", "))}, fikk {\(filter.entityIds.sorted().joined(separator: ", "))}"
+            ))
+        }
+        if let window = exp.window {
+            let actualWindow = filter.window?.rawValue ?? "(ingen)"
+            checks.append(EvalCheck(
+                label: "datovindu",
+                passed: actualWindow == window,
+                detail: actualWindow == window ? "vindu: \(window)" : "forventet \(window), fikk \(actualWindow)"
+            ))
+        }
+        if checks.isEmpty {
+            checks.append(EvalCheck(label: "filter", passed: false, detail: "Korpusfeil: filter-rubrikk uten noen sjekker."))
+        }
+        return checks
     }
 
     /// The arm (the part before ':') of a command token — "theme:dark" → "theme".

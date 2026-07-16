@@ -66,7 +66,7 @@ struct GeneratedMutation {
 /// enums/optionals) for a simple, robust generated schema.
 @Generable
 struct GeneratedTurn {
-    @Guide(description: "Intent: 'mutations' hvis brukeren vil ENDRE hva som følges (følg/slutt/prioriter), 'answer' hvis brukeren STILLER ET SPØRSMÅL om hva/når/hvor, 'command' hvis brukeren vil at APPEN skal GJØRE noe (tema, nullstill, onboarding, dele profil/QR, «hva vet du om meg», glem, varsel-ledetid, eller åpne en hendelse).")
+    @Guide(description: "Intent: 'mutations' hvis brukeren vil ENDRE hva som følges (følg/slutt/prioriter), 'answer' hvis brukeren STILLER ET SPØRSMÅL om hva/når/hvor, 'command' hvis brukeren vil at APPEN skal GJØRE noe (tema, nullstill, onboarding, dele profil/QR, «hva vet du om meg», glem, varsel-ledetid, eller åpne en hendelse), 'present' hvis brukeren vil MIDLERTIDIG endre hva agendaen VISER («vis bare golf denne uka», «vis vintersport», «vis alt igjen») uten å endre hva som følges.")
     var intent: String
 
     @Guide(description: "Kun når intent = 'mutations': alle foreslåtte endringer utledet fra ytringen. Tom liste ellers.")
@@ -83,6 +83,9 @@ struct GeneratedTurn {
 
     @Guide(description: "Argument til kommandoen når det trengs: 'theme' → 'dark'/'light'/'system'; 'reset' → 'everything' (alt om meg) eller 'followed' (det jeg følger); 'notifications' → 'on'/'off'; 'open' → navnet på hendelsen; 'forget' → hva som skal glemmes ('alt' for alt). Tom streng ellers.")
     var commandArgument: String
+
+    @Guide(description: "Kun når intent = 'present': hva agendaen skal vise, som en kort norsk frase — idretter/kategorier/turneringer/utøvere og evt. tidsvindu, f.eks. «golf, denne uka», «vintersport», «sykkel i dag». Bruk «alt» for å nullstille filteret (vis alt igjen). Tom streng ellers.")
+    var presentFilter: String
 }
 
 // MARK: - searchEntities tool
@@ -293,6 +296,17 @@ struct FoundationModelsInterestAssistant: InterestAssistant {
                let command = Self.command(name: turn.command, argument: turn.commandArgument) {
                 return .command(command)
             }
+            if intent.contains("present") {
+                // WP-67 — parse the model's short present phrase into an ephemeral
+                // filter (prepend the «vis» cue the parser anchors on), falling
+                // back to the raw utterance, then to an empty filter (reset). The
+                // filter never touches the profile — it is a pure view change.
+                let raw = turn.presentFilter.trimmingCharacters(in: .whitespacesAndNewlines)
+                let filter = AgendaFilterParser.parse("vis \(raw)", index: index)
+                    ?? AgendaFilterParser.parse(utterance, index: index)
+                    ?? AgendaFilter()
+                return .present(filter)
+            }
             if intent.contains("answer") {
                 return .answer(AssistantAnswer(
                     text: turn.answer.trimmingCharacters(in: .whitespacesAndNewlines),
@@ -450,13 +464,22 @@ struct FoundationModelsInterestAssistant: InterestAssistant {
           • intent = 'command' når brukeren vil at APPEN skal GJØRE noe: bytte tema, nullstille, kjøre
             onboarding på nytt, dele profilen/vise QR, vise «hva du vet om meg», glemme noe om dem, skru
             varsel-ledetid på/av, eller åpne en bestemt hendelse («vis Brann-kampen»).
+          • intent = 'present' når brukeren vil MIDLERTIDIG endre hva agendaen VISER uten å endre hva de
+            følger: «vis bare golf denne uka», «vis vintersport», «vis sykkel i dag», «vis alt igjen». Dette
+            er et rent visningsfilter — det legger IKKE til eller fjerner noe fra det brukeren følger.
 
         NÅR intent = 'command':
         - Sett command til ÉN av: 'theme', 'reset', 'onboarding', 'share', 'memory', 'forget', 'notifications', 'open'.
         - Sett commandArgument når det trengs: theme → 'dark'/'light'/'system'; reset → 'everything' (alt om meg)
           eller 'followed' (det jeg følger); notifications → 'on'/'off'; open → navnet på hendelsen; forget → hva
           som skal glemmes ('alt' for alt). La mutations og answer være tomme.
-        - «vis bare golf denne uka» er IKKE en kommando (det er et framtidig presentasjonsfilter) — bruk vanlig flyt.
+        - «vis bare golf denne uka» / «vis vintersport» er IKKE kommandoer — det er intent = 'present' (visningsfilter).
+          «vis Brann-kampen» (åpne én bestemt hendelse) er derimot command = 'open'.
+
+        NÅR intent = 'present':
+        - Sett presentFilter til en kort norsk frase for hva agendaen skal vise: idretter/kategorier/turneringer/
+          utøvere og evt. tidsvindu («golf, denne uka», «vintersport», «sykkel i dag»). «alt» nullstiller filteret.
+        - Dette endrer BARE visningen — la mutations, answer og command være tomme. Profilen røres aldri.
 
         NÅR intent = 'answer':
         - Spørsmål om AGENDAEN (hva/når/hvor): bruk verktøyet searchEvents for å finne hva som faktisk står på

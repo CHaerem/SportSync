@@ -198,4 +198,32 @@ final class MainFlowsUITests: ZenjiUITestCase {
 
 		assertExists(app.staticTexts["Velkommen"], "completing reset should raise onboarding again")
 	}
+
+	// MARK: - Flow 7 · Presentation filter (WP-67 — set via command line, then reset)
+
+	func testPresentationFilterViaCommandLineThenReset() {
+		let app = launchApp(state: "agenda")
+
+		// The seeded board shows the followed football row.
+		assertExists(app.staticTexts[UITestFixture.footballTitle], "the seeded football row should be on the board")
+
+		// Filter the VIEW to golf — nothing on the seeded board is golf, so the
+		// board empties to the honest "no matches" line while the profile is
+		// untouched (this is a presentation filter, not a follow).
+		let field = app.textFields["command.field"]
+		assertExists(field, "the command line should be present")
+		field.tap()
+		field.typeText("vis golf")
+		app.buttons["command.send"].tap()
+
+		// The quiet filter line appears; the football row is filtered out.
+		assertExists(app.staticTexts["agenda.filter.label"], "the filter line should appear over the agenda")
+		assertExists(app.staticTexts["Ingen treff for filteret."], "the golf filter hides the football row")
+		XCTAssertFalse(app.staticTexts[UITestFixture.footballTitle].exists, "the football row is hidden by the golf filter")
+
+		// One-tap reset (the ✕) brings everything back.
+		app.buttons["agenda.filter.reset"].tap()
+		assertExists(app.staticTexts[UITestFixture.footballTitle], "resetting the filter restores the full board")
+		XCTAssertFalse(app.staticTexts["agenda.filter.label"].exists, "the filter line is gone after reset")
+	}
 }

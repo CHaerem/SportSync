@@ -33,24 +33,26 @@ final class EvalCorpusTests: XCTestCase {
     func test_corpus_coversTheRequiredCategories() throws {
         let corpus = try loadCorpus()
         let categories = Set(corpus.cases.map(\.category))
-        for required in ["canon", "multiPart", "winter", "question", "command"] {
+        for required in ["canon", "multiPart", "winter", "question", "command", "present"] {
             XCTAssertTrue(categories.contains(required), "corpus must cover the '\(required)' category")
         }
     }
 
     func test_corpus_knownGapCasesAreMarkedWithARef() throws {
         let corpus = try loadCorpus()
-        let gaps = corpus.cases.filter(\.isKnownGap)
-        XCTAssertFalse(gaps.isEmpty, "the corpus documents at least one known gap")
-        for gap in gaps {
+        // Any remaining known gap must still name the WP that closes it.
+        for gap in corpus.cases.filter(\.isKnownGap) {
             XCTAssertNotNil(gap.knownGapRef, "known-gap case \(gap.id) must name the WP that closes it")
         }
-        // WP-64/65 closed the original winter + bulk gaps; the presentation-filter
-        // case (WP-67) is the documented forward-looking gap now.
+        // WP-64/65 closed the original winter + bulk gaps; WP-67 shipped the
+        // present arm, so the presentation-filter cases are real (`present`-kind)
+        // cases now — no longer forward-looking known gaps.
         XCTAssertFalse(corpus.cases.contains { $0.category == "winter" && $0.isKnownGap },
                        "the vintersport cases are no longer known gaps after WP-64/65")
-        XCTAssertTrue(gaps.contains { $0.knownGapRef == "WP-67" },
-                      "the presentation-filter case is the forward-looking known gap")
+        XCTAssertFalse(corpus.cases.contains { $0.category == "present" && $0.isKnownGap },
+                       "the presentation-filter cases are no longer known gaps after WP-67")
+        XCTAssertTrue(corpus.cases.contains { $0.category == "present" && $0.kind == .present },
+                      "WP-67 landed at least one real present-kind case")
     }
 
     // MARK: - The mock run (deterministic cases asserted, gaps skipped)
@@ -74,8 +76,9 @@ final class EvalCorpusTests: XCTestCase {
                 result.checks.filter { !$0.passed }.map { "\($0.label): \($0.detail)" }.joined(separator: " · ")
             )
         }
-        // Marker: the skipped known-gap cases are recorded, not silently ignored.
-        XCTAssertFalse(skipped.isEmpty)
+        // Marker: any skipped known-gap cases are recorded, not silently ignored.
+        // (After WP-64/65/67 there may be none — that is fine; the deterministic
+        // cases above are the assertion.)
         print("WP-69 eval — skipped \(skipped.count) known-gap case(s): \(skipped.joined(separator: ", "))")
     }
 
@@ -132,5 +135,25 @@ final class EvalCorpusTests: XCTestCase {
         XCTAssertTrue(EvalScorer.score(c, actual: .answer(text: "Kommende sykkelritt", citedRowCount: 1, resolvedRowCount: 1, resolvedRowSports: ["cycling"])).passed)
         XCTAssertFalse(EvalScorer.score(c, actual: .answer(text: "Norge VANT etappen", citedRowCount: 1, resolvedRowCount: 1, resolvedRowSports: ["cycling"])).passed, "a forbidden claim fails")
         XCTAssertFalse(EvalScorer.score(c, actual: .answer(text: "Kommende", citedRowCount: 1, resolvedRowCount: 1, resolvedRowSports: ["tennis"])).passed, "wrong sport fails")
+    }
+
+    // MARK: - Present scorer (WP-67, independent of the mock)
+
+    func test_scorer_present_sportsAndWindow() {
+        let c = EvalCase(id: "p", category: "present", utterance: "u", kind: .present,
+                         seedProfile: nil, knownGap: nil, knownGapRef: nil, note: nil,
+                         expect: EvalExpectation(filter: FilterExpectation(sports: ["golf"], entityIds: nil, window: "this-week", reset: nil)))
+        XCTAssertTrue(EvalScorer.score(c, actual: .present(filter: AgendaFilter(sports: ["golf"], window: .thisWeek))).passed)
+        XCTAssertFalse(EvalScorer.score(c, actual: .present(filter: AgendaFilter(sports: ["golf"], window: .today))).passed, "wrong window fails")
+        XCTAssertFalse(EvalScorer.score(c, actual: .present(filter: AgendaFilter(sports: ["golf", "chess"], window: .thisWeek))).passed, "an extra sport fails")
+        XCTAssertFalse(EvalScorer.score(c, actual: .present(filter: nil)).passed, "routing to another arm fails")
+    }
+
+    func test_scorer_present_reset() {
+        let c = EvalCase(id: "p", category: "present", utterance: "u", kind: .present,
+                         seedProfile: nil, knownGap: nil, knownGapRef: nil, note: nil,
+                         expect: EvalExpectation(filter: FilterExpectation(sports: nil, entityIds: nil, window: nil, reset: true)))
+        XCTAssertTrue(EvalScorer.score(c, actual: .present(filter: AgendaFilter())).passed, "an empty filter is the reset")
+        XCTAssertFalse(EvalScorer.score(c, actual: .present(filter: AgendaFilter(sports: ["golf"]))).passed, "a non-empty filter is not a reset")
     }
 }

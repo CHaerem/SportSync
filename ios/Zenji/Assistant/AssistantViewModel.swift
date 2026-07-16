@@ -89,6 +89,15 @@ final class AssistantViewModel {
     /// through this closure its associated value is the RESOLVED event id (the
     /// view model resolved the phrase against the local agenda first).
     var onCommand: ((AssistantCommand) -> Void)?
+    /// WP-67 — applies an EPHEMERAL presentation filter to the agenda («vis bare
+    /// golf denne uka»). Set by ContentView, which forwards it to
+    /// `AgendaViewModel.applyFilter`. Never touches the profile (this is a pure
+    /// view layer) and is never persisted; an empty filter clears it.
+    var onPresent: ((AgendaFilter) -> Void)?
+    /// WP-67 — the filter the last present turn produced (for testing + so a
+    /// host built without `onPresent` can still read the parsed filter). Nil
+    /// until a present turn runs; cleared at the start of every submit.
+    private(set) var presentedFilter: AgendaFilter?
 
     /// The local "forsto ikke"-log (WP-16.3): every submit that ended without
     /// an applied mutation, most-recent first.
@@ -253,6 +262,8 @@ final class AssistantViewModel {
                 applyAnswer(text: text, answer: ans, feed: feed)
             case .command(let command):
                 applyCommand(command, feed: feed)
+            case .present(let filter):
+                applyPresent(filter)
             }
             // WP-30 — the model may have written a fact via saveMemory; reflect it.
             refreshMemory()
@@ -323,6 +334,21 @@ final class AssistantViewModel {
             return
         }
         self.answer = AssistantAnswerResult(text: trimmed, rows: feed.rows(forIds: answer.referencedEventIds))
+    }
+
+    // MARK: - Present arm (WP-67 — the ephemeral presentation filter)
+
+    /// Apply a presentation filter to the agenda — EPHEMERAL, never persisted,
+    /// never a profile mutation. The host (ContentView) forwards it to
+    /// `AgendaViewModel.applyFilter`, which narrows what the board SHOWS (a pure
+    /// view layer over the compiled sections). Deliberately raises NO ark: the
+    /// quiet filter line over the agenda is the whole feedback, so the filtered
+    /// board stays visible. Clears the command line, and an empty filter (from
+    /// «vis alt igjen») resets the view.
+    private func applyPresent(_ filter: AgendaFilter) {
+        presentedFilter = filter
+        onPresent?(filter)
+        utterance = ""
     }
 
     // MARK: - Command arm (WP-66)
@@ -680,6 +706,10 @@ final class AssistantViewModel {
             // A command is an app action, not durable personal context; give the
             // distiller only its short token (it records nothing durable from it).
             return command.evalToken
+        case let .present(filter):
+            // A presentation filter is an ephemeral VIEW change, not durable
+            // personal context — give the distiller only a short, inert token.
+            return "present \(filter.subjectLabel)"
         }
     }
 
@@ -751,6 +781,7 @@ final class AssistantViewModel {
         mutationTally = nil
         commandReceipt = nil
         pendingCommand = nil
+        presentedFilter = nil
         lastImportSummary = nil
         shareImportMessage = nil
     }

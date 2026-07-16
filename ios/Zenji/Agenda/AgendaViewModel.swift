@@ -39,6 +39,14 @@ final class AgendaViewModel {
     /// rather than reading as "nothing on".
     private(set) var profileIsEmpty: Bool = true
 
+    /// WP-67 — the EPHEMERAL presentation filter («vis bare golf denne uka»).
+    /// nil ⇒ no filter (the board shows everything). NEVER persisted, never a
+    /// profile change: it is a pure view layer over the already-compiled
+    /// `sections` (`displayedSections` applies it), so the five predicates and
+    /// the golden vectors are untouched. Set by the assistant's present arm via
+    /// `applyFilter`, cleared by the filter line's one-tap ✕.
+    private(set) var filter: AgendaFilter?
+
     private let dataStore: DataStore
     private let syncClient: SyncClient
     /// WP-16.4 — the SAME local profile the assistant edits. Folded into the
@@ -120,6 +128,24 @@ final class AgendaViewModel {
     /// Invalidate the cached entity index so the next reload rebuilds it from
     /// disk. Call after a sync that may have rewritten `entities.json`.
     func invalidateEntityCache() { cachedEntityIndex = nil }
+
+    // MARK: - WP-67 — presentation filter (a pure view layer)
+
+    /// Apply (or clear) the EPHEMERAL presentation filter. No recompile, no
+    /// disk, no profile write — just swaps the view layer `displayedSections`
+    /// runs through. An empty/nil filter clears it (the «vis alt igjen» reset).
+    /// `@Observable` picks up the change, so the board + the filter line update.
+    func applyFilter(_ filter: AgendaFilter?) {
+        self.filter = (filter?.isEmpty ?? true) ? nil : filter
+    }
+
+    /// The sections actually shown: `sections` narrowed by `filter` (identity
+    /// when no filter is set). Pure post-processing over the compiled board — the
+    /// five predicates / golden vectors are never touched (they produce
+    /// `sections`; this only hides rows from the view).
+    var displayedSections: [AgendaSection] {
+        Self.applyFilter(filter, to: sections, now: Date())
+    }
 
     /// Await any in-flight (coalesced) reload — pull-to-refresh and tests use
     /// this to wait until the board has actually been recompiled and applied.
@@ -351,6 +377,52 @@ final class AgendaViewModel {
                     .map(\.item)
             )
         }
+    }
+
+    // MARK: - WP-67 presentation filter (pure view layer over compiled sections)
+
+    /// Narrow compiled `sections` by an ephemeral `filter`. PURE — a function of
+    /// its three inputs, no disk/clock/state — so it is unit-tested directly and
+    /// never touches the five predicates (the golden vectors compile `sections`;
+    /// this only hides rows from the view). Identity when the filter is nil/empty.
+    /// A section survives when its day is in the filter's window AND it still has
+    /// at least one item matching the subject (sport/entity); an emptied section
+    /// is dropped whole (no blank day headers).
+    nonisolated static func applyFilter(_ filter: AgendaFilter?, to sections: [AgendaSection], now: Date) -> [AgendaSection] {
+        guard let filter, !filter.isEmpty else { return sections }
+        return sections.compactMap { section -> AgendaSection? in
+            if let window = filter.window, !window.contains(dayKey: section.id, now: now) { return nil }
+            guard filter.hasSubjectConstraint else { return section }  // window-only keeps every subject
+            let items = section.items.filter { itemMatchesSubject($0, filter: filter) }
+            return items.isEmpty ? nil : AgendaSection(id: section.id, label: section.label, items: items)
+        }
+    }
+
+    /// Whether one agenda item matches the filter's SUBJECT (sport OR entity). A
+    /// series row matches when its next stage or any collapsed stage does.
+    nonisolated static func itemMatchesSubject(_ item: AgendaItem, filter: AgendaFilter) -> Bool {
+        switch item {
+        case .event(let row):
+            return eventMatchesSubject(row.event, filter: filter)
+        case .series(let row):
+            return eventMatchesSubject(row.nextStage, filter: filter)
+                || row.stages.contains { eventMatchesSubject($0, filter: filter) }
+        }
+    }
+
+    /// Whether an event matches the filter's sports (canonical tag) or entity ids
+    /// (home/away team + Norwegian players). Case-insensitive on the sport tag.
+    nonisolated private static func eventMatchesSubject(_ event: Event, filter: AgendaFilter) -> Bool {
+        if !filter.sports.isEmpty {
+            let sport = event.sport.lowercased()
+            if filter.sports.contains(where: { $0.lowercased() == sport }) { return true }
+        }
+        if !filter.entityIds.isEmpty {
+            if let h = event.homeTeamEntityId, filter.entityIds.contains(h) { return true }
+            if let a = event.awayTeamEntityId, filter.entityIds.contains(a) { return true }
+            if event.norwegianPlayers.contains(where: { $0.entityId.map(filter.entityIds.contains) ?? false }) { return true }
+        }
+        return false
     }
 
     // MARK: - Lens rendering (WP-18 — P320: event × deltakelse × linse)

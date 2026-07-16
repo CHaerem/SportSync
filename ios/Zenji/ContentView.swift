@@ -170,6 +170,7 @@ struct ContentView: View {
                 .fill(ZenjiTokens.hairline)
                 .frame(height: 1)
             liveNowLine
+            filterLine
             ZStack {
                 AgendaView(viewModel: agenda, onFollow: follow, onOpen: { assistant.recordOpened($0) },
                            openEventID: $requestedEventID)
@@ -213,6 +214,9 @@ struct ContentView: View {
             // (theme override, re-onboarding, the confirmed reset, opening an
             // event's detail). VM-owned effects run inside the view model.
             assistant.onCommand = { performCommand($0) }
+            // WP-67 — the present arm applies an EPHEMERAL filter to the agenda
+            // («vis bare golf denne uka»). A pure view layer — never the profile.
+            assistant.onPresent = { agenda.applyFilter($0) }
             #if DEBUG
             if let mode = ProcessInfo.processInfo.environment["ZENJI_DEMO"] {
                 // WP-18: seed a deterministic lensed golf agenda + the profile
@@ -221,6 +225,14 @@ struct ContentView: View {
                 if mode == "lens" {
                     LensDemoSeed.seed(profileStore: profileStore)
                     agenda.reloadFromCache(now: Date())
+                }
+                // WP-67: the presentation-filter screenshot — reuse the lens
+                // demo's golf+football board, then apply a golf-only view filter
+                // so the quiet «VISER: GOLF» line shows over the filtered agenda.
+                if mode == "filter" {
+                    LensDemoSeed.seed(profileStore: profileStore)
+                    agenda.reloadFromCache(now: Date())
+                    agenda.applyFilter(AgendaFilter(sports: ["golf"]))
                 }
                 // WP-19: seed a small profile so the share panel shows a real QR +
                 // link (the export needs a non-empty profile) and raise the ark.
@@ -431,7 +443,7 @@ struct ContentView: View {
         // the flows non-deterministic), so don't fetch (and don't schedule
         // notifications) in those modes.
         let demoMode = ProcessInfo.processInfo.environment["ZENJI_DEMO"]
-        if demoMode == "lens" || demoMode == UITestSeed.demoMode { return }
+        if demoMode == "lens" || demoMode == "filter" || demoMode == UITestSeed.demoMode { return }
         #endif
         let previousEvents = dataStore.loadEvents()
         _ = await syncClient.sync()
@@ -551,6 +563,49 @@ struct ContentView: View {
             .frame(maxWidth: .infinity, alignment: .center)
             .padding(.horizontal, 20)
             .padding(.vertical, 10)
+            Rectangle()
+                .fill(ZenjiTokens.hairline)
+                .frame(height: 1)
+        }
+    }
+
+    /// WP-67 — the quiet filter line over the agenda when a presentation filter
+    /// is active («VISER: GOLF · DENNE UKA ✕»). Tekst-TV to the core: mono,
+    /// dempet «VISER:», the amber subject, and a one-tap ✕ that resets. Hidden
+    /// when no filter is set — the calm default is an unfiltered board.
+    @ViewBuilder
+    private var filterLine: some View {
+        if let filter = agenda.filter, !filter.isEmpty {
+            VStack(spacing: 0) {
+                HStack(spacing: 8) {
+                    Text("VISER:")
+                        .font(.zenjiMono(size: 12, weight: .semibold))
+                        .foregroundStyle(ZenjiTokens.muted)
+                    Text(filter.subjectLabel)
+                        .font(.zenjiMono(size: 12, weight: .semibold))
+                        .tracking(1)
+                        .foregroundStyle(ZenjiTokens.accent)
+                        .lineLimit(1)
+                        .accessibilityIdentifier("agenda.filter.label")
+                    Spacer(minLength: 8)
+                    Button {
+                        withAnimation(.easeOut(duration: 0.15)) { agenda.applyFilter(nil) }
+                    } label: {
+                        Text("✕")
+                            .font(.zenjiMono(size: 13, weight: .semibold))
+                            .foregroundStyle(ZenjiTokens.muted)
+                    }
+                    .accessibilityLabel("Fjern filter")
+                    .accessibilityIdentifier("agenda.filter.reset")
+                    .zenjiTapTarget()
+                }
+                .frame(maxWidth: 640, alignment: .leading)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 10)
+            }
+            .accessibilityElement(children: .contain)
+            .accessibilityIdentifier("agenda.filterBar")
             Rectangle()
                 .fill(ZenjiTokens.hairline)
                 .frame(height: 1)

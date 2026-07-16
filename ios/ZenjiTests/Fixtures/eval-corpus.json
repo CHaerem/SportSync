@@ -1,6 +1,6 @@
 {
   "version": 4,
-  "description": "WP-69/65/66/68 — versioned assistant eval corpus. Golden STRUCTURED expectations (entity id-sets for mutations; row/claim rubric for answers), NEVER exact prose. Runs two ways: through MockInterestAssistant as a deterministic XCTest (CI), and through the REAL FoundationModelsInterestAssistant on an AI-enabled Mac/iPhone via RealFMEvalTests / the DEBUG eval screen. `clock` is the fixed `now` CI evaluates the answer arm against; the on-device run uses the live feed and real time. `knownGap` cases are EXPECTED to fail until the named work package lands — CI skips them (marked), the device run reports them as known gaps. SPORT-LEVEL vs SPECIFIC ENTITY (WP-65 principle): when the user names a BARE sport ('golf', 'litt F1', 'mer sykkel', 'skiskyting') the correct grounding is the SPORT-LEVEL entity (sport-golf, sport-f1, sport-cycling, sport-biathlon) — following the whole sport, not an arbitrary flagship tournament (grounding 'golf' to one random event is wrong). When the user names a SPECIFIC tournament/team/athlete ('Tour de France', 'Lyn', 'Hovland') the specific entity is correct. An umbrella term ('all vintersport') grounds to the single category entity (category-winter-sports). Sports with no published sport entity (tennis, athletics) fall back to their most-headline real entity. COMMAND ARM (WP-66): the `command` cases pin the parsed AssistantCommand's canonical token — enum-argument commands exact ('theme:dark', 'reset:everything', 'notify:off'), free-text commands ('open', 'forget') on the ARM only (a free-generating model can't be held to an exact phrase).",
+  "description": "WP-69/65/66/67/68 — versioned assistant eval corpus. Golden STRUCTURED expectations (entity id-sets for mutations; row/claim rubric for answers; filter structure for presentation), NEVER exact prose. Runs two ways: through MockInterestAssistant as a deterministic XCTest (CI), and through the REAL FoundationModelsInterestAssistant on an AI-enabled Mac/iPhone via RealFMEvalTests / the DEBUG eval screen. `clock` is the fixed `now` CI evaluates the answer arm against; the on-device run uses the live feed and real time. `knownGap` cases are EXPECTED to fail until the named work package lands — CI skips them (marked), the device run reports them as known gaps. SPORT-LEVEL vs SPECIFIC ENTITY (WP-65 principle): when the user names a BARE sport ('golf', 'litt F1', 'mer sykkel', 'skiskyting') the correct grounding is the SPORT-LEVEL entity (sport-golf, sport-f1, sport-cycling, sport-biathlon) — following the whole sport, not an arbitrary flagship tournament (grounding 'golf' to one random event is wrong). When the user names a SPECIFIC tournament/team/athlete ('Tour de France', 'Lyn', 'Hovland') the specific entity is correct. An umbrella term ('all vintersport') grounds to the single category entity (category-winter-sports). Sports with no published sport entity (tennis, athletics) fall back to their most-headline real entity. COMMAND ARM (WP-66): the `command` cases pin the parsed AssistantCommand's canonical token — enum-argument commands exact ('theme:dark', 'reset:everything', 'notify:off'), free-text commands ('open', 'forget') on the ARM only (a free-generating model can't be held to an exact phrase). PRESENT ARM (WP-67): the `present` cases pin the parsed AgendaFilter's structure (sports SET, entity-id SET, date window rawValue, or a reset flag). A presentation filter is an EPHEMERAL view change — it never mutates the profile — and a «vis …»-cue wins over the follow cue ('vis bare golf' filters, it does not follow golf). A category word ('vintersport') expands to its member sports in the filter.",
   "clock": "2026-07-13T05:00:00Z",
   "cases": [
     {
@@ -215,11 +215,49 @@
       "id": "present-01-vis-bare-golf",
       "category": "present",
       "utterance": "Vis bare golf denne uka",
-      "kind": "mutation",
-      "knownGap": true,
-      "knownGapRef": "WP-67",
-      "note": "A PRESENTATION filter, not a follow — «vis bare golf denne uka» should temporarily filter the agenda, not add a golf follow. Until WP-67 lands the present-intent arm, the assistant mis-reads it as a follow (grounds sport-golf), so this is a documented known gap: the empty golden marks the correct future outcome (no profile mutation).",
-      "expect": { "mutationEntityIds": [] }
+      "kind": "present",
+      "note": "WP-67 shipped the present arm — this is a real `present`-kind case now, NOT a known gap. «vis bare golf denne uka» is a PRESENTATION filter (sports={golf}, window=this-week), not a follow: it changes what the agenda SHOWS, never the profile. (History: under WP-66 this was a mutation-kind known gap with an empty golden; it began passing against the real FM once that model stopped grounding a follow for it. WP-67 makes the mock route it to the present arm deterministically, so the golden is now the actual filter structure.)",
+      "expect": { "filter": { "sports": ["golf"], "window": "this-week" } }
+    },
+    {
+      "id": "present-02-vis-vintersport",
+      "category": "present",
+      "utterance": "Vis vintersport",
+      "kind": "present",
+      "note": "An umbrella category in a present utterance expands to its member sports in the filter (the filter line collapses them back to «VINTERSPORT»). No follow, no profile change.",
+      "expect": { "filter": { "sports": ["biathlon", "cross-country", "nordic", "alpine", "ski jumping"] } }
+    },
+    {
+      "id": "present-03-vis-golf-og-sjakk",
+      "category": "present",
+      "utterance": "Vis golf og sjakk",
+      "kind": "present",
+      "note": "Two bare sports in a present utterance → both sport tags in the filter set.",
+      "expect": { "filter": { "sports": ["golf", "chess"] } }
+    },
+    {
+      "id": "present-04-vis-bare-hovland",
+      "category": "present",
+      "utterance": "Vis bare Hovland",
+      "kind": "present",
+      "note": "A specific athlete → an entity-id filter (viktor-hovland). «bare» is an explicit filter cue; nothing is followed.",
+      "expect": { "filter": { "entityIds": ["viktor-hovland"] } }
+    },
+    {
+      "id": "present-05-vis-alt-igjen",
+      "category": "present",
+      "utterance": "Vis alt igjen",
+      "kind": "present",
+      "note": "The reset — «vis alt igjen» clears the filter (an EMPTY AgendaFilter = show everything).",
+      "expect": { "filter": { "reset": true } }
+    },
+    {
+      "id": "present-06-vis-kun-sykkel-i-dag",
+      "category": "present",
+      "utterance": "Vis kun sykkel i dag",
+      "kind": "present",
+      "note": "A sport + a date window → sports={cycling}, window=today. «kun» is a filter cue.",
+      "expect": { "filter": { "sports": ["cycling"], "window": "today" } }
     },
     {
       "id": "q-01-neste-tour-de-france",

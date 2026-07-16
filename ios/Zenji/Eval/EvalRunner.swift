@@ -63,9 +63,9 @@ struct EvalRunner: Sendable {
         case let (.mutation, .mutations(proposals)):
             let grounded = MutationGrounder.ground(proposals, index: index, profile: profile).grounded
             return .mutation(groundedEntityIds: grounded.map { $0.entity.id })
-        case (.mutation, .answer), (.mutation, .command):
-            // The case wanted a change but the model answered / ran a command —
-            // nothing grounds.
+        case (.mutation, .answer), (.mutation, .command), (.mutation, .present):
+            // The case wanted a change but the model answered / ran a command /
+            // filtered the view — nothing grounds.
             return .mutation(groundedEntityIds: [])
         case let (.answer, .answer(answer)):
             let byId = Dictionary(feed.events.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
@@ -76,16 +76,23 @@ struct EvalRunner: Sendable {
                 resolvedRowCount: resolved.count,
                 resolvedRowSports: resolved.map { $0.sport }
             )
-        case (.answer, .mutations), (.answer, .command):
+        case (.answer, .mutations), (.answer, .command), (.answer, .present):
             // The case asked a question but the model proposed changes / ran a
-            // command — no answer text, no rows.
+            // command / filtered the view — no answer text, no rows.
             return .answer(text: "", citedRowCount: 0, resolvedRowCount: 0, resolvedRowSports: [])
         case let (.command, .command(command)):
             // WP-66 — score the PARSED command's canonical token.
             return .command(token: command.evalToken)
-        case (.command, .mutations), (.command, .answer):
+        case (.command, .mutations), (.command, .answer), (.command, .present):
             // The case expected a command but the model routed elsewhere.
             return .command(token: "")
+        case let (.present, .present(filter)):
+            // WP-67 — score the PARSED presentation filter's structure.
+            return .present(filter: filter)
+        case (.present, .mutations), (.present, .answer), (.present, .command):
+            // The case expected a presentation filter but the model routed
+            // elsewhere (e.g. mis-read «vis …» as a follow — the WP-67 bug).
+            return .present(filter: nil)
         }
     }
 
