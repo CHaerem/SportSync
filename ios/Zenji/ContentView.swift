@@ -85,6 +85,14 @@ struct ContentView: View {
         self.notificationPlanner = notificationPlanner
         self.profileStore = profileStore
         self.profileSync = profileSync
+        #if DEBUG
+        // WP-70 — the XCUITest launch harness. Seed a deterministic cache +
+        // reset the onboarding/theme `@AppStorage` flags BEFORE the view models
+        // read from disk and BEFORE the onboarding decision below, so the whole
+        // first frame is fixed. Reused via the existing `ZENJI_DEMO` env var
+        // (value "uitest"); a no-op unless that value is set.
+        UITestSeed.seedIfRequested(profileStore: profileStore)
+        #endif
         self._agenda = State(initialValue: AgendaViewModel(dataStore: dataStore, syncClient: syncClient, profileStore: profileStore))
         #if DEBUG
         // Screenshot harness: back the assistant with the deterministic mock
@@ -106,7 +114,12 @@ struct ContentView: View {
         // shows onboarding (the `.task` harness raises the requested state instead,
         // so the other demo modes aren't covered by the overlay).
         #if DEBUG
-        let isDemo = ProcessInfo.processInfo.environment["ZENJI_DEMO"] != nil
+        // WP-70: the "uitest" harness is deliberately NOT treated as a
+        // screenshot-demo (which suppresses the overlay) — it drives the REAL
+        // onboarding gate, so its "onboarding" launch state shows the first-run
+        // overlay exactly as a cold install would.
+        let demoValue = ProcessInfo.processInfo.environment["ZENJI_DEMO"]
+        let isDemo = demoValue != nil && demoValue != UITestSeed.demoMode
         #else
         let isDemo = false
         #endif
@@ -384,10 +397,12 @@ struct ContentView: View {
     private func refresh() async {
         agenda.reloadFromCache(now: Date())
         #if DEBUG
-        // WP-18: the lens screenshot demo runs entirely off its seeded cache —
-        // a live sync would clobber it, so don't fetch (and don't schedule
-        // notifications) in that mode.
-        if ProcessInfo.processInfo.environment["ZENJI_DEMO"] == "lens" { return }
+        // WP-18/WP-70: the lens screenshot demo and the XCUITest harness both run
+        // entirely off their seeded cache — a live sync would clobber it (and make
+        // the flows non-deterministic), so don't fetch (and don't schedule
+        // notifications) in those modes.
+        let demoMode = ProcessInfo.processInfo.environment["ZENJI_DEMO"]
+        if demoMode == "lens" || demoMode == UITestSeed.demoMode { return }
         #endif
         let previousEvents = dataStore.loadEvents()
         _ = await syncClient.sync()
@@ -451,6 +466,10 @@ struct ContentView: View {
                             .foregroundStyle(ZenjiTokens.muted)
                     }
                     .accessibilityLabel(themeOverride.accessibilityLabel)
+                    // WP-70: a stable id for the XCUITest theme-toggle flow — the
+                    // a11y LABEL cycles (automatisk/mørk/lys), so the test needs a
+                    // label-independent handle to tap and then assert the cycle.
+                    .accessibilityIdentifier("theme.toggle")
                     // WP-14.3: the glyph itself stays DESIGN.md-small — only
                     // the invisible hit area grows to the HIG's ≥44×44pt.
                     .zenjiTapTarget()

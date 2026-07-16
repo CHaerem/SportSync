@@ -188,6 +188,8 @@ struct OnboardingView: View {
                 .submitLabel(.send)
                 .disabled(assistant.isThinking)
                 .onSubmit(submit)
+                // WP-70: stable handle for the onboarding converse-step flow.
+                .accessibilityIdentifier("onboarding.field")
 
             if assistant.isThinking {
                 HStack(spacing: 8) {
@@ -207,6 +209,9 @@ struct OnboardingView: View {
                         .foregroundStyle(ZenjiTokens.accent)
                 }
                 .accessibilityLabel("Send")
+                // WP-70: distinct id (the keyboard's `.send` return key shares the
+                // "Send" label) so the onboarding converse flow can tap it.
+                .accessibilityIdentifier("onboarding.send")
                 .zenjiTapTarget()
             } else {
                 BlinkingCursor()
@@ -403,6 +408,10 @@ struct OnboardingView: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel("\(pack.title). \(pack.subtitle). \(applied ? "Valgt" : "Legg til")")
+        // WP-70: a stable per-pack handle for the quick-picks + rapid-toggle
+        // XCUITest flows (the a11y label carries the applied state, so the test
+        // needs a state-independent id to tap repeatedly).
+        .accessibilityIdentifier("starterpack.\(pack.id)")
     }
 
     // MARK: - Step 4 · Landing
