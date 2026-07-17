@@ -93,7 +93,7 @@ mennesket, aldri av en agent.
 | WP-80 | Token- & typografi-fundament (Apple-native) | 0F | – | ✅ merget (#289) — semantiske farge-tokens (system + amber) + Dynamic Type-API (`Font.zenji`/`zenjiTabular`), `zenjiMono(size:)` beholdt som deprecated shim (alle 4 schemes bygger urørt), 529 iOS-tester grønt + 13/13 vektorer bit-like |
 | WP-81 | Agenda → native List + sveip/pressed-state | 0F | WP-80 | ✅ merget (#290) — native `List(.insetGrouped)`, rad=Button (pressed-state + a11y-rolle), SF Symbols (bell/info), sveip «Følg», detaljark på detents; 529 unit + 13/13 vektorer bit-like |
 | WP-82 | Hjelperen → native (oppdagbarhet) | 0F | WP-80 | ✅ merget (#291) — tre oppdagbarhets-tilstander (hvile-eksempel/fokus-forslag/live grunning), native felt (clear/diktering/autocap av), font-migrering; mock-suite urørt grønn. Samlet bølge-2-verifisering: unit 529 + UI 9/10 (begge nye flyter), `testEventDetailWhyShown` er pre-eksisterende feil (fikses separat) |
-| WP-83 | Navigasjon (NavigationStack) + Deg-skjerm | 0F | WP-81,WP-82 | ⬜ |
+| WP-83 | Navigasjon (NavigationStack) + Deg-skjerm | 0F | WP-81,WP-82 | 🔬 agenda i `NavigationStack` + `gearshape`→Deg; v2-header-glyfer (`»_`/`◐`/klokke) fjernet; hjelperens resultat = native `.sheet` (detents); `AssistantPanel` slanket til samtale/resultat; ny `Profile/DegView.swift` re-hjemmer profil/minne/forsto-ikke/del/varsel/tema/nullstill/eval; alle 4 schemes bygger, 529 unit + 13/13 vektorer bit-like, UI-flyter (Deg-nav/tema/reset/sheet) grønne |
 | WP-84 | Widget + web token-paritet | 0F | WP-80 | ⬜ |
 | WP-85 | Baseline-designsystem + HIG-gate (promoter DESIGN.md) | 0F | WP-80,WP-81,WP-82,WP-83,WP-84 | ⬜ |
 

@@ -2,16 +2,16 @@
 //  AssistantPanel.swift
 //  Zenji
 //
-//  WP-16.4 — the assistant's content, moved OUT of a separate screen and INTO
-//  the flow: a flat "ark" (flate-token) that fades in over the agenda when the
-//  command line has something to show. It carries everything the WP-16 screen
-//  did — the proposal DIFF (Bekreft/Avvis per mutation, «mente du …?»
-//  suggestions, the always-explain «ingen endring» account) — PLUS the WP-16.4
-//  answer block (a question's calm reply + the rows it referenced), and reaches
-//  «Hva jeg følger» + the WP-16.3 forsto-ikke-loggen from two quiet disclosures
-//  at the bottom of the SAME ark ("i samme flyt"). No text input lives here —
-//  that's the always-present command line; confirming a change fades this ark
-//  away (≤150 ms) and the agenda behind it recompiles on the spot.
+//  WP-16.4 → WP-82 → WP-83 — the assistant's RESULT surface. WP-83 slimmed it to
+//  conversation/result ONLY: the answer block, the proposal DIFF (Bekreft/Avvis
+//  per mutation, «mente du …?» suggestions), the per-clause REGNSKAP, the
+//  command confirm/receipt, the «ikke funnet» rejections and the always-explain
+//  «ingen endring» account. The permanent sections it used to carry — Hva jeg
+//  følger, Hva jeg vet om deg, Det jeg ikke forsto, Del profil, the tema/varsel
+//  quick-chips, Nullstill, Sett opp på nytt, the version line and the DEBUG eval
+//  entry — were RE-HOMED to the "Deg" screen (DegView, reached from the agenda's
+//  gearshape). This panel is now presented as a native `.sheet` (detents) that
+//  ContentView raises over the agenda; the command line stays put beneath it.
 //
 //  Presentation only. All logic is AssistantViewModel + the pure pipeline it
 //  calls; this file lays the state out.
@@ -21,54 +21,8 @@ import SwiftUI
 
 struct AssistantPanel: View {
     var viewModel: AssistantViewModel
-    /// Fades the ark away (ContentView owns the ≤150 ms transition).
+    /// Dismisses the sheet (ContentView flips the presentation binding).
     var dismiss: () -> Void
-    /// WP-31 — re-run the first-run onboarding from "Hva jeg følger". Default
-    /// no-op so previews / standalone use still compile.
-    var onRerunOnboarding: () -> Void = {}
-    /// WP-32 — perform a confirmed reset (ContentView both calls
-    /// `AssistantViewModel.resetProfile(_:)` AND raises the onboarding overlay
-    /// afterwards, so it owns this closure). Default no-op so previews /
-    /// standalone use still compile.
-    var onReset: (ResetLevel) -> Void = { _ in }
-    /// WP-32 — whether cross-device sync is actually on (CloudKit, WP-17),
-    /// so the reset confirmation can honestly mention other devices only
-    /// when there ARE other devices to mention. Defaults to off (the free-
-    /// account build's `LocalOnlyProfileSync`).
-    var syncEnabled: Bool = false
-    /// «Har jeg siste versjon?» — the published truth (synced
-    /// app-version.json); ContentView passes it, default nil so previews /
-    /// standalone use still compile (the line then shows the stamp alone).
-    var publishedAppVersion: AppVersion? = nil
-
-    @State private var misunderstoodExpanded = false
-    @State private var profileExpanded = false
-    /// WP-30 — the "Hva jeg vet om deg" page (presented from the same foot as
-    /// "Hva jeg følger").
-    @State private var memoryPageShown = false
-    /// WP-32 — the "Nullstill" disclosure + which level (if any) is mid-
-    /// confirmation (nil = the two calm entry rows, non-nil = the confirm ark).
-    @State private var resetExpanded = false
-    @State private var confirmingReset: ResetLevel?
-    /// WP-66 — read the current theme so the quick chip can show its glyph and
-    /// cycle to the next state (the SAME @AppStorage key ContentView writes).
-    @AppStorage(ThemeOverride.storageKey) private var themeRaw = ThemeOverride.system.rawValue
-    #if DEBUG
-    /// WP-69 — the DEBUG-only FM-eval screen, reached from this same foot (the
-    /// existing debug surface). Never compiled into a Release build.
-    @State private var evalShown = false
-    #endif
-
-    /// DEBUG screenshot harness only: force the "Nullstill" disclosure open
-    /// (and optionally jump straight to one level's confirmation ark) so each
-    /// state can be captured deterministically. Nil in the shipping flow —
-    /// same convention as `OnboardingView.initialStep`.
-    var initialResetState: ResetDemoState? = nil
-
-    struct ResetDemoState {
-        var expanded: Bool
-        var confirming: ResetLevel?
-    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -85,18 +39,6 @@ struct AssistantPanel: View {
                     if !viewModel.pending.isEmpty { proposalsSection }
                     if !viewModel.rejected.isEmpty { rejectionsSection }
                     if let explanation = viewModel.explanation { explanationSection(explanation) }
-                    Rectangle().fill(ZenjiTokens.separator).frame(height: 1).padding(.vertical, 2)
-                    quickChipsRow
-                    profileSection
-                    rerunOnboardingRow
-                    memoryEntry
-                    resetSection
-                    misunderstoodSection
-                    #if DEBUG
-                    evalEntry
-                    #endif
-                    ProfileSharePanel(viewModel: viewModel)
-                    versionLine
                 }
                 .padding(20)
                 .frame(maxWidth: 640, alignment: .leading)
@@ -106,15 +48,6 @@ struct AssistantPanel: View {
         .background(ZenjiTokens.cell)
         .foregroundStyle(ZenjiTokens.label)
         .task { viewModel.refreshAvailability() }
-        .onAppear {
-            if let initialResetState {
-                resetExpanded = initialResetState.expanded
-                confirmingReset = initialResetState.confirming
-            }
-        }
-        // WP-66 — the «hva vet du om meg» command opens the memory page (the same
-        // sheet the memoryEntry row opens), via a token the view model bumps.
-        .onChange(of: viewModel.memoryRequestToken) { _, _ in memoryPageShown = true }
         // WP-82 — one light success haptic on Bekreft (a mutation/command
         // confirmed), DESIGN-BASELINE § Bevegelse & haptikk. The trigger only
         // bumps on an explicit confirm, never on scroll or every tap.
@@ -277,49 +210,6 @@ struct AssistantPanel: View {
         .overlay(Rectangle().stroke(ZenjiTokens.accent.opacity(0.3), lineWidth: 1))
     }
 
-    // MARK: - Quick chips (WP-66)
-
-    /// A FEW, quiet chips for the main app actions — flat hairline boxes in the
-    /// accent (never filled pills; DESIGN.md forbudsliste), ≥44 pt tall. They run
-    /// the SAME command path a typed command does (`runCommand`), so the chip and
-    /// the utterance are one code path. Wraps to two rows on a narrow width so the
-    /// body never scrolls horizontally.
-    private var quickChipsRow: some View {
-        let theme = ThemeOverride(rawValue: themeRaw) ?? .system
-        let leadOn = NotificationLeadPreference.isLeadTimeEnabled()
-        return VStack(alignment: .leading, spacing: 8) {
-            sectionTitle("HURTIG")
-            ViewThatFits(in: .horizontal) {
-                HStack(spacing: 8) { chipButtons(theme: theme, leadOn: leadOn) }
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack(spacing: 8) { chip("TEMA \(theme.glyph)") { viewModel.runCommand(.setTheme(theme.next)) }
-                        chip("VARSEL \(leadOn ? "●" : "○")") { viewModel.runCommand(.setNotificationLeadTime(enabled: !leadOn)) } }
-                    HStack(spacing: 8) { chip("DEL PROFIL") { viewModel.runCommand(.shareProfile) }
-                        chip("MITT MINNE") { viewModel.runCommand(.showMemory) } }
-                }
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func chipButtons(theme: ThemeOverride, leadOn: Bool) -> some View {
-        chip("TEMA \(theme.glyph)") { viewModel.runCommand(.setTheme(theme.next)) }
-        chip("VARSEL \(leadOn ? "●" : "○")") { viewModel.runCommand(.setNotificationLeadTime(enabled: !leadOn)) }
-        chip("DEL PROFIL") { viewModel.runCommand(.shareProfile) }
-        chip("MITT MINNE") { viewModel.runCommand(.showMemory) }
-    }
-
-    private func chip(_ label: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Text(label)
-                .font(.zenji(.caption, weight: .bold))
-                .foregroundStyle(ZenjiTokens.accent)
-                .tracking(1)
-        }
-        .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.accent))
-        .accessibilityIdentifier("chip.\(label.split(separator: " ").first.map(String.init)?.lowercased() ?? "")")
-    }
-
     // MARK: - Proposals (the DIFF)
 
     private var proposalsSection: some View {
@@ -449,301 +339,10 @@ struct AssistantPanel: View {
         .overlay(Rectangle().stroke(ZenjiTokens.label.opacity(0.2), lineWidth: 1))
     }
 
-    // MARK: - Profile ("Hva jeg følger") — a quiet disclosure
-
-    private var profileSection: some View {
-        DisclosureGroup(isExpanded: $profileExpanded) {
-            VStack(alignment: .leading, spacing: 0) {
-                if viewModel.profile.isEmpty {
-                    Text("Ingenting ennå. Skriv en ytring i linjen for å begynne.")
-                        .font(.zenji(.footnote))
-                        .foregroundStyle(ZenjiTokens.label.opacity(0.55))
-                        .padding(.top, 10)
-                } else {
-                    ForEach(viewModel.profile.rules) { rule in ruleRow(rule) }
-                }
-            }
-            .padding(.top, 8)
-        } label: {
-            Text("HVA JEG FØLGER (\(viewModel.profile.rules.count))")
-                .font(.zenji(.caption, weight: .bold))
-                .foregroundStyle(ZenjiTokens.label.opacity(0.5))
-                .tracking(1.5)
-        }
-        .tint(ZenjiTokens.secondaryLabel)
-    }
-
-    private func ruleRow(_ rule: InterestRule) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
-            HStack(alignment: .firstTextBaseline) {
-                Text(rule.entityName)
-                    .font(.zenji(.subheadline, weight: .bold))
-                Spacer()
-                Button("Fjern") { viewModel.removeRule(rule) }
-                    .font(.zenji(.caption))
-                    .foregroundStyle(ZenjiTokens.destructive.opacity(0.8))
-                    .zenjiTapTarget()
-            }
-            Text(ruleSubtitle(rule))
-                .font(.zenji(.caption))
-                .foregroundStyle(ZenjiTokens.label.opacity(0.6))
-            Text(rule.reason)
-                .font(.zenji(.caption2))
-                .foregroundStyle(ZenjiTokens.label.opacity(0.5))
-        }
-        .padding(.vertical, 8)
-        .overlay(alignment: .bottom) {
-            Rectangle().fill(ZenjiTokens.label.opacity(0.1)).frame(height: 1)
-        }
-    }
-
-    /// WP-31 — a quiet way back into the first-run flow ("say what you follow"),
-    /// for someone who skipped it or wants to add more from a guided step.
-    private var rerunOnboardingRow: some View {
-        Button { onRerunOnboarding() } label: {
-            HStack {
-                Text("SETT OPP DET DU FØLGER")
-                    .font(.zenji(.caption, weight: .bold))
-                    .foregroundStyle(ZenjiTokens.label.opacity(0.5))
-                    .tracking(1.5)
-                Spacer()
-                Text("»_")
-                    .font(.zenji(.footnote, weight: .semibold))
-                    .foregroundStyle(ZenjiTokens.secondaryLabel)
-            }
-            .frame(minHeight: 44)
-            .contentShape(Rectangle())
-        }
-        .accessibilityLabel("Sett opp det du følger på nytt")
-    }
-
-    private func ruleSubtitle(_ rule: InterestRule) -> String {
-        var parts = [SportVocabulary.display(for: rule.sport)]
-        if let scope = rule.scope, !scope.isEmpty { parts.append(scope) }
-        if !rule.lens.isDefault { parts.append(rule.lens.label) }
-        parts.append("vekt \(weightLabel(rule.weight))")
-        return parts.joined(separator: " · ")
-    }
-
-    // MARK: - "Hva jeg vet om deg" (WP-30) — a quiet entry to the memory page
-
-    /// A calm, chevron-free row (rhythm signals tappability, per DESIGN.md) that
-    /// opens the "Hva jeg vet om deg" trust/GDPR page — sits right under "Hva
-    /// jeg følger", the same foot of the ark.
-    private var memoryEntry: some View {
-        Button { memoryPageShown = true } label: {
-            HStack {
-                Text("HVA JEG VET OM DEG (\(viewModel.memoryItemCount))")
-                    .font(.zenji(.caption, weight: .bold))
-                    .foregroundStyle(ZenjiTokens.label.opacity(0.5))
-                    .tracking(1.5)
-                Spacer()
-            }
-            .frame(minHeight: 44)
-            .contentShape(Rectangle())
-        }
-        .sheet(isPresented: $memoryPageShown) {
-            WhatIKnowView(viewModel: viewModel)
-        }
-    }
-
-    // MARK: - "Nullstill" (WP-32) — reset the profile, re-onboard, no reinstall
-
-    /// A quiet disclosure at the same foot as "Hva jeg følger"/"Hva jeg vet om
-    /// deg": two calm entry rows (never a "button jungle" — each opens the
-    /// SAME inline confirm-ark, one at a time) collapse to a single confirm
-    /// step per tap, exactly the "Glem alt" idiom `WhatIKnowView` already uses.
-    private var resetSection: some View {
-        DisclosureGroup(isExpanded: $resetExpanded) {
-            VStack(alignment: .leading, spacing: 14) {
-                if let level = confirmingReset {
-                    resetConfirmation(level)
-                } else {
-                    Text("Dette gjelder DENNE enheten — du trenger aldri installere Zenji på nytt for å nullstille.")
-                        .font(.zenji(.caption))
-                        .foregroundStyle(ZenjiTokens.label.opacity(0.6))
-                        .fixedSize(horizontal: false, vertical: true)
-                    resetRow(
-                        title: "Nullstill det du følger",
-                        detail: "Fjerner alt du følger og viser onboarding på nytt. Det jeg vet om deg beholdes.",
-                        identifier: "reset.followedOnly",
-                        action: { confirmingReset = .followedOnly }
-                    )
-                    resetRow(
-                        title: "Slett alt om meg",
-                        detail: "Det du følger OG alt jeg vet om deg, pluss loggen over det jeg ikke forsto.",
-                        identifier: "reset.everything",
-                        action: { confirmingReset = .everything }
-                    )
-                }
-            }
-            .padding(.top, 10)
-        } label: {
-            Text("NULLSTILL")
-                .font(.zenji(.caption, weight: .bold))
-                .foregroundStyle(ZenjiTokens.label.opacity(0.5))
-                .tracking(1.5)
-        }
-        .tint(ZenjiTokens.secondaryLabel)
-    }
-
-    private func resetRow(title: String, detail: String, identifier: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            VStack(alignment: .leading, spacing: 3) {
-                Text(title)
-                    .font(.zenji(.footnote, weight: .bold))
-                    .foregroundStyle(ZenjiTokens.destructive.opacity(0.85))
-                Text(detail)
-                    .font(.zenji(.caption2))
-                    .foregroundStyle(ZenjiTokens.label.opacity(0.55))
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        // An explicit label collapses the two-line VStack into a SINGLE
-        // accessible button element (same pattern as the onboarding pack rows) —
-        // better VoiceOver AND a stable, tappable handle for the XCUITest reset
-        // flow (a plain-style button with only child texts otherwise exposes the
-        // texts, not an actionable button).
-        .accessibilityLabel("\(title). \(detail)")
-        .accessibilityIdentifier(identifier)
-    }
-
-    /// The rolig confirm ark (DESIGN.md — never a system alert): the exact,
-    /// honest consequence in one sentence, then Nullstill/Avbryt at full
-    /// comfortable size (never glyph-small). Mentions other devices ONLY when
-    /// sync is actually on — an honest, not hypothetical, disclosure.
-    private func resetConfirmation(_ level: ResetLevel) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(resetConfirmationText(level))
-                .font(.zenji(.caption))
-                .foregroundStyle(ZenjiTokens.label.opacity(0.85))
-                .fixedSize(horizontal: false, vertical: true)
-            HStack(spacing: 10) {
-                Button("Nullstill") {
-                    onReset(level)
-                    confirmingReset = nil
-                }
-                .font(.zenji(.footnote, weight: .bold))
-                .foregroundStyle(ZenjiTokens.destructive)
-                .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.destructive))
-                // WP-70: stable handles for the reset flow (cancel + confirm) —
-                // the labels ("Nullstill"/"Avbryt") also appear elsewhere.
-                .accessibilityIdentifier("reset.confirm")
-                Button("Avbryt") { confirmingReset = nil }
-                    .font(.zenji(.footnote))
-                    .foregroundStyle(ZenjiTokens.label.opacity(0.6))
-                    .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.label))
-                    .accessibilityIdentifier("reset.cancel")
-            }
-        }
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(ZenjiTokens.destructive.opacity(0.06))
-        .overlay(Rectangle().stroke(ZenjiTokens.destructive.opacity(0.3), lineWidth: 1))
-    }
-
-    private func resetConfirmationText(_ level: ResetLevel) -> String {
-        let otherDevicesNote = syncEnabled ? " Andre enheter beholder sitt til neste sync." : ""
-        switch level {
-        case .followedOnly:
-            return "Dette sletter det du følger på denne enheten og starter onboarding på nytt. Det jeg vet om deg beholdes. Kan ikke angres.\(otherDevicesNote)"
-        case .everything:
-            return "Dette sletter det du følger og alt Zenji vet om deg, fra denne enheten. Kan ikke angres.\(otherDevicesNote)"
-        }
-    }
-
-    // MARK: - "Det jeg ikke forsto" (WP-16.3)
-
-    private var misunderstoodSection: some View {
-        DisclosureGroup(isExpanded: $misunderstoodExpanded) {
-            VStack(alignment: .leading, spacing: 14) {
-                HStack(spacing: 16) {
-                    ShareLink(item: misunderstoodExportText, preview: SharePreview("forsto-ikke-rapport.json")) {
-                        Text("DEL RAPPORT")
-                            .font(.zenji(.caption2, weight: .bold))
-                            .foregroundStyle(ZenjiTokens.accent)
-                    }
-                    .disabled(viewModel.misunderstoodEntries.isEmpty)
-                    .zenjiTapTarget()
-                    Spacer()
-                    if !viewModel.misunderstoodEntries.isEmpty {
-                        Button("Slett alt") { viewModel.deleteAllMisunderstood() }
-                            .font(.zenji(.caption2))
-                            .foregroundStyle(ZenjiTokens.destructive.opacity(0.75))
-                            .zenjiTapTarget()
-                    }
-                }
-                if viewModel.misunderstoodEntries.isEmpty {
-                    Text("Ingenting her ennå — det dukker opp når jeg ikke klarer å gjøre en ytring om til en endring.")
-                        .font(.zenji(.caption))
-                        .foregroundStyle(ZenjiTokens.label.opacity(0.55))
-                } else {
-                    ForEach(viewModel.misunderstoodEntries) { entry in
-                        MisunderstoodEntryRow(
-                            entry: entry,
-                            onSaveNote: { note in viewModel.setMisunderstoodNote(note, for: entry) },
-                            onDelete: { viewModel.deleteMisunderstood(entry) }
-                        )
-                    }
-                }
-            }
-            .padding(.top, 12)
-        } label: {
-            Text("DET JEG IKKE FORSTO (\(viewModel.misunderstoodCount))")
-                .font(.zenji(.caption, weight: .bold))
-                .foregroundStyle(ZenjiTokens.label.opacity(0.5))
-                .tracking(1.5)
-        }
-        .tint(ZenjiTokens.secondaryLabel)
-    }
-
-    private var misunderstoodExportText: String {
-        String(data: viewModel.misunderstoodExportPayload(), encoding: .utf8) ?? "[]"
-    }
-
-    #if DEBUG
-    // MARK: - Eval (WP-69, DEBUG only)
-
-    /// A quiet entry to the on-device FM-eval screen at the same foot as the
-    /// other developer surfaces. Compiled out of Release builds entirely (the
-    /// whole EvalView + its model are `#if DEBUG`).
-    private var evalEntry: some View {
-        Button { evalShown = true } label: {
-            HStack {
-                Text("EVAL (DEBUG)")
-                    .font(.zenji(.caption, weight: .bold))
-                    .foregroundStyle(ZenjiTokens.label.opacity(0.5))
-                    .tracking(1.5)
-                Spacer()
-            }
-            .frame(minHeight: 44)
-            .contentShape(Rectangle())
-        }
-        .sheet(isPresented: $evalShown) {
-            EvalView()
-        }
-    }
-    #endif
-
-    /// The quiet version foot: which build is installed, and — when the
-    /// synced app-version.json says so — whether a newer one exists. Muted
-    /// mono, never a badge; the calmest possible «oppdater meg»-signal.
-    private var versionLine: some View {
-        Text(AppVersionCheck.footLine(published: publishedAppVersion))
-            .font(.zenjiTabular(.caption2))
-            .foregroundStyle(ZenjiTokens.secondaryLabel)
-            .tracking(1.0)
-            .padding(.top, 8)
-            .accessibilityIdentifier("versionLine")
-    }
-
     // MARK: - Small helpers
 
-    /// Fades the ark away once the user has cleared everything worth showing —
-    /// the "Bekreft → arket glir bort → agendaen re-kompileres" moment.
+    /// Dismisses the sheet once the user has cleared everything worth showing —
+    /// the "Bekreft → arket lukkes → agendaen re-kompileres" moment.
     private func dismissIfDone() {
         if !viewModel.hasPresentableResult { dismiss() }
     }
