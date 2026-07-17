@@ -77,8 +77,11 @@ class ZenjiUITestCase: XCTestCase {
 
 	/// The first staticText whose label CONTAINS `substring` — for labels that
 	/// carry a variable tail (e.g. the "· varsler deg før start" suffix).
+	/// Uses `.matching` (the element's OWN label), not `.containing` (which
+	/// filters to elements with a DESCENDANT matching — never true for a leaf
+	/// staticText, so it silently found nothing).
 	func staticText(containing substring: String, in app: XCUIApplication) -> XCUIElement {
-		app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", substring)).firstMatch
+		app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", substring)).firstMatch
 	}
 
 	/// An agenda row, queried by the row Button's own accessibility label.

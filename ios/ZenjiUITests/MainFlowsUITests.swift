@@ -135,8 +135,12 @@ final class MainFlowsUITests: ZenjiUITestCase {
 		let why = app.staticTexts["Hvorfor vises denne?"]
 		assertExists(why, "the detail sheet should offer «Hvorfor vises denne?»")
 		why.tap()
-		assertExists(staticText(containing: "Fordi FK Lyn Oslo spiller", in: app),
-		             "expanding it should show the deterministic reason")
+		// The disclosure sits at the foot of the sheet; on the .medium detent the
+		// revealed reason lands below the fold, and the List is lazy so its cell
+		// isn't realised until scrolled into view. Bring it on-screen, then assert.
+		let reason = staticText(containing: "Fordi FK Lyn Oslo spiller", in: app)
+		scrollUntilHittable(reason, in: app)
+		assertExists(reason, "expanding it should show the deterministic reason")
 
 		app.buttons["Lukk"].tap()
 		assertExists(app.textFields["command.field"], "closing the sheet returns to the agenda")
