@@ -1,21 +1,27 @@
 {
-  "runAt": "2026-07-17T17:40:00Z",
+  "runAt": "2026-07-17T21:00:00Z",
   "eventsAdded": 0,
   "eventsRemoved": 0,
-  "eventsAmended": 2,
-  "trackedDelta": "Ingen entries lagt til/fjernet. Oppdatert Tour de France-entryens GC-linje etter etappe 13 og lastUpdated.",
+  "eventsAmended": 1,
+  "trackedDelta": "Ingen entries lagt til/fjernet. Oppdatert: blast-bounty-2026-s2 + havard-rain-nygaard (loddtrekning gjort — 100 Thieves vs Falcons R32 Bo3, kampen konkretisert på tavla), viktor-hovland (misset cuten i The Open, ute helgen), kristoffer-reitan (på/rundt cutstreken, kildene spriker), samt ny run-note og oppdatert FØLGES-OPP-note.",
   "quality": {
     "pass": true,
-    "score": 90,
-    "failures": []
+    "score": 96,
+    "failures": [
+      "Informativ (ingen trekk): CS2-kamptiden 2026-07-22T17:30:00Z er avledet fra HLTV-søkeutdrag med avledet tidssone (HLTV 403 ved direkte henting) — riktig håndtert: confidence holdt medium, tentativitet opplyst i summary, flagget for verify til å bekrefte eksakt tid."
+    ]
   },
   "notes": [
-    "Standard-tier Opus, ~3,5t etter forrige run (14.10Z). To parallelle scout-subagenter med ekte web-søk: (1) sykkel/TdF, (2) bred norsk sveip (CS2/tennis/sjakk/golf/fotball/friidrett).",
-    "HOVEDFUNN (sykkel): TdF etappe 13 (Dole–Belfort) nå ferdig – Mauro Schmid (Jayco AlUla) vant fra et stort brudd, slo Harold Tejada i tomannsspurt (Tom Pidcock 3.). Jonas Abrahamsen (Uno-X) + Per Strand Hagenes var med i bruddet men ingen nordmann på pallen; ingen norske forfall på etappen. Amendert etappe-13-summary til resultatet.",
-    "GC etter etappe 13 (favorittene nøytrale): topp uendret (Pogačar gult, Vingegaard +3.36, Evenepoel +4.06), men Tom Pidcock klatret til 4. (+4.15) og Ayuso falt til 5. (+4.22); Tobias Halland Johannessen beste nordmann ned til 15. plass (+14.50). Grønn Pedersen (377 p), prikket Pogačar, hvit Ayuso. Amendert etappe-14-«Nå»-summary til den ferske GC-linja. Kilder enige: cyclinguptodate + procyclinguk + cyclingnews.",
-    "Etappe 14 (lør. 18. juli, Mulhouse–Le Markstein) starttid 11.10 UTC re-bekreftet (cyclingstage + franceletour) – ingen endring på tavla.",
-    "INGEN NYE EVENTS: CS2 BLAST Bounty S2 bracket/seeding/kamptider fortsatt genuint TBD på alle tre kilder (Liquipedia/HLTV/BLAST.tv) – seed 17–32 velger motstander i live pick-show rundt 21. juli; roster m/rain intakt; følg opp 18–20. juli. Ruud ute av Gstaad, neste Montreal dato-gated (trekning 31. juli). Ingen ny Carlsen-turnering før EWC (Olympiaden er september). Aryan Tari IKKE i Andorra Open-startlista (chess-results tnr1338669) – korrekt holdt av tavla. Barça Joan Gamper 19. aug vs Al Ahly: avspark-tid fortsatt uoffisiell – korrekt holdt av tavla. Hovland FedEx St. Jude ~13.–16. aug felt ikke publisert (ranking-sannsynlig, ikke bekreftet).",
-    "Mekaniske signaler (coverage-gaps.json): 3 entity-gaps (Premier League, British Open, Fotball-VM) – alle false positives (overgangssladder / pågående The Open / VM-finale allerede på tavla). coverage-audit.json (06.15Z): 0 high-severity hull, eneste low-gap er F1-kvalifisering som eget event (bevisst board-mønster). Scout-log: alle kjøringer «quiet».",
-    "Fact-check: amendmentene er kryssjekket mot 2+ uavhengige kilder av sykkel-scouten (cyclinguptodate/procyclinguk/cyclingnews for stage-13-resultat + GC); ingen nye events krevde egen write-time fact-checker."
+    "Standard-tier Opus, ~3,5t etter forrige run (17.40Z). Fersk tavle: coverage-audit (06.15Z) fant 0 high-severity hull; scout-loggene alle «quiet». Tre parallelle scout-subagenter (CS2/100T; sykkel/TdF; bred norsk sveip m/golf+tennis+F1+friidrett+sjakk+fotball) + én uavhengig write-time fact-checker, alle med ekte web-søk.",
+    "HOVEDFUNN (CS2 — den sene HLTV/X-kanalen cs2-skillet finnes for): BLAST Bounty S2-loddtrekningen er gjort. 100 Thieves (seed 31) valgte Falcons (seed 3) i Round of 32 (Bo3, single-elim). Placeholder-eventet «online-stadiet» konkretisert til kampen 100 Thieves–Falcons: opponent + homeTeam/awayTeam + rain i norwegianPlayers, streaming BLAST.tv/Twitch. Fact-checkeren amenderte dato/tid fra 21. → ons. 22. juli 17.30 UTC (19.30 CEST) per HLTV — men fra søkeutdrag (HLTV 403 direkte) med avledet tidssone; blast.tv/Liquipedia-brackets fortsatt tomme → confidence MEDIUM, tid merket tentativ, verify bekrefter.",
+    "SYKKEL (ingen board-endring): TdF etappe 13 (Schmid-seier fra brudd, Tejada 2., Pidcock 3.) + hele GC-linja re-verifisert uendret mot tre kilder (Pogačar gul, Vingegaard +3.36, Evenepoel +4.06, Pidcock 4. +4.15, Ayuso 5. +4.22, Tobias HJ 15. +14.50; grønn Pedersen, prikket Pogačar, hvit Ayuso). Etappe 14 (lør. 18.) starttid 11.10 UTC bekreftet mot franceletour + cyclingstage. Ingen nye norske forfall (kun Træen, DNS etappe 7). Uno-X post-Tour (Danmark Rundt 29.7–2.8, Arctic Race 13.–16.8) bekreftet uendret.",
+    "GOLF (ingen board-endring): Hovland MISSET CUTEN i The Open (kriserunde R2, NRK) — ute helgen; tracked-reason oppdatert. Reitan på/rundt cutstreken (NRK «kan klare cuten» vs PGA-profil «missed cut» — spriker), behandlet som usikkert/trolig ute. The Open er statisk event → ingen board-endring. Hovland FedEx St. Jude 13.–16. aug fortsatt ranking-gated (felt låses etter Wyndham). Ventura Corales: cut-status uavklart midt i runden.",
+    "F1 (bekreftet uendret): Belgia GP Spa søn. 19. juli 13.00 UTC (race) + kvalik lør. 18. 14.00 UTC — normal helg, ingen sprint, Viaplay. Coverage-audit flagget kvalik som eget event = LOW strukturelt board-valg (ett F1-event per helg = racet) — ikke endret.",
+    "TENNIS/SJAKK (bekreftet uendret): Ruud ute av Gstaad (tapte QF), neste Montreal dato-gated (trekning 31. juli). Ingen ny Carlsen-turnering før EWC (11.–15. aug); Tari ingen bekreftet påmelding.",
+    "FRIIDRETT: Warholm DL London lør. 18. 13.03 UTC (NRK) bekreftet uendret. Scout flagget at Jakob Ingebrigtsen angivelig løper 1500 m på samme stevne — men Jakob er IKKE en tracked utøver, og tidligere sykdomsmeldinger (over NM, trolig EM) spriker med dette → ikke lagt til (usikkert + ikke fulgt entitet). Verify/owner kan vurdere.",
+    "FOTBALL: Barça Joan Gamper vs Al Ahly ons. 19. aug — opponent/dato bekreftet, men avspark-TID fortsatt offisielt TBC (Barças billettside «to be confirmed») → HOLDT AV TAVLA (ubekreftet tid = feil-event-risiko; Barças next-fixtures Birmingham 31. juli + La Liga-åpning 27. aug dekker allerede next-fixture-prinsippet). Lyn–Strømsgodset borte lør. 25. juli 18.00 bekreftet uendret.",
+    "MEKANISKE SIGNALER (coverage-gaps.json 20.51Z): 3 entity-gaps, alle false positives — Premier League (overgangs-headline), British Open (Hovland-cut-headline; The Open på tavla som statisk event), Fotball-VM (finale-kommentar; finalen på tavla). 0 anomalies.",
+    "SKILL-VEDLIKEHOLD utestående (kan ikke skrives fra denne kjøringen — permissions): norwegian-rights trenger fire kjente oppdateringer (golf-splitt HBO Max/Viaplay, La Liga TV 2 solid t.o.m. 2030, Diamond League→NRK, Arctic Race→TV 2 / Danmark Rundt tom). Per-event «hvor kan jeg se det» er allerede korrekt i events.json. Trenger self-repair/improve eller manuell owner-edit.",
+    "validate-events.js: 49 events, 0 errors."
   ]
 }
