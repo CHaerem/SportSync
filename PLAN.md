@@ -840,6 +840,18 @@ eval-rapport er fasiten for alle:
 
 ---
 
+## FLYTTEDAGEN · Zenji → Sportivista — ✅ UTFØRT 17.07.2026
+
+Eierbeslutning (varemerke-søk utsatt, risiko akseptert av eier): repo omdøpt til
+`CHaerem/sportivista` (GitHub redirecter gamle URL-er), rebrand+identitetsflytting
+merget til main, Pages-domene → `sportivista.com` (GoDaddy-DNS A/AAAA/CNAME via API),
+`zenji.app` kuttet som domene (auto-fornyelse skrus av — dør ved utløp 2027-07-13).
+iOS: `app.sportivista.ios`-id-er, `group.app.sportivista`, `sportivista://`, baseURL →
+`sportivista.com/data/`. Web: navnebyttet; Tekst-TV-utseendet består til egen web-reskin.
+Gjenstår: formelt varemerke-søk+registrering (eier), `sportivista.no`-forwarding (manuell,
+GoDaddy-UI), zenji.app renewAuto-toggle (manuell — API-PATCH bet ikke), web-reskin til
+baseline, mekanisk target-rename (Zenji.xcodeproj → Sportivista), TestFlight (WP-17).
+
 ## FASE 0F · iOS-UX: Apple-native baseline (audit 17.07.2026) — ✅ KOMPLETT 17.07.2026 (#289–#295)
 
 > **Resultat:** iOS-appen + widgeten står nå på et Apple-native fundament — systemfont
