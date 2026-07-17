@@ -95,7 +95,7 @@ mennesket, aldri av en agent.
 | WP-82 | Hjelperen → native (oppdagbarhet) | 0F | WP-80 | ✅ merget (#291) — tre oppdagbarhets-tilstander (hvile-eksempel/fokus-forslag/live grunning), native felt (clear/diktering/autocap av), font-migrering; mock-suite urørt grønn. Samlet bølge-2-verifisering: unit 529 + UI 9/10 (begge nye flyter), `testEventDetailWhyShown` er pre-eksisterende feil (fikses separat) |
 | WP-83 | Navigasjon (NavigationStack) + Deg-skjerm | 0F | WP-81,WP-82 | ✅ merget (#293; samlet bølge-3-verif. grønn m/ #292) — agenda i `NavigationStack` + `gearshape`→Deg; v2-header-glyfer (`»_`/`◐`/klokke) fjernet; hjelperens resultat = native `.sheet` (detents); `AssistantPanel` slanket til samtale/resultat; ny `Profile/DegView.swift` re-hjemmer profil/minne/forsto-ikke/del/varsel/tema/nullstill/eval; alle 4 schemes bygger, 529 unit + 13/13 vektorer bit-like, UI-flyter (Deg-nav/tema/reset/sheet) grønne |
 | WP-84 | Widget token-paritet (web utsatt) | 0F | WP-80 | ✅ widget merget (#294) — WidgetKit av `zenjiMono`-shimen + deprecated farge-aliaser, over på `Font.zenji`/`zenjiTabular` + semantiske tokens; alle 4 schemes bygger, 529 unit. **Web-delen (`docs/css` + `theme.js`) utsatt til rebrandingen** (eierbeslutning 17.07 — web reskin'es uansett da) |
-| WP-85 | Baseline-designsystem + HIG-gate (promoter DESIGN.md) | 0F | WP-80,WP-81,WP-82,WP-83,WP-84 | 🔬 |
+| WP-85 | Baseline-designsystem + HIG-gate (promoter DESIGN.md) | 0F | WP-80,WP-81,WP-82,WP-83,WP-84 | ✅ merget (#295) — 105 font + 121 farge-kall migrert over de 4 siste filene, `zenjiMono`-shim + aliaser fjernet (null treff), HIG-gate `tests/ios-dynamic-type-gate.test.js` (dekker Zenji+ZenjiWidget), `DESIGN-BASELINE.md`→`DESIGN.md` promotert. Fable 5-sluttreview: KLAR (F1–F3 fikset i PR). Samlet verif.: npm+gate, 4 schemes, 526 unit + 12 UI + 13/13 vektorer |
 
 ---
 
@@ -840,7 +840,15 @@ eval-rapport er fasiten for alle:
 
 ---
 
-## FASE 0F · iOS-UX: Apple-native baseline (audit 17.07.2026) — 🔬 PÅGÅR
+## FASE 0F · iOS-UX: Apple-native baseline (audit 17.07.2026) — ✅ KOMPLETT 17.07.2026 (#289–#295)
+
+> **Resultat:** iOS-appen + widgeten står nå på et Apple-native fundament — systemfont
+> + Dynamic Type, semantiske system-farger + amber-token, `List`/`NavigationStack`/
+> native sheets, SF Symbols, lett haptikk — med visjonen intakt (rolig agenda, ambient
+> kontekst-hjelper, personvern, ærlighet). `DESIGN.md` er den nye kontrakten; en HIG-CI-
+> gate hindrer regresjon. **Web (`docs/`) beholder Tekst-TV til rebrandingen** (eierbeslutning).
+> Neste (egne beslutninger): web-migrering ved rebrand, robusthet (degradering uten Apple
+> Intelligence, trygge destruktive kommandoer), og selve rebrandingen (nytt navn + profil).
 
 Bakgrunn: eier-gjennomgang 17.07 fant at UX-en ikke føles intuitiv/snappy, at
 assistent-arket er overlesset (~15 seksjoner i én flate: `AssistantPanel.swift`),
