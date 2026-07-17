@@ -90,6 +90,12 @@ mennesket, aldri av en agent.
 | WP-69 | FM-eval-harness på enhet + korpus | 0E | – | ✅ merget (#280) — versjonert korpus `ios/ZenjiTests/Fixtures/eval-corpus.json` (24 cases: 12 canon + 5 multiPart + 2 winter + 5 question; 4 `knownGap` mot WP-64/65); delt pure `EvalCorpus`/`EvalScorer`/`EvalRunner`/`EvalReport` (id-sett for mutasjoner, rad/påstand-rubrikk for svar) i `Zenji/Eval/`; CI: `EvalCorpusTests` kjører samme korpus mot mocken (20 asserted grønne, 4 gap skippet med markering); DEBUG-only eval-skjerm (`Zenji/Eval/EvalView`, nås fra assistent-arkets fot) kjører ekte FM på enhet, pass-rate per kategori, anonymisert JSON-rapport via delesheet + eksport av forsto-ikke-loggen som korpus-kandidater; ingen ny target (korpus bundlet som ressurs i Zenji + ZenjiDeviceDev, `Zenji/Eval` i test-sources); 385/385 iOS-tester grønne (+9), begge schemes + ZenjiDeviceDev bygger. Eier kjører første reelle runde på fysisk iPhone og deler rapporten |
 | WP-71 | Hotfix: FM-prompt-budsjett (kontekst-overflow) | 0E | WP-68 | ✅ merget (#288) — WP-66/67/68 la alle fire armene + hele `GeneratedTurn`-skjemaet + fire verktøy på ÉN generering, som sprengte on-device-konteksten (~95 «Context length of 4096 exceeded during singleExtend», slutt-eval 10/55). Fiks: **budsjettér prompten ved å dele den ene store genereringen i to små** (`AssistantInstructions`, FM-fri + CI-testbar). Fase 1 = en liten, verktøyløs intent-klassifikator (`GeneratedIntent`); fase 2 = én fokusert økt per arm med KUN den armens skjema (`GeneratedMutations`/`GeneratedAnswer`/`GeneratedCommand`/`GeneratedPresent`) og KUN de verktøyene armen trenger (mutasjon→searchEntities, svar→searchEvents/getProfile/getHelp, kommando/present→ingen). Ingen enkelt-generering holder lenger alle fire armene — hver får vid margin i 4096, uten tapt kapabilitet (alle armer, linse, minne, verktøy består). Prompt-tekst: den gamle mono-prompten var ~4700 tegn (~1340 tok); nå ~772 tegn klassifikator + ≤817 tegn per arm. @Guide-skjema + verktøybeskrivelser komprimert; `getHelp`-dok slanket (~2000→~1840 tegn, hentes kun ved kall). Ny CI-vakt `AssistantInstructionsTests` (tegn-budsjett per fase, dokumentert ~3,5 tegn/token-antakelse) fanger neste oppblåsing i CI, ikke i evalen. DEBUG-miljøfiltre `TEST_RUNNER_ZENJI_EVAL_CATEGORY`/`_CASE` i RealFMEvalTests for billig enkeltkategori-iterasjon. Ekte-FM-eval (55 cases, iPhone 17-sim): **null kontekst-overflow** (var ~95), **total 32/55 = 58 %** (var 10/55) — canon 6/12, multiPart 8/13, winter 0/2, present 6/6, question 2/5, command 7/12, help 3/5. Terskler re-kalibrert «målt minus margin»: canon ≥5, total ≥25 (~45 %-gulv ≈ gamle 15/32). Gjenstående bom er grunnfestings-granularitet (bart idrettsnavn → sport-entitet), ikke overflow. Mock-suite 502-basis + 3 nye vakt-tester grønne; alle fire schemes bygger |
 | WP-70 | XCUITest: hovedflyter + launch-metrikk | 0E | – | ✅ merget (#283) — ny `ZenjiUITests`-target (bundle.ui-testing) + egen scheme (Zenji-scheme uendret → rask unit-run består); appen drives mot deterministisk `ZENJI_DEMO=uitest`-harness (`UITestSeed`: mock-assistent + seedet cache, ingen nett, ingen Apple Intelligence). 6 hovedflyter grønne i simulator (iPhone 17): onboarding (quick-picks + samtale), følg via kommandolinja → diff → Bekreft → rad dukker opp, N raske starter-pack-toggles uten heng (vokter WP-60-koalesceringen), event-detalj + «Hvorfor vises denne?», tema-toggle, nullstill (avbryt + gjennomfør). `XCTApplicationLaunchMetric` kaldstart-baseline ~0,97 s (5 kjøringer, RSD ~1–4 %). Additive accessibility-identifiers; `waitForExistence`/predikat-venter (ingen sleeps); ios/README §testing oppdatert |
+| WP-80 | Token- & typografi-fundament (Apple-native) | 0F | – | ⬜ |
+| WP-81 | Agenda → native List + sveip/pressed-state | 0F | WP-80 | ⬜ |
+| WP-82 | Hjelperen → native (slank + sheet + oppdagbarhet) | 0F | WP-80 | ⬜ |
+| WP-83 | Navigasjon (NavigationStack) + Deg-skjerm | 0F | WP-81,WP-82 | ⬜ |
+| WP-84 | Widget + web token-paritet | 0F | WP-80 | ⬜ |
+| WP-85 | Baseline-designsystem + HIG-gate (promoter DESIGN.md) | 0F | WP-80,WP-81,WP-82,WP-83,WP-84 | ⬜ |
 
 ---
 
@@ -831,6 +837,133 @@ eval-rapport er fasiten for alle:
 - **F · Ruting-presedens/parser-overlapp** i mock-stakken — fire parsere med
   hver sin tokenisering; en delt interrogativ-detektor ville forebygget neste
   «varsler»-type kollisjon (fikset enkeltvis 16.07).
+
+---
+
+## FASE 0F · iOS-UX: Apple-native baseline (audit 17.07.2026) — 🔬 PÅGÅR
+
+Bakgrunn: eier-gjennomgang 17.07 fant at UX-en ikke føles intuitiv/snappy, at
+assistent-arket er overlesset (~15 seksjoner i én flate: `AssistantPanel.swift`),
+at det ikke finnes forutsigbar navigasjon (alt er overlays på én skjerm), og at
+flere valg bryter Apple HIG. Tydeligst: `zenjiMono(size:)` (`DesignTokens.swift:104`)
+bruker FASTE punkter og skalerer IKKE med Dynamic Type — tross DESIGN.md-løftet;
+agenda-rader er `.onTapGesture` (`AgendaView.swift:74`) uten pressed-state/button-
+rolle; lista er `ScrollView`+`LazyVStack`; assistent-resultatet er et egendefinert
+fade-lag (`ContentView.swift:174-186`), ikke en native sheet.
+
+Mål: legg et **Apple-native fundament** (systemfont + Dynamic Type, semantiske
+system-farger + amber-token, SF Symbols, `List`/`NavigationStack`/native sheets,
+native bevegelse + lett haptikk) UTEN å miste visjonen (rolig én-formåls agenda,
+ambient kontekstbevisst hjelper, personvern på enheten, ærlighet). Normativ
+kontrakt: **`DESIGN-BASELINE.md`** (utkast — promoteres til `DESIGN.md` i WP-85).
+
+Strategisk premiss (eier 17.07): en full rebranding (nytt navn + designprofil)
+kommer på sikt («Zenji» oppleves for lite intuitivt). Derfor bygges skallet som et
+tynt, byttbart token-lag, så rebrandingen blir en **re-skin** (nye token-verdier,
+font, ikoner, logo) — ikke en ombygging. Kjernefunksjonaliteten + UX mot hovedmålet
+herdes FØRST; det kosmetiske byttes ETTERPÅ.
+
+**Tverrgående regel for 0F:** (a) hver WP migrerer KUN sine egne filer til det nye
+token-/type-API-et; **WP-80 beholder `zenjiMono(size:)` som deprecated shim** så alt
+kompilerer underveis — shimen dør først i WP-85. (b) Ingen gylne vektorer/predikater
+endres (rendering + nav er lag oppå). (c) Skjermbilder i BEGGE temaer + minst ett ved
+forstørret Dynamic Type per UI-PR.
+
+**Bølge-plan:** 1: WP-80 · 2: WP-81 ∥ WP-82 · 3: WP-83 · 4: WP-84 ∥ WP-85.
+(Maks ~4 xcodebuild-agenter; her ≤2 samtidig.)
+
+**Sluttreview (Fable 5):** etter bølge 4, FØR promotering til `DESIGN.md`, kjører
+hovedsesjonen én dyp review-runde på den rebasede kombinasjonen — HIG-sjekklista
+(`DESIGN-BASELINE.md`) + korrekthet + gylne vektorer bit-like — med **Fable 5** som
+reviewer når ukeskvoten tåler det (ellers Opus + `/code-review`). Enkelt-PR-er
+grønne beviser ikke kombinasjonen (WP-71-lærdommen).
+
+**Eierens rolle (manuelle punkter):** (1) godkjenn baseline-retningen
+(`DESIGN-BASELINE.md`) før delegering; (2) ingen beskyttede stier berøres ⇒ alt
+auto-merger etter test-gate; (3) kjør evt. FM-eval på iPhone kun hvis assistent-
+OPPFØRSEL endres (WP-82 er ren presentasjon — mock-suite grønn holder).
+
+### WP-80 · Token- & typografi-fundament
+- **Mål:** Semantiske farge-tokens (system-farger + amber-aksent) + Dynamic Type-
+  tekststil-API. Ikke-brytende (shim beholdes) så resten kan migrere uavhengig.
+- **Innhold:** `DesignTokens.swift:22-107` — erstatt de rå `ZenjiTokens.Dark/Light`-
+  flatene med semantiske tokens (background/groupedBackground/cell/cell2/label/
+  secondaryLabel/separator/accent/live/destructive) mappet til system-farger +
+  amber; nytt Dynamic Type-tekststil-API (`Font.zenji(_ style:)` bundet til
+  tekststiler, tabular der sifre rettes inn); behold `zenjiMono(size:)` som
+  `@available(*, deprecated)` shim → nærmeste tekststil (widget + alle view-er
+  kompilerer uendret); spacing-tokens (8pt). Token-tester.
+- **Ikke-mål:** migrere view-ene (surfaces gjør sitt eget); fjerne shim (WP-85);
+  web/widget-restyling (WP-84).
+- **Aksept:** alle fire schemes bygger (shim holder widget/agenda/assistant levende),
+  iOS-suite grønn, 13/13 gylne vektorer bit-like.
+
+### WP-81 · Agenda → native List
+- **Mål:** Agendaen som native `List` med pressed-state, sveip-handlinger og SF Symbols.
+- **Innhold:** `Agenda/AgendaView.swift` — `ScrollView`+`LazyVStack`+`.onTapGesture`
+  → `List` inset-gruppert (dag-seksjoner), rad som `Button`/`NavigationLink`
+  (pressed-state + button-rolle gratis), native chevron, SF Symbols (`bell.fill`
+  varsel, `info.circle` AI), amber must-see-prikk beholdt; sveip venstre → Følg/
+  Demp/Påminn; `EventDetailSheet`/`SeriesDetailSheet` på
+  `.presentationDetents([.medium,.large])`; migrér `Agenda/`-fontene til WP-80-API;
+  lett haptikk på sveip-handling. UI-suite agenda-flyt oppdatert.
+- **Avhenger av:** WP-80. **Nabo:** WP-82 eier `Assistant/` — union ved rebase-konflikt.
+- **Ikke-mål:** navigasjon/`ContentView` (WP-83); feed-predikater/vektorer (dommer); assistant.
+- **Aksept:** 13/13 vektorer bit-like, ZenjiUITests agenda grønn, alle schemes
+  bygger, skjermbilder begge temaer + forstørret Dynamic Type.
+
+### WP-82 · Hjelperen → native (slank + sheet + oppdagbarhet)
+- **Mål:** Assistenten gjør KUN samtale+resultat; resultat i native sheet;
+  kommandolinja som native søke-/skrivelinje; de tre oppdagbarhets-tilstandene.
+- **Innhold:** `Assistant/AssistantPanel.swift` — fjern de permanente seksjonene
+  (profil/minne/del/varsel/tema/nullstill/versjon/eval → re-hjemmes i WP-83s Deg);
+  behold svar/diff/regnskap/ikke-funnet/ingen-endring; vis resultatet via `.sheet`
+  + `.presentationDetents`. `Assistant/CommandLineView.swift` — native tekstfelt i
+  søke-/skrivelinje-form (diktering via tastatur-mic, clear-knapp, keyboard
+  avoidance), hvile-eksempel-placeholder, fokus-forslag, live grunning ved skriving;
+  lett haptikk på Bekreft. Migrér `Assistant/`-fontene.
+- **Avhenger av:** WP-80. **Nabo:** WP-81 eier `Agenda/`.
+- **Ikke-mål:** intent-tolkning/FM-oppførsel (uendret); Deg-skjermen (WP-83); nav.
+  **0E-regel:** ingen ny modell-kapabilitet ⇒ mock-suite MÅ forbli grønn + UI-cases
+  for de tre tilstandene (ikke nye eval-cases påkrevd).
+- **Aksept:** mock-suite grønn, ZenjiUITests assistent-flyt grønn, alle schemes
+  bygger, skjermbilder.
+
+### WP-83 · Navigasjon + Deg-skjerm
+- **Mål:** `NavigationStack` med agenda som rot + `gearshape`→Deg; ny gruppert
+  Deg-skjerm som re-hjemmer de permanente seksjonene fra WP-82.
+- **Innhold:** `ContentView.swift` — pakk agendaen i `NavigationStack`, `gearshape`-
+  toolbar-knapp (trailing) pusher Deg; fjern v2-header-glyfene (assistent = bunn-
+  linja, tema flyttes til Deg). Ny `Zenji/Profile/DegView.swift` — inset-gruppert
+  `List` (SF Symbols leading) som re-hjemmer HVA JEG FØLGER, HVA JEG VET OM DEG,
+  DET JEG IKKE FORSTO, DEL PROFIL, VARSEL, UTSEENDE (tema), NULLSTILL, versjonslinje
+  (+ EVAL/TELEMETRI i DEBUG); gjenbruk `WhatIKnowView`/`ProfileSharePanel`/reset-
+  flyten pushet fra Deg. UI-suite nav/Deg/tema.
+- **Avhenger av:** WP-82 (seksjonene fjernet der) + WP-81 (agenda-host stabil).
+- **Ikke-mål:** endre minne-/profil-/reset-LOGIKKEN (kun re-hjemme innganger);
+  assistant-innhold (WP-82).
+- **Aksept:** alle schemes bygger, ZenjiUITests (åpne Deg via gear, tilbake-swipe,
+  tema-sykle) grønn, skjermbilder begge temaer.
+
+### WP-84 · Widget + web token-paritet
+- **Mål:** Widget og web følger de nye tokenene.
+- **Innhold:** `Zenji/Widget/*` bruker de semantiske tokenene + Dynamic-Type-analog;
+  `docs/css/*` + `docs/js/theme.js` speiler token-verdiene (rem/clamp).
+- **Avhenger av:** WP-80. **Nabo:** WP-85.
+- **Ikke-mål:** app-skjermene (gjort i WP-81/82/83).
+- **Aksept:** ZenjiWidgetExtension bygger, web-screenshots begge temaer, `npm test` grønt.
+
+### WP-85 · Baseline-designsystem + HIG-gate (SIST)
+- **Mål:** Fjern shimen, slå på HIG-gaten, promotér designdokumentet.
+- **Innhold:** `DesignTokens.swift` — fjern `zenjiMono(size:)`-shimen (alle surfaces
+  migrert). Ny CI-gate `tests/ios-dynamic-type-gate.test.js` (vitest greper
+  `ios/Zenji` for isolert `.system(size:` utenom hvitelistede unntak — samme
+  koherenstest-mønster). Promotér `DESIGN-BASELINE.md` → `DESIGN.md` (arkivér v2);
+  oppdater `CLAUDE.md`/`ios/README.md`-referanser + Forbudslista.
+- **Avhenger av:** WP-80,81,82,83,84.
+- **Ikke-mål:** nye features.
+- **Aksept:** full JS+iOS-suite grønn MED gaten på, alle schemes bygger, null
+  `zenjiMono(size:)`-referanser igjen, `DESIGN.md` = baseline.
 
 ---
 
