@@ -20,7 +20,7 @@
 //                    starter packs as ≥44pt tap targets. This alone gives full
 //                    value on a cold start with no Apple Intelligence.
 //    4. landing    — the quiet finish: it points at the always-present command
-//                    line ("du kan alltid si mer til Zenji") and drops the user
+//                    line ("du kan alltid si mer til Sportivista") and drops the user
 //                    into an agenda that ALREADY reflects the choices, because
 //                    every confirm/tap recompiled it live via onProfileChanged.
 //
@@ -80,20 +80,19 @@ struct OnboardingView: View {
     // MARK: - Brand header (ensō · ZENJI)
 
     private var brandHeader: some View {
-        HStack(spacing: 8) {
-            Image("EnsoMark")
-                .renderingMode(.template)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 22, height: 22)
-                .foregroundStyle(ZenjiTokens.accent)
-                .accessibilityHidden(true)
-            Text("ZENJI")
+        HStack(spacing: 0) {
+            // Brand lock (designprofil rev 2): wordmark + amber colon.
+            Text("SPORTIVISTA")
                 .font(.zenjiTabular(.title2, weight: .bold))
-                .foregroundStyle(ZenjiTokens.accent)
+                .foregroundStyle(ZenjiTokens.label)
                 .tracking(2)
+            Text(":")
+                .font(.zenjiTabular(.title2, weight: .heavy))
+                .foregroundStyle(ZenjiTokens.accent)
             Spacer()
         }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Sportivista")
         .padding(.horizontal, 24)
         .padding(.top, 28)
         .padding(.bottom, 20)
@@ -104,7 +103,7 @@ struct OnboardingView: View {
     private var welcomeStep: some View {
         VStack(alignment: .leading, spacing: 20) {
             stepHeading("Velkommen")
-            Text("Zenji er én rolig oversikt over idretten du følger — når det skjer, hva det er, og hvor du kan se det.")
+            Text("Sportivista er én rolig oversikt over idretten du følger — når det skjer, hva det er, og hvor du kan se det.")
                 .font(.zenjiTabular(.subheadline, weight: .regular))
                 .foregroundStyle(ZenjiTokens.label.opacity(0.9))
                 .fixedSize(horizontal: false, vertical: true)
@@ -368,10 +367,10 @@ struct OnboardingView: View {
 
     private var quickPicksIntro: String {
         if assistant.availability.isAvailable {
-            return "Tapp for å legge til. Du kan endre alt senere, eller skrive fritt til Zenji i stedet."
+            return "Tapp for å legge til. Du kan endre alt senere, eller skrive fritt til Sportivista i stedet."
         }
         // Honest degradation: Apple Intelligence is off / unsupported here.
-        return "Tapp for å legge til. (Å skrive fritt til Zenji krever Apple Intelligence, som ikke er på her — men startpakkene gir deg alt du trenger.)"
+        return "Tapp for å legge til. (Å skrive fritt til Sportivista krever Apple Intelligence, som ikke er på her — men startpakkene gir deg alt du trenger.)"
     }
 
     private func packRow(_ pack: StarterPack) -> some View {
@@ -420,7 +419,7 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 20) {
             stepHeading("Klart")
             if assistant.profile.isEmpty {
-                Text("Du følger ingenting ennå — det er helt greit. Skriv til Zenji når som helst nederst på skjermen.")
+                Text("Du følger ingenting ennå — det er helt greit. Skriv til Sportivista når som helst nederst på skjermen.")
                     .font(.zenjiTabular(.subheadline, weight: .regular))
                     .foregroundStyle(ZenjiTokens.label.opacity(0.85))
                     .fixedSize(horizontal: false, vertical: true)
@@ -433,7 +432,7 @@ struct OnboardingView: View {
             }
 
             VStack(alignment: .leading, spacing: 6) {
-                Text("Du kan alltid si mer til Zenji — skriv i kommandolinjen nederst.")
+                Text("Du kan alltid si mer til Sportivista — skriv i kommandolinjen nederst.")
                     .font(.zenjiTabular(.footnote, weight: .regular))
                     .foregroundStyle(ZenjiTokens.label.opacity(0.75))
                     .fixedSize(horizontal: false, vertical: true)

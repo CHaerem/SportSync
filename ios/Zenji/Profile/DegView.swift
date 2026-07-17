@@ -408,7 +408,7 @@ private struct ResetView: View {
                     .font(.zenji(.footnote, weight: .semibold))
                     .foregroundStyle(ZenjiTokens.secondaryLabel)
             } footer: {
-                Text("Dette gjelder DENNE enheten — du trenger aldri installere Zenji på nytt for å nullstille.")
+                Text("Dette gjelder DENNE enheten — du trenger aldri installere Sportivista på nytt for å nullstille.")
                     .font(.zenji(.footnote))
                     .foregroundStyle(ZenjiTokens.secondaryLabel)
             }
@@ -473,7 +473,7 @@ private struct ResetView: View {
         case .followedOnly:
             return "Dette sletter det du følger på denne enheten og starter onboarding på nytt. Det jeg vet om deg beholdes. Kan ikke angres.\(otherDevicesNote)"
         case .everything:
-            return "Dette sletter det du følger og alt Zenji vet om deg, fra denne enheten. Kan ikke angres.\(otherDevicesNote)"
+            return "Dette sletter det du følger og alt Sportivista vet om deg, fra denne enheten. Kan ikke angres.\(otherDevicesNote)"
         }
     }
 }

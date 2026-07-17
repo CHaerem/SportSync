@@ -63,9 +63,9 @@ extension AssistantViewModel {
         } catch ProfileShareError.empty {
             shareImportMessage = "Koden inneholdt ingen profil å slå sammen."
         } catch ProfileShareError.unsupportedVersion {
-            shareImportMessage = "Koden er laget av en nyere versjon av Zenji enn denne."
+            shareImportMessage = "Koden er laget av en nyere versjon av Sportivista enn denne."
         } catch {
-            shareImportMessage = "Dette var ikke en gyldig Zenji-profilkode."
+            shareImportMessage = "Dette var ikke en gyldig Sportivista-profilkode."
         }
         presentToken &+= 1
     }

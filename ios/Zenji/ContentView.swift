@@ -549,22 +549,21 @@ struct ContentView: View {
     // date remain — one quiet masthead.
     private var header: some View {
         VStack(alignment: .leading, spacing: 5) {
-            HStack(alignment: .center, spacing: 6) {
-                // The mosaic ensō — a stille brand mark, mirrors the web
-                // masthead's `.wordmark-enso` (docs/index.html), coloured via the
-                // accent token so it follows dark/light. Decorative only.
-                Image("EnsoMark")
-                    .renderingMode(.template)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 20, height: 20)
-                    .foregroundStyle(ZenjiTokens.accent)
-                    .accessibilityHidden(true)
-                Text("ZENJI")
+            // The brand lock (designprofil rev 2, kandidat A «Kolonet»):
+            // wordmark in label colour + the amber colon — the ":" from every
+            // time on the board, the app's core answer («når») as the mark.
+            // Amber stays accent-only; no separate image mark (ensō retired).
+            HStack(alignment: .center, spacing: 0) {
+                Text("SPORTIVISTA")
                     .font(.zenji(.title, weight: .bold))
-                    .foregroundStyle(ZenjiTokens.accent)
+                    .foregroundStyle(ZenjiTokens.label)
                     .tracking(2)
+                Text(":")
+                    .font(.zenji(.title, weight: .heavy))
+                    .foregroundStyle(ZenjiTokens.accent)
             }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Sportivista")
             Text(dateLabel)
                 .font(.zenji(.footnote))
                 .foregroundStyle(ZenjiTokens.secondaryLabel)

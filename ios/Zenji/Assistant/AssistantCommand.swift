@@ -65,7 +65,7 @@ enum AssistantCommand: Equatable, Sendable {
         case .resetProfile(.followedOnly):
             return "Dette sletter det du følger på denne enheten og starter onboarding på nytt. Det jeg vet om deg beholdes. Kan ikke angres."
         case .resetProfile(.everything):
-            return "Dette sletter det du følger og alt Zenji vet om deg, fra denne enheten. Kan ikke angres."
+            return "Dette sletter det du følger og alt Sportivista vet om deg, fra denne enheten. Kan ikke angres."
         default:
             return nil
         }

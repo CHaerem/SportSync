@@ -78,10 +78,18 @@ struct ZenjiWidgetEntryView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 6) {
-                Text("ZENJI")
-                    .font(.zenji(.caption, weight: .bold))
-                    .foregroundStyle(ZenjiTokens.accent)
-                    .tracking(1)
+                // Brand lock (designprofil rev 2): wordmark + amber colon.
+                HStack(spacing: 0) {
+                    Text("SPORTIVISTA")
+                        .font(.zenji(.caption, weight: .bold))
+                        .foregroundStyle(ZenjiTokens.label)
+                        .tracking(1)
+                    Text(":")
+                        .font(.zenji(.caption, weight: .heavy))
+                        .foregroundStyle(ZenjiTokens.accent)
+                }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("Sportivista")
                 if entry.content.isMustSee {
                     Circle().fill(ZenjiTokens.accent).frame(width: 5, height: 5)
                 }
@@ -117,7 +125,7 @@ struct ZenjiWidget: Widget {
                     ZenjiTokens.background
                 }
         }
-        .configurationDisplayName("Zenji")
+        .configurationDisplayName("Sportivista")
         .description("Neste must-see-hendelse.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
