@@ -99,8 +99,8 @@ ios/
 ├── .gitignore                     scoped to ios/: *.xcodeproj, xcuserdata, DerivedData
 ├── Zenji/                         app target
 │   ├── ZenjiApp.swift             @main entry point
-│   ├── ContentView.swift          Tekst-TV header + live line + AgendaView host + sync/notify hook
-│   ├── DesignTokens.swift         shared Tekst-TV tokens (also used by widget + tests)
+│   ├── ContentView.swift          NavigationStack host: header + gearshape→Deg + live line + AgendaView + command line + sync/notify hook
+│   ├── DesignTokens.swift         shared baseline tokens: semantic system colours + amber + Dynamic Type font API (also used by widget + tests)
 │   ├── ThemeOverride.swift        manual system/dark/light override enum (pure)
 │   ├── Interaction.swift          shared ≥44pt tap-target helpers
 │   ├── Models/                    Codable models mirroring the data contract
@@ -290,10 +290,14 @@ block only on `ai-research` rows, a quiet varsel read-out, the spoiler-masked
 (the expanded stage race: every Norwegian rider de-duplicated, the next stage's
 summary, every stage as its own line).
 
-`ContentView` hosts `AgendaView` under a header ("ZENJI · dato · en stille tikkende
-klokke": a `P100` page index, the amber tabular clock, the `»_` assistant glyph, the
-theme glyph) + a quiet `▌ LIVE …` line (invisible when nothing is on).
-Screenshots: `docs/design-v2/after-{dark,light}.png`.
+`ContentView` wraps `AgendaView` in a `NavigationStack` (WP-83): a header with the
+ensō mark + `ZENJI` wordmark + date and a `gearshape` toolbar button that pushes the
+**Deg** settings screen (`Profile/DegView.swift`); a quiet `▌ LIVE …` line (invisible
+when nothing is on); and the always-present command line at the bottom. The
+assistant's result (a diff or an answer) presents as a native `.sheet`
+(`.presentationDetents`) over the agenda — no longer a bespoke fade-overlay. The v2
+header glyphs (`P100`, the ticking clock, `»_`, the theme glyph) were removed; theme
+now lives in Deg. Screenshots: `docs/wp-83/*.png`.
 
 ## Widget
 
@@ -342,8 +346,13 @@ the app-start `.task`, not on pull-to-refresh.
 `Zenji/Assistant/` is a conversational way to edit *what the app follows* and ask
 questions over your own local data. The principle is **"assistenten ER
 grensesnittet"** — a fixed, quiet command line pinned to the bottom of the agenda
-(`CommandLineView`: `»_` sigil · text field · blinking cursor), not a room behind a
-button; results fade in as a flat **ark** (`AssistantPanel`).
+(`CommandLineView`: `»_` sigil · text field · blinking cursor), a helper that follows
+you rather than a room behind a button. WP-82 gave it three discoverability states: a
+concrete example placeholder at rest, context suggestions on focus, and live entity
+grounding while typing. Its result presents as a native `.sheet` (`AssistantPanel`,
+slimmed by WP-83 to conversation/result only); the permanent "rooms" (follows,
+memory, share, reset, theme, version) moved to the **Deg** settings screen
+(`Profile/DegView.swift`).
 
 **The model is behind the `InterestAssistant` protocol** — the vendor surface is one file:
 
@@ -391,6 +400,15 @@ driven by a DEBUG-only `ZENJI_DEMO=…` launch harness (never compiled into rele
 `Zenji/Profile/` is the on-device, human-owned interest profile the assistant edits,
 plus its sync/share/reset/effective-merge machinery. **Our server never sees this**
 — it is device-local, syncing only through the user's own iCloud or a QR bridge (P360).
+
+- **`DegView.swift`** (WP-83) — the **Deg** settings screen, pushed from `ContentView`'s
+  `gearshape` toolbar button. A native inset-grouped `List` (SF Symbols leading, value +
+  chevron trailing) that re-homes the permanent surfaces the slimmed `AssistantPanel` no
+  longer holds: PROFIL (Hva jeg følger, Sett opp på nytt), DATA OM MEG (Hva jeg vet om
+  deg → `WhatIKnowView`, Det jeg ikke forsto, Del profil → `ProfileSharePanel`), APP
+  (varsel-ledetid, Utseende = the `ThemeOverride` cycle, Nullstill → `ResetService`),
+  the version line, and the DEBUG eval/telemetry entries. It reuses the existing views
+  rather than reimplementing their logic.
 
 - **`InterestProfile.swift` / `ProfileStore.swift`** — a flat list of
   `InterestRule`s (each with an always-filled Norwegian `reason`, the transparency
