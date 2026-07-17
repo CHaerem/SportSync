@@ -51,10 +51,15 @@ struct CommandLineView: View {
             }
             inputRow
         }
-        .background(ZenjiTokens.cell)
-        .overlay(alignment: .top) {
-            Rectangle().fill(ZenjiTokens.separator).frame(height: 1)
-        }
+        // Liquid Glass (iOS 26): the platform's own control material replaces
+        // the opaque bar + hairline. Glass belongs on the CONTROL layer only —
+        // content (the agenda) never gets glassed. A rounded rect (not a
+        // capsule) so the shape stays calm when the discovery section expands
+        // the bar to two rows. System glass handles Reduce Transparency /
+        // legibility fallbacks automatically.
+        .glassEffect(.regular, in: .rect(cornerRadius: 26))
+        .padding(.horizontal, 10)
+        .padding(.bottom, 4)
         .animation(.easeOut(duration: 0.15), value: focused)
         .animation(.easeOut(duration: 0.15), value: trimmed.isEmpty)
     }

@@ -117,6 +117,13 @@ Apple-system-farger + én amber-aksent. Ved rebrand endres KUN denne tabellen.
 ### Bevegelse & haptikk
 
 - **Navigasjon:** Apples native push/sheet/tilbake-swipe. Ingen egendefinerte kurver.
+- **Liquid Glass (iOS 26 — BINDENDE presisering):** plattformens kontroll-materiale
+  er *native*, ikke dekor. Standard-komponenter arver det automatisk (bygg mot
+  iOS 26-SDK, aldri `UIDesignRequiresCompatibility`-opt-out); appens egne
+  kontroll-flater (kommandolinja) adopterer `glassEffect` og flyter over innholdet
+  (`safeAreaInset`). Glass hører KUN til kontroll-laget — innhold (agenda-rader,
+  detaljark-innhold) glasses ALDRI. Egenlaget blur/glassmorfisme er fortsatt
+  forbudt; det historiske forbudet gjaldt DIY-dekor, ikke systemmaterialet.
 - **Hjelperens resultat:** native `.sheet` med `.presentationDetents`
   (grabber, dra-ned) — ikke et egendefinert fade-lag.
 - **Haptikk (sparsom):** `.sensoryFeedback(.success, …)` på Bekreft,
@@ -174,7 +181,9 @@ Seksjoner: Arena · Om · **Hvor ser jeg det** (lenker) · **Funnet av AI**
 Visjonens kjerne, bygd som native mønstre — ikke en bespoke kontroll.
 
 - **Bunn-linje** på agenda + Deg: et native tekstfelt i søke-/skrivelinje-form
-  (`mic` for diktering, send/retur). Forstår BÅDE profil-endringer OG spørsmål.
+  (`mic` for diktering, send/retur), som en **flytende Liquid Glass-flate**
+  (`glassEffect` + `safeAreaInset` — Safari-bunnfeltet-mønsteret; agendaen
+  scroller under). Forstår BÅDE profil-endringer OG spørsmål.
 - **Resultat i native sheet** (detents): diff (`+` grønn / `±` amber / `−` rød,
   semantiske signalfarger) med Bekreft/Avvis, eller et rolig svar over LOKAL data.
 - **Kontekstbevisst:** agenda → følg/spør om tavla; detaljark → forhåndsscopet
@@ -242,4 +251,6 @@ Faste punktstørrelser som ignorerer Dynamic Type · `.onTapGesture`-rader uten
 pressed-state/a11y-rolle · trunkerte titler · fortid i agendaen · mer enn én
 aksentfarge (amber) · to amber-elementer i samme rad · badges med tall ·
 spinnere · haptikk-fest · egendefinerte overgangskurver der Apple har en native ·
+egenlaget blur/glassmorfisme (system-Liquid Glass på kontroll-laget er native og
+påkrevd; DIY-glass — særlig på innhold — er forbudt) ·
 egne ikoner der en SF Symbol finnes · «AI-slop»-estetikk. Ved tvil: fjern.
