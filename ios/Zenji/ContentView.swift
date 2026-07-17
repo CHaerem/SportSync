@@ -184,6 +184,14 @@ struct ContentView: View {
                 filterLine
                 AgendaView(viewModel: agenda, onFollow: follow, onOpen: { assistant.recordOpened($0) },
                            openEventID: $requestedEventID)
+            }
+            // Liquid Glass (iOS 26): the command line is the app's ONE custom
+            // control surface — it floats over the agenda as a glass capsule
+            // (the Safari bottom-bar pattern) instead of sitting as an opaque
+            // bar in the VStack. `safeAreaInset` keeps the List scrollable
+            // beneath it with the correct automatic bottom inset, and the bar
+            // still rides above the keyboard natively.
+            .safeAreaInset(edge: .bottom) {
                 CommandLineView(viewModel: assistant, focused: $commandFocused, onOpenBrowse: openBrowse)
             }
             .background(ZenjiTokens.background.ignoresSafeArea())
