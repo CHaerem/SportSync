@@ -2,7 +2,7 @@
 //  BackgroundRefreshScheduling.swift
 //  Zenji
 //
-//  WP-12: pure scheduling-decision logic for the `app.zenji.refresh`
+//  WP-12: pure scheduling-decision logic for the `app.sportivista.refresh`
 //  BGAppRefreshTask — deliberately split out from BackgroundRefreshScheduler
 //  .swift (which actually talks to BGTaskScheduler) so it can be unit
 //  tested. BGTaskScheduler itself needs a running app + the real OS

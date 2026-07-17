@@ -124,14 +124,14 @@ struct MetricLogStore: Sendable {
 
     let directoryURL: URL
 
-    /// Default location: the SAME `ZenjiProfile` directory `ProfileStore` /
+    /// Default location: the SAME `SportivistaProfile` directory `ProfileStore` /
     /// `MisunderstoodLogStore` use in Application Support — one small user-owned
     /// document store, no App Group dependency (matters for the free-account
     /// `ZenjiDeviceDev` build, exactly like those stores' own rationale).
     init(fileManager: FileManager = .default) {
         let base = (try? fileManager.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true))
             ?? fileManager.temporaryDirectory
-        self.init(directory: base.appendingPathComponent("ZenjiProfile", isDirectory: true))
+        self.init(directory: base.appendingPathComponent("SportivistaProfile", isDirectory: true))
     }
 
     /// Explicit-directory initializer — tests use a throwaway temp directory.

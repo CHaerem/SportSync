@@ -220,7 +220,7 @@ final class AgendaViewModel {
     nonisolated static func computeReloadSync(now: Date, dataStore: DataStore, profileStore: ProfileStore, cachedIndex: EntityIndex?) -> sending Reload {
         MainThreadGuard.assertOffMain("AgendaViewModel reload (cache read + JSON decode + compile)")
         // WP-63: os_signpost the WP-60 hotpath so a real on-device stall surfaces
-        // in Instruments (Points of Interest, Subsystem "app.zenji.perf") as three
+        // in Instruments (Points of Interest, Subsystem "app.sportivista.perf") as three
         // named phases — load / index / compile — inside an outer `reload`, instead
         // of one opaque main-thread blob. Pure observation: the intervals wrap the
         // SAME work in the SAME order, so the golden vectors stay bit-identical.

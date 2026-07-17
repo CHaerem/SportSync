@@ -38,7 +38,7 @@ extension AssistantViewModel {
         importMerging { try ProfileShareCodec.merge(url: url, into: $0) }
     }
 
-    /// Import from a pasted string — the whole `zenji://…` link or just its
+    /// Import from a pasted string — the whole `sportivista://…` link or just its
     /// payload (both accepted), for the manual import field.
     func importSharedProfile(fromPayload raw: String) {
         let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)

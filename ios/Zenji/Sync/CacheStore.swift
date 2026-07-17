@@ -2,7 +2,7 @@
 //  CacheStore.swift
 //  Zenji
 //
-//  WP-12: on-disk cache for synced data files. Prefers the `group.app.zenji`
+//  WP-12: on-disk cache for synced data files. Prefers the `group.app.sportivista`
 //  App Group container (declared in Zenji.entitlements /
 //  ZenjiWidget.entitlements, see ios/README.md) so the widget extension can
 //  read the same cache once it needs to — and falls back automatically to
@@ -23,7 +23,7 @@
 import Foundation
 
 final class CacheStore: @unchecked Sendable {
-    private static let cacheDirectoryName = "ZenjiCache"
+    private static let cacheDirectoryName = "SportivistaCache"
     private static let syncStateFilename = "sync-state.json"
 
     let directoryURL: URL
@@ -33,7 +33,7 @@ final class CacheStore: @unchecked Sendable {
     /// available, falling back to Application Support otherwise. See the
     /// type-level doc above for why the fallback is the path that actually
     /// runs today.
-    convenience init(appGroupIdentifier: String = "group.app.zenji", fileManager: FileManager = .default) {
+    convenience init(appGroupIdentifier: String = "group.app.sportivista", fileManager: FileManager = .default) {
         let base: URL
         if let groupContainer = fileManager.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier) {
             base = groupContainer

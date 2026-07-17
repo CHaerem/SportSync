@@ -84,7 +84,7 @@ final class CacheStoreTests: XCTestCase {
     /// Support rather than fail — and the fallback directory must actually
     /// be usable, not just a plausible-looking path.
     func testInit_whenAppGroupContainerIsUnavailable_fallsBackToApplicationSupport() throws {
-        let store = CacheStore(appGroupIdentifier: "group.app.zenji", fileManager: NoAppGroupFileManager())
+        let store = CacheStore(appGroupIdentifier: "group.app.sportivista", fileManager: NoAppGroupFileManager())
         defer { try? FileManager.default.removeItem(at: store.directoryURL) }
 
         XCTAssertTrue(

@@ -1,6 +1,6 @@
 name: Zenji
 options:
-  bundleIdPrefix: app.zenji.ios
+  bundleIdPrefix: app.sportivista.ios
   deploymentTarget:
     iOS: "26.0"
   createIntermediateGroups: true
@@ -74,20 +74,20 @@ targets:
         # keys are required by BGTaskScheduler regardless of how thin the
         # wrapper around it is.
         BGTaskSchedulerPermittedIdentifiers:
-          - app.zenji.refresh
+          - app.sportivista.refresh
         UIBackgroundModes:
           - fetch
-        # WP-19: the `zenji://` deep-link scheme the profile-share QR / link
+        # WP-19: the `sportivista://` deep-link scheme the profile-share QR / link
         # opens (ProfileShareCodec). Custom scheme → no Associated-Domains
         # entitlement needed (free-account friendly).
         CFBundleURLTypes:
-          - CFBundleURLName: app.zenji.ios.profile
+          - CFBundleURLName: app.sportivista.ios.profile
             CFBundleURLSchemes:
-              - zenji
+              - sportivista
     settings:
       base:
         PRODUCT_NAME: Zenji
-        PRODUCT_BUNDLE_IDENTIFIER: app.zenji.ios
+        PRODUCT_BUNDLE_IDENTIFIER: app.sportivista.ios
         CODE_SIGN_ENTITLEMENTS: Zenji/Zenji.entitlements
     dependencies:
       - target: ZenjiWidgetExtension
@@ -126,7 +126,7 @@ targets:
     settings:
       base:
         PRODUCT_NAME: ZenjiWidget
-        PRODUCT_BUNDLE_IDENTIFIER: app.zenji.ios.widget
+        PRODUCT_BUNDLE_IDENTIFIER: app.sportivista.ios.widget
         CODE_SIGN_ENTITLEMENTS: ZenjiWidget/ZenjiWidget.entitlements
         SKIP_INSTALL: YES
 
@@ -240,7 +240,7 @@ targets:
     settings:
       base:
         PRODUCT_NAME: ZenjiTests
-        PRODUCT_BUNDLE_IDENTIFIER: app.zenji.ios.tests
+        PRODUCT_BUNDLE_IDENTIFIER: app.sportivista.ios.tests
 
   # WP-16: a device-flavoured build of the SAME app sources (path: Zenji — so it
   # includes Assistant/ and its on-device FoundationModels code) for running on
@@ -306,15 +306,15 @@ targets:
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         BGTaskSchedulerPermittedIdentifiers:
-          - app.zenji.refresh
+          - app.sportivista.refresh
         UIBackgroundModes:
           - fetch
-        # WP-19: same `zenji://` deep-link scheme on the device build so a
+        # WP-19: same `sportivista://` deep-link scheme on the device build so a
         # scanned QR / share link imports (LocalOnly merge — no CloudKit needed).
         CFBundleURLTypes:
-          - CFBundleURLName: app.zenji.ios.profile
+          - CFBundleURLName: app.sportivista.ios.profile
             CFBundleURLSchemes:
-              - zenji
+              - sportivista
     settings:
       base:
         # Distinct PRODUCT_NAME → distinct `ZenjiDeviceDev.app` output, so it
@@ -324,14 +324,14 @@ targets:
         # above; only the on-disk product bundle name differs.
         PRODUCT_NAME: ZenjiDeviceDev
         # Reuses the app's own bundle id (NOT a distinct one): the free personal
-        # team already has a valid "iOS Team Provisioning Profile: app.zenji.ios"
+        # team already has a valid "iOS Team Provisioning Profile: app.sportivista.ios"
         # covering this device, and a free account can't provision an unlimited
         # number of new App IDs — so the device build signs against the existing
         # profile. The Simulator `Zenji` target shares this id but never signs
         # (CODE_SIGNING_ALLOWED=NO), so the two don't collide at install time
         # (only one is ever installed per destination). Xcode may warn about the
         # shared id; that's expected and harmless here.
-        PRODUCT_BUNDLE_IDENTIFIER: app.zenji.ios
+        PRODUCT_BUNDLE_IDENTIFIER: app.sportivista.ios
         CODE_SIGN_ENTITLEMENTS: ZenjiDeviceDev/ZenjiDeviceDev.entitlements
         CODE_SIGN_STYLE: Automatic
         CODE_SIGNING_ALLOWED: YES
@@ -368,7 +368,7 @@ targets:
     settings:
       base:
         PRODUCT_NAME: ZenjiUITests
-        PRODUCT_BUNDLE_IDENTIFIER: app.zenji.ios.uitests
+        PRODUCT_BUNDLE_IDENTIFIER: app.sportivista.ios.uitests
         # The app the runner installs + launches + attaches to. XcodeGen turns
         # this into the TEST_TARGET_NAME / test-host wiring a UI-test bundle needs.
         TEST_TARGET_NAME: Zenji

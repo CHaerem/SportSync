@@ -30,7 +30,7 @@
 import Foundation
 
 struct SyncClient: Sendable {
-    static let defaultBaseURL = URL(string: "https://zenji.app/data/")!
+    static let defaultBaseURL = URL(string: "https://sportivista.com/data/")!
 
     /// The published files this iOS client actually consumes. See the
     /// type-level doc above for why the rest of the manifest is ignored.

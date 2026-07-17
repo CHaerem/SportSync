@@ -9,7 +9,7 @@
 //  runs the SAME merge — so it is genuine cross-device sync in the zero-infra
 //  spirit, with no server ever touched.
 //
-//  The link is a custom-scheme deep link (`zenji://profile?v=1&d=<payload>`), so
+//  The link is a custom-scheme deep link (`sportivista://profile?v=1&d=<payload>`), so
 //  it needs no Associated-Domains entitlement (free-account friendly). The
 //  payload is small, self-describing JSON — deliberately simple to re-implement
 //  in the web client later (a documented non-goal here).
@@ -32,7 +32,7 @@ enum ProfileShareError: Error, Equatable {
 }
 
 enum ProfileShareCodec {
-    static let scheme = "zenji"
+    static let scheme = "sportivista"
     static let host = "profile"
     static let version = 1
     private static let versionKey = "v"
@@ -62,7 +62,7 @@ enum ProfileShareCodec {
     // MARK: - Deep link (QR + share sheet)
 
     /// The link a QR code encodes and the share sheet hands off:
-    /// `zenji://profile?v=1&d=<payload>`.
+    /// `sportivista://profile?v=1&d=<payload>`.
     static func link(for state: ProfileSyncState) throws -> URL {
         let payload = try encode(state)
         var components = URLComponents()

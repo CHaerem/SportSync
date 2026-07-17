@@ -1,13 +1,13 @@
-# Zenji
+# Sportivista
 
 > A **calm, personal overview** of the sport, esport and tournaments you follow — one
 > quiet place that answers *what's on · when · where to watch · what's live now* — where
 > **scheduled AI research agents** find and **verify** the events static APIs miss.
 
-[![Static pipeline](https://github.com/CHaerem/zenji/workflows/Static%20data%20pipeline/badge.svg)](https://github.com/CHaerem/zenji/actions)
-[![Live Site](https://img.shields.io/badge/Live-Dashboard-blue)](https://zenji.app/)
+[![Static pipeline](https://github.com/CHaerem/sportivista/workflows/Static%20data%20pipeline/badge.svg)](https://github.com/CHaerem/sportivista/actions)
+[![Live Site](https://img.shields.io/badge/Live-Dashboard-blue)](https://sportivista.com/)
 
-**See it live**: [zenji.app](https://zenji.app/)
+**See it live**: [sportivista.com](https://sportivista.com/)
 
 <!-- STATUS:START -->
 ## AI-budsjett
