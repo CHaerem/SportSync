@@ -1,24 +1,22 @@
 {
-  "runAt": "2026-07-17T10:15:00Z",
-  "eventsAdded": 2,
+  "runAt": "2026-07-17T14:10:00Z",
+  "eventsAdded": 0,
   "eventsRemoved": 0,
-  "eventsAmended": 1,
-  "trackedDelta": "+2 tournament-entries (tour-of-denmark-2026, arctic-race-of-norway-2026 — begge tettet Uno-X' next-fixture-hull etter Tour de France); TdF-entry oppdatert (etappe 13 ikke startet, etappe 14 starttid bekreftet 11.10 UTC, peker til de to nye Uno-X-løpene).",
+  "eventsAmended": 3,
+  "trackedDelta": "Ingen entries lagt til/fjernet. Oppdatert: casper-ruud + swiss-open-gstaad-2026 (Ruud ute av Gstaad, tapte QF), tour-de-france-2026 (GC-sprik oppløst til Tobias 14. +14.30, etappe 13 på veien, etappe 14 tid re-bekreftet). Ingen utløpte entries å droppe (alle expires > 17. juli).",
   "quality": {
     "pass": true,
-    "score": 93,
+    "score": 97,
     "failures": [
-      "Mindre provenance-etterslep (ikke-blokkerende): TdF etappe-14-amenderingen (11.00→11.10 UTC) støttes av evidence-URL-ene, men verifiedAt (2026-07-11) + verificationSources (kun wikipedia) i verifikasjons-blokka ble ikke oppdatert til å reflektere franceletour.com + cyclingstage-bekreftelsen 17. juli. Verifikasjons-feltene eies av verify-agenten (correctness-gate) — overlatt til daglig verify."
+      "Non-blocking (grader): TdF etappe 13 endTime var 15:30Z mot summaryens målgang ~17.45 CEST (15:45 UTC) — rettet til 15:45Z i denne kjøringen."
     ]
   },
   "notes": [
-    "Kjøring fre. 17. juli ~10.15Z (standard-tier Opus, ~6t etter forrige run 04.00Z). Tre parallelle scout-subagenter (sykkel/TdF; tennis+golf; CS2+bred norsk sveip) + én uavhengig write-time fact-checker, alle med ekte web-søk.",
-    "NEXT-FIXTURE-HULL TETTET (hovedfunn): Uno-X Mobility (alwaysTrack.teams) hadde ingenting på tavla etter Tour de France (slutt 26. juli). La til to reelle etappeløp, begge uavhengig fact-checket 17. juli: (1) PostNord Danmark Rundt 29. juli–2. aug (Uno-X' neste løp), (2) Arctic Race of Norway 13.–16. aug (Uno-X' hjemmeløp/sesongmål). Begge stage races → ikke i neverTrack (som gjelder klassikere utenom TdF).",
-    "STREAMING: Arctic Race = TV 2 / TV 2 Play (bekreftet, egen løps-side hos TV 2 Play + Eurosport Norge/Max). Tour of Denmark = norsk kringkaster IKKE bekreftet for 2026 (historisk Eurosport Norge/Max, men ingen 2026-listing funnet ennå) → streaming holdt TOM med ærlig note i summary, per kontrakten «aldri gjett en kanal». Begge løp er >7 dager unna (29. juli / 13. aug), så ingen near-term-streaming-mangel. Etappe-1-starttider for begge er ikke publisert ennå (tid over anslått, tydelig notert; verify berammer) → begge satt til confidence medium, ikke high.",
-    "AMENDERT: TdF etappe 14 (Mulhouse–Le Markstein, lør. 18. juli) starttid 11.00→11.10 UTC — bekreftet mot franceletour.com + cyclingstage (to kilder enige). Summary + evidence oppdatert.",
-    "LIVE-POSTER IKKE LØST (for tidlig på dagen ved kjøretid 10.15Z): TdF etappe 13 (Dole–Belfort, start 11.00 UTC) hadde ikke startet — ingen resultat; Gstaad Ruud QF vs Cerúndolo (11.30 UTC) ikke spilt — ingen resultat. GC-topp uendret. Research (hver 4t)/verify fanger opp begge senere i dag. Mindre uavklart: fersk scout leste Tobias Halland Johannessen som TdF-14. (+14.30) mot tavlas 13. (+14.50) — kildene spriker ett hakk/~20 sek., IKKE rettet (verify avgjør daglig).",
-    "ANDRE FUNN (ingen board-endring): CS2 BLAST Bounty S2 bracket FORTSATT TBD — bounty-draften (seed 17–32 velger motstander) skjer typisk ~1 dag før start, så 100T-motstander/kamptid ventes ~19.–21. juli; rain (Håvard Nygaard) på aktiv roster. Warholm DL London lør. 18. juli 13.03 UTC (NRK) bekreftet uendret. The Open R2: Hovland åpnet på par (E), trygt innenfor projisert cut; Reitan i feltet — statisk event, ikke rørt. Ingen ny Carlsen-turnering før Esports World Cup (11.–15. aug). Ruud National Bank Open Montreal fortsatt dato-gated (trekning 31. juli).",
-    "COVERAGE-SIGNALER: coverage-gaps.json 3 entity-gaps (Uno-X/British Open/Fotball-VM) — alle false positives fra resultat-headlines (TdF-velt, Hovland-åpning, VM-nominasjon), ikke manglende events. coverage-audit.json (06.15Z): 0 high-severity hull, alt imminent dekket; eneste low-gap = F1-kvalifisering vises ikke som eget event (strukturelt board-valg per GP, ikke kildefeil). scout-log: quiet.",
+    "Standard-tier Opus, fre. ettermiddag ~14.10Z, ~4t etter forrige run (10.15Z). Tre parallelle scout-subagenter (sykkel/TdF; tennis+golf; CS2+bred norsk sveip) med ekte web-søk + egen uavhengig fact-check av Ruud-QF-resultatet.",
+    "HOVEDFUNN (tennis): Casper Ruud UTE AV GSTAAD — tapte kvartfinalen mot Juan Manuel Cerúndolo (6.-seed) fre. 17. juli i strake sett. Egen fact-check mot TNT Sports live-side bekreftet «Finished» + Cerúndolo-seier. Eksakt sett-score var upålitelig i renderen (ugyldig «7-6, 6-5») → SCORE UTELATT fra tavla (en manglende detalj er bedre enn en feil), men utfallet solid. Gstaad-eventets summary amendert til tapet (ingen SF/finale for Ruud). Ruuds neste: Montreal (trekning 31. juli, dato-gated).",
+    "HOVEDFUNN (sykkel): TdF-GC-spriket (Tobias Halland Johannessen 13. +14.50 vs 14. +14.30) OPPLØST — to ferske 17.-juli-kilder (idlprocycling + Wikipedia) enige om 14. plass (+14.30). Etappe-13- og etappe-14-summary rettet (Ayuso 4. +4.22 lagt til topp-GC). Etappe 13 (Dole–Belfort) FORTSATT PÅ VEIEN ved kjøretid (mål ~15.45 UTC) — ingen vinner å skrive; brudd (~57) m/Jonas Abrahamsen (Uno-X) på vei mot mål, ingen norske forfall. Etappe 14 (lør. 18.) starttid 11.10 UTC re-bekreftet mot tre franske kilder.",
+    "ANDRE FUNN (ingen board-endring): CS2 BLAST Bounty S2 bracket/seeding/kamptider FORTSATT TBD (Liquipedia/HLTV/BLAST.tv tomme; venter ~18.–20. juli; 100T-roster m/rain intakt) — følg opp 24–48t. The Open R2: Hovland E (T32, R2 pågikk), Reitan -1 (trygt innenfor kutt) — statisk event, ikke rørt. Corales R2: Ventura E (T90, på feil side av kuttstrek -2 som pågikk) — ai-research-event uendret (kutt ikke avgjort). Ingen ny Carlsen-turnering før EWC (Vegas-Freestyle-treff = 2025-artefakt). Barça Joan Gamper 19. aug vs Al Ahly — avspark-tid fortsatt TBC (korrekt holdt av tavla). Warholm Silesia DL 23. aug bekreftet fremtidig booking (utenfor ~4-ukers-horisont; Warholm allerede dekket via DL London 18. juli + EM 10.–16. aug — legges til ved neste sveip). Vinteridretter av-sesong (biathlon-VC 24. nov).",
+    "COVERAGE-SIGNALER: coverage-gaps.json 2 entity-gaps (Premier League + Fotball-VM) — begge false positives fra VM-finale/overgangs-headlines, ingen manglende event. coverage-audit.json (06.15Z): alt imminent + hele ~4-ukershorisonten dekket; eneste registrerte gap er LOW (F1-kvalifisering vises ikke som eget event per GP — strukturelt board-valg, ikke kildefeil). scout-log: alle kjøringer «quiet». Ingen eskalering.",
     "validate-events.js: 49 events, 0 errors."
   ]
 }
