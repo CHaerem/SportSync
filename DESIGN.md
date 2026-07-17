@@ -1,304 +1,245 @@
-# Zenji designspråk
+# Zenji designsystem — Apple-native baseline
+
+Dette er den **levende designkontrakten**. iOS-appen og widgeten følger denne
+Apple-native baselinen: systemfont, semantiske system-farger, SF Symbols, native
+lister/sheets/navigasjon — med **amber som eneste aksent-token**. Web (`docs/`)
+beholder inntil videre Tekst-TV-uttrykket fra v2 (se § Cross-surface).
+
+> **Om den senere rebrandingen:** Vi kommer sannsynligvis til å gjøre en full
+> rebranding (nytt navn — «Zenji» oppleves for lite intuitivt — og en egen
+> designprofil) på sikt. Dette dokumentet er DERFOR bevisst bygget som et tynt,
+> byttbart token-lag oppå Apples plattform: rebrandingen skal bli en **re-skin**
+> (nye token-verdier, font, ikoner, logo), ikke en ombygging. Alt merkevare-
+> bærende er isolert i § Tokens. Kjernefunksjonaliteten og UX-en mot hovedmålet
+> herdes FØRST, det kosmetiske byttes ETTERPÅ.
 
 Normativ kontrakt for alle flater: web (docs/), iOS-app (ios/), widget, ikon.
-Agenter som endrer UI leser dette FØRST og avviker aldri uten menneskelig ordre.
-Verifisering: skjermbilder i begge temaer før merge; eieren er siste smaksinstans.
+Verifisering: HIG-sjekklista (§ HIG-samsvar) + skjermbilder i begge temaer og
+ved forstørret Dynamic Type før merge. Eieren er siste smaksinstans.
 
-## Grunnlov (tre setninger)
+---
+
+## Grunnlov
 
 1. **Ro i en skjerm full av støy** — hver flate er ett stille, skannbart svar på
-   *når · hva · hvor ser jeg det*; alt som ikke tjener det svaret, fjernes.
-2. **Ærlig digital** — Zenji er en skjerm som vet den er en skjerm (Tekst-TV-arv,
-   mosaikk-ensō): kvantisert, flatt, presist. Aldri falsk-analog (ingen
-   penselimitasjon, papirtekstur, glød, gradient, skygge, glassmorfisme).
-3. **Ærlig innhold** — ukjent kanal er «–», AI-funn bærer ⓘ med kilder, tomhet
-   forklares. Aldri lat som.
+   *når · hva · hvor ser jeg det*. Dette er ren Apple *deference* (innhold først).
+2. **Native der det finnes** — bruk Apples egne kontroller, navigasjon, typografi
+   og bevegelse. Vi etterligner dem aldri når vi kan bruke dem; da arver vi
+   tilgjengelighet, kjennskap og samsvar gratis.
+3. **Ærlig innhold** — ukjent kanal er «–», AI-funn bærer en `info`-markør med
+   kilder, tomhet forklares. Aldri lat som.
+4. **Skall er tokens** — alt merkevare-bærende (farge, font-rolle, ikon, bevegelse)
+   er en token, aldri hardkodet i en komponent. Så en rebranding er et bytte.
+
+## Visjon (fryst) vs. skall (byttbart)
+
+| Fryst — visjon (overlever rebrand) | Byttbart — skall (tokens) |
+|---|---|
+| Rolig én-formåls agenda (når·hva·hvor) | Aksentfarge |
+| Korrekt tid/streaming + dekning | Bakgrunn / flate / tekst-farger |
+| Ambient, kontekstbevisst hjelper | Font-familie / rolle |
+| Personvern på enheten, ærlighet | Ikon-sett |
+| Følg / linser / spoilervern / varsler | Bevegelses-signatur, navn/logo |
 
 ## Tokens
 
-| Token | Mørk (DEFAULT) | Lys (varmt papir) |
+Alle farger er **semantiske**, ikke rå hex i komponentene. Verdiene under er
+Apple-system-farger + én amber-aksent. Ved rebrand endres KUN denne tabellen.
+
+### Farge
+
+| Token | Rolle | Mørk | Lys |
+|---|---|---|---|
+| `background` | sideflate | `#000000` | `#F2F2F7` |
+| `groupedBackground` | bak grupperte lister | `#000000` | `#F2F2F7` |
+| `cell` | liste-/kort-flate | `#1C1C1E` | `#FFFFFF` |
+| `cell2` | nøstet/hevet flate | `#2C2C2E` | `#FFFFFF` |
+| `label` | primærtekst | `#FFFFFF` | `#000000` |
+| `secondaryLabel` | meta/kanal/dempet | `rgba(235,235,245,.6)` | `rgba(60,60,67,.6)` |
+| `separator` | hårlinje/skille | `rgba(84,84,88,.6)` | `#C6C6C8` |
+| **`accent`** | **ENESTE aksent (amber)** | `#FFB000` | `#9A6800` |
+| `live` / `good` | direkte / positiv (systemGreen) | `#30D158` | `#34C759` |
+| `destructive` | slett/nullstill (systemRed) | `#FF453A` | `#FF3B30` |
+
+- Foretrekk `Color(.systemBackground)`, `.secondaryLabel`, `.separator` osv.
+  direkte der de finnes; `accent`/`live`/`destructive` er egne token-farger.
+- **Amber brukes KUN til aksent:** valgt tilstand, tinting av bar-knapper,
+  must-see-prikk, varsel-på, primær-knapp. Aldri brødtekst, aldri to i samme rad.
+- Aldri ren svart/hvit-inversjon — bruk system-flatene (grouped/cell) for dybde.
+
+### Typografi (BINDENDE — Dynamic Type)
+
+- **Systemfont** (San Francisco) overalt, via SwiftUIs tekststiler — ALDRI faste
+  `.system(size:)`-punkter. Hver rolle bindes til en tekststil så teksten
+  skalerer med brukerens innstilling.
+- **Tabular tall** (`.monospacedDigit()`) i tidskolonnen og alle steder sifre
+  skal rette seg inn.
+- Bryt aldri til trunkering når teksten vokser — omform kilden.
+
+| Rolle | Tekststil (iOS) | Web |
 |---|---|---|
-| bakgrunn | `#0A0A0C` | `#F5F1E6` |
-| flate (ark/detalj) | `#131316` | `#EDE8D9` |
-| tekst | `#E8E6E0` | `#1D1B15` |
-| dempet | `#8A877E` | `#6E6A5C` |
-| amber (ENESTE aksent) | `#FFB000` | `#8F6400` |
-| hårlinje | `#26251F` | `#D9D3C0` |
-| live (semantisk, sparsom) | `#5BD990` | `#2E7D4F` |
+| Stor tittel (nav) | `.largeTitle` bold | `2.125rem` |
+| Seksjonstittel | `.headline` | `1.0rem` semibold |
+| Radtittel | `.body` | `1.0rem` |
+| Tid (rad) | `.body` semibold + `monospacedDigit` | tabular |
+| Meta / kanal | `.subheadline`, `secondaryLabel` | `.9rem` dempet |
+| Gruppeoverskrift | `.footnote` uppercase, `secondaryLabel` | `.8rem` |
+| Caption | `.caption` | `.75rem` |
 
-- Mørk er merkevare-default; begge temaer likestilt polert. Aldri ren svart/hvit-inversjon.
-- Amber brukes KUN til: wordmark, dagoverskrifter, must-see-prikk, klokke, valgt tilstand.
-  Aldri til brødtekst, aldri to amber-elementer i samme rad.
+### Rytme & layout
 
-**Typografi:** mono ÉN familie overalt (SF Mono/ui-monospace; web: samme stack).
-Tabular numerals alltid. Skala (iOS pt / web rem): tittel 17/1.0 · tid 17 semibold ·
-meta/kanal 15 dempet · dagoverskrift 13 uppercase +8 % sporing · header-wordmark 28 tung.
-Dynamic Type respekteres (skaler hele skalaen, bryt aldri til trunkering).
+- 8pt-basisgrid (4pt for finjustering). Radhøyde ≥ 44pt.
+- Inset-grupperte lister: kort med 12pt hjørne, skille innrykket til
+  tekststart (ikke full bredde).
+- Én lesekolonne, maks 640pt på store flater (iPad/web), sentrert.
 
-**Rytme:** 4pt-grid. Rad: 12pt vertikal luft + hårlinje. Dagseksjon: 28pt før
-overskrift, 10pt etter. Én kolonnebredde (maks 640pt på store flater, sentrert).
+### Ikoner
 
-## Agendaens semantikk (BINDENDE — dette var feil i v1)
+- **SF Symbols** for alle standard-handlinger — de skalerer med Dynamic Type,
+  retter seg inn med tekst og har innebygd tilgjengelighet.
 
-1. **I DAG først.** Deretter I MORGEN, så ukedag + dato, 7 dager frem. ALDRI
-   passerte dager i agendaen.
-2. **Pågående flerdagsevents bor under I DAG** med vindu i tidskolonnen
-   («3.–11. juli» ERSTATTER klokkeslett — aldri i tillegg til tittel, aldri
-   duplisert i tittelfeltet).
-3. **Serie-kollaps** (≥4 events samme turnering): én rad, «neste: <etappe> i dag
-   HH:MM», ekspanderes ved tapp.
-4. **Live nå**: egen stille linje øverst under headeren når noe pågår
-   (`▌ LIVE` i live-farge + tittel + kanal), maks to; ellers usynlig.
-5. **Presentasjonsfilter (WP-67 — iOS)**: sier du «vis bare golf denne uka»,
-   vises en stille linje over agendaen — dempet `VISER:` + amber emne
-   (`GOLF · DENNE UKA`) + ett-trykks `✕` som nullstiller. MIDLERTIDIG og ærlig:
-   det endrer bare hva agendaen VISER, aldri hva du følger, og lagres aldri (et
-   rent visningslag over de kompilerte seksjonene — de fem predikatene og de
-   gylne vektorene er urørt). En kategori («vintersport») kollapser til
-   kategorinavnet i linja. Tomt treff sier «Ingen treff for filteret.» (aldri
-   «ingenting på»). Linja er usynlig når intet filter er satt — rolig standard
-   er en ufiltrert agenda.
+| Handling | Symbol | A11y-label (no) |
+|---|---|---|
+| Innstillinger / Deg | `gearshape` | «Innstillinger» |
+| Varsel av/på | `bell` / `bell.fill` (amber når på) | «Varsel på/av» |
+| AI-proveniens | `info.circle` | «Funnet av AI» |
+| Se-lenke | `arrow.up.forward` | «Åpne <kanal>» |
+| Følg | `plus.circle` | «Følg <navn>» |
+| Demp/skjul | `eye.slash` | «Demp» |
+| Del | `square.and.arrow.up` | «Del profil» |
+| Nullstill/slett | `trash` | «Nullstill» |
+| Diktering | `mic` | «Diktér» |
+| Spoiler skjult | `eye.slash` | «Skjult — spoilervern på» |
 
-## Radens anatomi
+- Egne (ikke-SF) glyfer kun der ingen SF Symbol passer OG a11y-label finnes.
+  Dekorative glyfer: `accessibilityHidden`.
+
+### Bevegelse & haptikk
+
+- **Navigasjon:** Apples native push/sheet/tilbake-swipe. Ingen egendefinerte kurver.
+- **Hjelperens resultat:** native `.sheet` med `.presentationDetents`
+  (grabber, dra-ned) — ikke et egendefinert fade-lag.
+- **Haptikk (sparsom):** `.sensoryFeedback(.success, …)` på Bekreft,
+  `.selection` på toggle, lett `.impact` på «varsel satt». Aldri på scroll/hvert tapp.
+- **Reduce Motion:** ingen spring; overganger blir kryss-fade; ingen haptikk.
+- Ingen spinnere (bruk innhold/skjelett), ingen parallakse/konfetti.
+
+> Note: den amber-tikkende klokka og «P-nummer»-arven fra v2 er FJERNET — de var
+> skall, ikke visjon. Tid bor i raden + systemets statusbar.
+
+## Navigasjon & informasjonsarkitektur
+
+- **`NavigationStack` med agendaen som rot.** Ingen tab bar (én permanent
+  fane-rad for en sjelden-brukt «Deg» er for tungt krom).
+- **`gearshape` i nav-baren (trailing)** pusher **Deg**-skjermen (§ Deg).
+- **Detaljer** vises som native `.sheet` (detents) eller push i agendaens stakk.
+- **Hjelperen** er en fast linje nederst på agenda (og Deg), ikke en fane
+  (§ Hjelperen). Bunnen tilhører hjelperen alene.
+
+## Agendaen (rot-skjermen)
+
+Native `List`, inset-gruppert per dag. Bindende semantikk (uendret fra v2):
+
+1. **I DAG først**, så I MORGEN, så ukedag + dato, 7 dager frem. Aldri passerte dager.
+2. **Pågående flerdagsevents bor under I DAG** med vindu i tidskolonnen.
+3. **Serie-kollaps** (≥4 events samme turnering): én rad, ekspanderes ved tapp.
+4. **Live nå:** egen stille seksjon/rad øverst (`live`-farge) når noe pågår, maks to.
+5. **Presentasjonsfilter:** en stille linje over lista + ett-trykks nullstilling.
+
+### Radens anatomi (native List-rad)
 
 ```
-[tid HH:MM]  [tittel — inntil TO linjer, ALDRI trunkert]
- [• amber]   [meta: turnering · runde · kanal — én dempet linje]
+[• amber]  [tid]  [tittel                    ] [🔔] [›]
+                  [turnering · runde · kanal   ]
 ```
-(Kanalen bor i meta-linjen — realisert slik i både iOS og web; den krymper
-aldri tittelen.)
 
-- Tid: fast venstre kolonne, semibold, tabular. Flerdagsvindu i samme kolonne.
-- **Titler trunkeres aldri** — to linjer, deretter omformuler datakilden (aldri «…»).
-- Kanal: høyre, dempet, krymper ALDRI tittelen (tittel har prioritet; kanal kan
-  gå til egen linje under på smale skjermer). Ukjent: «–» i dempet.
-- Must-see: amber-prikk venstre for tid. **Prikken er hele språket** — 🔔 og
-  all annen emoji i kromet er FORBUDT (emoji tillatt kun i redaksjonell brødtekst).
-- Varslings-tilstand vises IKKE i raden (den bor i detaljarket som stille toggle).
-- **Ingen chevroner.** Hele raden er tappbar; det signaliseres av rytme, ikke pil.
-  ⓘ-glyf (mono, dempet) KUN på AI-research-events — åpner proveniens.
+- **Must-see:** liten amber-prikk (leading). Prikken er signalet — ingen emoji.
+- **Tid:** tabular, semibold, fast venstrekolonne. Flerdagsvindu i samme kolonne.
+- **Tittel:** `.body`, inntil to linjer, ALDRI trunkert til «…».
+- **Kanal:** `secondaryLabel` i meta-linjen; ukjent = «–». Krymper aldri tittelen.
+- **Varsel:** `bell.fill` (amber) trailing KUN når raden armerer en påminnelse.
+- **AI-funn:** `info.circle` trailing; tapp på raden åpner detalj med kilder.
+- **Disclosure:** native chevron (`List` gir den) — trykkbarhet er tydelig,
+  raden har pressed-state og button-rolle gratis.
+- **Sveip-handlinger:** venstre → Følg / Demp / Påminn der det er meningsfullt.
 
-## Linse-rendering (P320 — rad = event × deltakelse × linse)
+### Event-detalj (native sheet, detents `[.medium, .large]`)
 
-En sport når deg GJENNOM dem du følger. Følger du en golfturnering «med fokus på
-norske utøvere» (linse `throughNorwegians`/`throughAthletes`), slutter «The Open»
-å være én rad — den blir utøver-sentrerte rader, sett fra den fulgtes plass.
-Bindende (WP-18):
+Seksjoner: Arena · Om · **Hvor ser jeg det** (lenker) · **Funnet av AI**
+(confidence + kilder, kun AI-events) · **Varsel** (stille status) · **Resultat**
+(spoiler-maskert bak tapp når spoilervern er på). Ingen kort-i-kortet.
 
-- **Utøver-tid overstyrer eventtid.** Har en fulgt utøver en starttid (golf:
-  tee time), er DEN radens tid — den overstyrer eventtiden for sortering,
-  dag-gruppering OG visning i tidskolonnen (ikke flerdagsvinduet). Tittelen
-  omformuleres til utøver-perspektiv («Reitan teer av — The Open»); status
-  (runde/score/plassering) legges dempet i meta-linjen.
-- **Én rad per utøver-tid.** Flere fulgte i samme event med ULIKE tider → én rad
-  hver (hver tee time beholder sin egen tidskolonne — tidskolonnen er hellig).
-  Deler de nøyaktig samme tid, kollapser de til én rolig rad med etternavnene
-  listet. Roligst, og ærligst mot «når».
-- **Grasiøs degradering.** Ingen linse (default `sportAsSuch`), eller ingen
-  per-utøver-deltakelsesdata å rendre gjennom, ⇒ NÅVÆRENDE rad urørt. En sport
-  uten per-utøver-tid (sjakk, fotball) rammes aldri.
-- **Ærlighet over fylde.** Mangler tid, DIKT den ALDRI: behold eventtiden (eller
-  flerdagsvinduet) og løft utøvernavnet inn i meta-linjen. Status vises verbatim,
-  aldri tolket/oppdiktet.
-- Linse-rader arver must-see-prikk og bjelle fra sitt event. Detaljarket viser
-  fortsatt HELE eventet (linse-tittelen lekker aldri dit). Ingen nye farger/emoji.
-- Rendering-lag, ikke seleksjon: linsen kjører ETTER relevans/must-see/kollaps
-  og rører aldri de fem predikatene (de gylne vektorene forblir bit-like). I dag
-  iOS-only (profil/linse bor lokalt per P310/P350); web venter på profil-sync.
+## Hjelperen (ambient, kontekstbevisst)
 
-## Header
+Visjonens kjerne, bygd som native mønstre — ikke en bespoke kontroll.
 
-Mosaikk-ensō som stille merke foran `ZENJI`-wordmarken, på alle flater (web:
-`.wordmark-enso` i mastheaden; iOS: `EnsoMark` i Assets.xcassets, template-
-rendret mot amber-token) — dekorativt, ikke interaktivt.
+- **Bunn-linje** på agenda + Deg: et native tekstfelt i søke-/skrivelinje-form
+  (`mic` for diktering, send/retur). Forstår BÅDE profil-endringer OG spørsmål.
+- **Resultat i native sheet** (detents): diff (`+` grønn / `±` amber / `−` rød,
+  semantiske signalfarger) med Bekreft/Avvis, eller et rolig svar over LOKAL data.
+- **Kontekstbevisst:** agenda → følg/spør om tavla; detaljark → forhåndsscopet
+  til eventet («Følg <lag>», «Påminn meg», «Hvorfor vises denne?»); Deg →
+  innstillinger i naturlig språk.
+- **Oppdagbarhet (tre tilstander):** hvile = konkret eksempel-placeholder ·
+  fokus = en rad kontekst-forslag stiger opp · skriving = live grunning mot
+  entitets-indeksen (velg, ikke stav). Ingen permanent krom.
+- **Tenke-tilstand:** dempet «tenker …» + Avbryt, aldri en spinner.
+- **Umiddelbar konsekvens:** Bekreft ⇒ sheet lukkes ⇒ agendaen re-kompileres.
+- **Ærlighet:** Apple Intelligence av ⇒ si det rett ut, aldri falsk degradering.
 
-`ZENJI` (amber, tung mono) · dato («TIRSDAG 14. JULI», dempet) · levende klokke
-`HH:MM:SS` (amber, tikker). Assistent-glyf: mono `»_` (IKKE pratebobler/emoji),
-dempet, høyre — en FOKUS-SNARVEI til kommandolinjen nederst (ikke en egen skjerm;
-se «Assistent»). Ingen sidetall/P-nummer i produktflatene — interne
-tekst-TV-referanser som må forklares er dekorasjon, ikke kommunikasjon.
+## Deg-skjermen
 
-**Tema-overstyring (BINDENDE, gjelder alle flater):** én mono-glyf i headeren,
-dempet, ved siden av assistent-glyfen, sykler system → mørk → lys → system ved
-tapp, kvantisert tilstand (`◐` auto / `●` mørk / `○` lys), persistert og
-appliseres på hele flaten (ingen egen innstillingsskjerm) — web har allerede
-sin theme-toggle (`docs/js/dashboard.js`); iOS speiler den (`ThemeOverride.swift`
-+ `.preferredColorScheme` på appens rot i `ContentView`).
+Pushet fra `gearshape`. Native inset-gruppert `List` (SF Symbols leading,
+verdi + chevron trailing). Grupper:
 
-## Interaksjon (BINDENDE — WP-14.3, Apple HIG)
+- **PROFIL:** Hva jeg følger (n) · Sett opp på nytt.
+- **DATA OM MEG:** Hva jeg vet om deg (n) · Det jeg ikke forsto (n) · Del profil (QR).
+- **APP:** Varsel før start (leadMinutes) · Utseende (tema) · Nullstill.
+- **FOT:** «BYGG <sha> · dato · SISTE / NYERE FINNES» (dempet).
+- **DEBUG (kun DEBUG-bygg):** Eval · Telemetri (MetricKit).
 
-Tapp-mål ≥44×44 pt for ETHVERT interaktivt element, uansett hvor liten glyfen
-SER ut. Den lille, stille mono-glyfen er det VISUELLE språket og beholdes
-uendret — treffflaten utvides usynlig rundt den (padding/`contentShape`,
-aldri en større glyf/font). Gjelder header-glyfene, ⓘ og alle sigiler,
-verktøylinje-knapper, og enhver liten tekst-«lenke» (Fjern/Slett/OK/Avbryt).
+Destruktive rader → ett rolig bekreftelses-ark (aldri system-alert var påkrevd,
+men native `confirmationDialog`/sheet er nå tillatt): eksakt konsekvens i én
+setning + Nullstill/Avbryt.
 
-Handlingsknapper er ALDRI glyf-små: en handling som Bekreft/Avvis eller et
-«mente du»-forslag er komfortabel — min. 44 pt høy, romslig horisontal
-padding, en flat hårlinje-ramme i handlingens egen farge (diffAdd/diffRemove/
-amber/dempet). Aldri en fylt «pill button» (forbudslisten gjelder også her).
+## Tema
 
-## Detaljark / assistent / widget
+Følger systemet via semantiske farger. Manuell overstyring (system → mørk → lys)
+er en enhets-preferanse under **Deg › Utseende** (ikke lenger en header-glyf),
+persistert, appliseres på appens rot. Overlever enhver profil-nullstilling.
 
-- Detaljark: flate-token, samme radspråk: venue · sammendrag · alle
-  se-muligheter som lenkeliste · ⓘ-proveniens (confidence + kilder) for AI-events ·
-  stille varsel-toggle · KONTEKST-HANDLINGER (se Assistent). Ingen kort-i-kortet.
-- Widget: mosaikk-ensō + neste must-see (tid · tittel · kanal) i tokens — en
-  miniatyr-teletekstside, ikke en iOS-plakat.
+## HIG-samsvar (BINDENDE sjekkliste)
 
-## Assistent (kommandolinjen ER grensesnittet)
+Fordi baselinen bruker Apples kontroller, arves mesteparten. Hver UI-endring
+skal likevel bestå denne før merge; håndhev det som kan håndheves i CI:
 
-Assistenten er ikke et rom bak en knapp — den er inngangen. «Assistenten ER
-grensesnittet.» Normativt (BINDENDE):
+- [ ] **Dynamic Type:** all tekst via tekststiler; ingen isolert `.system(size:)`.
+      *CI-gate:* en test feiler på nye faste størrelser i `Zenji/`.
+- [ ] **Kontroller:** `List`/`Button` med pressed-state + a11y-rolle; ingen
+      naken `.onTapGesture`-rad.
+- [ ] **Tastatur:** keyboard avoidance verifisert; clear-knapp; diktering; autocap av for egennavn.
+- [ ] **VoiceOver:** hver kontroll har label; dekorasjon skjult; logisk rekkefølge.
+- [ ] **Tapp-mål:** ≥44×44 pt.
+- [ ] **Kontrast:** tekst mot flate ≥ WCAG AA (amber-verdiene er valgt for dette).
+- [ ] **Reduce Motion + Dark/Light:** begge respektert.
+- [ ] **Modalitet:** native `.sheet` (grabber/detents) for ark.
+- [ ] **Verifisering:** skjermbilder i BEGGE temaer + minst ett ved forstørret Dynamic Type.
 
-- **Kommandolinjen**: en fast, stille prompt-linje NEDERST i agendaen, over
-  safe-area, på hver skjerm — den PRIMÆRE inngangen. Anatomi: mono `»_`-sigill
-  (venstre, dempet, trykkbart = åpner assistent-oppslaget) · tekstfelt
-  («Skriv eller spør …») · blinkende `▌`-blokkmarkør i amber (høyre). Markøren er
-  appens eneste bevegelse utenom klokka; Reduce Motion ⇒ statisk. Header-glyfen
-  er kun en fokus-snarvei hit.
-- **Intent-dualitet**: linjen forstår BÅDE profil-endringer OG spørsmål. Ett svar
-  er enten mutasjoner (diff) ELLER et svar over LOKAL agenda-data (aldri sky).
-  Spørsmål besvares rolig på norsk med referanse til radene (tid · tittel · kanal).
-- **Forslag/diff som ark**: resultater vises som et flatt ark (flate-token) som
-  toner inn (≤150 ms fade) OVER agendaen, med kommandolinjen synlig under (aldri
-  en egen skjerm). Diff-tegn: `+` grønn (ny) · `±` amber (endret) · `−` rød
-  (fjernet) — grønn/rød er SEMANTISKE signalfarger (som live-fargen), sparsomt
-  brukt, aldri en andre aksent. Forklaringer som rolig tekst, aldri alerts.
-  «Hva jeg følger» + «Det jeg ikke forsto» nås fra stille oppslag NEDERST i
-  samme ark.
-- **Tenke-tilstand**: mens modellen jobber blinker markøren i linjen og viser en
-  dempet «tenker …» + «Avbryt». ALDRI en spinner. Alltid avbrytbar.
-- **Umiddelbar konsekvens**: Bekreft ⇒ arket toner bort (≤150 ms) ⇒ profilen
-  appliseres ⇒ agendaen re-kompileres synlig med det samme.
-- **Kontekst-handlinger** (i detaljarket): «Følg <entitet>» (forhåndsutfylt
-  mutasjon gjennom den vanlige diff/bekreft-flyten) og «Hvorfor vises denne?»
-  (den deterministiske relevans-grunnen). Samme rolige radspråk.
-- Ærlighet: er Apple Intelligence av, sier arket det rett ut — aldri falsk
-  degradering til nøkkelord.
+## Cross-surface & innhold
 
-## Onboarding (P310 — «definere»)
+- **iOS-app + widget = baseline (nå).** Begge følger denne kontrakten fullt ut;
+  widgeten er en miniatyr av samme språk (semantiske farger + Dynamic Type).
+- **Web (docs/) er det bevisste unntaket inntil rebrandingen.** Web beholder
+  Tekst-TV-uttrykket fra v2 (mono type-stack, amber, near-black side) — en
+  eierbeslutning: web-migreringen tas sammen med rebrandingen, ikke før. Til da
+  er `docs/`-flatens levende kontrakt fortsatt v2-tekst-TV-verdiene i `base.css`.
+- **Stemme:** norsk, lavmælt, presis. «Kanal ukjent», ikke «Ingen streaming!».
+  Aldri utropstegn i kromet. Feil forklarer hva og hvorfor.
 
-Førstegangsopplevelsen er en **samtale, ikke et skjema** — ingen konkurrent lar
-deg SI hva du bryr deg om; alle tvinger deg gjennom liga-lister. Zenji gjør det
-motsatte, og lander deg i en agenda som ALLEREDE reflekterer valgene (umiddelbar
-konsekvens, samme mønster som assistenten). Bindende:
+## Forbudsliste
 
-- **Vises kun ved førstegang.** Ett persistent flagg (`@AppStorage`); onboarding
-  dukker opp bare når profilen er tom OG flagget ikke er satt. Re-kjørbar på
-  forespørsel fra «Hva jeg følger» (samme stille flyt) — aldri automatisk igjen.
-- **Rolige steg, ingen «AI-slop».** Ingen hero-illustrasjoner, karuseller, emoji
-  eller utropstegn. Mono, amber, nesten-svart, ensō-merket i toppen; DESIGN.md-
-  tokens og ≥44 pt tapp-mål gjennomgående. Fire steg:
-  1. **Velkommen** — én ærlig setning om hva Zenji er (når · hva · hvor) +
-     personvern-øyeblikket, on-brand og sant: «Det du følger bor på telefonen din
-     — aldri på en server.» (P350/P360-løftet).
-  2. **Samtale** (primærvei når Apple Intelligence er tilgjengelig) — samme `»_`-
-     kommandolinje-idiom. Fri norsk tekst → den EKSISTERENDE assistenten
-     (`InterestAssistant.interpret`) → en rolig diff brukeren bekrefter, flere ting
-     etter hverandre, mens «Følger nå»-lista vokser. Gjenbruk av assistenten, ikke
-     en parallell inntasting. Grasiøs: forstår den ikke → alltid-forklar (WP-16.1)
-     + tilbud om hurtigvalg.
-  3. **Hurtigvalg** (fallback + for alle) — kuraterte norske startpakker som
-     tappbare valg (≥44 pt), bygget fra entitets-indeksen + en liten kuratert
-     startliste. Fornuftige linser der det gir mening (golf/sykkel gjennom de
-     norske → `throughNorwegians`, WP-18). Dette steget ALENE gir full verdi ved
-     cold-start uten Apple Intelligence (pakkene bærer egne entitetsdata).
-  4. **Landet** — peker på den alltid-tilstedeværende kommandolinjen («du kan
-     alltid si mer til Zenji») og slipper deg inn i en fylt agenda.
-- **Hopp over er alltid lov.** Tom profil ⇒ agendaen viser en rolig «Fortell Zenji
-  hva du følger»-tomtilstand med peker til `»_` — aldri et falskt «ingenting på».
-- **Ærlighet over fylde.** Hurtigvalg-pakkene er grunnet i ekte, i-sesong
-  entiteter (så en tapp har konsekvens umiddelbart). Vintersport (langrenn/
-  skiskyting/hopp) er bevisst utelatt utenom sesong — det finnes ingen entiteter
-  ennå, og en pakke som matchet ingenting ville brutt ærlighets-løftet;
-  research-agenten legger dem til ved sesongstart.
-
-## Profil-sync (P360 — WP-19)
-
-Profilen (det du følger) og minnet er DITT, og synkes gjennom **din egen
-iCloud** — aldri via vår server. Bindende:
-
-- **iClouds egen kanal.** Ekte cross-device-sync går til brukerens PRIVATE
-  CloudKit-database (i deres iCloud-kvote), record-per-regel, med `encryptedValues`
-  på fritekst (regelens `reason`, notater) — E2E der CloudKit støtter det.
-  Krever betalt Apple-konto (WP-17); til da er backenden `LocalOnly` (no-op) og
-  telefon-installasjonen (gratis-konto) virker som før.
-- **Merge-strategiene** (deterministiske, CRDT-aktige): regler = siste-skriver-vinner
-  på `modifiedAt` + **tombstones** for slettinger (en sletting replikeres — en
-  gammel enhet gjenoppliver den aldri); episodiske minnenotater = append-only
-  union; atferdstellere = grow-only (max per enhet, sum totalt). Merge er
-  kommutativ, idempotent og rekkefølge-uavhengig.
-- **QR-broen** (verdifull NÅ, uten betalt konto): profilen eksporteres som en
-  komprimert payload i en QR-kode + `zenji://`-delelenke; import på en annen
-  enhet kjører SAMME merge — den **slår sammen, overskriver aldri**. Rolig UI:
-  mono, én amber-aksent, QR tonet til blekk-token, ingen emoji.
-- **Aldri vår server.** All sync er brukerens iCloud eller QR/lenke mellom deres
-  egne enheter. Personvern-løftet holder bokstavelig.
-
-## Personlig minne (P350 — WP-30)
-
-Assistenten skal føles som en redaktør som HUSKER DEG mellom øktene. Foundation
-Models er statsløs — «minne» = persistert data + smart innsetting i sesjonen.
-Kjernen er skillet mellom **personlig kontekst** (hvordan DU forholder deg til
-det du følger — smak, kunnskapsnivå, spoiler-preferanse, varslingstoleranse;
-liten, privat, KUN på enheten) og **verdens-kontekst** (form, storylines — stor,
-delt, server-produsert). **Serveren samler ALDRI personlig kontekst.** Bindende:
-
-- **Tre minnelag, alle lokalt** (utvider P360-synkmodellen `ProfileSyncState`, en
-  egen konkurrent lages aldri): **strukturert** (relasjonsmetadata per
-  entitet/sport — «nybegynner i sjakk», «ser F1 på opptak», «ikke varsle før
-  08:00» — LWW + tombstone, redigerbart), **episodisk** (etter en samtale
-  destillerer FM ett KOMPAKT notat, aldri råtranskript — append-only), og
-  **atferd** (åpninger/utvidelser/avvisninger per entitet — ren kode, ingen AI,
-  grow-only). Alt synkes gjennom brukerens egen iCloud/QR (P360), aldri serveren.
-- **Retrieval er ren Swift** (deterministisk entitet-match + ferskhet, ingen AI):
-  et `memoryDigest` (~500-token-tak) bygges for det som er relevant NÅ og
-  **injiseres i `LanguageModelSession`-instruksjonene** i både svar og en lokal
-  `saveMemory`-verktøy modellen kaller for å lagre noe den lærer. Svar REFLEKTERER
-  minnet (bruker kunnskapsnivå til å forklare/ikke forklare fagtermer) — det leses
-  aldri opp ordrett.
-- **Spoilervern er et presentasjonslag** (signaturtrekket, umulig server-side): en
-  `spoilerPolicy`-minnepost gir (a) svar formulert uten å avsløre utfall, og (b)
-  et `spoilerSafe`-flagg agendaen/detaljarket respekterer ved å **maskere
-  resultat/score** for den entiteten/sporten til brukeren har «sett» det (tapp for
-  å vise). Ligger OPPÅ feeden som linsen (WP-18) — rører aldri de fem predikatene
-  eller de gylne vektorene.
-- **«Hva jeg vet om deg»** er tillits- og GDPR-flaten: en rolig liste over ALT
-  lagret minne (strukturert + episodisk + atferd), hver post lesbar, redigerbar,
-  slettbar, med «Glem alt». Nås fra assistent-flyten (samme sted som «Hva jeg
-  følger»). Mono, ingen emoji, tapp-mål ≥44 pt. Sier rett ut at minnet bor kun på
-  enheten (og din egen iCloud), aldri på en server.
-
-### Nullstill uten å reinstallere (WP-32)
-
-En «NULLSTILL»-disclosure i samme stille oppslag som «Hva jeg følger»/«Hva jeg
-vet om deg» — ikke en ny fane — gir to rolige nivåer: **«Nullstill det du
-følger»** (profilen + onboarding-flagget, så onboarding starter på nytt) og
-**«Slett alt om meg»** (det over PLUSS alt personlig minne og «det jeg ikke
-forsto»-loggen — GDPR-knappen). Destruktiv handling → ett rolig
-bekreftelses-ark (DESIGN.md-tro, aldri en system-alert): eksakt setning om
-konsekvensen + Nullstill/Avbryt i `ZenjiActionButtonStyle`. Ærlig om omfang:
-gjelder KUN denne enheten (en synket enhet beholder sitt til neste sync, som
-da også ser slettingen — tombstones, ikke en taus forsvinning). Tema-
-overstyringen er en enhets-preferanse, ikke en del av profilen, og overlever
-enhver nullstilling uendret.
-
-## Bevegelse & lyd
-
-Klokkens sekundtikk og kommandolinjens blinkende `▌`-markør er appens eneste
-kontinuerlige bevegelser. Overganger: umiddelbare eller ≤150 ms fade (assistent-
-arket toner inn/ut). Ingen spretne kurver, parallakse, konfetti, haptikk-fest,
-spinnere. `prefers-reduced-motion`/Reduce Motion: klokka viser HH:MM statisk og
-markøren står stille.
-
-## Stemme
-
-Norsk, lavmælt, presis. «Kanal ukjent» ikke «Ingen streaming tilgjengelig!».
-Aldri utropstegn i kromet. Feil forklarer hva og hvorfor, uten unnskyldninger.
-
-## Forbudsliste (kort versjon til review)
-
-Trunkerte titler · fortid i agendaen · emoji i krom · chevroner · glød/gradient/
-skygge/blur · mer enn én aksentfarge · kort/paneler · badges med tall · pull-quotes
-av engasjement · alt som ligner «AI-slop»-estetikk. Ved tvil: fjern.
+Faste punktstørrelser som ignorerer Dynamic Type · `.onTapGesture`-rader uten
+pressed-state/a11y-rolle · trunkerte titler · fortid i agendaen · mer enn én
+aksentfarge (amber) · to amber-elementer i samme rad · badges med tall ·
+spinnere · haptikk-fest · egendefinerte overgangskurver der Apple har en native ·
+egne ikoner der en SF Symbol finnes · «AI-slop»-estetikk. Ved tvil: fjern.

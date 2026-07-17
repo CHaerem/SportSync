@@ -2,17 +2,15 @@
 //  DesignTokensTests.swift
 //  ZenjiTests
 //
-//  WP-80 acceptance — the token & typography foundation (DESIGN-BASELINE.md
-//  § Tokens). Proves:
+//  Token & typography foundation acceptance (DESIGN.md § Tokens). Proves:
 //    • the semantic colour tokens exist and resolve to the documented dark/
 //      light values (§ Farge),
 //    • the Dynamic Type text-style API binds to SwiftUI text styles (and the
 //      tabular variant adds monospaced digits),
-//    • the deprecated `zenjiMono(size:)` shim still compiles and maps a legacy
-//      point size onto the nearest text style (so every un-migrated view/widget
-//      keeps compiling until WP-85),
-//    • the legacy colour aliases map onto the new tokens,
 //    • the 8pt spacing scale exists.
+//
+//  The WP-80 migration shims (the fixed-size `zenjiMono` font and the legacy
+//  Tekst-TV colour aliases) were removed in WP-85; their tests went with them.
 //
 
 import XCTest
@@ -46,7 +44,7 @@ final class DesignTokensTests: XCTestCase {
 		XCTAssertLessThanOrEqual(abs(got.b - want.b), 2, "\(label) B", file: file, line: line)
 	}
 
-	// MARK: - Semantic colour tokens (DESIGN-BASELINE.md § Farge)
+	// MARK: - Semantic colour tokens (DESIGN.md § Farge)
 
 	func testBackgroundResolvesToDocumentedValues() {
 		assertHex(ZenjiTokens.background, darkTraits, 0x000000, "background dark")
@@ -89,7 +87,7 @@ final class DesignTokensTests: XCTestCase {
 	}
 
 	/// secondaryLabel and separator are semi-transparent system colours — assert
-	/// they resolve (exist) and, per DESIGN-BASELINE, are muted (alpha < 1) so
+	/// they resolve (exist) and, per DESIGN, are muted (alpha < 1) so
 	/// they read as "dempet"/hairline rather than solid.
 	func testSecondaryLabelAndSeparatorAreMutedSystemColours() {
 		let secDark = rgba(ZenjiTokens.secondaryLabel, darkTraits)
@@ -103,21 +101,7 @@ final class DesignTokensTests: XCTestCase {
 		XCTAssertLessThanOrEqual(sepLight.a, 1.0, "separator light resolves")
 	}
 
-	// MARK: - Legacy colour aliases (WP-80 shim → new tokens)
-
-	@available(*, deprecated)
-	func testLegacyColourAliasesMapToNewTokens() {
-		// Referencing the deprecated aliases proves they still compile; comparing
-		// resolved values proves the mapping. Wrapped in a @available(deprecated)
-		// method so the intentional legacy use raises no warning noise.
-		XCTAssertEqual(rgba(ZenjiTokens.foreground, darkTraits).r, rgba(ZenjiTokens.label, darkTraits).r)
-		XCTAssertEqual(rgba(ZenjiTokens.muted, darkTraits).a, rgba(ZenjiTokens.secondaryLabel, darkTraits).a, accuracy: 0.01)
-		assertHex(ZenjiTokens.surface, darkTraits, 0x1C1C1E, "surface(alias→cell) dark")
-		assertHex(ZenjiTokens.diffAdd, darkTraits, 0x30D158, "diffAdd(alias→live) dark")
-		assertHex(ZenjiTokens.diffRemove, darkTraits, 0xFF453A, "diffRemove(alias→destructive) dark")
-	}
-
-	// MARK: - Typography (DESIGN-BASELINE.md § Typografi)
+	// MARK: - Typography (DESIGN.md § Typografi)
 
 	func testZenjiFontBindsToTextStyle() {
 		XCTAssertEqual(Font.zenji(.body), Font.system(.body))
@@ -136,32 +120,6 @@ final class DesignTokensTests: XCTestCase {
 		               Font.system(.body).weight(.semibold).monospacedDigit())
 		// Tabular differs from the plain style (proves the modifier is applied).
 		XCTAssertNotEqual(Font.zenjiTabular(.body), Font.zenji(.body))
-	}
-
-	// MARK: - Deprecated zenjiMono shim (WP-80 — keeps views compiling)
-
-	@available(*, deprecated)
-	func testZenjiMonoShimMapsSizeToNearestTextStyle() {
-		// The shim must still compile and return a sensible, Dynamic-Type-backed
-		// font. Legacy sizes used across the un-migrated views map to the nearest
-		// text style, with tabular digits preserved. The shim's default weight is
-		// `.regular`, which SwiftUI records as a distinct modifier — so the
-		// expectation carries `.regular` too.
-		XCTAssertEqual(Font.zenjiMono(size: 13), Font.zenjiTabular(.footnote, weight: .regular))
-		XCTAssertEqual(Font.zenjiMono(size: 12), Font.zenjiTabular(.caption, weight: .regular))
-		XCTAssertEqual(Font.zenjiMono(size: 11), Font.zenjiTabular(.caption2, weight: .regular))
-		XCTAssertEqual(Font.zenjiMono(size: 15), Font.zenjiTabular(.subheadline, weight: .regular))
-		XCTAssertEqual(Font.zenjiMono(size: 17), Font.zenjiTabular(.body, weight: .regular))
-		XCTAssertEqual(Font.zenjiMono(size: 28), Font.zenjiTabular(.title, weight: .regular))
-		XCTAssertEqual(Font.zenjiMono(size: 34), Font.zenjiTabular(.largeTitle, weight: .regular))
-	}
-
-	@available(*, deprecated)
-	func testZenjiMonoShimCarriesWeight() {
-		XCTAssertEqual(Font.zenjiMono(size: 13, weight: .bold),
-		               Font.zenjiTabular(.footnote, weight: .bold))
-		XCTAssertEqual(Font.zenjiMono(size: 15, weight: .semibold),
-		               Font.zenjiTabular(.subheadline, weight: .semibold))
 	}
 
 	// MARK: - Spacing scale (8pt basis)

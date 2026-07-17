@@ -2,7 +2,7 @@
 //  DegView.swift
 //  Zenji
 //
-//  WP-83 — the "Deg" screen (DESIGN-BASELINE § Deg-skjermen). Pushed from the
+//  WP-83 — the "Deg" screen (DESIGN § Deg-skjermen). Pushed from the
 //  agenda's `gearshape` toolbar button, it RE-HOMES the permanent sections that
 //  used to live at the foot of the assistant ark (WP-82 slimmed the ark down to
 //  conversation/result only). It is a native inset-grouped `List` — SF Symbols
@@ -16,7 +16,7 @@
 //  `EvalView`. No memory/profile/reset/eval LOGIC is re-implemented here; this
 //  file only lays out the entrances (WP-83 non-goal: don't touch the logic).
 //
-//  Groups (DESIGN-BASELINE § Deg-skjermen):
+//  Groups (DESIGN § Deg-skjermen):
 //    • PROFIL     — Hva jeg følger (n) · Sett opp på nytt
 //    • DATA OM MEG — Hva jeg vet om deg (n) · Det jeg ikke forsto (n) · Del profil
 //    • APP        — Varsel før start · Utseende (tema) · Nullstill
@@ -40,7 +40,7 @@ struct DegView: View {
     var publishedAppVersion: AppVersion? = nil
 
     /// The SAME @AppStorage key ContentView used for the header glyph — the
-    /// theme override now lives here (DESIGN-BASELINE § Tema: "en enhets-
+    /// theme override now lives here (DESIGN § Tema: "en enhets-
     /// preferanse under Deg › Utseende, ikke lenger en header-glyf").
     @AppStorage(ThemeOverride.storageKey) private var themeRaw = ThemeOverride.system.rawValue
     /// Mirrors `NotificationLeadPreference` (the toggle writes straight through).

@@ -29,21 +29,21 @@ struct ProfileSharePanel: View {
         DisclosureGroup(isExpanded: $expanded) {
             VStack(alignment: .leading, spacing: 18) {
                 exportBlock
-                Rectangle().fill(ZenjiTokens.hairline).frame(height: 1)
+                Rectangle().fill(ZenjiTokens.separator).frame(height: 1)
                 importBlock
                 Text("iClouds egen kanal synker automatisk mellom enhetene dine når du har betalt Apple-konto; QR-koden virker uten, og deler kun det du følger — aldri via vår server.")
-                    .font(.zenjiMono(size: 11))
-                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                    .font(.zenjiTabular(.caption2, weight: .regular))
+                    .foregroundStyle(ZenjiTokens.label.opacity(0.5))
                     .fixedSize(horizontal: false, vertical: true)
             }
             .padding(.top, 12)
         } label: {
             Text("DEL / IMPORTER PROFIL")
-                .font(.zenjiMono(size: 12, weight: .bold))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                .font(.zenjiTabular(.caption, weight: .bold))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.5))
                 .tracking(1.5)
         }
-        .tint(ZenjiTokens.muted)
+        .tint(ZenjiTokens.secondaryLabel)
         .onChange(of: viewModel.presentToken) { _, _ in
             if viewModel.lastImportSummary != nil || viewModel.shareImportMessage != nil { expanded = true }
         }
@@ -63,13 +63,13 @@ struct ProfileSharePanel: View {
     private var exportBlock: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("DEL DENNE ENHETEN")
-                .font(.zenjiMono(size: 11, weight: .bold))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.45))
+                .font(.zenjiTabular(.caption2, weight: .bold))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.45))
                 .tracking(1.5)
             if viewModel.profile.isEmpty {
                 Text("Ingenting å dele ennå — begynn å følge noe i linjen.")
-                    .font(.zenjiMono(size: 12))
-                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.55))
+                    .font(.zenjiTabular(.caption, weight: .regular))
+                    .foregroundStyle(ZenjiTokens.label.opacity(0.55))
             } else if let url = viewModel.profileShareURL {
                 if let image = qrImage {
                     Image(uiImage: image)
@@ -77,18 +77,18 @@ struct ProfileSharePanel: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 180, height: 180)
-                        .colorMultiply(ZenjiTokens.foreground)
+                        .colorMultiply(ZenjiTokens.label)
                         .padding(12)
-                        .background(ZenjiTokens.foreground.opacity(0.04))
-                        .overlay(Rectangle().stroke(ZenjiTokens.foreground.opacity(0.15), lineWidth: 1))
+                        .background(ZenjiTokens.label.opacity(0.04))
+                        .overlay(Rectangle().stroke(ZenjiTokens.label.opacity(0.15), lineWidth: 1))
                         .accessibilityLabel("QR-kode med profilen din")
                 }
                 Text("Skann med kameraet på en annen enhet, eller del lenken:")
-                    .font(.zenjiMono(size: 12))
-                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.65))
+                    .font(.zenjiTabular(.caption, weight: .regular))
+                    .foregroundStyle(ZenjiTokens.label.opacity(0.65))
                 ShareLink(item: url) {
                     Text("› Del profillenke")
-                        .font(.zenjiMono(size: 13, weight: .bold))
+                        .font(.zenjiTabular(.footnote, weight: .bold))
                         .foregroundStyle(ZenjiTokens.accent)
                 }
                 .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.accent, fullWidth: true))
@@ -109,40 +109,40 @@ struct ProfileSharePanel: View {
     private var importBlock: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("IMPORTER FRA EN ANNEN ENHET")
-                .font(.zenjiMono(size: 11, weight: .bold))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.45))
+                .font(.zenjiTabular(.caption2, weight: .bold))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.45))
                 .tracking(1.5)
             Text("Lim inn en profillenke. Den slås SAMMEN med det du følger her — ingenting overskrives.")
-                .font(.zenjiMono(size: 12))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.65))
+                .font(.zenjiTabular(.caption, weight: .regular))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.65))
                 .fixedSize(horizontal: false, vertical: true)
             TextField("zenji://profile?…", text: $importDraft, axis: .vertical)
-                .font(.zenjiMono(size: 12))
+                .font(.zenjiTabular(.caption, weight: .regular))
                 .textFieldStyle(.plain)
                 .lineLimit(1...3)
                 .autocorrectionDisabled(true)
                 .textInputAutocapitalization(.never)
                 .padding(8)
-                .background(ZenjiTokens.foreground.opacity(0.06))
-                .overlay(Rectangle().stroke(ZenjiTokens.foreground.opacity(0.2), lineWidth: 1))
+                .background(ZenjiTokens.label.opacity(0.06))
+                .overlay(Rectangle().stroke(ZenjiTokens.label.opacity(0.2), lineWidth: 1))
             Button("Slå sammen") {
                 viewModel.importSharedProfile(fromPayload: importDraft)
                 importDraft = ""
             }
-            .font(.zenjiMono(size: 13, weight: .bold))
-            .foregroundStyle(ZenjiTokens.diffAdd)
-            .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.diffAdd))
+            .font(.zenjiTabular(.footnote, weight: .bold))
+            .foregroundStyle(ZenjiTokens.live)
+            .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.live))
             .disabled(importDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
 
             if let summary = viewModel.lastImportSummary {
                 Text(summaryText(summary))
-                    .font(.zenjiMono(size: 12))
+                    .font(.zenjiTabular(.caption, weight: .regular))
                     .foregroundStyle(ZenjiTokens.accent.opacity(0.9))
             }
             if let message = viewModel.shareImportMessage {
                 Text(message)
-                    .font(.zenjiMono(size: 12))
-                    .foregroundStyle(ZenjiTokens.diffRemove)
+                    .font(.zenjiTabular(.caption, weight: .regular))
+                    .foregroundStyle(ZenjiTokens.destructive)
             }
         }
     }

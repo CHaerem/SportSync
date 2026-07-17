@@ -157,7 +157,7 @@ targets:
       # pattern as Models/Sync/Feed above, so AgendaViewModelTests and
       # WidgetTimelineBuilderTests can drive them with no running app.
       # DesignTokens.swift is needed here too: Agenda's SwiftUI views
-      # reference ZenjiTokens/.zenjiMono directly (same reason
+      # reference ZenjiTokens / Font.zenji directly (same reason
       # ZenjiWidgetExtension already lists it explicitly, above).
       - path: Zenji/DesignTokens.swift
       # WP-14.2: the manual theme override enum (pure cycling/mapping logic,

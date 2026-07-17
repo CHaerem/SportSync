@@ -3,7 +3,7 @@
 //  Zenji
 //
 //  WP-81 — the agenda rebuilt as a native, inset-grouped `List` on the
-//  Apple-native baseline (DESIGN-BASELINE.md § Agendaen + § Radens anatomi).
+//  Apple-native baseline (DESIGN.md § Agendaen + § Radens anatomi).
 //  What changed versus the WP-14 ScrollView/LazyVStack pass:
 //   • The board is a native `List` (`.insetGrouped`), one `Section` per day —
 //     so the platform owns the separators, grouping, scrolling and inset column.
@@ -22,9 +22,9 @@
 //     NotifyStatusRow — and a mute/unfollow host action would have to be wired
 //     in ContentView, which WP-83 owns), so only the meaningful, already-backed
 //     «Følg» action ships here ("der det er meningsfullt · ikke finn opp ny logikk").
-//   • All typography migrated off the deprecated `zenjiMono(size:)` shim to the
-//     WP-80 Dynamic Type API (`Font.zenji` / `Font.zenjiTabular`) and the
-//     semantic colour tokens (`label`/`secondaryLabel`/`separator`/`accent`).
+//   • All typography uses the Dynamic Type API (`Font.zenji` /
+//     `Font.zenjiTabular`) and the semantic colour tokens
+//     (`label`/`secondaryLabel`/`separator`/`accent`).
 //
 //  The detail sheets keep their `.presentationDetents([.medium, .large])`
 //  (grabber + drag-to-dismiss), already set on each sheet.
@@ -67,7 +67,7 @@ struct AgendaView: View {
     @State private var detailTarget: DetailTarget?
     /// A monotonically increasing trigger for the light swipe-action haptic.
     /// `.sensoryFeedback` fires on each change; we only bump it off the Reduce
-    /// Motion path (DESIGN-BASELINE § Bevegelse & haptikk: "Reduce Motion …
+    /// Motion path (DESIGN § Bevegelse & haptikk: "Reduce Motion …
     /// ingen haptikk").
     @State private var followHaptic = 0
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -127,7 +127,7 @@ struct AgendaView: View {
         return nil
     }
 
-    // MARK: - Day section header (DESIGN-BASELINE § Typografi: gruppeoverskrift)
+    // MARK: - Day section header (DESIGN § Typografi: gruppeoverskrift)
 
     private func dayHeader(_ label: String) -> some View {
         Text(label)
@@ -229,7 +229,7 @@ struct AgendaView: View {
 
 // MARK: - Rows
 
-/// One ordinary agenda row (DESIGN-BASELINE § Radens anatomi): amber must-see
+/// One ordinary agenda row (DESIGN § Radens anatomi): amber must-see
 /// dot, the time (or a multi-day window) in a fixed left column, then the title
 /// — up to two lines, never truncated — with a quiet meta line and the channel.
 /// A `bell.fill` (amber) trails when the row arms a reminder, an `info.circle`
@@ -268,7 +268,7 @@ struct SeriesRowView: View {
 /// priority: on a compact width the channel drops to its own dempet line
 /// UNDER the title so the title keeps the full column; on a regular width the
 /// channel sits quietly on the right. Either way the channel never squeezes
-/// the title (DESIGN-BASELINE: "Kanal … Krymper aldri tittelen").
+/// the title (DESIGN: "Kanal … Krymper aldri tittelen").
 private struct RowBody: View {
     let title: String
     let meta: String?
@@ -329,7 +329,7 @@ private struct RowBody: View {
     }
 }
 
-/// The gentlest possible emphasis (DESIGN-BASELINE: "Prikken er signalet"): a
+/// The gentlest possible emphasis (DESIGN: "Prikken er signalet"): a
 /// small filled amber dot when on, an invisible placeholder of the same size
 /// when off, so rows stay aligned either way. Left of the time column.
 private struct MustSeeDot: View {
@@ -369,7 +369,7 @@ private struct TimeColumn: View {
 }
 
 /// The channel ("hvor"): dempet subheadline. An honest, fainter "–" when unknown
-/// (DESIGN-BASELINE "Ærlig innhold": ukjent kanal er «–»).
+/// (DESIGN "Ærlig innhold": ukjent kanal er «–»).
 private struct ChannelLabel: View {
     let text: String
 
@@ -394,7 +394,7 @@ private struct MetaText: View {
     }
 }
 
-/// The trailing markers (DESIGN-BASELINE § Radens anatomi): `bell.fill` (amber)
+/// The trailing markers (DESIGN § Radens anatomi): `bell.fill` (amber)
 /// when the row arms a reminder, `info.circle` on AI-research events, then a
 /// quiet native-style chevron so the row reads as a disclosure. SF Symbols scale
 /// with Dynamic Type and carry their own accessibility labels. The row is a

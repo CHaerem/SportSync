@@ -151,7 +151,7 @@ final class MainFlowsUITests: ZenjiUITestCase {
 	func testThemeToggleCyclesInDeg() {
 		let app = launchApp(state: "agenda")
 
-		// The theme override now lives in Deg (DESIGN-BASELINE § Tema), reached
+		// The theme override now lives in Deg (DESIGN § Tema), reached
 		// via the gearshape in the nav bar — no longer a header glyph.
 		app.buttons["nav.settings"].tap()
 
