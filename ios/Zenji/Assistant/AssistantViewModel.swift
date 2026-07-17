@@ -64,6 +64,11 @@ final class AssistantViewModel {
 
     /// Bound to the command-line text field.
     var utterance: String = ""
+    /// WP-82 — bumped every time a mutation or command is CONFIRMED (Bekreft),
+    /// so the command surface can play ONE light `.sensoryFeedback(.success)` on
+    /// confirm (DESIGN-BASELINE § Bevegelse & haptikk). A pure signal — no
+    /// behaviour or routing changes.
+    private(set) var confirmHaptic = 0
     private(set) var isThinking = false
     /// A blocking error (model unavailable / generation failed) shown verbatim.
     private(set) var errorMessage: String?
@@ -412,6 +417,7 @@ final class AssistantViewModel {
     func confirmCommand() {
         guard let command = pendingCommand else { return }
         pendingCommand = nil
+        confirmHaptic &+= 1
         onCommand?(command)
         utterance = ""
     }
@@ -515,6 +521,7 @@ final class AssistantViewModel {
         pending.removeAll { $0.id == mutation.id }
         pendingBatchConfirmedAny = true
         resolveIfMentedFrom(mutation)
+        confirmHaptic &+= 1
         onProfileChanged?()
         if pending.isEmpty { utterance = "" }
     }
@@ -526,6 +533,7 @@ final class AssistantViewModel {
         persist()
         pendingBatchConfirmedAny = true
         pending = []
+        confirmHaptic &+= 1
         onProfileChanged?()
         utterance = ""
     }
@@ -768,6 +776,40 @@ final class AssistantViewModel {
 
     private func refreshMisunderstoodLog() {
         misunderstoodEntries = misunderstoodLog.load()
+    }
+
+    // MARK: - WP-82 — command-line discoverability (rest · focus · typing)
+
+    /// REST state: a CONCRETE example placeholder (not an abstract instruction),
+    /// so an empty line still teaches what the assistant can do
+    /// (DESIGN-BASELINE § Hjelperen: "hvile = konkret eksempel-placeholder").
+    let restPlaceholder = "Prøv «følg Bodø/Glimt» eller «når spiller Ruud?»"
+
+    /// FOCUS state: a small, calm row of context suggestions that rises over the
+    /// line while it has focus. Tapping one FILLS the line (the user still edits
+    /// or sends it) — discovery, never an applied action. These are example
+    /// prompts spanning the assistant's arms (følg · spør · vis), scoped to the
+    /// agenda context the command line lives in.
+    var focusSuggestions: [String] {
+        ["følg et lag", "hva skjer i kveld?", "vis bare fotball"]
+    }
+
+    /// Fill the command line with a tapped focus suggestion. Deliberately does
+    /// NOT submit — the user reviews/edits/sends it, so a tap never surprises
+    /// them with a change.
+    func fillSuggestion(_ text: String) { utterance = text }
+
+    /// TYPING state: live grounding of the in-progress utterance against the
+    /// SAME entity index the grounder uses — "velg, ikke stav". Reuses
+    /// `EntityIndex.nearestMatches` (no new matching logic); empty until there's
+    /// something groundable, so the row stays silent for very short input or a
+    /// phrase that resolves to nothing (e.g. a pure question). Selecting a hit
+    /// runs `proposeFollow` (below), the exact grounded diff/confirm flow the
+    /// detail sheet's «Følg X» uses.
+    func groundingHits(for text: String, limit: Int = 3) -> [Entity] {
+        let q = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard q.count >= 2, hasEntities else { return [] }
+        return index.nearestMatches(to: q, limit: limit)
     }
 
     // MARK: - Helpers
