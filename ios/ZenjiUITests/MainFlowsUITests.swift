@@ -146,13 +146,18 @@ final class MainFlowsUITests: ZenjiUITestCase {
 		assertExists(app.textFields["command.field"], "closing the sheet returns to the agenda")
 	}
 
-	// MARK: - Flow 5 · Theme toggle
+	// MARK: - Flow 5 · Theme cycle (WP-83 — moved from the header to Deg › Utseende)
 
-	func testThemeToggleCycles() {
+	func testThemeToggleCyclesInDeg() {
 		let app = launchApp(state: "agenda")
 
+		// The theme override now lives in Deg (DESIGN-BASELINE § Tema), reached
+		// via the gearshape in the nav bar — no longer a header glyph.
+		app.buttons["nav.settings"].tap()
+
 		let toggle = app.buttons["theme.toggle"]
-		assertExists(toggle, "the theme toggle should be in the header")
+		scrollUntilHittable(toggle, in: app)
+		assertExists(toggle, "the Utseende row should be in Deg")
 		// Seeded to start at system.
 		waitForLabel(toggle, equals: "Tema: automatisk")
 		toggle.tap()
@@ -163,32 +168,28 @@ final class MainFlowsUITests: ZenjiUITestCase {
 		waitForLabel(toggle, equals: "Tema: automatisk")
 	}
 
-	// MARK: - Flow 6 · Reset (cancel, then carry through)
+	// MARK: - Flow 6 · Reset (WP-83 — reached from Deg › Nullstill)
 
 	func testResetFlowCancelThenComplete() {
 		let app = launchApp(state: "agenda")
 
-		// Open the assistant ark from the command line's sigil (no typing).
-		app.buttons["command.browse"].tap()
-		assertExists(app.staticTexts["ASSISTENT"], "the assistant ark should be up")
-
-		// Reveal + open the NULLSTILL disclosure at the foot of the ark (its header
-		// is a button labelled "NULLSTILL").
-		let disclosure = app.buttons["NULLSTILL"]
-		scrollUntilHittable(disclosure, in: app)
-		assertExists(disclosure, "the reset disclosure should be reachable")
-		disclosure.tap()
+		// Open Deg via the gearshape, then push the Nullstill screen.
+		app.buttons["nav.settings"].tap()
+		let resetEntry = app.buttons["deg.reset"]
+		scrollUntilHittable(resetEntry, in: app)
+		assertExists(resetEntry, "the Nullstill row should be in Deg")
+		resetEntry.tap()
 
 		let followedOnly = app.buttons["reset.followedOnly"]
 		scrollUntilHittable(followedOnly, in: app)
 		assertExists(followedOnly, "the «Nullstill det du følger» row should appear")
 
-		// First: enter the confirm ark, then CANCEL — nothing changes.
+		// First: enter the confirm step, then CANCEL — nothing changes.
 		followedOnly.tap()
 		let cancel = app.buttons["reset.cancel"]
-		assertExists(cancel, "the confirm ark should offer Avbryt")
+		assertExists(cancel, "the confirm step should offer Avbryt")
 		cancel.tap()
-		// Still on the board (onboarding did NOT trigger).
+		// Still no onboarding (cancelling reset must not start it).
 		XCTAssertFalse(app.staticTexts["Velkommen"].exists, "cancelling reset must not start onboarding")
 
 		// Then: carry it through — reset + re-onboard, no reinstall.
@@ -197,7 +198,7 @@ final class MainFlowsUITests: ZenjiUITestCase {
 		assertExists(followedOnly2, "the reset row should still be available")
 		followedOnly2.tap()
 		let confirm = app.buttons["reset.confirm"]
-		assertExists(confirm, "the confirm ark should offer Nullstill")
+		assertExists(confirm, "the confirm step should offer Nullstill")
 		confirm.tap()
 
 		assertExists(app.staticTexts["Velkommen"], "completing reset should raise onboarding again")
@@ -280,5 +281,48 @@ final class MainFlowsUITests: ZenjiUITestCase {
 		confirm.tap()
 		assertExists(app.staticTexts[UITestFixture.biathlonTitle],
 		             "confirming the selected follow should surface the biathlon row")
+	}
+
+	// MARK: - Flow 10 · Navigation — open Deg via the gearshape, then back-swipe (WP-83)
+
+	func testOpenDegViaGearThenBackSwipe() {
+		let app = launchApp(state: "agenda")
+
+		// The gearshape in the nav bar pushes the Deg screen.
+		let gear = app.buttons["nav.settings"]
+		assertExists(gear, "the gearshape settings button should be in the nav bar")
+		gear.tap()
+		assertExists(app.navigationBars["Deg"], "the gear should push the Deg screen")
+		assertExists(app.buttons["deg.follows"], "Deg should re-home «Hva jeg følger»")
+
+		// The native interactive pop gesture (tilbake-swipe) from the left edge
+		// returns to the agenda — the always-present command line is the tell.
+		let edge = app.coordinate(withNormalizedOffset: CGVector(dx: 0.0, dy: 0.5))
+		let target = app.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5))
+		edge.press(forDuration: 0.05, thenDragTo: target)
+		assertExists(app.textFields["command.field"], "back-swiping Deg returns to the agenda")
+	}
+
+	// MARK: - Flow 11 · Assistant result is a native sheet (WP-83)
+
+	func testAssistantResultShowsAsSheet() {
+		let app = launchApp(state: "agenda")
+
+		// Type a follow and send — the result now rises as a native sheet whose
+		// header reads «ASSISTENT», with a confirmable diff inside it.
+		let field = app.textFields["command.field"]
+		assertExists(field, "the command line should be present")
+		field.tap()
+		field.typeText(UITestFixture.followUtterance)
+		app.buttons["command.send"].tap()
+
+		assertExists(app.staticTexts["ASSISTENT"], "the result should present as a sheet titled ASSISTENT")
+		let confirm = app.buttons["assistant.confirm"].firstMatch
+		assertExists(confirm, "the sheet should carry a confirmable diff")
+
+		// Dismissing the sheet (its «Lukk») returns to the agenda with the command
+		// line still pinned beneath.
+		app.buttons["Lukk"].tap()
+		assertExists(app.textFields["command.field"], "closing the result sheet returns to the agenda")
 	}
 }

@@ -35,8 +35,17 @@ struct ContentView: View {
 
     @State private var agenda: AgendaViewModel
     @State private var assistant: AssistantViewModel
-    /// WP-16.4 — the assistant "ark" is up (a result or a browse).
+    /// WP-16.4 → WP-83 — the assistant RESULT sheet is up (a diff/answer/receipt).
+    /// Presented as a native `.sheet` (detents) over the agenda; the command line
+    /// stays put beneath it.
     @State private var panelShown = false
+    /// WP-83 — the "Deg" screen is pushed (from the gearshape toolbar button).
+    @State private var showDeg = false
+    /// WP-83 — the memory page / share sheet, raised when the assistant's
+    /// «hva vet du om meg» / «del profil» commands (or a scanned QR) ask for them.
+    /// Their permanent home is now the Deg screen; these are the command shortcuts.
+    @State private var memorySheetShown = false
+    @State private var shareSheetShown = false
     @FocusState private var commandFocused: Bool
     /// WP-31 — the first-run onboarding overlay. Decided once in init (profile
     /// empty AND not yet completed); also re-raised on demand from "Hva jeg
@@ -50,20 +59,21 @@ struct ContentView: View {
     enum DemoSheet: Identifiable {
         case memory
         case spoiler(AgendaEventRow)
+        /// WP-83 — the slimmed assistant result panel (diff/answer screenshots).
+        case assistantResult
+        /// WP-83 — the share/import surface (now re-homed to Deg).
+        case share
         var id: String {
             switch self {
             case .memory: return "memory"
             case .spoiler(let row): return "spoiler-\(row.id)"
+            case .assistantResult: return "assistantResult"
+            case .share: return "share"
             }
         }
     }
     @State private var demoSheet: DemoSheet?
     #endif
-    /// WP-32 screenshot harness: force the "Nullstill" disclosure open (and
-    /// optionally jump to one level's confirmation ark) deterministically.
-    /// Always nil outside DEBUG (only ever assigned inside a `ZENJI_DEMO`
-    /// branch, same convention as `onboardingInitialStep` below).
-    @State private var resetDemoState: AssistantPanel.ResetDemoState?
     /// WP-66 — an event id the assistant's «vis <hendelse>» command resolved;
     /// handed to AgendaView to raise its detail sheet, then cleared by it.
     @State private var requestedEventID: String?
@@ -164,28 +174,54 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-        VStack(alignment: .leading, spacing: 0) {
-            header
-            Rectangle()
-                .fill(ZenjiTokens.hairline)
-                .frame(height: 1)
-            liveNowLine
-            filterLine
-            ZStack {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 0) {
+                header
+                Rectangle()
+                    .fill(ZenjiTokens.separator)
+                    .frame(height: 1)
+                liveNowLine
+                filterLine
                 AgendaView(viewModel: agenda, onFollow: follow, onOpen: { assistant.recordOpened($0) },
                            openEventID: $requestedEventID)
-                if panelShown {
-                    AssistantPanel(
-                        viewModel: assistant, dismiss: closePanel, onRerunOnboarding: rerunOnboarding,
-                        onReset: performReset, syncEnabled: profileSync.backend.isEnabled,
-                        publishedAppVersion: dataStore.loadAppVersion(),
-                        initialResetState: resetDemoState
-                    )
-                        .transition(.opacity)
-                        .zIndex(1)
+                CommandLineView(viewModel: assistant, focused: $commandFocused, onOpenBrowse: openBrowse)
+            }
+            .background(ZenjiTokens.background.ignoresSafeArea())
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { showDeg = true } label: {
+                        Image(systemName: "gearshape")
+                    }
+                    .tint(ZenjiTokens.accent)
+                    .accessibilityLabel("Innstillinger")
+                    .accessibilityIdentifier("nav.settings")
                 }
             }
-            CommandLineView(viewModel: assistant, focused: $commandFocused, onOpenBrowse: openBrowse)
+            .navigationDestination(isPresented: $showDeg) {
+                DegView(
+                    viewModel: assistant,
+                    onRerunOnboarding: rerunOnboarding,
+                    onReset: performReset,
+                    syncEnabled: profileSync.backend.isEnabled,
+                    publishedAppVersion: dataStore.loadAppVersion()
+                )
+            }
+            // WP-83 — the assistant's result as a native sheet (detents), raised
+            // over the agenda; the command line stays put beneath it.
+            .sheet(isPresented: $panelShown) {
+                AssistantPanel(viewModel: assistant, dismiss: closePanel)
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
+            }
+            // WP-83 — the «hva vet du om meg» / «del profil» commands (and a
+            // scanned QR) reach the memory / share surfaces that now live in Deg.
+            .sheet(isPresented: $memorySheetShown) {
+                WhatIKnowView(viewModel: assistant)
+            }
+            .sheet(isPresented: $shareSheetShown) {
+                ProfileShareSheet(viewModel: assistant)
+            }
         }
         #if DEBUG
         demoOverlay
@@ -205,7 +241,7 @@ struct ContentView: View {
         }
         }
         .background(ZenjiTokens.background.ignoresSafeArea())
-        .foregroundStyle(ZenjiTokens.foreground)
+        .foregroundStyle(ZenjiTokens.label)
         .preferredColorScheme(themeOverride.colorScheme)
         .task {
             // Recompile the agenda the instant the assistant applies a change
@@ -235,8 +271,10 @@ struct ContentView: View {
                     agenda.reloadFromCache(now: Date())
                     agenda.applyFilter(AgendaFilter(sports: ["golf"]))
                 }
-                // WP-19: seed a small profile so the share panel shows a real QR +
-                // link (the export needs a non-empty profile) and raise the ark.
+                // WP-19/WP-83: seed a small profile so the share panel shows a
+                // real QR + link (the export needs a non-empty profile). Rendered
+                // full-screen via demoOverlay (a `.sheet` is a no-op in the launch
+                // `.task`) — the share surface now lives in Deg (ProfileShareSheet).
                 if mode == "share" {
                     let now = Date()
                     try? profileStore.save(InterestProfile(rules: [
@@ -247,7 +285,22 @@ struct ContentView: View {
                                      scope: nil, weight: 0.6, reason: "Følger norsk golf.", addedAt: now),
                     ]), now: now)
                     assistant.reloadProfile()
-                    panelShown = true
+                    demoSheet = .share
+                }
+                // WP-83: the Deg screen screenshot — seed a profile + memory so the
+                // counts read real, then push Deg (navigation works from `.task`).
+                if mode == "deg" {
+                    let now = Date()
+                    try? profileStore.save(InterestProfile(rules: [
+                        InterestRule(entityId: "casper-ruud", entityName: "Casper Ruud", sport: "tennis",
+                                     scope: nil, weight: 0.8, reason: "Norsk tennisstjerne.", addedAt: now),
+                        InterestRule(entityId: "viktor-hovland", entityName: "Viktor Hovland", sport: "golf",
+                                     scope: nil, weight: 0.6, reason: "Følger norsk golf.", addedAt: now),
+                    ]), now: now)
+                    MemoryDemoSeed.seedMemory(into: MemoryStore(profileStore: profileStore))
+                    assistant.reloadProfile()
+                    assistant.refreshMemory()
+                    showDeg = true
                 }
                 // WP-30: memory page + spoiler-masked detail sheet, shown as a
                 // full-screen demo overlay (a sheet raised during the launch
@@ -291,11 +344,10 @@ struct ContentView: View {
                     if mode != "onboarding-landed" { showOnboarding = true }
                     agenda.reloadFromCache(now: Date())
                 }
-                // WP-32 — reset-entry/-confirm show the "Nullstill" disclosure
-                // open (optionally mid-confirmation) over a seeded profile;
+                // WP-32/WP-83 — the reset UI now lives in Deg › Nullstill.
+                // reset-entry/-confirm push Deg (navigation works from `.task`);
                 // reset-onboarding runs the REAL `performReset` path so the
-                // onboarding overlay that follows is the exact state a user
-                // sees, not a fabricated stand-in.
+                // onboarding overlay that follows is the exact state a user sees.
                 if mode.hasPrefix("reset") {
                     try? profileStore.save(InterestProfile(rules: [
                         InterestRule(entityId: "fk-lyn-oslo", entityName: "FK Lyn Oslo", sport: "football",
@@ -304,12 +356,8 @@ struct ContentView: View {
                     assistant.reloadProfile()
                     agenda.reloadFromCache(now: Date())
                     switch mode {
-                    case "reset-entry":
-                        resetDemoState = AssistantPanel.ResetDemoState(expanded: true, confirming: nil)
-                        panelShown = true
-                    case "reset-confirm":
-                        resetDemoState = AssistantPanel.ResetDemoState(expanded: true, confirming: .everything)
-                        panelShown = true
+                    case "reset-entry", "reset-confirm":
+                        showDeg = true
                     case "reset-onboarding":
                         performReset(.followedOnly)
                     default:
@@ -317,27 +365,35 @@ struct ContentView: View {
                     }
                 }
                 assistant.demoSeed(mode)
-                if mode == "diff" || mode == "answer" { panelShown = true }
+                // WP-83: a diff/answer screenshot renders the (slimmed) result
+                // panel full-screen via demoOverlay (a `.sheet` is a no-op in the
+                // launch `.task`; in the live app the result IS a native sheet).
+                if mode == "diff" || mode == "answer" { demoSheet = .assistantResult }
             }
             #endif
             await refresh()
             // WP-19 — one profile sync round at launch (no-op on LocalOnly).
             await assistant.runBackgroundSync(using: profileSync)
         }
-        // A fresh assistant result raises the ark (≤150 ms fade, move 5's calm).
+        // A fresh assistant result raises the result sheet.
         // WP-31: while onboarding is up it renders its OWN diff/answer inline, so
-        // don't also raise the ark behind the overlay.
+        // don't also raise the sheet behind the overlay.
         .onChange(of: assistant.presentToken) { _, _ in
             guard !showOnboarding else { return }
             commandFocused = false
-            withAnimation(.easeOut(duration: 0.15)) { panelShown = true }
+            panelShown = true
         }
+        // WP-83 — the «hva vet du om meg» / «del profil» commands reach the
+        // memory / share surfaces (their permanent home is Deg; these are the
+        // command shortcuts). The view model bumps a token per command.
+        .onChange(of: assistant.memoryRequestToken) { _, _ in memorySheetShown = true }
+        .onChange(of: assistant.shareRequestToken) { _, _ in shareSheetShown = true }
         // WP-19 — a scanned QR / opened share link imports on the spot, MERGING
         // into this device's profile (never overwriting); the agenda recompiles
-        // via `onProfileChanged`, and the confirmation shows in the assistant ark.
+        // via `onProfileChanged`, and the confirmation shows in the share sheet.
         .onOpenURL { url in
             assistant.importSharedProfile(from: url)
-            withAnimation(.easeOut(duration: 0.15)) { panelShown = true }
+            shareSheetShown = true
         }
         // WP-19 — offline-first pull → merge → push on foreground (a no-op on the
         // LocalOnly backend; the real round-trip only happens on a CloudKit build).
@@ -358,6 +414,8 @@ struct ContentView: View {
             switch demoSheet {
             case .memory: WhatIKnowView(viewModel: assistant)
             case .spoiler(let row): EventDetailSheet(row: row)
+            case .assistantResult: AssistantPanel(viewModel: assistant, dismiss: closePanel)
+            case .share: ProfileShareSheet(viewModel: assistant)
             }
         }
     }
@@ -403,22 +461,26 @@ struct ContentView: View {
         agenda.reloadFromCache(now: Date())
     }
 
-    /// Re-run onboarding on demand from "Hva jeg følger" — closes the assistant
-    /// ark and raises the overlay fresh (it re-enters at `.welcome`).
+    /// Re-run onboarding on demand from Deg › Sett opp på nytt — pops the Deg
+    /// screen / closes any assistant sheet and raises the overlay fresh (it
+    /// re-enters at `.welcome`).
     private func rerunOnboarding() {
         panelShown = false
+        showDeg = false
         withAnimation(.easeOut(duration: 0.15)) { showOnboarding = true }
     }
 
     /// WP-32 — the confirmed "Nullstill" action: reset the profile (and, at
     /// the GDPR level, all personal memory + the misunderstood log) on THIS
     /// device, then raise the onboarding overlay immediately — the owner's
-    /// ask, verbatim: never having to reinstall the app to re-onboard.
+    /// ask, verbatim: never having to reinstall the app to re-onboard. Pops the
+    /// Deg screen (reset is reached from Deg › Nullstill) so the overlay is clean.
     private func performReset(_ level: ResetLevel) {
         assistant.resetProfile(level)
         onboardingCompleted = false
         agenda.reloadFromCache(now: Date())
         panelShown = false
+        showDeg = false
         if reduceMotion {
             showOnboarding = true
         } else {
@@ -426,7 +488,7 @@ struct ContentView: View {
         }
     }
 
-    /// The command line's `»_` — open the assistant in browse mode.
+    /// The command line's `»_` — open the assistant result sheet.
     private func openBrowse() {
         commandFocused = false
         withAnimation(.easeOut(duration: 0.15)) { panelShown = true }
@@ -470,70 +532,38 @@ struct ContentView: View {
 
     // MARK: - Header
 
+    // WP-83 — the brand header, stripped of the v2 header glyphs: the theme
+    // toggle (`◐`) moved to Deg › Utseende, and the `»_` assistant shortcut is
+    // gone (the always-present bottom command line IS the assistant). The
+    // amber-ticking clock is dropped too (DESIGN-BASELINE § Bevegelse: "Tid bor
+    // i raden + systemets statusbar"). Settings live behind the nav bar's
+    // gearshape (see `.toolbar`). Just the ensō brand mark, the wordmark and the
+    // date remain — one quiet masthead.
     private var header: some View {
-        HStack(alignment: .firstTextBaseline) {
-            VStack(alignment: .leading, spacing: 5) {
-                HStack(alignment: .center, spacing: 6) {
-                    // The mosaic ensō — a stille brand mark, mirrors the web
-                    // masthead's `.wordmark-enso` (docs/index.html): the SAME
-                    // template-rendered SVG, coloured via the accent token so
-                    // it follows dark/light automatically. Decorative only —
-                    // no tap target (DESIGN.md "Header").
-                    Image("EnsoMark")
-                        .renderingMode(.template)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 20, height: 20)
-                        .foregroundStyle(ZenjiTokens.accent)
-                        .accessibilityHidden(true)
-                    Text("ZENJI")
-                        .font(.zenjiMono(size: 28, weight: .bold))
-                        .foregroundStyle(ZenjiTokens.accent)
-                        .tracking(2)
-                }
-                // WP-14.3 (owner feedback): the "P100" Tekst-TV page-index
-                // glyph read as unexplained noise — dropped, no replacement.
-                // The DESIGN.md line update for this lives in a separate
-                // session's commit, not this package.
-                Text(dateLabel)
-                    .font(.zenjiMono(size: 13))
-                    .foregroundStyle(ZenjiTokens.muted)
+        VStack(alignment: .leading, spacing: 5) {
+            HStack(alignment: .center, spacing: 6) {
+                // The mosaic ensō — a stille brand mark, mirrors the web
+                // masthead's `.wordmark-enso` (docs/index.html), coloured via the
+                // accent token so it follows dark/light. Decorative only.
+                Image("EnsoMark")
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20, height: 20)
+                    .foregroundStyle(ZenjiTokens.accent)
+                    .accessibilityHidden(true)
+                Text("ZENJI")
+                    .font(.zenji(.title, weight: .bold))
+                    .foregroundStyle(ZenjiTokens.accent)
+                    .tracking(2)
             }
-            Spacer()
-            VStack(alignment: .trailing, spacing: 5) {
-                HStack(spacing: 12) {
-                    Button {
-                        themeOverrideRaw = themeOverride.next.rawValue
-                    } label: {
-                        Text(themeOverride.glyph)
-                            .font(.zenjiMono(size: 15, weight: .semibold))
-                            .foregroundStyle(ZenjiTokens.muted)
-                    }
-                    .accessibilityLabel(themeOverride.accessibilityLabel)
-                    // WP-70: a stable id for the XCUITest theme-toggle flow — the
-                    // a11y LABEL cycles (automatisk/mørk/lys), so the test needs a
-                    // label-independent handle to tap and then assert the cycle.
-                    .accessibilityIdentifier("theme.toggle")
-                    // WP-14.3: the glyph itself stays DESIGN.md-small — only
-                    // the invisible hit area grows to the HIG's ≥44×44pt.
-                    .zenjiTapTarget()
-                    // WP-16.4: the assistant glyph is now a FOCUS SHORTCUT to
-                    // the command line (the primary entry), not a button that
-                    // opens a separate screen.
-                    Button {
-                        commandFocused = true
-                    } label: {
-                        Text("»_")
-                            .font(.zenjiMono(size: 15, weight: .semibold))
-                            .foregroundStyle(ZenjiTokens.muted)
-                    }
-                    .accessibilityLabel("Skriv til assistenten")
-                    .zenjiTapTarget()
-                }
-                TekstTVClock()
-            }
+            Text(dateLabel)
+                .font(.zenji(.footnote))
+                .foregroundStyle(ZenjiTokens.secondaryLabel)
         }
-        .padding(20)
+        .padding(.horizontal, 20)
+        .padding(.top, 4)
+        .padding(.bottom, 16)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -544,18 +574,18 @@ struct ContentView: View {
                 ForEach(agenda.liveNow) { row in
                     HStack(spacing: 8) {
                         Text("▌ LIVE")
-                            .font(.zenjiMono(size: 12, weight: .semibold))
+                            .font(.zenji(.caption, weight: .semibold))
                             .foregroundStyle(ZenjiTokens.live)
                         Text(row.title)
-                            .font(.zenjiMono(size: 13))
-                            .foregroundStyle(ZenjiTokens.foreground)
+                            .font(.zenji(.subheadline))
+                            .foregroundStyle(ZenjiTokens.label)
                             .lineLimit(1)
                         Text("·")
-                            .font(.zenjiMono(size: 13))
-                            .foregroundStyle(ZenjiTokens.muted.opacity(0.6))
+                            .font(.zenji(.subheadline))
+                            .foregroundStyle(ZenjiTokens.secondaryLabel.opacity(0.6))
                         Text(row.channelLabel)
-                            .font(.zenjiMono(size: 13))
-                            .foregroundStyle(ZenjiTokens.muted)
+                            .font(.zenji(.subheadline))
+                            .foregroundStyle(ZenjiTokens.secondaryLabel)
                             .lineLimit(1)
                     }
                 }
@@ -565,7 +595,7 @@ struct ContentView: View {
             .padding(.horizontal, 20)
             .padding(.vertical, 10)
             Rectangle()
-                .fill(ZenjiTokens.hairline)
+                .fill(ZenjiTokens.separator)
                 .frame(height: 1)
         }
     }
@@ -580,10 +610,10 @@ struct ContentView: View {
             VStack(spacing: 0) {
                 HStack(spacing: 8) {
                     Text("VISER:")
-                        .font(.zenjiMono(size: 12, weight: .semibold))
-                        .foregroundStyle(ZenjiTokens.muted)
+                        .font(.zenji(.caption, weight: .semibold))
+                        .foregroundStyle(ZenjiTokens.secondaryLabel)
                     Text(filter.subjectLabel)
-                        .font(.zenjiMono(size: 12, weight: .semibold))
+                        .font(.zenji(.caption, weight: .semibold))
                         .tracking(1)
                         .foregroundStyle(ZenjiTokens.accent)
                         .lineLimit(1)
@@ -593,8 +623,8 @@ struct ContentView: View {
                         withAnimation(.easeOut(duration: 0.15)) { agenda.applyFilter(nil) }
                     } label: {
                         Text("✕")
-                            .font(.zenjiMono(size: 13, weight: .semibold))
-                            .foregroundStyle(ZenjiTokens.muted)
+                            .font(.zenji(.subheadline, weight: .semibold))
+                            .foregroundStyle(ZenjiTokens.secondaryLabel)
                     }
                     .accessibilityLabel("Fjern filter")
                     .accessibilityIdentifier("agenda.filter.reset")
@@ -608,49 +638,9 @@ struct ContentView: View {
             .accessibilityElement(children: .contain)
             .accessibilityIdentifier("agenda.filterBar")
             Rectangle()
-                .fill(ZenjiTokens.hairline)
+                .fill(ZenjiTokens.separator)
                 .frame(height: 1)
         }
-    }
-}
-
-/// WP-62 — the header's stille tikkende klokke, extracted into its own leaf so
-/// its per-second tick invalidates ONLY this ~13pt label, never the whole
-/// ContentView body (which hosts the agenda List). It owns its timer + `now`.
-/// Under Reduce Motion it ticks once a minute and drops the seconds — the calm
-/// cadence DESIGN.md asks for — otherwise once a second; each tick is aligned to
-/// the wall-clock boundary so the digits flip exactly on the second/minute.
-private struct TekstTVClock: View {
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @State private var now = Date()
-
-    private static let withSeconds: DateFormatter = formatter("HH:mm:ss")
-    private static let noSeconds: DateFormatter = formatter("HH:mm")
-
-    private static func formatter(_ format: String) -> DateFormatter {
-        let f = DateFormatter()
-        f.locale = Locale(identifier: "nb_NO")
-        f.timeZone = FeedCompiler.osloTimeZone
-        f.dateFormat = format
-        return f
-    }
-
-    var body: some View {
-        Text((reduceMotion ? Self.noSeconds : Self.withSeconds).string(from: now))
-            .font(.zenjiMono(size: 13))
-            .monospacedDigit()
-            .foregroundStyle(ZenjiTokens.accent)
-            // Re-armed if Reduce Motion flips mid-session (rare) — the id change
-            // restarts the loop at the new cadence.
-            .task(id: reduceMotion) {
-                let step: TimeInterval = reduceMotion ? 60 : 1
-                while !Task.isCancelled {
-                    now = Date()
-                    let current = Date().timeIntervalSinceReferenceDate
-                    let delay = max((floor(current / step) + 1) * step - current, 0)
-                    try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
-                }
-            }
     }
 }
 
