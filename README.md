@@ -1,7 +1,8 @@
 # Zenji
 
-> A personal sports dashboard for a Norwegian sports fan — where **scheduled AI research
-> agents** find, verify, and editorialize the events that static APIs miss.
+> A **calm, personal overview** of the sport, esport and tournaments you follow — one
+> quiet place that answers *what's on · when · where to watch · what's live now* — where
+> **scheduled AI research agents** find and **verify** the events static APIs miss.
 
 [![Static pipeline](https://github.com/CHaerem/zenji/workflows/Static%20data%20pipeline/badge.svg)](https://github.com/CHaerem/zenji/actions)
 [![Live Site](https://img.shields.io/badge/Live-Dashboard-blue)](https://zenji.app/)
@@ -21,6 +22,22 @@ Kvoten er **konto-bred** (delt med interaktiv Claude-bruk) — samlet kvote-tryk
 
 <sub>Oppdatert 2026-07-17 11:43 UTC av `usage-monitor` · kilde: `docs/data/usage-summary.json` · [Self-throttling on quota](#self-throttling-on-quota)</sub>
 <!-- STATUS:END -->
+
+## What it is
+
+One calm place that gathers everything you follow — sport, esport, tournaments — and
+answers only what matters: **what's on, when, where to watch, and what's live now.**
+No noisy feed competing for your attention; one quiet, scannable overview.
+
+The core promise is **trust**: times and where-to-watch are meant to be *correct and
+dependable*, and the app should never miss what matters to you. That's why AI research
+runs actively — searching broad static and live sources, finding events ordinary APIs
+miss, and **verifying** when and where before anything reaches you.
+
+You describe your interests in plain language — *"Cycling in summer, especially the
+Tour de France, focused on the Norwegian riders and Uno-X"* — and an in-app assistant
+lets you ask questions and reshape the overview anytime. What you follow lives on your
+own device, never on a server.
 
 ## The idea
 
