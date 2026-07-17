@@ -116,7 +116,7 @@ struct ProfileSharePanel: View {
                 .font(.zenjiTabular(.caption, weight: .regular))
                 .foregroundStyle(ZenjiTokens.label.opacity(0.65))
                 .fixedSize(horizontal: false, vertical: true)
-            TextField("zenji://profile?…", text: $importDraft, axis: .vertical)
+            TextField("sportivista://profile?…", text: $importDraft, axis: .vertical)
                 .font(.zenjiTabular(.caption, weight: .regular))
                 .textFieldStyle(.plain)
                 .lineLimit(1...3)

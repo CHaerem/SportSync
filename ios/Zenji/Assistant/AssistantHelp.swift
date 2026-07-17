@@ -174,7 +174,7 @@ enum AssistantHelp {
             .map { "- \($0.title): \($0.howTo)" }
             .joined(separator: "\n")
         return """
-        ZENJI — HVA ASSISTENTEN KAN (hjelp v\(version))
+        SPORTIVISTA — HVA ASSISTENTEN KAN (hjelp v\(version))
 
         \(overview)
 

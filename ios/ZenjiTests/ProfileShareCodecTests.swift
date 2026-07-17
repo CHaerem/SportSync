@@ -44,7 +44,7 @@ final class ProfileShareCodecTests: XCTestCase {
     func test_link_roundTrips() throws {
         let original = state(synced("a", at: 10, device: "A"))
         let url = try ProfileShareCodec.link(for: original)
-        XCTAssertEqual(url.scheme, "zenji")
+        XCTAssertEqual(url.scheme, "sportivista")
         XCTAssertEqual(url.host, "profile")
         XCTAssertEqual(try ProfileShareCodec.state(from: url), original.normalized())
     }
@@ -103,7 +103,7 @@ final class ProfileShareCodecTests: XCTestCase {
 
     func test_link_futureVersion_throwsUnsupported() throws {
         let payload = try ProfileShareCodec.encode(state(synced("a", at: 10, device: "A")))
-        let url = URL(string: "zenji://profile?v=999&d=\(payload)")!
+        let url = URL(string: "sportivista://profile?v=999&d=\(payload)")!
         XCTAssertThrowsError(try ProfileShareCodec.state(from: url)) { error in
             XCTAssertEqual(error as? ProfileShareError, .unsupportedVersion(999))
         }

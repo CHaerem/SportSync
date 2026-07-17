@@ -74,7 +74,7 @@ Object.assign(window.Dashboard.prototype, {
 		let dismissed = false;
 		try { dismissed = localStorage.getItem('ss-install-hint') === 'off'; } catch { /* ignore */ }
 		if (!isIOS || installed || dismissed) return;
-		el.innerHTML = 'Legg Zenji på Hjem-skjermen for varsler + offline: trykk Del-knappen nederst i Safari → «Legg til på Hjem-skjerm». <button type="button" class="install-dismiss" aria-label="Skjul">Skjul</button>';
+		el.innerHTML = 'Legg Sportivista på Hjem-skjermen for varsler + offline: trykk Del-knappen nederst i Safari → «Legg til på Hjem-skjerm». <button type="button" class="install-dismiss" aria-label="Skjul">Skjul</button>';
 		el.hidden = false;
 		el.querySelector('.install-dismiss')?.addEventListener('click', () => {
 			el.hidden = true;

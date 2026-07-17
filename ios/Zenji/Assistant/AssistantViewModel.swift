@@ -249,7 +249,7 @@ final class AssistantViewModel {
         // that runs BEFORE the on-device model call: building the feed (events/
         // entities/profile decode + merge + FeedQuery.build) and the memory
         // context. A stuck prelude shows in Instruments as this named interval
-        // (Subsystem "app.zenji.perf") rather than merging into the model latency.
+        // (Subsystem "app.sportivista.perf") rather than merging into the model latency.
         // Pure observation — nothing about the result changes.
         let prelude = PerfSignpost.assistant.beginInterval("submit-prelude")
         let feed = feedProvider()

@@ -20,7 +20,7 @@
 //  invisible to them); the coordinator + QR bridge use `loadSyncState()` /
 //  `saveSyncState(_:)` for the full mergeable shape.
 //
-//  The directory is injectable (defaults to Application Support/ZenjiProfile)
+//  The directory is injectable (defaults to Application Support/SportivistaProfile)
 //  so ProfileStoreTests can round-trip through a throwaway temp directory
 //  instead of this process's real container.
 //
@@ -35,12 +35,12 @@ struct ProfileStore: Sendable {
     /// A stable per-install id by default; tests inject a fixed one.
     let deviceID: String
 
-    /// Default location: `Application Support/ZenjiProfile/`. Falls back to the
+    /// Default location: `Application Support/SportivistaProfile/`. Falls back to the
     /// temporary directory if Application Support can't be resolved (never nil).
     init(fileManager: FileManager = .default) {
         let base = (try? fileManager.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true))
             ?? fileManager.temporaryDirectory
-        self.init(directory: base.appendingPathComponent("ZenjiProfile", isDirectory: true))
+        self.init(directory: base.appendingPathComponent("SportivistaProfile", isDirectory: true))
     }
 
     /// Explicit-directory initializer — tests use this for an isolated,

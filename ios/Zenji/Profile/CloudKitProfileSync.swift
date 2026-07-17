@@ -48,7 +48,7 @@ final class CloudKitProfileSync: ProfileSyncBackend, @unchecked Sendable {
     /// Defaults to the app's default container's PRIVATE database and a dedicated
     /// custom zone (custom zones are what enable `encryptedValues`). A different
     /// container id can be injected for a future multi-container setup.
-    init(container: CKContainer = .default(), zoneName: String = "ZenjiProfile") {
+    init(container: CKContainer = .default(), zoneName: String = "SportivistaProfile") {
         self.database = container.privateCloudDatabase
         self.zoneID = CKRecordZone.ID(zoneName: zoneName, ownerName: CKCurrentUserDefaultName)
     }

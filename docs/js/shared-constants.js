@@ -4,7 +4,7 @@
 
 // ── Repo ────────────────────────────────────────────────────────────────────
 // The ONE repo slug — used for issue/PR deep links on all pages.
-const SS_REPO = 'CHaerem/zenji';
+const SS_REPO = 'CHaerem/sportivista';
 
 // ── Time constants ──────────────────────────────────────────────────────────
 const MS_PER_MINUTE = 60000;

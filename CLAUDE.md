@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Vision (v2)
 
-Zenji (formerly SportSync) is a personal sports dashboard for a Norwegian sports fan. v2 (July 2026)
+Sportivista (formerly SportSync/Zenji) is a personal sports dashboard for a Norwegian sports fan. v2 (July 2026)
 replaced the v1 "self-improving autonomy" architecture (13 feedback loops, multi-agent
 autopilot, pipeline manifest) with a **lean, reliable design** built on one idea:
 

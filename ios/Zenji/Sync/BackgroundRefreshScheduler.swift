@@ -3,14 +3,14 @@
 //  Zenji
 //
 //  WP-12: thin BGTaskScheduler wrapper — registers and (re)submits the
-//  `app.zenji.refresh` BGAppRefreshTask and delegates the actual work to
+//  `app.sportivista.refresh` BGAppRefreshTask and delegates the actual work to
 //  SyncClient. This is intentionally a separate, minimal layer: everything
 //  with real logic to test lives in BackgroundRefreshScheduling.swift (a
 //  pure function) instead of here. Not unit-tested itself — BGTaskScheduler
 //  needs a running app + the real OS scheduler, which a test target doesn't
 //  provide.
 //
-//  Requires `app.zenji.refresh` in Info.plist's
+//  Requires `app.sportivista.refresh` in Info.plist's
 //  BGTaskSchedulerPermittedIdentifiers (project.yml) and the Background
 //  Modes "fetch" capability (UIBackgroundModes) — both wired in project.yml.
 //
@@ -26,7 +26,7 @@
 import Foundation
 
 enum BackgroundRefreshScheduler {
-    static let taskIdentifier = "app.zenji.refresh"
+    static let taskIdentifier = "app.sportivista.refresh"
 
     /// Registers the handler. Must be called before the app finishes
     /// launching (Apple's own requirement for BGTaskScheduler) — with no

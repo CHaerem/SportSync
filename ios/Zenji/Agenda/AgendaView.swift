@@ -203,7 +203,7 @@ struct AgendaView: View {
             emptyText("Henter data …")
         } else if viewModel.profileIsEmpty {
             VStack(alignment: .leading, spacing: 8) {
-                emptyText("Fortell Zenji hva du følger.")
+                emptyText("Fortell Sportivista hva du følger.")
                 HStack(spacing: 8) {
                     Text("»_")
                         .font(.zenji(.callout, weight: .semibold))

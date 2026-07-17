@@ -62,7 +62,7 @@ mennesket, aldri av en agent.
 | WP-31 | Naturlig onboarding (P310 «definere») | 0B | WP-16.4,WP-05 | ✅ merget (#262) — 368/368 |
 | WP-32 | Nullstill profil + re-onboard | 0B | WP-30,WP-31 | ✅ merget (#263) — 376/376 |
 | WP-26 | Nytt navn | 0C | – | ✅ valgt + domene sikret — formell sjekk gjenstår |
-| WP-27 | 💰 Domene + DNS-cutover | 0C | WP-26 | ✅ zenji.app live 13.07 (cert + enforce-https + rot-paths) |
+| WP-27 | 💰 Domene + DNS-cutover | 0C | WP-26 | ✅ sportivista.com (tidl. zenji.app) live 13.07 (cert + enforce-https + rot-paths) |
 | WP-28 | Repo-splitt (privat motor / public site) | ~~0C~~ → Fase 1 | trigger | utsatt — trigger-basert (se WP-28) |
 | WP-29 | Self-hosted runner (kun privat repo) | ~~0C~~ → Fase 1 | WP-28 | utsatt — følger WP-28 |
 | WP-40 | Autonomi-herding: felles merge-gate | 0D | – | ✅ merget (#267) — `scripts/merge-gate.js` delt av alle tre løkker (ui-fix-hullet tettet), BLOCK utvidet med `.claude/settings.json` + `.github/actions/**`, run-logger committes også på no-op, toppkommentarer rettet; 382/382 tester. Beskyttet sti → menneskelig merge |
@@ -266,9 +266,9 @@ Apple Developer-konto, signering, 15–20 eksterne testere fra nisjemiljøene.
 
 ## FASE 0C · Flyttedagen: rebrand + repo-splitt (besluttet 13.07.2026)
 
-**Statusnote 13.07.2026:** Navnet er Zenji; eier kjøpte zenji.app og valgte å
+**Statusnote 13.07.2026:** Navnet er Zenji; eier kjøpte sportivista.com (tidl. zenji.app) og valgte å
 rename repoet umiddelbart (billigste tidspunkt — null brukere å brekke). Gjort:
-repo → `CHaerem/zenji.app`, alle serverte stier/brand-strenger oppdatert
+repo → `CHaerem/sportivista.com (tidl. zenji.app)`, alle serverte stier/brand-strenger oppdatert
 (manifest, sw.js, HTML, README, package.json). Konsekvens: **navnet er nå
 offentlig** → zenji.no/.tv bør kjøpes STRAKS; formell varemerkesjekk står
 fortsatt åpen; gamle PWA-installasjoner/ICS-abonnement på /SportSync/-URL-en er
@@ -313,7 +313,7 @@ er en ressurs i denne fasen.
 **Triggere (én holder):** (1) kommersiell lansering nærmer seg og prompts/skills
 utgjør reell konkurransefordel, (2) inntekt skaper kopist-insentiv, (3) B2B-/
 partnersamtaler krever IP-hygiene.
-**Design når den utføres (invertert etter renamen):** `zenji.app` BEHOLDES
+**Design når den utføres (invertert etter renamen):** `sportivista.com (tidl. zenji.app)` BEHOLDES
 offentlig og strippes til kun site-innhold (`docs/`) — Pages/URL uavbrutt; nytt
 PRIVAT `zenji-engine` får motoren (agenter, prompts, quirks, fetchere, tester,
 workflows + secrets); deploy key scopet til site-repoet gir cross-repo-push av
@@ -613,7 +613,7 @@ bindende) håndheves strengt — pakkene er skåret for å unngå filkollisjoner
   - **README.md:** `:89` + `:122-123` påstår research kjører «Fable 5 → Opus 4.8» hver
     4. time — det er den FORLATTE designen (standard-tier ER Opus 4.8; Fable kun
     deep-tier); testtall «~20 filer (~160 tester)»; lenketekst
-    «chaerem.github.io/Zenji» vs. href `zenji.app`.
+    «chaerem.github.io/Zenji» vs. href `sportivista.com (tidl. zenji.app)`.
   - **package.json:** description er v1-generisk — nevn agent-arkitekturen.
   - **.github/copilot-instructions.md:** legg til DESIGN.md-peker (+ edit.js/rediger).
   - **Prompter:** `research.md:179-184` begrunner logg-regelen med workflow-atferd som

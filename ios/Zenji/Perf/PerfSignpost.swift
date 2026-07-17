@@ -20,13 +20,13 @@ import Foundation
 import os
 
 /// The single home for Zenji's performance signposters. One subsystem
-/// (`app.zenji.perf`) so every perf signpost is trivially filtered in
+/// (`app.sportivista.perf`) so every perf signpost is trivially filtered in
 /// Instruments without drowning in the app's ordinary logging; one signposter
 /// per hotpath category, each emitting a few named intervals.
 enum PerfSignpost {
     /// Filter on this in Instruments (os_signpost instrument → Subsystem) to see
     /// only Zenji's performance intervals.
-    static let subsystem = "app.zenji.perf"
+    static let subsystem = "app.sportivista.perf"
 
     /// The agenda reload pipeline (WP-60's off-main path in
     /// `AgendaViewModel.computeReloadSync`). Emits three nested intervals:
