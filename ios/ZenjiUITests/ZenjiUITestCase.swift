@@ -81,6 +81,15 @@ class ZenjiUITestCase: XCTestCase {
 		app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", substring)).firstMatch
 	}
 
+	/// An agenda row, queried by the row Button's own accessibility label.
+	/// WP-81 turned each agenda row into a `Button` (native pressed-state +
+	/// button role), so its child Texts are combined into the button's label and
+	/// are no longer exposed as separate `staticTexts`; the row is addressed by
+	/// the (combined) button label that contains its title.
+	func agendaRow(_ title: String, in app: XCUIApplication) -> XCUIElement {
+		app.buttons.matching(NSPredicate(format: "label CONTAINS %@", title)).firstMatch
+	}
+
 	/// Scroll the app up until `element` is hittable (or a bounded number of
 	/// swipes elapse). Reveals a foot-of-panel control without a sleep.
 	func scrollUntilHittable(_ element: XCUIElement, in app: XCUIApplication, maxSwipes: Int = 6) {

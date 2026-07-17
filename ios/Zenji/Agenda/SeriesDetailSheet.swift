@@ -44,14 +44,14 @@ struct SeriesDetailSheet: View {
                     }
                 } header: {
                     Text("ETAPPER")
-                        .font(.zenjiMono(size: 11, weight: .semibold))
+                        .font(.zenji(.caption2, weight: .semibold))
                         .foregroundStyle(ZenjiTokens.accent)
                         .tracking(0.5)
                 }
             }
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
-            .background(ZenjiTokens.surface)
+            .background(ZenjiTokens.cell)
             .navigationTitle(series.tournament)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -89,18 +89,18 @@ private struct StageRow: View {
                 .padding(.top, 6)
             VStack(alignment: .leading, spacing: 2) {
                 Text(Self.dateFormatter.string(from: stage.time))
-                    .font(.zenjiMono(size: 11))
-                    .foregroundStyle(ZenjiTokens.muted)
+                    .font(.zenji(.caption2))
+                    .foregroundStyle(ZenjiTokens.secondaryLabel)
                 Text(stage.title)
-                    .font(.zenjiMono(size: 13))
-                    .foregroundStyle(ZenjiTokens.foreground)
+                    .font(.zenji(.footnote))
+                    .foregroundStyle(ZenjiTokens.label)
             }
             Spacer()
             Text(AgendaFormat.channelLabel(stage.streaming))
-                .font(.zenjiMono(size: 11))
-                .foregroundStyle(ZenjiTokens.muted)
+                .font(.zenji(.caption2))
+                .foregroundStyle(ZenjiTokens.secondaryLabel)
         }
         .padding(.vertical, 4)
-        .listRowBackground(ZenjiTokens.surface)
+        .listRowBackground(ZenjiTokens.cell)
     }
 }
