@@ -16,7 +16,13 @@ import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
 
-const ZENJI_DIR = path.resolve(process.cwd(), "ios", "Zenji");
+// Scan the app AND the WidgetKit extension — DESIGN.md § Cross-surface binds
+// both to the baseline (the widget was migrated in WP-84), so the gate must
+// cover ios/ZenjiWidget too, not just the app tree.
+const SCAN_DIRS = [
+	path.resolve(process.cwd(), "ios", "Zenji"),
+	path.resolve(process.cwd(), "ios", "ZenjiWidget"),
+];
 
 // Explicit whitelist of legitimate fixed-size call sites. Each entry is
 // { file, needle, reason } — a line in `file` whose text includes `needle` is
@@ -25,7 +31,7 @@ const ZENJI_DIR = path.resolve(process.cwd(), "ios", "Zenji");
 // Empty today — the baseline has no fixed-size text.
 const SYSTEM_SIZE_WHITELIST = [
 	// Example shape (leave commented until a real exception is needed):
-	// { file: "Widget/SomeGlyph.swift", needle: ".system(size: 8)", reason: "..." },
+	// { file: "ZenjiWidget/SomeGlyph.swift", needle: ".system(size: 8)", reason: "..." },
 ];
 
 /** Recursively collect every .swift file under a directory. */
@@ -39,13 +45,16 @@ function swiftFiles(dir) {
 	return out;
 }
 
-// A real fixed-size font call: `.system(size:` followed by a number. The doc
-// mentions `.system(size:)` (no digit) in DesignTokens.swift are NOT matched.
-const FIXED_SIZE = /\.system\(size:\s*[\d.]/;
+// A real fixed-size font call — SwiftUI `.system(size:` or the UIKit
+// `systemFont(ofSize:` — followed by an ARGUMENT (a digit OR a named constant).
+// A bare `.system(size:)` with no argument (a doc-comment mention, e.g. in
+// DesignTokens.swift) is NOT matched, since `[^)\s]` requires a real argument
+// char that is neither the closing paren nor whitespace.
+const FIXED_SIZE = /(?:\.system\(size:|systemFont\(ofSize:)\s*[^)\s]/;
 const SHIM = /zenjiMono\(size:/;
 
 describe("iOS Dynamic Type HIG gate", () => {
-	const files = swiftFiles(ZENJI_DIR);
+	const files = SCAN_DIRS.flatMap(swiftFiles);
 
 	it("finds the iOS source tree", () => {
 		expect(files.length).toBeGreaterThan(0);
