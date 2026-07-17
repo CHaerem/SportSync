@@ -73,7 +73,7 @@ struct AssistantPanel: View {
     var body: some View {
         VStack(spacing: 0) {
             headerBar
-            Rectangle().fill(ZenjiTokens.hairline).frame(height: 1)
+            Rectangle().fill(ZenjiTokens.separator).frame(height: 1)
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     if let message = viewModel.availability.message { unavailableBanner(message) }
@@ -85,7 +85,7 @@ struct AssistantPanel: View {
                     if !viewModel.pending.isEmpty { proposalsSection }
                     if !viewModel.rejected.isEmpty { rejectionsSection }
                     if let explanation = viewModel.explanation { explanationSection(explanation) }
-                    Rectangle().fill(ZenjiTokens.hairline).frame(height: 1).padding(.vertical, 2)
+                    Rectangle().fill(ZenjiTokens.separator).frame(height: 1).padding(.vertical, 2)
                     quickChipsRow
                     profileSection
                     rerunOnboardingRow
@@ -103,8 +103,8 @@ struct AssistantPanel: View {
                 .frame(maxWidth: .infinity, alignment: .center)
             }
         }
-        .background(ZenjiTokens.surface)
-        .foregroundStyle(ZenjiTokens.foreground)
+        .background(ZenjiTokens.cell)
+        .foregroundStyle(ZenjiTokens.label)
         .task { viewModel.refreshAvailability() }
         .onAppear {
             if let initialResetState {
@@ -115,6 +115,10 @@ struct AssistantPanel: View {
         // WP-66 — the «hva vet du om meg» command opens the memory page (the same
         // sheet the memoryEntry row opens), via a token the view model bumps.
         .onChange(of: viewModel.memoryRequestToken) { _, _ in memoryPageShown = true }
+        // WP-82 — one light success haptic on Bekreft (a mutation/command
+        // confirmed), DESIGN-BASELINE § Bevegelse & haptikk. The trigger only
+        // bumps on an explicit confirm, never on scroll or every tap.
+        .sensoryFeedback(.success, trigger: viewModel.confirmHaptic)
     }
 
     // MARK: - Header
@@ -122,13 +126,13 @@ struct AssistantPanel: View {
     private var headerBar: some View {
         HStack(alignment: .firstTextBaseline) {
             Text("ASSISTENT")
-                .font(.zenjiMono(size: 15, weight: .bold))
+                .font(.zenji(.subheadline, weight: .bold))
                 .foregroundStyle(ZenjiTokens.accent)
                 .tracking(2)
             Spacer()
             Button("Lukk") { dismiss() }
-                .font(.zenjiMono(size: 14))
-                .foregroundStyle(ZenjiTokens.muted)
+                .font(.zenji(.subheadline))
+                .foregroundStyle(ZenjiTokens.secondaryLabel)
                 .zenjiTapTarget()
         }
         .padding(.horizontal, 20)
@@ -140,12 +144,12 @@ struct AssistantPanel: View {
     private func unavailableBanner(_ message: String) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("APPLE INTELLIGENCE")
-                .font(.zenjiMono(size: 11, weight: .bold))
+                .font(.zenji(.caption2, weight: .bold))
                 .foregroundStyle(ZenjiTokens.accent.opacity(0.8))
                 .tracking(1.5)
             Text(message)
-                .font(.zenjiMono(size: 13))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.8))
+                .font(.zenji(.footnote))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.8))
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -155,8 +159,8 @@ struct AssistantPanel: View {
 
     private func errorRow(_ error: String) -> some View {
         Text(error)
-            .font(.zenjiMono(size: 13))
-            .foregroundStyle(ZenjiTokens.diffRemove)
+            .font(.zenji(.footnote))
+            .foregroundStyle(ZenjiTokens.destructive)
     }
 
     // MARK: - Answer (WP-16.4)
@@ -167,8 +171,8 @@ struct AssistantPanel: View {
         VStack(alignment: .leading, spacing: 10) {
             sectionTitle("SVAR")
             Text(answer.text)
-                .font(.zenjiMono(size: 14))
-                .foregroundStyle(ZenjiTokens.foreground)
+                .font(.zenji(.subheadline))
+                .foregroundStyle(ZenjiTokens.label)
                 .fixedSize(horizontal: false, vertical: true)
             if !answer.rows.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
@@ -178,31 +182,30 @@ struct AssistantPanel: View {
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(ZenjiTokens.foreground.opacity(0.04))
-        .overlay(Rectangle().stroke(ZenjiTokens.foreground.opacity(0.15), lineWidth: 1))
+        .background(ZenjiTokens.label.opacity(0.04))
+        .overlay(Rectangle().stroke(ZenjiTokens.label.opacity(0.15), lineWidth: 1))
     }
 
     private func answerRow(_ row: AnswerRow) -> some View {
         HStack(alignment: .top, spacing: 10) {
             VStack(alignment: .leading, spacing: 1) {
                 Text(row.dayLabel)
-                    .font(.zenjiMono(size: 10, weight: .semibold))
-                    .foregroundStyle(ZenjiTokens.muted)
+                    .font(.zenji(.caption2, weight: .semibold))
+                    .foregroundStyle(ZenjiTokens.secondaryLabel)
                     .tracking(1)
                 Text(row.timeLabel)
-                    .font(.zenjiMono(size: 13, weight: .semibold))
-                    .foregroundStyle(ZenjiTokens.foreground)
-                    .monospacedDigit()
+                    .font(.zenjiTabular(.footnote, weight: .semibold))
+                    .foregroundStyle(ZenjiTokens.label)
             }
             .frame(minWidth: 72, alignment: .leading)
             VStack(alignment: .leading, spacing: 2) {
                 Text(row.title)
-                    .font(.zenjiMono(size: 14))
-                    .foregroundStyle(ZenjiTokens.foreground)
+                    .font(.zenji(.subheadline))
+                    .foregroundStyle(ZenjiTokens.label)
                     .fixedSize(horizontal: false, vertical: true)
                 Text(row.channelLabel)
-                    .font(.zenjiMono(size: 12))
-                    .foregroundStyle(row.channelLabel == "–" ? ZenjiTokens.muted.opacity(0.5) : ZenjiTokens.muted)
+                    .font(.zenji(.caption))
+                    .foregroundStyle(row.channelLabel == "–" ? ZenjiTokens.secondaryLabel.opacity(0.5) : ZenjiTokens.secondaryLabel)
             }
         }
     }
@@ -217,14 +220,14 @@ struct AssistantPanel: View {
         VStack(alignment: .leading, spacing: 6) {
             sectionTitle("REGNSKAP")
             Text(tally.summary)
-                .font(.zenjiMono(size: 13))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
+                .font(.zenji(.footnote))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.85))
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(ZenjiTokens.foreground.opacity(0.04))
-        .overlay(Rectangle().stroke(ZenjiTokens.foreground.opacity(0.15), lineWidth: 1))
+        .background(ZenjiTokens.label.opacity(0.04))
+        .overlay(Rectangle().stroke(ZenjiTokens.label.opacity(0.15), lineWidth: 1))
     }
 
     // MARK: - Command arm (WP-66)
@@ -236,26 +239,26 @@ struct AssistantPanel: View {
         VStack(alignment: .leading, spacing: 10) {
             sectionTitle("BEKREFT")
             Text(command.confirmationPrompt ?? "Vil du gjøre dette?")
-                .font(.zenjiMono(size: 12))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
+                .font(.zenji(.caption))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.85))
                 .fixedSize(horizontal: false, vertical: true)
             HStack(spacing: 10) {
                 Button("Bekreft") { viewModel.confirmCommand(); dismissIfDone() }
-                    .font(.zenjiMono(size: 13, weight: .bold))
-                    .foregroundStyle(ZenjiTokens.diffRemove)
-                    .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.diffRemove))
+                    .font(.zenji(.footnote, weight: .bold))
+                    .foregroundStyle(ZenjiTokens.destructive)
+                    .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.destructive))
                     .accessibilityIdentifier("command.confirm")
                 Button("Avbryt") { viewModel.cancelCommand(); dismissIfDone() }
-                    .font(.zenjiMono(size: 13))
-                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
-                    .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.foreground))
+                    .font(.zenji(.footnote))
+                    .foregroundStyle(ZenjiTokens.label.opacity(0.6))
+                    .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.label))
                     .accessibilityIdentifier("command.cancel")
             }
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(ZenjiTokens.diffRemove.opacity(0.06))
-        .overlay(Rectangle().stroke(ZenjiTokens.diffRemove.opacity(0.3), lineWidth: 1))
+        .background(ZenjiTokens.destructive.opacity(0.06))
+        .overlay(Rectangle().stroke(ZenjiTokens.destructive.opacity(0.3), lineWidth: 1))
     }
 
     /// A calm one-line receipt after a harmless command executed ("Tema: mørkt.",
@@ -264,8 +267,8 @@ struct AssistantPanel: View {
         VStack(alignment: .leading, spacing: 6) {
             sectionTitle("UTFØRT")
             Text(receipt)
-                .font(.zenjiMono(size: 13))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
+                .font(.zenji(.footnote))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.85))
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(12)
@@ -309,7 +312,7 @@ struct AssistantPanel: View {
     private func chip(_ label: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(label)
-                .font(.zenjiMono(size: 12, weight: .bold))
+                .font(.zenji(.caption, weight: .bold))
                 .foregroundStyle(ZenjiTokens.accent)
                 .tracking(1)
         }
@@ -327,9 +330,9 @@ struct AssistantPanel: View {
                 if viewModel.pending.count > 1 {
                     // WP-14.3: an action, not chrome — real button comfort.
                     Button("Bekreft alle") { viewModel.confirmAll(); dismissIfDone() }
-                        .font(.zenjiMono(size: 12, weight: .bold))
-                        .foregroundStyle(ZenjiTokens.diffAdd)
-                        .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.diffAdd))
+                        .font(.zenji(.caption, weight: .bold))
+                        .foregroundStyle(ZenjiTokens.live)
+                        .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.live))
                 }
             }
             ForEach(viewModel.pending) { mutation in proposalRow(mutation) }
@@ -340,34 +343,34 @@ struct AssistantPanel: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text(sign(for: mutation.kind))
-                    .font(.zenjiMono(size: 16, weight: .bold))
+                    .font(.zenji(.callout, weight: .bold))
                     .foregroundStyle(color(for: mutation.kind))
                 VStack(alignment: .leading, spacing: 2) {
                     Text(mutation.entity.name)
-                        .font(.zenjiMono(size: 15, weight: .bold))
+                        .font(.zenji(.subheadline, weight: .bold))
                     Text(subtitle(for: mutation))
-                        .font(.zenjiMono(size: 12))
-                        .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
+                        .font(.zenji(.caption))
+                        .foregroundStyle(ZenjiTokens.label.opacity(0.6))
                 }
             }
             Text(mutation.reason)
-                .font(.zenjiMono(size: 12))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.75))
+                .font(.zenji(.caption))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.75))
             // WP-14.3: Bekreft/Avvis ARE the action, never glyph-small — a
             // real, comfortable button (min 44pt tall, roomy padding, a
             // hairline box in the action's own colour, never a filled pill).
             HStack(spacing: 10) {
                 Button("Bekreft") { viewModel.confirm(mutation); dismissIfDone() }
-                    .font(.zenjiMono(size: 13, weight: .bold))
-                    .foregroundStyle(ZenjiTokens.diffAdd)
-                    .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.diffAdd))
+                    .font(.zenji(.footnote, weight: .bold))
+                    .foregroundStyle(ZenjiTokens.live)
+                    .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.live))
                     // WP-70: stable handle for the follow-via-command-line flow's
                     // Bekreft (the test uses .firstMatch — a single-mutation diff).
                     .accessibilityIdentifier("assistant.confirm")
                 Button("Avvis") { viewModel.reject(mutation); dismissIfDone() }
-                    .font(.zenjiMono(size: 13))
-                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
-                    .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.foreground))
+                    .font(.zenji(.footnote))
+                    .foregroundStyle(ZenjiTokens.label.opacity(0.6))
+                    .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.label))
             }
         }
         .padding(12)
@@ -392,12 +395,12 @@ struct AssistantPanel: View {
             ForEach(viewModel.rejected) { rejection in
                 VStack(alignment: .leading, spacing: 6) {
                     Text(rejection.explanation)
-                        .font(.zenjiMono(size: 13))
-                        .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
+                        .font(.zenji(.footnote))
+                        .foregroundStyle(ZenjiTokens.label.opacity(0.85))
                     if !rejection.suggestions.isEmpty {
                         Text("Trykk for å foreslå endringen:")
-                            .font(.zenjiMono(size: 11))
-                            .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                            .font(.zenji(.caption2))
+                            .foregroundStyle(ZenjiTokens.label.opacity(0.5))
                         VStack(alignment: .leading, spacing: 4) {
                             ForEach(rejection.suggestions, id: \.id) { suggestion in
                                 // WP-14.3: a «mente du»-forslag IS the action
@@ -408,7 +411,7 @@ struct AssistantPanel: View {
                                     viewModel.choose(suggestion, for: rejection)
                                 } label: {
                                     Text("› \(suggestion.name)")
-                                        .font(.zenjiMono(size: 13, weight: .bold))
+                                        .font(.zenji(.footnote, weight: .bold))
                                         .foregroundStyle(ZenjiTokens.accent)
                                 }
                                 .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.accent, fullWidth: true))
@@ -416,14 +419,14 @@ struct AssistantPanel: View {
                         }
                     }
                     Button("OK") { viewModel.dismissRejection(rejection); dismissIfDone() }
-                        .font(.zenjiMono(size: 12))
-                        .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
+                        .font(.zenji(.caption))
+                        .foregroundStyle(ZenjiTokens.label.opacity(0.6))
                         .zenjiTapTarget()
                 }
                 .padding(12)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(ZenjiTokens.diffRemove.opacity(0.06))
-                .overlay(Rectangle().stroke(ZenjiTokens.diffRemove.opacity(0.3), lineWidth: 1))
+                .background(ZenjiTokens.destructive.opacity(0.06))
+                .overlay(Rectangle().stroke(ZenjiTokens.destructive.opacity(0.3), lineWidth: 1))
             }
         }
     }
@@ -434,16 +437,16 @@ struct AssistantPanel: View {
         VStack(alignment: .leading, spacing: 6) {
             sectionTitle("INGEN ENDRING")
             Text(explanation.understood)
-                .font(.zenjiMono(size: 13))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
+                .font(.zenji(.footnote))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.85))
             Text(explanation.reason)
-                .font(.zenjiMono(size: 12))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.65))
+                .font(.zenji(.caption))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.65))
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(ZenjiTokens.foreground.opacity(0.05))
-        .overlay(Rectangle().stroke(ZenjiTokens.foreground.opacity(0.2), lineWidth: 1))
+        .background(ZenjiTokens.label.opacity(0.05))
+        .overlay(Rectangle().stroke(ZenjiTokens.label.opacity(0.2), lineWidth: 1))
     }
 
     // MARK: - Profile ("Hva jeg følger") — a quiet disclosure
@@ -453,8 +456,8 @@ struct AssistantPanel: View {
             VStack(alignment: .leading, spacing: 0) {
                 if viewModel.profile.isEmpty {
                     Text("Ingenting ennå. Skriv en ytring i linjen for å begynne.")
-                        .font(.zenjiMono(size: 13))
-                        .foregroundStyle(ZenjiTokens.foreground.opacity(0.55))
+                        .font(.zenji(.footnote))
+                        .foregroundStyle(ZenjiTokens.label.opacity(0.55))
                         .padding(.top, 10)
                 } else {
                     ForEach(viewModel.profile.rules) { rule in ruleRow(rule) }
@@ -463,34 +466,34 @@ struct AssistantPanel: View {
             .padding(.top, 8)
         } label: {
             Text("HVA JEG FØLGER (\(viewModel.profile.rules.count))")
-                .font(.zenjiMono(size: 12, weight: .bold))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                .font(.zenji(.caption, weight: .bold))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.5))
                 .tracking(1.5)
         }
-        .tint(ZenjiTokens.muted)
+        .tint(ZenjiTokens.secondaryLabel)
     }
 
     private func ruleRow(_ rule: InterestRule) -> some View {
         VStack(alignment: .leading, spacing: 3) {
             HStack(alignment: .firstTextBaseline) {
                 Text(rule.entityName)
-                    .font(.zenjiMono(size: 14, weight: .bold))
+                    .font(.zenji(.subheadline, weight: .bold))
                 Spacer()
                 Button("Fjern") { viewModel.removeRule(rule) }
-                    .font(.zenjiMono(size: 12))
-                    .foregroundStyle(ZenjiTokens.diffRemove.opacity(0.8))
+                    .font(.zenji(.caption))
+                    .foregroundStyle(ZenjiTokens.destructive.opacity(0.8))
                     .zenjiTapTarget()
             }
             Text(ruleSubtitle(rule))
-                .font(.zenjiMono(size: 12))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
+                .font(.zenji(.caption))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.6))
             Text(rule.reason)
-                .font(.zenjiMono(size: 11))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                .font(.zenji(.caption2))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.5))
         }
         .padding(.vertical, 8)
         .overlay(alignment: .bottom) {
-            Rectangle().fill(ZenjiTokens.foreground.opacity(0.1)).frame(height: 1)
+            Rectangle().fill(ZenjiTokens.label.opacity(0.1)).frame(height: 1)
         }
     }
 
@@ -500,13 +503,13 @@ struct AssistantPanel: View {
         Button { onRerunOnboarding() } label: {
             HStack {
                 Text("SETT OPP DET DU FØLGER")
-                    .font(.zenjiMono(size: 12, weight: .bold))
-                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                    .font(.zenji(.caption, weight: .bold))
+                    .foregroundStyle(ZenjiTokens.label.opacity(0.5))
                     .tracking(1.5)
                 Spacer()
                 Text("»_")
-                    .font(.zenjiMono(size: 13, weight: .semibold))
-                    .foregroundStyle(ZenjiTokens.muted)
+                    .font(.zenji(.footnote, weight: .semibold))
+                    .foregroundStyle(ZenjiTokens.secondaryLabel)
             }
             .frame(minHeight: 44)
             .contentShape(Rectangle())
@@ -531,8 +534,8 @@ struct AssistantPanel: View {
         Button { memoryPageShown = true } label: {
             HStack {
                 Text("HVA JEG VET OM DEG (\(viewModel.memoryItemCount))")
-                    .font(.zenjiMono(size: 12, weight: .bold))
-                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                    .font(.zenji(.caption, weight: .bold))
+                    .foregroundStyle(ZenjiTokens.label.opacity(0.5))
                     .tracking(1.5)
                 Spacer()
             }
@@ -557,8 +560,8 @@ struct AssistantPanel: View {
                     resetConfirmation(level)
                 } else {
                     Text("Dette gjelder DENNE enheten — du trenger aldri installere Zenji på nytt for å nullstille.")
-                        .font(.zenjiMono(size: 12))
-                        .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
+                        .font(.zenji(.caption))
+                        .foregroundStyle(ZenjiTokens.label.opacity(0.6))
                         .fixedSize(horizontal: false, vertical: true)
                     resetRow(
                         title: "Nullstill det du følger",
@@ -577,22 +580,22 @@ struct AssistantPanel: View {
             .padding(.top, 10)
         } label: {
             Text("NULLSTILL")
-                .font(.zenjiMono(size: 12, weight: .bold))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                .font(.zenji(.caption, weight: .bold))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.5))
                 .tracking(1.5)
         }
-        .tint(ZenjiTokens.muted)
+        .tint(ZenjiTokens.secondaryLabel)
     }
 
     private func resetRow(title: String, detail: String, identifier: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
-                    .font(.zenjiMono(size: 13, weight: .bold))
-                    .foregroundStyle(ZenjiTokens.diffRemove.opacity(0.85))
+                    .font(.zenji(.footnote, weight: .bold))
+                    .foregroundStyle(ZenjiTokens.destructive.opacity(0.85))
                 Text(detail)
-                    .font(.zenjiMono(size: 11))
-                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.55))
+                    .font(.zenji(.caption2))
+                    .foregroundStyle(ZenjiTokens.label.opacity(0.55))
                     .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
@@ -615,31 +618,31 @@ struct AssistantPanel: View {
     private func resetConfirmation(_ level: ResetLevel) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(resetConfirmationText(level))
-                .font(.zenjiMono(size: 12))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
+                .font(.zenji(.caption))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.85))
                 .fixedSize(horizontal: false, vertical: true)
             HStack(spacing: 10) {
                 Button("Nullstill") {
                     onReset(level)
                     confirmingReset = nil
                 }
-                .font(.zenjiMono(size: 13, weight: .bold))
-                .foregroundStyle(ZenjiTokens.diffRemove)
-                .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.diffRemove))
+                .font(.zenji(.footnote, weight: .bold))
+                .foregroundStyle(ZenjiTokens.destructive)
+                .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.destructive))
                 // WP-70: stable handles for the reset flow (cancel + confirm) —
                 // the labels ("Nullstill"/"Avbryt") also appear elsewhere.
                 .accessibilityIdentifier("reset.confirm")
                 Button("Avbryt") { confirmingReset = nil }
-                    .font(.zenjiMono(size: 13))
-                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
-                    .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.foreground))
+                    .font(.zenji(.footnote))
+                    .foregroundStyle(ZenjiTokens.label.opacity(0.6))
+                    .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.label))
                     .accessibilityIdentifier("reset.cancel")
             }
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(ZenjiTokens.diffRemove.opacity(0.06))
-        .overlay(Rectangle().stroke(ZenjiTokens.diffRemove.opacity(0.3), lineWidth: 1))
+        .background(ZenjiTokens.destructive.opacity(0.06))
+        .overlay(Rectangle().stroke(ZenjiTokens.destructive.opacity(0.3), lineWidth: 1))
     }
 
     private func resetConfirmationText(_ level: ResetLevel) -> String {
@@ -660,7 +663,7 @@ struct AssistantPanel: View {
                 HStack(spacing: 16) {
                     ShareLink(item: misunderstoodExportText, preview: SharePreview("forsto-ikke-rapport.json")) {
                         Text("DEL RAPPORT")
-                            .font(.zenjiMono(size: 11, weight: .bold))
+                            .font(.zenji(.caption2, weight: .bold))
                             .foregroundStyle(ZenjiTokens.accent)
                     }
                     .disabled(viewModel.misunderstoodEntries.isEmpty)
@@ -668,15 +671,15 @@ struct AssistantPanel: View {
                     Spacer()
                     if !viewModel.misunderstoodEntries.isEmpty {
                         Button("Slett alt") { viewModel.deleteAllMisunderstood() }
-                            .font(.zenjiMono(size: 11))
-                            .foregroundStyle(ZenjiTokens.diffRemove.opacity(0.75))
+                            .font(.zenji(.caption2))
+                            .foregroundStyle(ZenjiTokens.destructive.opacity(0.75))
                             .zenjiTapTarget()
                     }
                 }
                 if viewModel.misunderstoodEntries.isEmpty {
                     Text("Ingenting her ennå — det dukker opp når jeg ikke klarer å gjøre en ytring om til en endring.")
-                        .font(.zenjiMono(size: 12))
-                        .foregroundStyle(ZenjiTokens.foreground.opacity(0.55))
+                        .font(.zenji(.caption))
+                        .foregroundStyle(ZenjiTokens.label.opacity(0.55))
                 } else {
                     ForEach(viewModel.misunderstoodEntries) { entry in
                         MisunderstoodEntryRow(
@@ -690,11 +693,11 @@ struct AssistantPanel: View {
             .padding(.top, 12)
         } label: {
             Text("DET JEG IKKE FORSTO (\(viewModel.misunderstoodCount))")
-                .font(.zenjiMono(size: 12, weight: .bold))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                .font(.zenji(.caption, weight: .bold))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.5))
                 .tracking(1.5)
         }
-        .tint(ZenjiTokens.muted)
+        .tint(ZenjiTokens.secondaryLabel)
     }
 
     private var misunderstoodExportText: String {
@@ -711,8 +714,8 @@ struct AssistantPanel: View {
         Button { evalShown = true } label: {
             HStack {
                 Text("EVAL (DEBUG)")
-                    .font(.zenjiMono(size: 12, weight: .bold))
-                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                    .font(.zenji(.caption, weight: .bold))
+                    .foregroundStyle(ZenjiTokens.label.opacity(0.5))
                     .tracking(1.5)
                 Spacer()
             }
@@ -730,8 +733,8 @@ struct AssistantPanel: View {
     /// mono, never a badge; the calmest possible «oppdater meg»-signal.
     private var versionLine: some View {
         Text(AppVersionCheck.footLine(published: publishedAppVersion))
-            .font(.zenjiMono(size: 11))
-            .foregroundStyle(ZenjiTokens.muted)
+            .font(.zenjiTabular(.caption2))
+            .foregroundStyle(ZenjiTokens.secondaryLabel)
             .tracking(1.0)
             .padding(.top, 8)
             .accessibilityIdentifier("versionLine")
@@ -747,8 +750,8 @@ struct AssistantPanel: View {
 
     private func sectionTitle(_ text: String) -> some View {
         Text(text)
-            .font(.zenjiMono(size: 12, weight: .bold))
-            .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+            .font(.zenji(.caption, weight: .bold))
+            .foregroundStyle(ZenjiTokens.label.opacity(0.5))
             .tracking(1.5)
     }
 
@@ -762,9 +765,9 @@ struct AssistantPanel: View {
 
     private func color(for kind: MutationKind) -> Color {
         switch kind {
-        case .add: return ZenjiTokens.diffAdd
+        case .add: return ZenjiTokens.live
         case .update: return ZenjiTokens.accent
-        case .remove: return ZenjiTokens.diffRemove
+        case .remove: return ZenjiTokens.destructive
         }
     }
 
@@ -795,48 +798,48 @@ struct MisunderstoodEntryRow: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(alignment: .firstTextBaseline) {
                 Text("«\(entry.utterance)»")
-                    .font(.zenjiMono(size: 13, weight: .bold))
+                    .font(.zenji(.footnote, weight: .bold))
                 Spacer()
                 if entry.isResolved {
                     Text("LØST")
-                        .font(.zenjiMono(size: 10, weight: .bold))
-                        .foregroundStyle(ZenjiTokens.diffAdd)
+                        .font(.zenji(.caption2, weight: .bold))
+                        .foregroundStyle(ZenjiTokens.live)
                 }
             }
             Text(entry.outcome.label)
-                .font(.zenjiMono(size: 11))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
+                .font(.zenji(.caption2))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.6))
             Text(entry.explanation.reason)
-                .font(.zenjiMono(size: 12))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.75))
+                .font(.zenji(.caption))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.75))
 
             if isEditingNote {
                 TextField("Hva mente du egentlig?", text: $noteDraft, axis: .vertical)
-                    .font(.zenjiMono(size: 12))
+                    .font(.zenji(.caption))
                     .textFieldStyle(.plain)
                     .lineLimit(1...3)
                     .padding(8)
-                    .background(ZenjiTokens.foreground.opacity(0.06))
-                    .overlay(Rectangle().stroke(ZenjiTokens.foreground.opacity(0.2), lineWidth: 1))
+                    .background(ZenjiTokens.label.opacity(0.06))
+                    .overlay(Rectangle().stroke(ZenjiTokens.label.opacity(0.2), lineWidth: 1))
                 HStack(spacing: 14) {
                     Button("Lagre notat") {
                         onSaveNote(noteDraft)
                         isEditingNote = false
                     }
-                    .font(.zenjiMono(size: 11, weight: .bold))
+                    .font(.zenji(.caption2, weight: .bold))
                     .foregroundStyle(ZenjiTokens.accent)
                     .zenjiTapTarget()
                     Button("Avbryt") {
                         noteDraft = entry.note ?? ""
                         isEditingNote = false
                     }
-                    .font(.zenjiMono(size: 11))
-                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                    .font(.zenji(.caption2))
+                    .foregroundStyle(ZenjiTokens.label.opacity(0.5))
                     .zenjiTapTarget()
                 }
             } else if let note = entry.note, !note.isEmpty {
                 Text("Notat: \(note)")
-                    .font(.zenjiMono(size: 12))
+                    .font(.zenji(.caption))
                     .foregroundStyle(ZenjiTokens.accent.opacity(0.85))
             }
 
@@ -845,19 +848,19 @@ struct MisunderstoodEntryRow: View {
                     Button(entry.note?.isEmpty == false ? "Endre notat" : "Legg til notat") {
                         isEditingNote = true
                     }
-                    .font(.zenjiMono(size: 11))
-                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
+                    .font(.zenji(.caption2))
+                    .foregroundStyle(ZenjiTokens.label.opacity(0.6))
                     .zenjiTapTarget()
                 }
                 Button("Slett") { onDelete() }
-                    .font(.zenjiMono(size: 11))
-                    .foregroundStyle(ZenjiTokens.diffRemove.opacity(0.7))
+                    .font(.zenji(.caption2))
+                    .foregroundStyle(ZenjiTokens.destructive.opacity(0.7))
                     .zenjiTapTarget()
             }
         }
         .padding(10)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(ZenjiTokens.foreground.opacity(0.04))
-        .overlay(Rectangle().stroke(ZenjiTokens.foreground.opacity(0.15), lineWidth: 1))
+        .background(ZenjiTokens.label.opacity(0.04))
+        .overlay(Rectangle().stroke(ZenjiTokens.label.opacity(0.15), lineWidth: 1))
     }
 }

@@ -92,7 +92,7 @@ mennesket, aldri av en agent.
 | WP-70 | XCUITest: hovedflyter + launch-metrikk | 0E | – | ✅ merget (#283) — ny `ZenjiUITests`-target (bundle.ui-testing) + egen scheme (Zenji-scheme uendret → rask unit-run består); appen drives mot deterministisk `ZENJI_DEMO=uitest`-harness (`UITestSeed`: mock-assistent + seedet cache, ingen nett, ingen Apple Intelligence). 6 hovedflyter grønne i simulator (iPhone 17): onboarding (quick-picks + samtale), følg via kommandolinja → diff → Bekreft → rad dukker opp, N raske starter-pack-toggles uten heng (vokter WP-60-koalesceringen), event-detalj + «Hvorfor vises denne?», tema-toggle, nullstill (avbryt + gjennomfør). `XCTApplicationLaunchMetric` kaldstart-baseline ~0,97 s (5 kjøringer, RSD ~1–4 %). Additive accessibility-identifiers; `waitForExistence`/predikat-venter (ingen sleeps); ios/README §testing oppdatert |
 | WP-80 | Token- & typografi-fundament (Apple-native) | 0F | – | ✅ merget (#289) — semantiske farge-tokens (system + amber) + Dynamic Type-API (`Font.zenji`/`zenjiTabular`), `zenjiMono(size:)` beholdt som deprecated shim (alle 4 schemes bygger urørt), 529 iOS-tester grønt + 13/13 vektorer bit-like |
 | WP-81 | Agenda → native List + sveip/pressed-state | 0F | WP-80 | 🔬 |
-| WP-82 | Hjelperen → native (slank + sheet + oppdagbarhet) | 0F | WP-80 | ⬜ |
+| WP-82 | Hjelperen → native (slank + sheet + oppdagbarhet) | 0F | WP-80 | 🔬 |
 | WP-83 | Navigasjon (NavigationStack) + Deg-skjerm | 0F | WP-81,WP-82 | ⬜ |
 | WP-84 | Widget + web token-paritet | 0F | WP-80 | ⬜ |
 | WP-85 | Baseline-designsystem + HIG-gate (promoter DESIGN.md) | 0F | WP-80,WP-81,WP-82,WP-83,WP-84 | ⬜ |

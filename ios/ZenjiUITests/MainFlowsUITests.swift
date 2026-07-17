@@ -226,4 +226,55 @@ final class MainFlowsUITests: ZenjiUITestCase {
 		assertExists(agendaRow(UITestFixture.footballTitle, in: app), "resetting the filter restores the full board")
 		XCTAssertFalse(app.staticTexts["agenda.filter.label"].exists, "the filter line is gone after reset")
 	}
+
+	// MARK: - Flow 8 · Command-line discoverability — focus shows context suggestions (WP-82)
+
+	func testCommandLineFocusShowsContextSuggestions() {
+		let app = launchApp(state: "agenda")
+
+		// At rest, the suggestion row is NOT present — it appears only on focus.
+		let suggestion = app.buttons["assistant.suggestion.0"]
+		XCTAssertFalse(suggestion.exists, "context suggestions must not show before the line is focused")
+
+		// Focusing the command line raises the calm context-suggestion row.
+		let field = app.textFields["command.field"]
+		assertExists(field, "the command line should be present")
+		field.tap()
+		assertExists(suggestion, "focusing the line should raise a context-suggestion pill")
+
+		// Tapping a suggestion FILLS the line (it does not submit) — the value
+		// lands in the field (read as the text field's `value`) so the user can
+		// edit or send it. "lag" is an ASCII token of the first suggestion that
+		// the placeholder does NOT contain, so the match is unambiguous.
+		suggestion.tap()
+		let value = (field.value as? String) ?? ""
+		XCTAssertTrue(value.contains("lag"),
+		              "tapping a suggestion should fill the command line with its text (got «\(value)»)")
+	}
+
+	// MARK: - Flow 9 · Command-line discoverability — typing shows live grounding hits (WP-82)
+
+	func testCommandLineTypingShowsGroundingHits() {
+		let app = launchApp(state: "agenda")
+
+		// Type a prefix of a known entity (ASCII-only — typeText with æøå is flaky).
+		let field = app.textFields["command.field"]
+		assertExists(field, "the command line should be present")
+		field.tap()
+		field.typeText("ski")
+
+		// A live grounding hit for the seeded biathlon tournament appears as a
+		// tappable row — "velg, ikke stav".
+		let hit = app.buttons["grounding.skiskyting-verdenscup"]
+		assertExists(hit, "typing should surface a live grounding hit for the entity")
+
+		// Selecting the hit runs the grounded follow flow: a confirmable diff
+		// rises, and confirming it surfaces the biathlon row on the recompiled board.
+		hit.tap()
+		let confirm = app.buttons["assistant.confirm"].firstMatch
+		assertExists(confirm, "selecting a grounding hit should raise a confirmable follow diff")
+		confirm.tap()
+		assertExists(app.staticTexts[UITestFixture.biathlonTitle],
+		             "confirming the selected follow should surface the biathlon row")
+	}
 }
