@@ -94,7 +94,7 @@ mennesket, aldri av en agent.
 | WP-81 | Agenda → native List + sveip/pressed-state | 0F | WP-80 | ✅ merget (#290) — native `List(.insetGrouped)`, rad=Button (pressed-state + a11y-rolle), SF Symbols (bell/info), sveip «Følg», detaljark på detents; 529 unit + 13/13 vektorer bit-like |
 | WP-82 | Hjelperen → native (oppdagbarhet) | 0F | WP-80 | ✅ merget (#291) — tre oppdagbarhets-tilstander (hvile-eksempel/fokus-forslag/live grunning), native felt (clear/diktering/autocap av), font-migrering; mock-suite urørt grønn. Samlet bølge-2-verifisering: unit 529 + UI 9/10 (begge nye flyter), `testEventDetailWhyShown` er pre-eksisterende feil (fikses separat) |
 | WP-83 | Navigasjon (NavigationStack) + Deg-skjerm | 0F | WP-81,WP-82 | ✅ merget (#293; samlet bølge-3-verif. grønn m/ #292) — agenda i `NavigationStack` + `gearshape`→Deg; v2-header-glyfer (`»_`/`◐`/klokke) fjernet; hjelperens resultat = native `.sheet` (detents); `AssistantPanel` slanket til samtale/resultat; ny `Profile/DegView.swift` re-hjemmer profil/minne/forsto-ikke/del/varsel/tema/nullstill/eval; alle 4 schemes bygger, 529 unit + 13/13 vektorer bit-like, UI-flyter (Deg-nav/tema/reset/sheet) grønne |
-| WP-84 | Widget + web token-paritet | 0F | WP-80 | ⬜ |
+| WP-84 | Widget + web token-paritet | 0F | WP-80 | 🔬 widget-delen migrert (PR) — WidgetKit av `zenjiMono`-shimen + deprecated farge-aliaser, over på `Font.zenji`/`zenjiTabular` + semantiske tokens; **web-delen (`docs/css` + `theme.js`) utsatt til egen beslutning** |
 | WP-85 | Baseline-designsystem + HIG-gate (promoter DESIGN.md) | 0F | WP-80,WP-81,WP-82,WP-83,WP-84 | ⬜ |
 
 ---
@@ -952,6 +952,11 @@ OPPFØRSEL endres (WP-82 er ren presentasjon — mock-suite grønn holder).
 - **Avhenger av:** WP-80. **Nabo:** WP-85.
 - **Ikke-mål:** app-skjermene (gjort i WP-81/82/83).
 - **Aksept:** ZenjiWidgetExtension bygger, web-screenshots begge temaer, `npm test` grønt.
+- **Status (🔬):** widget-delen er levert i egen PR — `ios/ZenjiWidget/*` migrert av
+  `zenjiMono(size:)`-shimen og de deprecated farge-aliasene (`foreground`/`muted`) til
+  `Font.zenji`/`zenjiTabular` + semantiske tokens (`label`/`secondaryLabel`), så shimen
+  trygt kan fjernes i WP-85. **Web-delen (`docs/css/*` + `docs/js/theme.js`) er bevisst
+  utsatt til en egen beslutning** og er IKKE med i denne PR-en.
 
 ### WP-85 · Baseline-designsystem + HIG-gate (SIST)
 - **Mål:** Fjern shimen, slå på HIG-gaten, promotér designdokumentet.

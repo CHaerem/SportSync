@@ -79,7 +79,7 @@ struct ZenjiWidgetEntryView: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 6) {
                 Text("ZENJI")
-                    .font(.zenjiMono(size: 12, weight: .bold))
+                    .font(.zenji(.caption, weight: .bold))
                     .foregroundStyle(ZenjiTokens.accent)
                     .tracking(1)
                 if entry.content.isMustSee {
@@ -89,17 +89,17 @@ struct ZenjiWidgetEntryView: View {
             }
             Spacer(minLength: 2)
             Text(entry.content.title)
-                .font(.zenjiMono(size: family == .systemSmall ? 14 : 16, weight: .semibold))
-                .foregroundStyle(ZenjiTokens.foreground)
+                .font(.zenji(family == .systemSmall ? .subheadline : .callout, weight: .semibold))
+                .foregroundStyle(ZenjiTokens.label)
                 .lineLimit(family == .systemSmall ? 3 : 2)
             if entry.content.hasHighlight {
                 HStack(spacing: 6) {
-                    Text(entry.content.timeLabel).monospacedDigit()
+                    Text(entry.content.timeLabel)
                     Text("·")
                     Text(entry.content.channelLabel)
                 }
-                .font(.zenjiMono(size: 11))
-                .foregroundStyle(ZenjiTokens.muted)
+                .font(.zenjiTabular(.caption2))
+                .foregroundStyle(ZenjiTokens.secondaryLabel)
                 .lineLimit(1)
             }
         }
