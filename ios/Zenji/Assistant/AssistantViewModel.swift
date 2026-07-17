@@ -66,7 +66,7 @@ final class AssistantViewModel {
     var utterance: String = ""
     /// WP-82 — bumped every time a mutation or command is CONFIRMED (Bekreft),
     /// so the command surface can play ONE light `.sensoryFeedback(.success)` on
-    /// confirm (DESIGN-BASELINE § Bevegelse & haptikk). A pure signal — no
+    /// confirm (DESIGN § Bevegelse & haptikk). A pure signal — no
     /// behaviour or routing changes.
     private(set) var confirmHaptic = 0
     private(set) var isThinking = false
@@ -782,7 +782,7 @@ final class AssistantViewModel {
 
     /// REST state: a CONCRETE example placeholder (not an abstract instruction),
     /// so an empty line still teaches what the assistant can do
-    /// (DESIGN-BASELINE § Hjelperen: "hvile = konkret eksempel-placeholder").
+    /// (DESIGN § Hjelperen: "hvile = konkret eksempel-placeholder").
     let restPlaceholder = "Prøv «følg Bodø/Glimt» eller «når spiller Ruud?»"
 
     /// FOCUS state: a small, calm row of context suggestions that rises over the

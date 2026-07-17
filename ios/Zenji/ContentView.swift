@@ -535,7 +535,7 @@ struct ContentView: View {
     // WP-83 — the brand header, stripped of the v2 header glyphs: the theme
     // toggle (`◐`) moved to Deg › Utseende, and the `»_` assistant shortcut is
     // gone (the always-present bottom command line IS the assistant). The
-    // amber-ticking clock is dropped too (DESIGN-BASELINE § Bevegelse: "Tid bor
+    // amber-ticking clock is dropped too (DESIGN § Bevegelse: "Tid bor
     // i raden + systemets statusbar"). Settings live behind the nav bar's
     // gearshape (see `.toolbar`). Just the ensō brand mark, the wordmark and the
     // date remain — one quiet masthead.

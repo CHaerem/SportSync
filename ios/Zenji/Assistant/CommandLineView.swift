@@ -7,7 +7,7 @@
 //  assistant — "assistenten ER grensesnittet", not a room behind a button.
 //
 //  WP-82 makes the line INTUITIVE via the three discoverability states
-//  (DESIGN-BASELINE § Hjelperen), with NO permanent chrome:
+//  (DESIGN § Hjelperen), with NO permanent chrome:
 //    • REST     — a CONCRETE example placeholder (not an abstract instruction).
 //    • FOCUS    — a small, calm row of context-suggestion pills rises OVER the
 //                 line; it disappears the moment focus is released.
@@ -242,7 +242,7 @@ struct CommandLineView: View {
 
 /// The Tekst-TV block cursor. Blinks (the assistant's only motion besides the
 /// clock) unless Reduce Motion is on, in which case it holds steady — same
-/// contract the header clock follows (DESIGN-BASELINE "Bevegelse & haptikk").
+/// contract the header clock follows (DESIGN "Bevegelse & haptikk").
 struct BlinkingCursor: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var dim = false

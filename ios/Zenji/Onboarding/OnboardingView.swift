@@ -72,7 +72,7 @@ struct OnboardingView: View {
                 }
             }
         }
-        .foregroundStyle(ZenjiTokens.foreground)
+        .foregroundStyle(ZenjiTokens.label)
         .task { assistant.refreshAvailability() }
         .onAppear { if let initialStep { step = initialStep } }
     }
@@ -89,7 +89,7 @@ struct OnboardingView: View {
                 .foregroundStyle(ZenjiTokens.accent)
                 .accessibilityHidden(true)
             Text("ZENJI")
-                .font(.zenjiMono(size: 22, weight: .bold))
+                .font(.zenjiTabular(.title2, weight: .bold))
                 .foregroundStyle(ZenjiTokens.accent)
                 .tracking(2)
             Spacer()
@@ -105,19 +105,19 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 20) {
             stepHeading("Velkommen")
             Text("Zenji er én rolig oversikt over idretten du følger — når det skjer, hva det er, og hvor du kan se det.")
-                .font(.zenjiMono(size: 15))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.9))
+                .font(.zenjiTabular(.subheadline, weight: .regular))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.9))
                 .fixedSize(horizontal: false, vertical: true)
 
             // The privacy moment — on-brand, true, trust-building (P350/P360).
             VStack(alignment: .leading, spacing: 6) {
                 Text("PÅ TELEFONEN DIN")
-                    .font(.zenjiMono(size: 11, weight: .bold))
+                    .font(.zenjiTabular(.caption2, weight: .bold))
                     .foregroundStyle(ZenjiTokens.accent.opacity(0.85))
                     .tracking(1.5)
                 Text("Det du følger bor på telefonen din — aldri på en server.")
-                    .font(.zenjiMono(size: 14))
-                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
+                    .font(.zenjiTabular(.subheadline, weight: .regular))
+                    .foregroundStyle(ZenjiTokens.label.opacity(0.85))
                     .fixedSize(horizontal: false, vertical: true)
             }
             .padding(14)
@@ -128,13 +128,13 @@ struct OnboardingView: View {
                 Button("Kom i gang") {
                     go(to: OnboardingGate.buildStep(aiAvailable: assistant.availability.isAvailable))
                 }
-                .font(.zenjiMono(size: 15, weight: .bold))
+                .font(.zenjiTabular(.subheadline, weight: .bold))
                 .foregroundStyle(ZenjiTokens.accent)
                 .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.accent, fullWidth: true))
 
                 Button("Hopp over") { onSkip() }
-                    .font(.zenjiMono(size: 13))
-                    .foregroundStyle(ZenjiTokens.muted)
+                    .font(.zenjiTabular(.footnote, weight: .regular))
+                    .foregroundStyle(ZenjiTokens.secondaryLabel)
                     .zenjiTapTarget()
             }
             .padding(.top, 8)
@@ -147,8 +147,8 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 20) {
             stepHeading("Fortell meg hva du følger")
             Text("Skriv fritt på norsk — «Liverpool», «golf, mest de norske», «sjakk når Carlsen spiller». Jeg foreslår, du bekrefter. Si gjerne flere ting etter hverandre.")
-                .font(.zenjiMono(size: 14))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.8))
+                .font(.zenjiTabular(.subheadline, weight: .regular))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.8))
                 .fixedSize(horizontal: false, vertical: true)
 
             if let message = assistant.availability.message { unavailableBanner(message) }
@@ -176,12 +176,12 @@ struct OnboardingView: View {
     private var promptLine: some View {
         HStack(alignment: .center, spacing: 10) {
             Text("»_")
-                .font(.zenjiMono(size: 15, weight: .semibold))
-                .foregroundStyle(ZenjiTokens.muted)
+                .font(.zenjiTabular(.subheadline, weight: .semibold))
+                .foregroundStyle(ZenjiTokens.secondaryLabel)
                 .accessibilityHidden(true)
 
             TextField("Skriv hva du følger …", text: $assistant.utterance, axis: .vertical)
-                .font(.zenjiMono(size: 15))
+                .font(.zenjiTabular(.subheadline, weight: .regular))
                 .textFieldStyle(.plain)
                 .lineLimit(1...3)
                 .focused($inputFocused)
@@ -195,17 +195,17 @@ struct OnboardingView: View {
                 HStack(spacing: 8) {
                     BlinkingCursor()
                     Text("tenker …")
-                        .font(.zenjiMono(size: 13))
-                        .foregroundStyle(ZenjiTokens.muted)
+                        .font(.zenjiTabular(.footnote, weight: .regular))
+                        .foregroundStyle(ZenjiTokens.secondaryLabel)
                     Button("Avbryt") { assistant.cancel() }
-                        .font(.zenjiMono(size: 12))
-                        .foregroundStyle(ZenjiTokens.muted)
+                        .font(.zenjiTabular(.caption, weight: .regular))
+                        .foregroundStyle(ZenjiTokens.secondaryLabel)
                         .zenjiTapTarget()
                 }
             } else if !trimmed.isEmpty {
                 Button(action: submit) {
                     Text("↵")
-                        .font(.zenjiMono(size: 17, weight: .semibold))
+                        .font(.zenjiTabular(.body, weight: .semibold))
                         .foregroundStyle(ZenjiTokens.accent)
                 }
                 .accessibilityLabel("Send")
@@ -220,8 +220,8 @@ struct OnboardingView: View {
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(ZenjiTokens.surface)
-        .overlay(Rectangle().stroke(ZenjiTokens.hairline, lineWidth: 1))
+        .background(ZenjiTokens.cell)
+        .overlay(Rectangle().stroke(ZenjiTokens.separator, lineWidth: 1))
     }
 
     private func submit() {
@@ -238,14 +238,14 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 6) {
             sectionLabel("REGNSKAP")
             Text(tally.summary)
-                .font(.zenjiMono(size: 13))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
+                .font(.zenjiTabular(.footnote, weight: .regular))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.85))
                 .fixedSize(horizontal: false, vertical: true)
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(ZenjiTokens.foreground.opacity(0.04))
-        .overlay(Rectangle().stroke(ZenjiTokens.foreground.opacity(0.15), lineWidth: 1))
+        .background(ZenjiTokens.label.opacity(0.04))
+        .overlay(Rectangle().stroke(ZenjiTokens.label.opacity(0.15), lineWidth: 1))
     }
 
     /// The proposal diff — the same before/after language as the assistant ark,
@@ -259,25 +259,25 @@ struct OnboardingView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
                         Text(sign(mutation.kind))
-                            .font(.zenjiMono(size: 16, weight: .bold))
+                            .font(.zenjiTabular(.callout, weight: .bold))
                             .foregroundStyle(color(mutation.kind))
                         VStack(alignment: .leading, spacing: 2) {
                             Text(mutation.entity.name)
-                                .font(.zenjiMono(size: 15, weight: .bold))
+                                .font(.zenjiTabular(.subheadline, weight: .bold))
                             Text(mutationSubtitle(mutation))
-                                .font(.zenjiMono(size: 12))
-                                .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
+                                .font(.zenjiTabular(.caption, weight: .regular))
+                                .foregroundStyle(ZenjiTokens.label.opacity(0.6))
                         }
                     }
                     HStack(spacing: 10) {
                         Button("Bekreft") { assistant.confirm(mutation) }
-                            .font(.zenjiMono(size: 13, weight: .bold))
-                            .foregroundStyle(ZenjiTokens.diffAdd)
-                            .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.diffAdd))
+                            .font(.zenjiTabular(.footnote, weight: .bold))
+                            .foregroundStyle(ZenjiTokens.live)
+                            .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.live))
                         Button("Avvis") { assistant.reject(mutation) }
-                            .font(.zenjiMono(size: 13))
-                            .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
-                            .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.foreground))
+                            .font(.zenjiTabular(.footnote, weight: .regular))
+                            .foregroundStyle(ZenjiTokens.label.opacity(0.6))
+                            .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.label))
                     }
                 }
                 .padding(12)
@@ -297,26 +297,26 @@ struct OnboardingView: View {
             ForEach(assistant.rejected) { rejection in
                 VStack(alignment: .leading, spacing: 6) {
                     Text(rejection.explanation)
-                        .font(.zenjiMono(size: 13))
-                        .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
+                        .font(.zenjiTabular(.footnote, weight: .regular))
+                        .foregroundStyle(ZenjiTokens.label.opacity(0.85))
                         .fixedSize(horizontal: false, vertical: true)
                     ForEach(rejection.suggestions, id: \.id) { suggestion in
                         Button { assistant.choose(suggestion, for: rejection) } label: {
                             Text("› \(suggestion.name)")
-                                .font(.zenjiMono(size: 13, weight: .bold))
+                                .font(.zenjiTabular(.footnote, weight: .bold))
                                 .foregroundStyle(ZenjiTokens.accent)
                         }
                         .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.accent, fullWidth: true))
                     }
                     Button("OK") { assistant.dismissRejection(rejection) }
-                        .font(.zenjiMono(size: 12))
-                        .foregroundStyle(ZenjiTokens.foreground.opacity(0.6))
+                        .font(.zenjiTabular(.caption, weight: .regular))
+                        .foregroundStyle(ZenjiTokens.label.opacity(0.6))
                         .zenjiTapTarget()
                 }
                 .padding(12)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(ZenjiTokens.diffRemove.opacity(0.06))
-                .overlay(Rectangle().stroke(ZenjiTokens.diffRemove.opacity(0.3), lineWidth: 1))
+                .background(ZenjiTokens.destructive.opacity(0.06))
+                .overlay(Rectangle().stroke(ZenjiTokens.destructive.opacity(0.3), lineWidth: 1))
             }
         }
     }
@@ -325,22 +325,22 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 6) {
             sectionLabel("INGEN ENDRING")
             Text(explanation.understood)
-                .font(.zenjiMono(size: 13))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
+                .font(.zenjiTabular(.footnote, weight: .regular))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.85))
                 .fixedSize(horizontal: false, vertical: true)
             Text(explanation.reason)
-                .font(.zenjiMono(size: 12))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.65))
+                .font(.zenjiTabular(.caption, weight: .regular))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.65))
                 .fixedSize(horizontal: false, vertical: true)
             Button("Velg fra startpakker i stedet") { go(to: .quickPicks) }
-                .font(.zenjiMono(size: 12, weight: .bold))
+                .font(.zenjiTabular(.caption, weight: .bold))
                 .foregroundStyle(ZenjiTokens.accent)
                 .zenjiTapTarget()
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(ZenjiTokens.foreground.opacity(0.05))
-        .overlay(Rectangle().stroke(ZenjiTokens.foreground.opacity(0.2), lineWidth: 1))
+        .background(ZenjiTokens.label.opacity(0.05))
+        .overlay(Rectangle().stroke(ZenjiTokens.label.opacity(0.2), lineWidth: 1))
     }
 
     // MARK: - Step 3 · Quick picks (fallback + for everyone)
@@ -349,8 +349,8 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 20) {
             stepHeading("Velg det du bryr deg om")
             Text(quickPicksIntro)
-                .font(.zenjiMono(size: 14))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.8))
+                .font(.zenjiTabular(.subheadline, weight: .regular))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.8))
                 .fixedSize(horizontal: false, vertical: true)
 
             VStack(spacing: 10) {
@@ -380,22 +380,22 @@ struct OnboardingView: View {
             HStack(alignment: .top, spacing: 12) {
                 // A calm add/valgt marker — the amber dot is the whole language.
                 Text(applied ? "•" : "+")
-                    .font(.zenjiMono(size: 16, weight: .bold))
-                    .foregroundStyle(applied ? ZenjiTokens.accent : ZenjiTokens.muted)
+                    .font(.zenjiTabular(.callout, weight: .bold))
+                    .foregroundStyle(applied ? ZenjiTokens.accent : ZenjiTokens.secondaryLabel)
                     .frame(width: 14, alignment: .leading)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(pack.title)
-                        .font(.zenjiMono(size: 15, weight: .bold))
-                        .foregroundStyle(ZenjiTokens.foreground)
+                        .font(.zenjiTabular(.subheadline, weight: .bold))
+                        .foregroundStyle(ZenjiTokens.label)
                     Text(pack.subtitle)
-                        .font(.zenjiMono(size: 12))
-                        .foregroundStyle(ZenjiTokens.muted)
+                        .font(.zenjiTabular(.caption, weight: .regular))
+                        .foregroundStyle(ZenjiTokens.secondaryLabel)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: 8)
                 if applied {
                     Text("VALGT")
-                        .font(.zenjiMono(size: 10, weight: .bold))
+                        .font(.zenjiTabular(.caption2, weight: .bold))
                         .foregroundStyle(ZenjiTokens.accent)
                         .tracking(1)
                 }
@@ -403,8 +403,8 @@ struct OnboardingView: View {
             .padding(12)
             .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
             .contentShape(Rectangle())
-            .background((applied ? ZenjiTokens.accent : ZenjiTokens.foreground).opacity(applied ? 0.08 : 0.03))
-            .overlay(Rectangle().stroke((applied ? ZenjiTokens.accent : ZenjiTokens.foreground).opacity(applied ? 0.4 : 0.15), lineWidth: 1))
+            .background((applied ? ZenjiTokens.accent : ZenjiTokens.label).opacity(applied ? 0.08 : 0.03))
+            .overlay(Rectangle().stroke((applied ? ZenjiTokens.accent : ZenjiTokens.label).opacity(applied ? 0.4 : 0.15), lineWidth: 1))
         }
         .buttonStyle(.plain)
         .accessibilityLabel("\(pack.title). \(pack.subtitle). \(applied ? "Valgt" : "Legg til")")
@@ -421,35 +421,35 @@ struct OnboardingView: View {
             stepHeading("Klart")
             if assistant.profile.isEmpty {
                 Text("Du følger ingenting ennå — det er helt greit. Skriv til Zenji når som helst nederst på skjermen.")
-                    .font(.zenjiMono(size: 15))
-                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
+                    .font(.zenjiTabular(.subheadline, weight: .regular))
+                    .foregroundStyle(ZenjiTokens.label.opacity(0.85))
                     .fixedSize(horizontal: false, vertical: true)
             } else {
                 Text("Agendaen din er klar, og viser allerede det du valgte.")
-                    .font(.zenjiMono(size: 15))
-                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
+                    .font(.zenjiTabular(.subheadline, weight: .regular))
+                    .foregroundStyle(ZenjiTokens.label.opacity(0.85))
                     .fixedSize(horizontal: false, vertical: true)
                 followingNow
             }
 
             VStack(alignment: .leading, spacing: 6) {
                 Text("Du kan alltid si mer til Zenji — skriv i kommandolinjen nederst.")
-                    .font(.zenjiMono(size: 13))
-                    .foregroundStyle(ZenjiTokens.foreground.opacity(0.75))
+                    .font(.zenjiTabular(.footnote, weight: .regular))
+                    .foregroundStyle(ZenjiTokens.label.opacity(0.75))
                     .fixedSize(horizontal: false, vertical: true)
                 HStack(spacing: 8) {
                     Text("»_")
-                        .font(.zenjiMono(size: 15, weight: .semibold))
-                        .foregroundStyle(ZenjiTokens.muted)
+                        .font(.zenjiTabular(.subheadline, weight: .semibold))
+                        .foregroundStyle(ZenjiTokens.secondaryLabel)
                     BlinkingCursor()
                 }
             }
             .padding(14)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .overlay(Rectangle().stroke(ZenjiTokens.hairline, lineWidth: 1))
+            .overlay(Rectangle().stroke(ZenjiTokens.separator, lineWidth: 1))
 
             Button("Til agendaen") { onFinish() }
-                .font(.zenjiMono(size: 15, weight: .bold))
+                .font(.zenjiTabular(.subheadline, weight: .bold))
                 .foregroundStyle(ZenjiTokens.accent)
                 .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.accent, fullWidth: true))
                 .padding(.top, 4)
@@ -470,14 +470,14 @@ struct OnboardingView: View {
                     ForEach(assistant.profile.rules) { rule in
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             Text("•")
-                                .font(.zenjiMono(size: 13, weight: .bold))
+                                .font(.zenjiTabular(.footnote, weight: .bold))
                                 .foregroundStyle(ZenjiTokens.accent)
                             VStack(alignment: .leading, spacing: 1) {
                                 Text(rule.entityName)
-                                    .font(.zenjiMono(size: 14, weight: .bold))
+                                    .font(.zenjiTabular(.subheadline, weight: .bold))
                                 Text(ruleSubtitle(rule))
-                                    .font(.zenjiMono(size: 11))
-                                    .foregroundStyle(ZenjiTokens.muted)
+                                    .font(.zenjiTabular(.caption2, weight: .regular))
+                                    .foregroundStyle(ZenjiTokens.secondaryLabel)
                             }
                         }
                     }
@@ -485,8 +485,8 @@ struct OnboardingView: View {
             }
             .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(ZenjiTokens.foreground.opacity(0.03))
-            .overlay(Rectangle().stroke(ZenjiTokens.hairline, lineWidth: 1))
+            .background(ZenjiTokens.label.opacity(0.03))
+            .overlay(Rectangle().stroke(ZenjiTokens.separator, lineWidth: 1))
         }
     }
 
@@ -494,12 +494,12 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 12) {
             if let alternative {
                 Button(alternative.0) { alternative.1() }
-                    .font(.zenjiMono(size: 13))
-                    .foregroundStyle(ZenjiTokens.muted)
+                    .font(.zenjiTabular(.footnote, weight: .regular))
+                    .foregroundStyle(ZenjiTokens.secondaryLabel)
                     .zenjiTapTarget()
             }
             Button(primary.0) { primary.1() }
-                .font(.zenjiMono(size: 15, weight: .bold))
+                .font(.zenjiTabular(.subheadline, weight: .bold))
                 .foregroundStyle(ZenjiTokens.accent)
                 .buttonStyle(ZenjiActionButtonStyle(tint: ZenjiTokens.accent, fullWidth: true))
         }
@@ -508,30 +508,30 @@ struct OnboardingView: View {
 
     private func stepHeading(_ text: String) -> some View {
         Text(text)
-            .font(.zenjiMono(size: 20, weight: .bold))
-            .foregroundStyle(ZenjiTokens.foreground)
+            .font(.zenjiTabular(.title3, weight: .bold))
+            .foregroundStyle(ZenjiTokens.label)
             .fixedSize(horizontal: false, vertical: true)
     }
 
     private func sectionLabel(_ text: String) -> some View {
         Text(text)
-            .font(.zenjiMono(size: 12, weight: .bold))
-            .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+            .font(.zenjiTabular(.caption, weight: .bold))
+            .foregroundStyle(ZenjiTokens.label.opacity(0.5))
             .tracking(1.5)
     }
 
     private func unavailableBanner(_ message: String) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("APPLE INTELLIGENCE")
-                .font(.zenjiMono(size: 11, weight: .bold))
+                .font(.zenjiTabular(.caption2, weight: .bold))
                 .foregroundStyle(ZenjiTokens.accent.opacity(0.8))
                 .tracking(1.5)
             Text(message)
-                .font(.zenjiMono(size: 13))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.8))
+                .font(.zenjiTabular(.footnote, weight: .regular))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.8))
                 .fixedSize(horizontal: false, vertical: true)
             Button("Velg fra startpakker i stedet") { go(to: .quickPicks) }
-                .font(.zenjiMono(size: 12, weight: .bold))
+                .font(.zenjiTabular(.caption, weight: .bold))
                 .foregroundStyle(ZenjiTokens.accent)
                 .zenjiTapTarget()
         }
@@ -543,8 +543,8 @@ struct OnboardingView: View {
 
     private func errorRow(_ error: String) -> some View {
         Text(error)
-            .font(.zenjiMono(size: 13))
-            .foregroundStyle(ZenjiTokens.diffRemove)
+            .font(.zenjiTabular(.footnote, weight: .regular))
+            .foregroundStyle(ZenjiTokens.destructive)
     }
 
     private func go(to next: OnboardingStep) {
@@ -568,9 +568,9 @@ struct OnboardingView: View {
 
     private func color(_ kind: MutationKind) -> Color {
         switch kind {
-        case .add: return ZenjiTokens.diffAdd
+        case .add: return ZenjiTokens.live
         case .update: return ZenjiTokens.accent
-        case .remove: return ZenjiTokens.diffRemove
+        case .remove: return ZenjiTokens.destructive
         }
     }
 

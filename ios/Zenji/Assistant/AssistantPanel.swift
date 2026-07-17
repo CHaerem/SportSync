@@ -49,7 +49,7 @@ struct AssistantPanel: View {
         .foregroundStyle(ZenjiTokens.label)
         .task { viewModel.refreshAvailability() }
         // WP-82 — one light success haptic on Bekreft (a mutation/command
-        // confirmed), DESIGN-BASELINE § Bevegelse & haptikk. The trigger only
+        // confirmed), DESIGN § Bevegelse & haptikk. The trigger only
         // bumps on an explicit confirm, never on scroll or every tap.
         .sensoryFeedback(.success, trigger: viewModel.confirmHaptic)
     }

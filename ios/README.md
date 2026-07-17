@@ -138,9 +138,13 @@ sibling), kept 1:1 with the `DESIGN.md` token table.
 | Foreground | `#E8E6E0` | `#1D1B15` |
 | Accent (amber) | `#FFB000` | `#8F6400` |
 
-Plus `surface` / `muted` / `hairline` / `live`. `ZenjiTokens.background` /
-`.foreground` / `.accent` are dynamic `Color`s following the system colour scheme;
-`Font.zenjiMono(size:weight:)` is the one monospaced typeface used everywhere.
+Plus the semantic tokens `cell` / `secondaryLabel` / `separator` / `live` /
+`destructive` (the neutrals map to iOS system colours; `accent` / `live` /
+`destructive` are dynamic `Color`s following the system colour scheme). Typography
+goes through the Dynamic Type API — `Font.zenji(_:weight:)` binds each text role to
+a SwiftUI text style (San Francisco) so text scales with the user's setting, and
+`Font.zenjiTabular(...)` adds monospaced digits for the time column; a fixed
+`.system(size:)` point is barred (HIG gate `tests/ios-dynamic-type-gate.test.js`).
 
 **`ThemeOverride.swift`** — a `String`-backed enum (`system`/`dark`/`light`) with a
 tap-cycle, a `colorScheme: ColorScheme?` fed to `.preferredColorScheme`, a

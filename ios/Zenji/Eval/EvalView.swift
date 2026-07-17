@@ -162,12 +162,12 @@ struct EvalView: View {
                 .frame(maxWidth: .infinity, alignment: .center)
             }
             .background(ZenjiTokens.background)
-            .foregroundStyle(ZenjiTokens.foreground)
+            .foregroundStyle(ZenjiTokens.label)
             .navigationTitle("EVAL")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Lukk") { dismiss() }
-                        .font(.zenjiMono(size: 13))
+                        .font(.zenjiTabular(.footnote, weight: .regular))
                         .foregroundStyle(ZenjiTokens.accent)
                 }
             }
@@ -179,31 +179,31 @@ struct EvalView: View {
     private var intro: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text("FM-EVAL PÅ ENHET")
-                .font(.zenjiMono(size: 12, weight: .bold))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                .font(.zenjiTabular(.caption, weight: .bold))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.5))
                 .tracking(1.5)
             Text("Kjører det versjonerte korpuset gjennom Apple Intelligence på denne enheten og scorer strukturert. Del rapporten når kjøringen er ferdig.")
-                .font(.zenjiMono(size: 12))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.7))
+                .font(.zenjiTabular(.caption, weight: .regular))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.7))
             if let corpus = model.corpus {
                 Text("Korpus v\(corpus.version) · \(corpus.cases.count) ytringer")
-                    .font(.zenjiMono(size: 11))
-                    .foregroundStyle(ZenjiTokens.muted)
+                    .font(.zenjiTabular(.caption2, weight: .regular))
+                    .foregroundStyle(ZenjiTokens.secondaryLabel)
             } else if let status = model.status {
                 Text(status)
-                    .font(.zenjiMono(size: 12))
-                    .foregroundStyle(ZenjiTokens.diffRemove)
+                    .font(.zenjiTabular(.caption, weight: .regular))
+                    .foregroundStyle(ZenjiTokens.destructive)
             }
         }
     }
 
     private func banner(_ message: String) -> some View {
         Text(message)
-            .font(.zenjiMono(size: 12))
-            .foregroundStyle(ZenjiTokens.foreground.opacity(0.8))
+            .font(.zenjiTabular(.caption, weight: .regular))
+            .foregroundStyle(ZenjiTokens.label.opacity(0.8))
             .padding(12)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(ZenjiTokens.surface)
+            .background(ZenjiTokens.cell)
     }
 
     private var controls: some View {
@@ -212,8 +212,8 @@ struct EvalView: View {
                 Task { await model.run() }
             } label: {
                 Text(model.isRunning ? "KJØRER … \(model.progress)/\(model.corpus?.cases.count ?? 0)" : "KJØR EVAL")
-                    .font(.zenjiMono(size: 13, weight: .bold))
-                    .foregroundStyle(model.isRunning ? ZenjiTokens.muted : ZenjiTokens.accent)
+                    .font(.zenjiTabular(.footnote, weight: .bold))
+                    .foregroundStyle(model.isRunning ? ZenjiTokens.secondaryLabel : ZenjiTokens.accent)
             }
             .disabled(model.isRunning || model.corpus == nil)
             .zenjiTapTarget()
@@ -223,7 +223,7 @@ struct EvalView: View {
             if model.report != nil {
                 ShareLink(item: model.reportJSON, preview: SharePreview("zenji-eval-rapport.json")) {
                     Text("DEL RAPPORT")
-                        .font(.zenjiMono(size: 12, weight: .bold))
+                        .font(.zenjiTabular(.caption, weight: .bold))
                         .foregroundStyle(ZenjiTokens.accent)
                 }
                 .zenjiTapTarget()
@@ -233,15 +233,15 @@ struct EvalView: View {
 
     private func summary(_ report: EvalReport) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Rectangle().fill(ZenjiTokens.hairline).frame(height: 1)
+            Rectangle().fill(ZenjiTokens.separator).frame(height: 1)
             HStack {
                 Text("BESTÅTT \(report.totals.passed)/\(report.totals.evaluated)")
-                    .font(.zenjiMono(size: 13, weight: .bold))
+                    .font(.zenjiTabular(.footnote, weight: .bold))
                 Spacer()
                 if report.totals.knownGap > 0 {
                     Text("\(report.totals.knownGap) kjente hull\(report.totals.knownGapPassed > 0 ? " · \(report.totals.knownGapPassed) lukket!" : "")")
-                        .font(.zenjiMono(size: 11))
-                        .foregroundStyle(report.totals.knownGapPassed > 0 ? ZenjiTokens.diffAdd : ZenjiTokens.muted)
+                        .font(.zenjiTabular(.caption2, weight: .regular))
+                        .foregroundStyle(report.totals.knownGapPassed > 0 ? ZenjiTokens.live : ZenjiTokens.secondaryLabel)
                 }
             }
             ForEach(report.categories) { cat in
@@ -253,32 +253,32 @@ struct EvalView: View {
     private func categoryRow(_ cat: EvalReport.CategorySummary) -> some View {
         HStack {
             Text(cat.category)
-                .font(.zenjiMono(size: 12))
+                .font(.zenjiTabular(.caption, weight: .regular))
                 .frame(width: 110, alignment: .leading)
             if let rate = cat.passRate {
                 Text("\(cat.passed)/\(cat.evaluated)")
-                    .font(.zenjiMono(size: 12, weight: .bold))
-                    .foregroundStyle(cat.passed == cat.evaluated ? ZenjiTokens.diffAdd : ZenjiTokens.accent)
+                    .font(.zenjiTabular(.caption, weight: .bold))
+                    .foregroundStyle(cat.passed == cat.evaluated ? ZenjiTokens.live : ZenjiTokens.accent)
                 Text("\(Int((rate * 100).rounded()))%")
-                    .font(.zenjiMono(size: 11))
-                    .foregroundStyle(ZenjiTokens.muted)
+                    .font(.zenjiTabular(.caption2, weight: .regular))
+                    .foregroundStyle(ZenjiTokens.secondaryLabel)
             } else {
                 Text("— kun kjente hull")
-                    .font(.zenjiMono(size: 11))
-                    .foregroundStyle(ZenjiTokens.muted)
+                    .font(.zenjiTabular(.caption2, weight: .regular))
+                    .foregroundStyle(ZenjiTokens.secondaryLabel)
             }
             Spacer()
             if cat.knownGap > 0 {
                 Text("(\(cat.knownGap) hull)")
-                    .font(.zenjiMono(size: 10))
-                    .foregroundStyle(ZenjiTokens.muted)
+                    .font(.zenjiTabular(.caption2, weight: .regular))
+                    .foregroundStyle(ZenjiTokens.secondaryLabel)
             }
         }
     }
 
     private var caseList: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Rectangle().fill(ZenjiTokens.hairline).frame(height: 1)
+            Rectangle().fill(ZenjiTokens.separator).frame(height: 1)
             ForEach(model.results) { result in
                 EvalCaseRow(result: result)
             }
@@ -288,17 +288,17 @@ struct EvalView: View {
 
     private var candidateFooter: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Rectangle().fill(ZenjiTokens.hairline).frame(height: 1).padding(.top, 8)
+            Rectangle().fill(ZenjiTokens.separator).frame(height: 1).padding(.top, 8)
             ShareLink(item: model.candidatesJSON, preview: SharePreview("forsto-ikke-kandidater.json")) {
                 Text("DEL KORPUS-KANDIDATER (\(model.candidateCount))")
-                    .font(.zenjiMono(size: 11, weight: .bold))
+                    .font(.zenjiTabular(.caption2, weight: .bold))
                     .foregroundStyle(ZenjiTokens.accent)
             }
             .disabled(model.candidateCount == 0)
             .zenjiTapTarget()
             Text("Eksporterer «forsto ikke»-loggen som korpus-kandidater. Du bestemmer selv hva som legges inn.")
-                .font(.zenjiMono(size: 10))
-                .foregroundStyle(ZenjiTokens.muted)
+                .font(.zenjiTabular(.caption2, weight: .regular))
+                .foregroundStyle(ZenjiTokens.secondaryLabel)
         }
     }
 
@@ -308,15 +308,15 @@ struct EvalView: View {
     /// device-only), which the honest note states.
     private var metricSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Rectangle().fill(ZenjiTokens.hairline).frame(height: 1).padding(.top, 8)
+            Rectangle().fill(ZenjiTokens.separator).frame(height: 1).padding(.top, 8)
             Text("TELEMETRI (METRICKIT)")
-                .font(.zenjiMono(size: 12, weight: .bold))
-                .foregroundStyle(ZenjiTokens.foreground.opacity(0.5))
+                .font(.zenjiTabular(.caption, weight: .bold))
+                .foregroundStyle(ZenjiTokens.label.opacity(0.5))
                 .tracking(1.5)
             HStack(spacing: 16) {
                 ShareLink(item: model.metricLogJSON, preview: SharePreview("zenji-telemetri.json")) {
                     Text("DEL TELEMETRI (\(model.metricLogCount))")
-                        .font(.zenjiMono(size: 11, weight: .bold))
+                        .font(.zenjiTabular(.caption2, weight: .bold))
                         .foregroundStyle(ZenjiTokens.accent)
                 }
                 .disabled(model.metricLogCount == 0)
@@ -324,14 +324,14 @@ struct EvalView: View {
                 Spacer()
                 if model.metricLogCount > 0 {
                     Button("Slett") { model.clearMetricLog() }
-                        .font(.zenjiMono(size: 11))
-                        .foregroundStyle(ZenjiTokens.diffRemove.opacity(0.75))
+                        .font(.zenjiTabular(.caption2, weight: .regular))
+                        .foregroundStyle(ZenjiTokens.destructive.opacity(0.75))
                         .zenjiTapTarget()
                 }
             }
             Text("Lokale MetricKit-sammendrag: app-oppstartstid + heng. Aldri nettverk. Tomt i simulatoren — MetricKit leverer bare på ekte enhet.")
-                .font(.zenjiMono(size: 10))
-                .foregroundStyle(ZenjiTokens.muted)
+                .font(.zenjiTabular(.caption2, weight: .regular))
+                .foregroundStyle(ZenjiTokens.secondaryLabel)
         }
     }
 }
@@ -345,29 +345,29 @@ struct EvalCaseRow: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text(glyph)
-                    .font(.zenjiMono(size: 13, weight: .bold))
+                    .font(.zenjiTabular(.footnote, weight: .bold))
                     .foregroundStyle(glyphColor)
                 Text("«\(result.utterance)»")
-                    .font(.zenjiMono(size: 12, weight: .bold))
+                    .font(.zenjiTabular(.caption, weight: .bold))
                 Spacer()
                 if result.knownGap {
                     Text("KJENT HULL\(result.knownGapRef.map { " · \($0)" } ?? "")")
-                        .font(.zenjiMono(size: 9, weight: .bold))
-                        .foregroundStyle(ZenjiTokens.muted)
+                        .font(.zenjiTabular(.caption2, weight: .bold))
+                        .foregroundStyle(ZenjiTokens.secondaryLabel)
                 }
             }
             ForEach(result.checks) { check in
                 Text("\(check.passed ? "·" : "✕") \(check.label): \(check.detail)")
-                    .font(.zenjiMono(size: 10))
-                    .foregroundStyle(check.passed ? ZenjiTokens.foreground.opacity(0.55) : ZenjiTokens.diffRemove.opacity(0.85))
+                    .font(.zenjiTabular(.caption2, weight: .regular))
+                    .foregroundStyle(check.passed ? ZenjiTokens.label.opacity(0.55) : ZenjiTokens.destructive.opacity(0.85))
             }
         }
     }
 
     private var glyph: String { result.passed ? "✓" : (result.knownGap ? "○" : "✕") }
     private var glyphColor: Color {
-        if result.passed { return ZenjiTokens.diffAdd }
-        return result.knownGap ? ZenjiTokens.muted : ZenjiTokens.diffRemove
+        if result.passed { return ZenjiTokens.live }
+        return result.knownGap ? ZenjiTokens.secondaryLabel : ZenjiTokens.destructive
     }
 }
 #endif

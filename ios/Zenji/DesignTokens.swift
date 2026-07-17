@@ -2,7 +2,7 @@
 //  DesignTokens.swift
 //  Zenji
 //
-//  Apple-native baseline design system (DESIGN-BASELINE.md § Tokens) — the thin,
+//  Apple-native baseline design system (DESIGN.md § Tokens) — the thin,
 //  swappable skin over Apple's platform. Every brand-bearing value (colour,
 //  type role, spacing) is a token here, never hardcoded in a component, so a
 //  future rebrand is a re-skin of this file alone.
@@ -17,26 +17,24 @@
 //      with the user's setting. `Font.zenjiTabular(...)` adds `.monospacedDigit`
 //      for the time column and other places digits must line up.
 //
-//  Non-breaking (WP-80): the legacy `zenjiMono(size:)` font and the Tekst-TV
-//  colour names (`foreground`/`muted`/`surface`/`hairline`/`diffAdd`/`diffRemove`)
-//  are kept as deprecated shims mapping onto the new tokens, so the widget and
-//  every existing view compile UNCHANGED and each surface migrates on its own
-//  schedule (WP-81..84). The shims are removed once all surfaces have migrated
-//  (WP-85).
+//  The WP-80 migration shims (the legacy fixed-size `zenjiMono` font and the
+//  Tekst-TV colour aliases) were removed in WP-85 once every surface had
+//  migrated to the API above. Fixed `.system(size:)` points are barred by the
+//  HIG CI gate (tests/ios-dynamic-type-gate.test.js).
 //
 
 import SwiftUI
 import UIKit
 
 /// Semantic design tokens — the single source of truth for colour on every
-/// surface. Values mirror DESIGN-BASELINE.md § Tokens exactly.
+/// surface. Values mirror DESIGN.md § Tokens exactly.
 ///
 /// Neutrals use iOS system colours (which resolve to the documented dark/light
 /// hex and adapt to appearance + accessibility automatically); `accent`,
 /// `live` and `destructive` carry their own explicit token values.
 enum ZenjiTokens {
 
-	// MARK: - Semantic colour tokens (DESIGN-BASELINE.md § Farge)
+	// MARK: - Semantic colour tokens (DESIGN.md § Farge)
 
 	/// Page surface. `#000000` dark / `#F2F2F7` light — `systemGroupedBackground`
 	/// (the baseline is an inset-grouped list world, so the page background is
@@ -75,41 +73,9 @@ enum ZenjiTokens {
 	/// Destructive (systemRed). `#FF453A` dark / `#FF3B30` light. An own token
 	/// value (matches systemRed) so a rebrand can retune it independently.
 	static let destructive = Color.zenji(dark: Color(hex: 0xFF453A), light: Color(hex: 0xFF3B30))
-
-	// MARK: - Legacy Tekst-TV colour names (deprecated — WP-80 shim)
-	//
-	// These map the pre-baseline names onto the semantic tokens so every
-	// un-migrated view/widget compiles unchanged. Each surface migrates to the
-	// semantic name on its own schedule (WP-81..84); the aliases are removed in
-	// WP-85. Deprecation is a compile-time *warning* (not an error), so the
-	// build stays green throughout the migration.
-
-	/// Legacy alias for `label` (primary text).
-	@available(*, deprecated, message: "Use ZenjiTokens.label")
-	static var foreground: Color { label }
-
-	/// Legacy alias for `secondaryLabel` (muted/meta text).
-	@available(*, deprecated, message: "Use ZenjiTokens.secondaryLabel")
-	static var muted: Color { secondaryLabel }
-
-	/// Legacy alias for `cell` (raised surface / detail sheet).
-	@available(*, deprecated, message: "Use ZenjiTokens.cell")
-	static var surface: Color { cell }
-
-	/// Legacy alias for `separator` (hairline rule).
-	@available(*, deprecated, message: "Use ZenjiTokens.separator")
-	static var hairline: Color { separator }
-
-	/// Legacy alias for `live` — the DIFF "add/keep" colour (green signal).
-	@available(*, deprecated, message: "Use ZenjiTokens.live")
-	static var diffAdd: Color { live }
-
-	/// Legacy alias for `destructive` — the DIFF "remove" colour (red signal).
-	@available(*, deprecated, message: "Use ZenjiTokens.destructive")
-	static var diffRemove: Color { destructive }
 }
 
-/// Spacing scale on an 8pt basis (4pt for fine tuning) — DESIGN-BASELINE.md
+/// Spacing scale on an 8pt basis (4pt for fine tuning) — DESIGN.md
 /// § Rytme & layout. Use these instead of ad-hoc literals so rhythm stays
 /// consistent and re-tunable.
 enum ZenjiSpacing {
@@ -148,12 +114,12 @@ extension Color {
 }
 
 extension Font {
-	/// The Dynamic Type text-style API (DESIGN-BASELINE.md § Typografi). Binds a
+	/// The Dynamic Type text-style API (DESIGN.md § Typografi). Binds a
 	/// role to a SwiftUI text style so text scales with the user's setting —
 	/// San Francisco (system), NEVER a fixed `.system(size:)` point. Pass a
 	/// `weight` for semibold/bold roles.
 	///
-	/// Role → style map (DESIGN-BASELINE.md typography table):
+	/// Role → style map (DESIGN.md typography table):
 	///   • Stor tittel (nav) → `.largeTitle` bold
 	///   • Seksjonstittel    → `.headline`
 	///   • Radtittel / Tid   → `.body` (Tid also `zenjiTabular`, semibold)
@@ -167,40 +133,9 @@ extension Font {
 	}
 
 	/// Dynamic Type text style with tabular (monospaced) digits — for the time
-	/// column and anywhere numerals must line up (DESIGN-BASELINE.md: "Tabular
+	/// column and anywhere numerals must line up (DESIGN.md: "Tabular
 	/// tall … der sifre skal rette seg inn"). Still San Francisco, still scales.
 	static func zenjiTabular(_ style: Font.TextStyle = .body, weight: Font.Weight? = nil) -> Font {
 		zenji(style, weight: weight).monospacedDigit()
-	}
-
-	/// DEPRECATED (WP-80 shim). The Tekst-TV monospace font took a FIXED point
-	/// size and did not scale with Dynamic Type. It is kept only so un-migrated
-	/// views/widget compile unchanged; it now maps the old size to the NEAREST
-	/// Dynamic Type text style (so shimmed text scales for free) and keeps
-	/// tabular digits (the old mono font aligned numerals, so the time column
-	/// stays aligned until it migrates). Removed in WP-85.
-	///
-	/// Migrate call sites to `Font.zenji(_:weight:)` / `Font.zenjiTabular(...)`.
-	@available(*, deprecated, message: "Use Font.zenji(_:weight:) / Font.zenjiTabular(_:weight:) — this fixed-size monospace font ignores Dynamic Type")
-	static func zenjiMono(size: CGFloat, weight: Font.Weight = .regular) -> Font {
-		zenjiTabular(textStyle(nearestTo: size), weight: weight)
-	}
-
-	/// Maps a legacy fixed point size onto the nearest Dynamic Type text style,
-	/// by each style's default (Large content size) point size. Used only by the
-	/// `zenjiMono` shim.
-	private static func textStyle(nearestTo size: CGFloat) -> Font.TextStyle {
-		switch size {
-		case 31...: return .largeTitle	// 34
-		case 25..<31: return .title		// 28
-		case 21..<25: return .title2		// 22
-		case 18.5..<21: return .title3	// 20
-		case 16.5..<18.5: return .body	// 17 (body/headline)
-		case 15.5..<16.5: return .callout	// 16
-		case 14..<15.5: return .subheadline	// 15
-		case 12.5..<14: return .footnote	// 13
-		case 11.5..<12.5: return .caption	// 12
-		default: return .caption2		// 11
-		}
 	}
 }

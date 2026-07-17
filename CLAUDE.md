@@ -160,12 +160,14 @@ Pure static HTML/CSS/JS on GitHub Pages (PWA). No build step. **Calm design** �
 the whole page is one quiet, scannable overview of the events you follow;
 no dashboard grid, no competing panels.
 
-**`DESIGN.md` is the normative UI contract** for every surface (web, iOS, widget,
-icon). Any agent or human changing UI reads it first and never deviates without an
-explicit owner instruction. The identity is **Tekst-TV** (teletext-rooted): a
-monospace type stack, amber as the single accent, a near-black page, quantized/flat/
-honest — never faux-analog. The values below must stay verifiable against `base.css`;
-DESIGN.md is the source of intent behind them.
+**`DESIGN.md` is the normative UI contract** for every surface. Any agent or human
+changing UI reads it first and never deviates without an explicit owner instruction.
+It is now an **Apple-native baseline** (semantic system colours, Dynamic Type, SF
+Symbols, amber as the one accent) that the **iOS app + widget follow**; **web
+(`docs/`) is the deliberate exception until the rebrand** and keeps the v2 **Tekst-TV**
+identity (teletext-rooted): a monospace type stack, amber as the single accent, a
+near-black page, quantized/flat/honest — never faux-analog. The web values below must
+stay verifiable against `base.css`; DESIGN.md is the source of intent behind them.
 
 - `docs/index.html` — shell: header (wordmark · date · theme toggle), one quiet editorial headline line, live-now line (conditional), the agenda, "Hva vi følger" disclosure, footer. `docs/rediger.html` — the follow-request page (see below); `docs/activity.html` — the ops/activity view.
 - `docs/css/` — `base.css` (calm tokens: near-black dark default `#0A0A0C`, warm-paper light `#F5F1E6` via prefers-color-scheme; amber `#FFB000` as the ONLY accent; a **monospace type stack** — `ui-monospace, "SF Mono", Menlo, …` — with tabular numerals; max-width 640px, fixed 120px time column), `layout.css` (single centered column, all breakpoints), `cards.css` (agenda rows, day groups)
@@ -192,10 +194,11 @@ by default) or the agents' `git add` silently skips them.
 
 ### Companion docs & the iOS app
 
-- **`DESIGN.md`** — the **normative design contract** for every surface (web, iOS,
-  widget, icon): tokens, type, the Tekst-TV identity, layout laws. Agents that touch
-  UI read it first; it is verified value-for-value against the CSS and is *not*
-  freely rewritten.
+- **`DESIGN.md`** — the **normative design contract** for every surface: tokens,
+  type, layout laws. The iOS app + widget follow the **Apple-native baseline**
+  (semantic system colours + Dynamic Type); web (`docs/`) keeps the **Tekst-TV**
+  identity until the rebrand (the deliberate exception). Agents that touch UI read it
+  first; it is verified value-for-value against the code and is *not* freely rewritten.
 - **`PLAN.md`** — the commercialization/execution backlog (phases, work packages,
   gates). Long-horizon planning lives here, not in this file; consult it for what's
   queued/in-flight and update the relevant WP status row when you complete one.
