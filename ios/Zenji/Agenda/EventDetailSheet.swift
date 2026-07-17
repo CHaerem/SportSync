@@ -50,9 +50,9 @@ struct EventDetailSheet: View {
                 Section {
                     if event.streaming.isEmpty {
                         Text("Kanal ukjent")
-                            .font(.zenjiMono(size: 14))
-                            .foregroundStyle(ZenjiTokens.muted)
-                            .listRowBackground(ZenjiTokens.surface)
+                            .font(.zenji(.subheadline))
+                            .foregroundStyle(ZenjiTokens.secondaryLabel)
+                            .listRowBackground(ZenjiTokens.cell)
                     } else {
                         ForEach(Array(event.streaming.enumerated()), id: \.offset) { _, channel in
                             StreamingLinkRow(channel: channel)
@@ -85,7 +85,7 @@ struct EventDetailSheet: View {
             }
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
-            .background(ZenjiTokens.surface)
+            .background(ZenjiTokens.cell)
             .navigationTitle(titleText)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -101,7 +101,7 @@ struct EventDetailSheet: View {
 
     private func header(_ text: String) -> some View {
         Text(text)
-            .font(.zenjiMono(size: 11, weight: .semibold))
+            .font(.zenji(.caption2, weight: .semibold))
             .foregroundStyle(ZenjiTokens.accent)
             .tracking(0.5)
     }
@@ -121,21 +121,21 @@ struct EventDetailSheet: View {
                 if !row.whyShown.isEmpty {
                     DisclosureGroup(isExpanded: $whyExpanded) {
                         Text(row.whyShown)
-                            .font(.zenjiMono(size: 13))
-                            .foregroundStyle(ZenjiTokens.foreground.opacity(0.85))
+                            .font(.zenji(.footnote))
+                            .foregroundStyle(ZenjiTokens.label.opacity(0.85))
                             .padding(.vertical, 4)
                     } label: {
                         Text("Hvorfor vises denne?")
-                            .font(.zenjiMono(size: 13))
-                            .foregroundStyle(ZenjiTokens.foreground)
+                            .font(.zenji(.footnote))
+                            .foregroundStyle(ZenjiTokens.label)
                             // WP-14.3: the disclosure header is the tap
                             // target for the whole row — guarantee ≥44pt
                             // even though the label text itself is small.
                             .frame(minHeight: 44, alignment: .leading)
                             .contentShape(Rectangle())
                     }
-                    .tint(ZenjiTokens.muted)
-                    .listRowBackground(ZenjiTokens.surface)
+                    .tint(ZenjiTokens.secondaryLabel)
+                    .listRowBackground(ZenjiTokens.cell)
                 }
                 ForEach(row.followable, id: \.id) { entity in
                     Button {
@@ -146,7 +146,7 @@ struct EventDetailSheet: View {
                     } label: {
                         HStack(spacing: 8) {
                             Text("» Følg \(entity.name)")
-                                .font(.zenjiMono(size: 14, weight: .semibold))
+                                .font(.zenji(.subheadline, weight: .semibold))
                                 .foregroundStyle(ZenjiTokens.accent)
                             Spacer()
                         }
@@ -155,7 +155,7 @@ struct EventDetailSheet: View {
                         .frame(minHeight: 44, alignment: .leading)
                         .contentShape(Rectangle())
                     }
-                    .listRowBackground(ZenjiTokens.surface)
+                    .listRowBackground(ZenjiTokens.cell)
                 }
             } header: {
                 header("HANDLINGER")
@@ -175,26 +175,26 @@ struct EventDetailSheet: View {
             Section {
                 if row.spoilerSafe || resultRevealed {
                     Text(result)
-                        .font(.zenjiMono(size: 14))
-                        .foregroundStyle(ZenjiTokens.foreground)
-                        .listRowBackground(ZenjiTokens.surface)
+                        .font(.zenji(.subheadline))
+                        .foregroundStyle(ZenjiTokens.label)
+                        .listRowBackground(ZenjiTokens.cell)
                 } else {
                     Button {
                         resultRevealed = true
                     } label: {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Skjult — spoilervern på")
-                                .font(.zenjiMono(size: 14, weight: .semibold))
+                                .font(.zenji(.subheadline, weight: .semibold))
                                 .foregroundStyle(ZenjiTokens.accent)
                             Text("Trykk for å vise resultatet")
-                                .font(.zenjiMono(size: 12))
-                                .foregroundStyle(ZenjiTokens.muted)
+                                .font(.zenji(.caption))
+                                .foregroundStyle(ZenjiTokens.secondaryLabel)
                         }
                         // WP-14.3: a real, comfortable tap target.
                         .frame(minHeight: 44, alignment: .leading)
                         .contentShape(Rectangle())
                     }
-                    .listRowBackground(ZenjiTokens.surface)
+                    .listRowBackground(ZenjiTokens.cell)
                 }
             } header: {
                 header("RESULTAT")
@@ -211,14 +211,14 @@ struct DetailRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
             Text(label.uppercased())
-                .font(.zenjiMono(size: 10, weight: .semibold))
-                .foregroundStyle(ZenjiTokens.muted)
+                .font(.zenji(.caption2, weight: .semibold))
+                .foregroundStyle(ZenjiTokens.secondaryLabel)
             Text(value)
-                .font(.zenjiMono(size: 14))
-                .foregroundStyle(ZenjiTokens.foreground)
+                .font(.zenji(.subheadline))
+                .foregroundStyle(ZenjiTokens.label)
         }
         .padding(.vertical, 4)
-        .listRowBackground(ZenjiTokens.surface)
+        .listRowBackground(ZenjiTokens.cell)
     }
 }
 
@@ -231,14 +231,14 @@ private struct NotifyStatusRow: View {
     var body: some View {
         HStack(spacing: 8) {
             Text(on ? "På" : "Av")
-                .font(.zenjiMono(size: 14, weight: .semibold))
-                .foregroundStyle(on ? ZenjiTokens.accent : ZenjiTokens.muted)
+                .font(.zenji(.subheadline, weight: .semibold))
+                .foregroundStyle(on ? ZenjiTokens.accent : ZenjiTokens.secondaryLabel)
             Text(on ? "minner deg før start" : "ingen påminnelse")
-                .font(.zenjiMono(size: 12))
-                .foregroundStyle(ZenjiTokens.muted)
+                .font(.zenji(.caption))
+                .foregroundStyle(ZenjiTokens.secondaryLabel)
         }
         .padding(.vertical, 2)
-        .listRowBackground(ZenjiTokens.surface)
+        .listRowBackground(ZenjiTokens.cell)
     }
 }
 
@@ -258,23 +258,23 @@ private struct StreamingLinkRow: View {
                 row(linked: false)
             }
         }
-        .listRowBackground(ZenjiTokens.surface)
+        .listRowBackground(ZenjiTokens.cell)
     }
 
     private func row(linked: Bool) -> some View {
         HStack {
             Text(channel.platform?.isEmpty == false ? channel.platform! : "Ukjent kanal")
-                .font(.zenjiMono(size: 14))
-                .foregroundStyle(linked ? ZenjiTokens.accent : ZenjiTokens.foreground)
+                .font(.zenji(.subheadline))
+                .foregroundStyle(linked ? ZenjiTokens.accent : ZenjiTokens.label)
             if channel.tentative == true {
                 Text("(bekreftes)")
-                    .font(.zenjiMono(size: 11))
-                    .foregroundStyle(ZenjiTokens.muted)
+                    .font(.zenji(.caption2))
+                    .foregroundStyle(ZenjiTokens.secondaryLabel)
             }
             Spacer()
             if linked {
                 Text("↗")
-                    .font(.zenjiMono(size: 12))
+                    .font(.zenji(.caption))
                     .foregroundStyle(ZenjiTokens.accent)
             }
         }
@@ -289,24 +289,24 @@ private struct ProvenanceRows: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Sikkerhet: \(confidenceLabel)")
-                .font(.zenjiMono(size: 13))
-                .foregroundStyle(ZenjiTokens.foreground)
+                .font(.zenji(.footnote))
+                .foregroundStyle(ZenjiTokens.label)
             if event.evidence.isEmpty {
                 Text("Ingen kildelenker oppgitt.")
-                    .font(.zenjiMono(size: 12))
-                    .foregroundStyle(ZenjiTokens.muted)
+                    .font(.zenji(.caption))
+                    .foregroundStyle(ZenjiTokens.secondaryLabel)
             } else {
                 ForEach(Array(event.evidence.enumerated()), id: \.offset) { index, urlString in
                     if let url = URL(string: urlString) {
                         Link("Kilde \(index + 1)", destination: url)
-                            .font(.zenjiMono(size: 13))
+                            .font(.zenji(.footnote))
                             .foregroundStyle(ZenjiTokens.accent)
                     }
                 }
             }
         }
         .padding(.vertical, 4)
-        .listRowBackground(ZenjiTokens.surface)
+        .listRowBackground(ZenjiTokens.cell)
     }
 
     private var confidenceLabel: String {

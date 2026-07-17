@@ -68,8 +68,8 @@ final class MainFlowsUITests: ZenjiUITestCase {
 
 		// The seeded board shows the followed football row; the biathlon row is
 		// deliberately NOT relevant yet.
-		assertExists(app.staticTexts[UITestFixture.footballTitle], "the seeded followed football row should be on the board")
-		XCTAssertFalse(app.staticTexts[UITestFixture.biathlonTitle].exists, "biathlon must not be on the board before following it")
+		assertExists(agendaRow(UITestFixture.footballTitle, in: app), "the seeded followed football row should be on the board")
+		XCTAssertFalse(agendaRow(UITestFixture.biathlonTitle, in: app).exists, "biathlon must not be on the board before following it")
 
 		// Type the follow, confirm the diff.
 		let field = app.textFields["command.field"]
@@ -83,7 +83,7 @@ final class MainFlowsUITests: ZenjiUITestCase {
 		confirm.tap()
 
 		// Immediate consequence: the biathlon row now appears on the recompiled board.
-		assertExists(app.staticTexts[UITestFixture.biathlonTitle], "confirming the follow should surface the biathlon row")
+		assertExists(agendaRow(UITestFixture.biathlonTitle, in: app), "confirming the follow should surface the biathlon row")
 	}
 
 	// MARK: - Flow 3 · Rapid starter-pack toggles (guards WP-60 coalescing)
@@ -127,7 +127,7 @@ final class MainFlowsUITests: ZenjiUITestCase {
 	func testEventDetailWhyShown() {
 		let app = launchApp(state: "agenda")
 
-		let row = app.staticTexts[UITestFixture.footballTitle]
+		let row = agendaRow(UITestFixture.footballTitle, in: app)
 		assertExists(row, "the followed football row should be tappable")
 		row.tap()
 
@@ -205,7 +205,7 @@ final class MainFlowsUITests: ZenjiUITestCase {
 		let app = launchApp(state: "agenda")
 
 		// The seeded board shows the followed football row.
-		assertExists(app.staticTexts[UITestFixture.footballTitle], "the seeded football row should be on the board")
+		assertExists(agendaRow(UITestFixture.footballTitle, in: app), "the seeded football row should be on the board")
 
 		// Filter the VIEW to golf — nothing on the seeded board is golf, so the
 		// board empties to the honest "no matches" line while the profile is
@@ -219,11 +219,11 @@ final class MainFlowsUITests: ZenjiUITestCase {
 		// The quiet filter line appears; the football row is filtered out.
 		assertExists(app.staticTexts["agenda.filter.label"], "the filter line should appear over the agenda")
 		assertExists(app.staticTexts["Ingen treff for filteret."], "the golf filter hides the football row")
-		XCTAssertFalse(app.staticTexts[UITestFixture.footballTitle].exists, "the football row is hidden by the golf filter")
+		XCTAssertFalse(agendaRow(UITestFixture.footballTitle, in: app).exists, "the football row is hidden by the golf filter")
 
 		// One-tap reset (the ✕) brings everything back.
 		app.buttons["agenda.filter.reset"].tap()
-		assertExists(app.staticTexts[UITestFixture.footballTitle], "resetting the filter restores the full board")
+		assertExists(agendaRow(UITestFixture.footballTitle, in: app), "resetting the filter restores the full board")
 		XCTAssertFalse(app.staticTexts["agenda.filter.label"].exists, "the filter line is gone after reset")
 	}
 }

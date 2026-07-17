@@ -2,31 +2,41 @@
 //  AgendaView.swift
 //  Zenji
 //
-//  WP-14 → WP-14.1 — the real, day-grouped Tekst-TV agenda, realised against
-//  DESIGN.md ("Agendaens semantikk" + "Radens anatomi"): one quiet centred
-//  column (max 640pt), ruled by hairlines, no cards, no competing panels.
-//  Each row answers only when · what · where. A tap anywhere on the row opens
-//  the detail sheet — there is NO chevron; the rhythm signals tappability.
+//  WP-81 — the agenda rebuilt as a native, inset-grouped `List` on the
+//  Apple-native baseline (DESIGN-BASELINE.md § Agendaen + § Radens anatomi).
+//  What changed versus the WP-14 ScrollView/LazyVStack pass:
+//   • The board is a native `List` (`.insetGrouped`), one `Section` per day —
+//     so the platform owns the separators, grouping, scrolling and inset column.
+//   • Each row is a `Button` (`.buttonStyle(.plain)`) — it gets the native
+//     pressed-state highlight and a button accessibility role for free, in
+//     place of the old naked `.onTapGesture` (a Forbudsliste item).
+//   • Row anatomy per the baseline: a leading amber must-see dot, tabular time,
+//     the never-truncated title + a quiet meta/channel line, then trailing SF
+//     Symbols — `bell.fill` (amber) when the row arms a reminder, `info.circle`
+//     when the event is AI-research — and a quiet native-style chevron.
+//   • Left swipe → «Følg» on rows that are ABOUT a not-yet-followed entity,
+//     routed through the SAME assistant diff/confirm flow the detail sheet uses
+//     (`onFollow`); a light `.sensoryFeedback` fires (suppressed under Reduce
+//     Motion). Demp/Påminn have no existing action hook wired to the agenda
+//     (per-event reminders are explicitly a non-feature — see EventDetailSheet's
+//     NotifyStatusRow — and a mute/unfollow host action would have to be wired
+//     in ContentView, which WP-83 owns), so only the meaningful, already-backed
+//     «Følg» action ships here ("der det er meningsfullt · ikke finn opp ny logikk").
+//   • All typography migrated off the deprecated `zenjiMono(size:)` shim to the
+//     WP-80 Dynamic Type API (`Font.zenji` / `Font.zenjiTabular`) and the
+//     semantic colour tokens (`label`/`secondaryLabel`/`separator`/`accent`).
 //
-//  What WP-14.1 changed versus the first WP-14 pass (all eight audited
-//  breaches; the day-ordering ones live in AgendaViewModel/FeedCompiler, the
-//  rest here):
-//   • Titles are never truncated — up to two lines, never a "…".
-//   • The 🔔 emoji is gone from rows (the amber dot is the whole must-see
-//     language; the reminder state moved to the detail sheet).
-//   • The iOS chevron is gone; a quiet mono ⓘ appears ONLY on AI-research rows.
-//   • The channel never shrinks the title — it drops to its own dempet line
-//     under the title on a narrow (compact) screen, and only sits on the
-//     right on a wide one.
+//  The detail sheets keep their `.presentationDetents([.medium, .large])`
+//  (grabber + drag-to-dismiss), already set on each sheet.
 //
 
 import SwiftUI
 
 struct AgendaView: View {
     var viewModel: AgendaViewModel
-    /// WP-16.4 — a "Følg <entitet>" context action tapped in the detail sheet;
-    /// ContentView routes it into the assistant's diff/confirm flow. Defaults to
-    /// a no-op so the WP-14 `#Preview` and any standalone use still compile.
+    /// WP-16.4 — a "Følg <entitet>" action (the detail sheet's context action
+    /// and now the row's left-swipe); ContentView routes it into the assistant's
+    /// diff/confirm flow. Defaults to a no-op so `#Preview` / standalone use compile.
     var onFollow: (Entity) -> Void = { _ in }
     /// WP-30 — an event's detail was opened; the host records a behaviour "open"
     /// stat for it (personal memory, layer 3). No-op default keeps previews/
@@ -55,37 +65,41 @@ struct AgendaView: View {
     }
 
     @State private var detailTarget: DetailTarget?
+    /// A monotonically increasing trigger for the light swipe-action haptic.
+    /// `.sensoryFeedback` fires on each change; we only bump it off the Reduce
+    /// Motion path (DESIGN-BASELINE § Bevegelse & haptikk: "Reduce Motion …
+    /// ingen haptikk").
+    @State private var followHaptic = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 0) {
-                // WP-67: render the (possibly filtered) view of the board. The
-                // filter is a pure view layer — `sections` (and the golden
-                // vectors) are unchanged; `displayedSections` just hides rows.
-                let sections = viewModel.displayedSections
-                if sections.isEmpty {
-                    emptyRow
-                } else {
-                    ForEach(Array(sections.enumerated()), id: \.element.id) { index, section in
-                        dayHeader(section.label, isFirst: index == 0)
+        List {
+            // WP-67: render the (possibly filtered) view of the board. The
+            // filter is a pure view layer — `sections` (and the golden vectors)
+            // are unchanged; `displayedSections` just hides rows.
+            let sections = viewModel.displayedSections
+            if sections.isEmpty {
+                Section { emptyRow }
+                    .listRowBackground(ZenjiTokens.background)
+            } else {
+                ForEach(sections) { section in
+                    Section {
                         ForEach(section.items) { item in
-                            rowView(for: item)
-                                .contentShape(Rectangle())
-                                .onTapGesture { open(item) }
-                            hairline
+                            rowButton(for: item)
                         }
+                    } header: {
+                        dayHeader(section.label)
                     }
                 }
             }
-            .frame(maxWidth: 640, alignment: .leading)
-            .frame(maxWidth: .infinity, alignment: .center) // centre the column on wide screens
-            .padding(.horizontal, 20)
-            .padding(.bottom, 40)
         }
+        .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
         .background(ZenjiTokens.background)
         .refreshable {
             await viewModel.refresh()
         }
+        .sensoryFeedback(.impact(weight: .light), trigger: followHaptic)
         .sheet(item: $detailTarget) { target in
             switch target {
             case .event(let row):
@@ -113,22 +127,47 @@ struct AgendaView: View {
         return nil
     }
 
-    // MARK: - Day section header (28pt before, 10pt after — DESIGN.md "Rytme")
+    // MARK: - Day section header (DESIGN-BASELINE § Typografi: gruppeoverskrift)
 
-    private func dayHeader(_ label: String, isFirst: Bool) -> some View {
+    private func dayHeader(_ label: String) -> some View {
         Text(label)
-            .font(.zenjiMono(size: 13, weight: .semibold))
-            .tracking(1) // +8 % of 13pt (DESIGN.md "dagoverskrift … +8 % sporing")
-            .foregroundStyle(ZenjiTokens.accent)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.top, isFirst ? 12 : 28)
-            .padding(.bottom, 10)
+            .font(.zenji(.footnote, weight: .semibold))
+            .foregroundStyle(ZenjiTokens.secondaryLabel)
     }
 
-    private var hairline: some View {
-        Rectangle()
-            .fill(ZenjiTokens.hairline)
-            .frame(height: 1)
+    // MARK: - Rows
+
+    /// One tappable agenda row: a `Button` (native pressed-state + button role),
+    /// opening the detail sheet, with the left-swipe «Følg» affordance where the
+    /// row is about a not-yet-followed entity.
+    @ViewBuilder
+    private func rowButton(for item: AgendaItem) -> some View {
+        Button {
+            open(item)
+        } label: {
+            rowView(for: item)
+        }
+        .buttonStyle(.plain)
+        .listRowBackground(ZenjiTokens.cell)
+        .swipeActions(edge: .leading, allowsFullSwipe: true) {
+            if let entity = firstFollowable(item) {
+                Button {
+                    if !reduceMotion { followHaptic &+= 1 }
+                    onFollow(entity)
+                } label: {
+                    Label("Følg", systemImage: "plus.circle")
+                }
+                .tint(ZenjiTokens.accent)
+            }
+        }
+    }
+
+    /// The first entity this row is ABOUT that the user doesn't already follow —
+    /// what the left-swipe «Følg» offers. Series rows aren't followed this way
+    /// (they're the athlete-agnostic collapsed view), so only event rows qualify.
+    private func firstFollowable(_ item: AgendaItem) -> Entity? {
+        if case let .event(row) = item { return row.followable.first }
+        return nil
     }
 
     @ViewBuilder
@@ -167,15 +206,14 @@ struct AgendaView: View {
                 emptyText("Fortell Zenji hva du følger.")
                 HStack(spacing: 8) {
                     Text("»_")
-                        .font(.zenjiMono(size: 15, weight: .semibold))
-                        .foregroundStyle(ZenjiTokens.muted)
+                        .font(.zenji(.callout, weight: .semibold))
+                        .foregroundStyle(ZenjiTokens.secondaryLabel)
                     Text("Skriv i linjen nederst.")
-                        .font(.zenjiMono(size: 13))
-                        .foregroundStyle(ZenjiTokens.muted.opacity(0.8))
+                        .font(.zenji(.footnote))
+                        .foregroundStyle(ZenjiTokens.secondaryLabel.opacity(0.8))
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.top, 24)
         } else {
             emptyText("Ingen kommende arrangementer akkurat nå.")
         }
@@ -183,19 +221,19 @@ struct AgendaView: View {
 
     private func emptyText(_ text: String) -> some View {
         Text(text)
-            .font(.zenjiMono(size: 15))
-            .foregroundStyle(ZenjiTokens.muted)
+            .font(.zenji(.callout))
+            .foregroundStyle(ZenjiTokens.secondaryLabel)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.top, 24)
     }
 }
 
 // MARK: - Rows
 
-/// One ordinary agenda row (DESIGN.md "Radens anatomi"): amber must-see dot,
-/// the time (or a multi-day window) in a fixed left column, then the title —
-/// up to two lines, never truncated — with a quiet meta line and the channel.
-/// A mono ⓘ trails ONLY on AI-research events.
+/// One ordinary agenda row (DESIGN-BASELINE § Radens anatomi): amber must-see
+/// dot, the time (or a multi-day window) in a fixed left column, then the title
+/// — up to two lines, never truncated — with a quiet meta line and the channel.
+/// A `bell.fill` (amber) trails when the row arms a reminder, an `info.circle`
+/// on AI-research events, then the native-style chevron.
 struct EventRowView: View {
     let row: AgendaEventRow
 
@@ -204,9 +242,9 @@ struct EventRowView: View {
             MustSeeDot(on: row.isMustSee)
             TimeColumn(text: row.timeLabel)
             RowBody(title: row.title, meta: row.metaLabel, channel: row.channelLabel)
-            InfoGlyph(on: row.isAIResearch)
+            TrailingMarkers(reminder: row.mustWatch, aiResearch: row.isAIResearch)
         }
-        .padding(.vertical, 12)
+        .padding(.vertical, 4)
     }
 }
 
@@ -220,9 +258,9 @@ struct SeriesRowView: View {
             MustSeeDot(on: false) // series rows are never visually accented (FeedCompiler.isMustSee)
             TimeColumn(text: row.timeLabel)
             RowBody(title: row.summaryLabel, meta: nil, channel: row.channelLabel)
-            InfoGlyph(on: row.isAIResearch)
+            TrailingMarkers(reminder: row.mustWatch, aiResearch: row.isAIResearch)
         }
-        .padding(.vertical, 12)
+        .padding(.vertical, 4)
     }
 }
 
@@ -230,7 +268,7 @@ struct SeriesRowView: View {
 /// priority: on a compact width the channel drops to its own dempet line
 /// UNDER the title so the title keeps the full column; on a regular width the
 /// channel sits quietly on the right. Either way the channel never squeezes
-/// the title (DESIGN.md: "Kanal … krymper ALDRI tittelen").
+/// the title (DESIGN-BASELINE: "Kanal … Krymper aldri tittelen").
 private struct RowBody: View {
     let title: String
     let meta: String?
@@ -260,8 +298,8 @@ private struct RowBody: View {
 
     private var titleText: some View {
         Text(title)
-            .font(.zenjiMono(size: 17))
-            .foregroundStyle(ZenjiTokens.foreground)
+            .font(.zenji(.body))
+            .foregroundStyle(ZenjiTokens.label)
             .lineLimit(2)
             .fixedSize(horizontal: false, vertical: true) // grow to 2 lines, never clip
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -278,8 +316,8 @@ private struct RowBody: View {
                 HStack(spacing: 6) {
                     MetaText(meta).fixedSize()
                     Text("·")
-                        .font(.zenjiMono(size: 15))
-                        .foregroundStyle(ZenjiTokens.muted.opacity(0.6))
+                        .font(.zenji(.subheadline))
+                        .foregroundStyle(ZenjiTokens.secondaryLabel.opacity(0.6))
                         .fixedSize()
                     ChannelLabel(text: channel).fixedSize()
                 }
@@ -291,7 +329,7 @@ private struct RowBody: View {
     }
 }
 
-/// The gentlest possible emphasis (DESIGN.md: "Prikken er hele språket"): a
+/// The gentlest possible emphasis (DESIGN-BASELINE: "Prikken er signalet"): a
 /// small filled amber dot when on, an invisible placeholder of the same size
 /// when off, so rows stay aligned either way. Left of the time column.
 private struct MustSeeDot: View {
@@ -302,15 +340,16 @@ private struct MustSeeDot: View {
             .fill(on ? ZenjiTokens.accent : Color.clear)
             .frame(width: 6, height: 6)
             .padding(.top, 7)
+            .accessibilityHidden(true)
     }
 }
 
-/// The time column. An ordinary "HH:mm" reads at 17pt semibold tabular (the
-/// DESIGN.md time scale); a multi-day window ("13.–20. juli") reads a notch
-/// quieter (13pt medium) so a week-long range stays compact and doesn't shove
-/// the title off the row — it is a date span, not a clock. Either way it lives
-/// in the SAME left column (never merged into the title). `.fixedSize` lets it
-/// take exactly the width it needs; the min width keeps "HH:mm" rows aligned.
+/// The time column. An ordinary "HH:mm" reads at `.body` semibold tabular; a
+/// multi-day window ("13.–20. juli") reads a notch quieter (`.footnote`) so a
+/// week-long range stays compact and doesn't shove the title off the row — it is
+/// a date span, not a clock. Either way it lives in the SAME left column (never
+/// merged into the title). `.fixedSize` lets it take exactly the width it needs;
+/// the min width keeps "HH:mm" rows aligned.
 private struct TimeColumn: View {
     let text: String
 
@@ -320,9 +359,8 @@ private struct TimeColumn: View {
 
     var body: some View {
         Text(text)
-            .font(.zenjiMono(size: isClock ? 17 : 13, weight: isClock ? .semibold : .medium))
-            .foregroundStyle(ZenjiTokens.foreground)
-            .monospacedDigit()
+            .font(isClock ? .zenjiTabular(.body, weight: .semibold) : .zenjiTabular(.footnote, weight: .medium))
+            .foregroundStyle(ZenjiTokens.label)
             .lineLimit(1)
             .fixedSize(horizontal: true, vertical: false)
             .frame(minWidth: 58, alignment: .leading)
@@ -330,45 +368,62 @@ private struct TimeColumn: View {
     }
 }
 
-/// The channel ("hvor"): dempet, 15pt. An honest, fainter "–" when unknown
-/// (DESIGN.md "Ærlig innhold": ukjent kanal er «–»).
+/// The channel ("hvor"): dempet subheadline. An honest, fainter "–" when unknown
+/// (DESIGN-BASELINE "Ærlig innhold": ukjent kanal er «–»).
 private struct ChannelLabel: View {
     let text: String
 
     var body: some View {
         Text(text)
-            .font(.zenjiMono(size: 15))
-            .foregroundStyle(text == "–" ? ZenjiTokens.muted.opacity(0.5) : ZenjiTokens.muted)
+            .font(.zenji(.subheadline))
+            .foregroundStyle(text == "–" ? ZenjiTokens.secondaryLabel.opacity(0.5) : ZenjiTokens.secondaryLabel)
             .lineLimit(1)
     }
 }
 
-/// The quiet meta line ("turnering"): 15pt dempet.
+/// The quiet meta line ("turnering"): dempet subheadline.
 private struct MetaText: View {
     let text: String
     init(_ text: String) { self.text = text }
 
     var body: some View {
         Text(text)
-            .font(.zenjiMono(size: 15))
-            .foregroundStyle(ZenjiTokens.muted)
+            .font(.zenji(.subheadline))
+            .foregroundStyle(ZenjiTokens.secondaryLabel)
             .lineLimit(1)
     }
 }
 
-/// The provenance marker: a quiet mono ⓘ, shown ONLY on AI-research rows
-/// (DESIGN.md). Tapping the row opens the detail sheet, where the confidence
-/// and every evidence link live. An invisible placeholder keeps non-AI rows
-/// aligned with AI ones.
-private struct InfoGlyph: View {
-    let on: Bool
+/// The trailing markers (DESIGN-BASELINE § Radens anatomi): `bell.fill` (amber)
+/// when the row arms a reminder, `info.circle` on AI-research events, then a
+/// quiet native-style chevron so the row reads as a disclosure. SF Symbols scale
+/// with Dynamic Type and carry their own accessibility labels. The row is a
+/// Button (`.buttonStyle(.plain)`), which does not draw the system chevron, so
+/// the chevron is a `chevron.forward` glyph tinted like the native one.
+private struct TrailingMarkers: View {
+    let reminder: Bool
+    let aiResearch: Bool
 
     var body: some View {
-        Text("ⓘ")
-            .font(.zenjiMono(size: 14))
-            .foregroundStyle(on ? ZenjiTokens.muted : Color.clear)
-            .padding(.top, 2)
-            .accessibilityLabel(on ? "Funnet av AI" : "")
+        HStack(spacing: 8) {
+            if reminder {
+                Image(systemName: "bell.fill")
+                    .font(.zenji(.footnote))
+                    .foregroundStyle(ZenjiTokens.accent)
+                    .accessibilityLabel("Varsel på")
+            }
+            if aiResearch {
+                Image(systemName: "info.circle")
+                    .font(.zenji(.footnote))
+                    .foregroundStyle(ZenjiTokens.secondaryLabel)
+                    .accessibilityLabel("Funnet av AI")
+            }
+            Image(systemName: "chevron.forward")
+                .font(.zenji(.footnote, weight: .semibold))
+                .foregroundStyle(Color(uiColor: .tertiaryLabel))
+                .accessibilityHidden(true)
+        }
+        .padding(.top, 2)
     }
 }
 
