@@ -1,22 +1,21 @@
 {
-  "runAt": "2026-07-17T14:10:00Z",
+  "runAt": "2026-07-17T17:40:00Z",
   "eventsAdded": 0,
   "eventsRemoved": 0,
-  "eventsAmended": 3,
-  "trackedDelta": "Ingen entries lagt til/fjernet. Oppdatert: casper-ruud + swiss-open-gstaad-2026 (Ruud ute av Gstaad, tapte QF), tour-de-france-2026 (GC-sprik oppløst til Tobias 14. +14.30, etappe 13 på veien, etappe 14 tid re-bekreftet). Ingen utløpte entries å droppe (alle expires > 17. juli).",
+  "eventsAmended": 2,
+  "trackedDelta": "Ingen entries lagt til/fjernet. Oppdatert Tour de France-entryens GC-linje etter etappe 13 og lastUpdated.",
   "quality": {
     "pass": true,
-    "score": 97,
-    "failures": [
-      "Non-blocking (grader): TdF etappe 13 endTime var 15:30Z mot summaryens målgang ~17.45 CEST (15:45 UTC) — rettet til 15:45Z i denne kjøringen."
-    ]
+    "score": 90,
+    "failures": []
   },
   "notes": [
-    "Standard-tier Opus, fre. ettermiddag ~14.10Z, ~4t etter forrige run (10.15Z). Tre parallelle scout-subagenter (sykkel/TdF; tennis+golf; CS2+bred norsk sveip) med ekte web-søk + egen uavhengig fact-check av Ruud-QF-resultatet.",
-    "HOVEDFUNN (tennis): Casper Ruud UTE AV GSTAAD — tapte kvartfinalen mot Juan Manuel Cerúndolo (6.-seed) fre. 17. juli i strake sett. Egen fact-check mot TNT Sports live-side bekreftet «Finished» + Cerúndolo-seier. Eksakt sett-score var upålitelig i renderen (ugyldig «7-6, 6-5») → SCORE UTELATT fra tavla (en manglende detalj er bedre enn en feil), men utfallet solid. Gstaad-eventets summary amendert til tapet (ingen SF/finale for Ruud). Ruuds neste: Montreal (trekning 31. juli, dato-gated).",
-    "HOVEDFUNN (sykkel): TdF-GC-spriket (Tobias Halland Johannessen 13. +14.50 vs 14. +14.30) OPPLØST — to ferske 17.-juli-kilder (idlprocycling + Wikipedia) enige om 14. plass (+14.30). Etappe-13- og etappe-14-summary rettet (Ayuso 4. +4.22 lagt til topp-GC). Etappe 13 (Dole–Belfort) FORTSATT PÅ VEIEN ved kjøretid (mål ~15.45 UTC) — ingen vinner å skrive; brudd (~57) m/Jonas Abrahamsen (Uno-X) på vei mot mål, ingen norske forfall. Etappe 14 (lør. 18.) starttid 11.10 UTC re-bekreftet mot tre franske kilder.",
-    "ANDRE FUNN (ingen board-endring): CS2 BLAST Bounty S2 bracket/seeding/kamptider FORTSATT TBD (Liquipedia/HLTV/BLAST.tv tomme; venter ~18.–20. juli; 100T-roster m/rain intakt) — følg opp 24–48t. The Open R2: Hovland E (T32, R2 pågikk), Reitan -1 (trygt innenfor kutt) — statisk event, ikke rørt. Corales R2: Ventura E (T90, på feil side av kuttstrek -2 som pågikk) — ai-research-event uendret (kutt ikke avgjort). Ingen ny Carlsen-turnering før EWC (Vegas-Freestyle-treff = 2025-artefakt). Barça Joan Gamper 19. aug vs Al Ahly — avspark-tid fortsatt TBC (korrekt holdt av tavla). Warholm Silesia DL 23. aug bekreftet fremtidig booking (utenfor ~4-ukers-horisont; Warholm allerede dekket via DL London 18. juli + EM 10.–16. aug — legges til ved neste sveip). Vinteridretter av-sesong (biathlon-VC 24. nov).",
-    "COVERAGE-SIGNALER: coverage-gaps.json 2 entity-gaps (Premier League + Fotball-VM) — begge false positives fra VM-finale/overgangs-headlines, ingen manglende event. coverage-audit.json (06.15Z): alt imminent + hele ~4-ukershorisonten dekket; eneste registrerte gap er LOW (F1-kvalifisering vises ikke som eget event per GP — strukturelt board-valg, ikke kildefeil). scout-log: alle kjøringer «quiet». Ingen eskalering.",
-    "validate-events.js: 49 events, 0 errors."
+    "Standard-tier Opus, ~3,5t etter forrige run (14.10Z). To parallelle scout-subagenter med ekte web-søk: (1) sykkel/TdF, (2) bred norsk sveip (CS2/tennis/sjakk/golf/fotball/friidrett).",
+    "HOVEDFUNN (sykkel): TdF etappe 13 (Dole–Belfort) nå ferdig – Mauro Schmid (Jayco AlUla) vant fra et stort brudd, slo Harold Tejada i tomannsspurt (Tom Pidcock 3.). Jonas Abrahamsen (Uno-X) + Per Strand Hagenes var med i bruddet men ingen nordmann på pallen; ingen norske forfall på etappen. Amendert etappe-13-summary til resultatet.",
+    "GC etter etappe 13 (favorittene nøytrale): topp uendret (Pogačar gult, Vingegaard +3.36, Evenepoel +4.06), men Tom Pidcock klatret til 4. (+4.15) og Ayuso falt til 5. (+4.22); Tobias Halland Johannessen beste nordmann ned til 15. plass (+14.50). Grønn Pedersen (377 p), prikket Pogačar, hvit Ayuso. Amendert etappe-14-«Nå»-summary til den ferske GC-linja. Kilder enige: cyclinguptodate + procyclinguk + cyclingnews.",
+    "Etappe 14 (lør. 18. juli, Mulhouse–Le Markstein) starttid 11.10 UTC re-bekreftet (cyclingstage + franceletour) – ingen endring på tavla.",
+    "INGEN NYE EVENTS: CS2 BLAST Bounty S2 bracket/seeding/kamptider fortsatt genuint TBD på alle tre kilder (Liquipedia/HLTV/BLAST.tv) – seed 17–32 velger motstander i live pick-show rundt 21. juli; roster m/rain intakt; følg opp 18–20. juli. Ruud ute av Gstaad, neste Montreal dato-gated (trekning 31. juli). Ingen ny Carlsen-turnering før EWC (Olympiaden er september). Aryan Tari IKKE i Andorra Open-startlista (chess-results tnr1338669) – korrekt holdt av tavla. Barça Joan Gamper 19. aug vs Al Ahly: avspark-tid fortsatt uoffisiell – korrekt holdt av tavla. Hovland FedEx St. Jude ~13.–16. aug felt ikke publisert (ranking-sannsynlig, ikke bekreftet).",
+    "Mekaniske signaler (coverage-gaps.json): 3 entity-gaps (Premier League, British Open, Fotball-VM) – alle false positives (overgangssladder / pågående The Open / VM-finale allerede på tavla). coverage-audit.json (06.15Z): 0 high-severity hull, eneste low-gap er F1-kvalifisering som eget event (bevisst board-mønster). Scout-log: alle kjøringer «quiet».",
+    "Fact-check: amendmentene er kryssjekket mot 2+ uavhengige kilder av sykkel-scouten (cyclinguptodate/procyclinguk/cyclingnews for stage-13-resultat + GC); ingen nye events krevde egen write-time fact-checker."
   ]
 }
