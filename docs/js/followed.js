@@ -112,6 +112,18 @@ Object.assign(window.Dashboard.prototype, {
 		return { tee, groupmates: ((g && g.groupmates) || []).map((m) => m.name || m).filter(Boolean) };
 	},
 
+	/** WP-95: the followed golfer's participation status ("røk cutten" etc.) for a
+	 *  golf event, or null. When set, the player is OUT — the row shows this calm
+	 *  status instead of "pågår nå"/a tee time, which would imply they're playing. */
+	golfPlayerStatus(e, entry) {
+		if (!e || e.sport !== 'golf' || !entry) return null;
+		const terms = trackedTerms([entry]).map((t) => t.toLowerCase()).filter(Boolean);
+		if (!terms.length) return null;
+		const hit = (name) => terms.some((t) => ssContainsTerm(String(name || ''), t));
+		const p = (e.norwegianPlayers || []).find((pl) => hit(pl.name || pl));
+		return (p && p.status) || null;
+	},
+
 	/** One row in the "neste" index: name + next event (or an honest gap). Flat —
 	 *  no logo/badge, no bell, no chevron; the row's rhythm signals tappability. */
 	followRow(entry, notifyDefault) {
@@ -121,8 +133,14 @@ Object.assign(window.Dashboard.prototype, {
 		if (!next) {
 			return `<li class="fn-item no-event"><div class="fn-row"><span class="fn-name">${name}<span class="fn-sub">ikke satt opp ennå</span></span></div></li>`;
 		}
+		const status = this.golfPlayerStatus(next, entry);
 		const tee = this.golfTeeForEntity(next, entry);
-		const when = tee ? `${this.relDay(next)} · ${tee.tee}` : this.relDay(next);
+		// A player who is out of the tournament (cut/WD) shows the calm status, not
+		// "pågår nå"/a tee time — relDay alone would read "pågår nå" for the still
+		// live tournament even though this golfer is done.
+		const when = status
+			? status
+			: (tee ? `${this.relDay(next)} · ${tee.tee}` : this.relDay(next));
 		return `<li class="fn-item has-event"><div class="fn-row" role="button" tabindex="0" aria-expanded="false">
 			<span class="fn-name">${name}</span>
 			<span class="fn-when">${escapeHtml(when)}</span>
@@ -144,10 +162,12 @@ Object.assign(window.Dashboard.prototype, {
 				return this.streamLink(s) ? `<a href="${escapeHtml(s.url)}" target="_blank" rel="noopener">${p}</a>` : label;
 			}).join(' · ')
 			: '<span class="tbd">–</span>';
+		const status = this.golfPlayerStatus(e, entry);
 		const rows = [
 			`<div class="d-row"><span class="d-k">Når</span><span class="d-v">${escapeHtml(when)}</span></div>`,
 			`<div class="d-row"><span class="d-k">Hva</span><span class="d-v">${escapeHtml(what)}</span></div>`,
 		];
+		if (status) rows.push(`<div class="d-row"><span class="d-k">Status</span><span class="d-v">${escapeHtml(status)}</span></div>`);
 		if (tee) {
 			const mates = tee.groupmates.length ? ` <span class="tbd">med ${escapeHtml(tee.groupmates.join(', '))}</span>` : '';
 			rows.push(`<div class="d-row"><span class="d-k">Tee-tid</span><span class="d-v">${escapeHtml(tee.tee)}${mates}</span></div>`);

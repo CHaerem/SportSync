@@ -20,6 +20,13 @@ the product's whole value is that times, channels, and coverage are RIGHT.
    the channel chip says "Viaplay" is shown two answers to "hvor kan jeg se det"; that is
    the exact Corales failure that survived 52 green grader runs. Compare case-insensitively
    and allow known aliases (e.g. "TV 2 Play" ≈ "TV 2"); a genuine mismatch is a hard fail.
+7. **Participation claim against contradicting status (WP-95)** — an event whose `summary`
+   prose says a named athlete is still playing/competing (e.g. "Hovland går ut i tredje
+   runde", "spiller i dag") while that same athlete's `norwegianPlayers[].status` on the
+   event marks them out (`"røk cutten"`, `"trakk seg"`, `"diskvalifisert"`, or equivalent).
+   Like check 6 this stands on the event's own two fields — no web access needed — so it
+   can never be excused as "a note, not scored". This is the eier-funn (a brief written
+   hours after Hovland missed the cut); a genuine contradiction is a hard fail.
 
 ## Scored criteria (deduct points, note in failures)
 - Events in the next 7 days missing `streaming` info without a research-log note

@@ -5,7 +5,9 @@ import {
 	buildFeaturedGroups,
 	buildGolfTournament,
 	getNorwegianStreaming,
+	fetchGolfPlayerStatuses,
 } from "../scripts/fetch/golf.js";
+import { golfParticipationStatus, isOutOfTournament, GOLF_OUT_LABELS } from "../scripts/lib/golf.js";
 
 // --- playerNameMatches ---
 
@@ -132,6 +134,96 @@ describe("buildGolfTournament", () => {
 		expect(out.events[0].streaming).toEqual([
 			{ platform: "Discovery+", url: "https://www.discoveryplus.no", type: "streaming" },
 		]);
+	});
+});
+
+// --- Participation freshness (WP-95): cut/WD/DQ detection ---
+
+describe("golfParticipationStatus", () => {
+	// The eier-funn shape: The Open R3, Hovland's core-API competitor status.
+	it("maps STATUS_CUT / displayValue CUT to «røk cutten» (the Hovland case)", () => {
+		expect(golfParticipationStatus({
+			type: { name: "STATUS_CUT", description: "Missed Cut", shortDetail: "CUT" },
+			displayValue: "CUT",
+		})).toBe("røk cutten");
+	});
+
+	it("catches the cut from the short code alone, if the machine name drifts", () => {
+		expect(golfParticipationStatus({ type: { name: "STATUS_OTHER" }, displayValue: "CUT" })).toBe("røk cutten");
+		expect(golfParticipationStatus({ type: { shortDetail: "MC" } })).toBe("røk cutten");
+	});
+
+	it("maps withdrawals and disqualifications", () => {
+		expect(golfParticipationStatus({ type: { name: "STATUS_WITHDRAWN" } })).toBe("trakk seg");
+		expect(golfParticipationStatus({ displayValue: "WD" })).toBe("trakk seg");
+		expect(golfParticipationStatus({ type: { name: "STATUS_DISQUALIFIED" } })).toBe("diskvalifisert");
+		expect(golfParticipationStatus({ displayValue: "DQ" })).toBe("diskvalifisert");
+	});
+
+	it("returns null for an active player (scheduled/in-progress) — the Reitan case", () => {
+		// A scheduled player's displayValue is a tee-time ISO string, not a short code.
+		expect(golfParticipationStatus({ type: { name: "STATUS_SCHEDULED" }, displayValue: "2026-07-18T14:50:00Z" })).toBeNull();
+		expect(golfParticipationStatus({ type: { name: "STATUS_IN_PROGRESS" } })).toBeNull();
+		expect(golfParticipationStatus(null)).toBeNull();
+		expect(golfParticipationStatus({})).toBeNull();
+	});
+});
+
+describe("isOutOfTournament", () => {
+	it("is true for every out-label and false otherwise", () => {
+		for (const label of Object.values(GOLF_OUT_LABELS)) expect(isOutOfTournament(label)).toBe(true);
+		expect(isOutOfTournament(null)).toBe(false);
+		expect(isOutOfTournament("Confirmed")).toBe(false);
+		expect(isOutOfTournament("i feltet")).toBe(false);
+	});
+});
+
+describe("fetchGolfPlayerStatuses", () => {
+	it("labels only the out players, keyed by competitor id (cut ⇒ present, active ⇒ omitted)", async () => {
+		const byId = {
+			"4364873": { type: { name: "STATUS_CUT" }, displayValue: "CUT" }, // Hovland — cut
+			"4348470": { type: { name: "STATUS_IN_PROGRESS" } },              // Reitan — active
+		};
+		const fetcher = async (url) => {
+			const id = url.match(/competitors\/(\d+)\/status/)[1];
+			return byId[id];
+		};
+		const statuses = await fetchGolfPlayerStatuses("pga", "401811957",
+			[{ id: "4364873" }, { id: "4348470" }], fetcher);
+		expect(statuses.get("4364873")).toBe("røk cutten");
+		expect(statuses.has("4348470")).toBe(false); // active players are omitted
+	});
+
+	it("is fail-soft: a fetch error leaves that player unlabelled", async () => {
+		const fetcher = async () => { throw new Error("network"); };
+		const statuses = await fetchGolfPlayerStatuses("pga", "1", [{ id: "999" }], fetcher);
+		expect(statuses.size).toBe(0);
+	});
+});
+
+describe("cut player earns no tee time / featured group (WP-95 reproduction)", () => {
+	// Mirrors fetchGolfESPN's assembly: an out player is excluded from the active
+	// list that feeds buildFeaturedGroups, and never carries a tee time.
+	it("drops the cut player from featured groups; the active player is unaffected", () => {
+		const players = [
+			{ name: "Viktor Hovland", teeTime: null, teeTimeUTC: null, status: "røk cutten" },
+			{ name: "Kristoffer Reitan", teeTime: "15:50", teeTimeUTC: "2026-07-18T13:50:00Z", status: null },
+		];
+		const active = players.filter((p) => !isOutOfTournament(p.status));
+		expect(active.map((p) => p.name)).toEqual(["Kristoffer Reitan"]);
+
+		const pgaField = { players: [
+			{ displayName: "Kristoffer Reitan", teeTime: "15:50", startingHole: 1 },
+			{ displayName: "Playing Partner", teeTime: "15:50", startingHole: 1 },
+			{ displayName: "Viktor Hovland", teeTime: "15:50", startingHole: 1 },
+		] };
+		const groups = buildFeaturedGroups(active, pgaField, null);
+		// Only Reitan gets a featured group; the cut Hovland never does.
+		expect(groups.map((g) => g.player)).toEqual(["Kristoffer Reitan"]);
+		// The cut player carries the status label and no tee time.
+		const cut = players[0];
+		expect(cut.status).toBe("røk cutten");
+		expect(cut.teeTime).toBeNull();
 	});
 });
 

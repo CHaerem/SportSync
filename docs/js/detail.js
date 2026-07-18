@@ -13,6 +13,13 @@ Object.assign(window.Dashboard.prototype, {
 		let listed = false;
 		for (const p of players) {
 			const name = p.name || p;
+			// WP-95: a player out of the tournament (cut/WD) shows their calm status
+			// verbatim — never a tee time or "i feltet" as if still playing.
+			if (p.status) {
+				add(escapeHtml(name), escapeHtml(p.status));
+				listed = true;
+				continue;
+			}
 			const g = groupFor(name);
 			const tee = p.teeTime || g?.teeTime;
 			const mates = (g?.groupmates || []).map((m) => escapeHtml(m.name || m)).join(', ');
