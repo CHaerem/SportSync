@@ -1,22 +1,25 @@
 {
-  "runAt": "2026-07-18T06:40:00Z",
+  "runAt": "2026-07-18T20:15:00Z",
   "eventsAdded": 0,
   "eventsRemoved": 0,
-  "eventsAmended": 0,
-  "trackedDelta": "Ingen entries lagt til/fjernet. Én reason korrigert: kristoffer-reitan — fra «trolig ute / kildene spriker» til «KLARTE CUTEN i The Open (par totalt, delt 50., spiller helgen)» etter uavhengig write-time fact-check mot VG som avslørte at en scout mis-leste artikkelen som «misset cut». Hovland misset cuten (uendret, korrekt).",
+  "eventsAmended": 5,
+  "trackedDelta": "Ingen entries lagt til/fjernet. Tre reasons oppdatert: karsten-warholm (DL London-seier 46,61 + expires forlenget 19. juli → 17. aug/EM), tour-de-france-2026 (etappe 14-resultat + GC etter etappe 14). Board: 5 events amendert (TdF etappe 14-resultat, TdF etappe 15 tid+GC, Warholm-resultat, VM-finale lagene, VM-bronse lagene).",
   "quality": {
     "pass": true,
-    "score": 97,
-    "failures": []
+    "score": 90,
+    "failures": [
+      "Tobias Halland Johannessens GC-plassering etter etappe 14 (~14., +16.40) er én kilde (cyclinguptodate) — ærlig flagget, ikke krysssjekket; verify avgjør.",
+      "Etappe 15s starttid (11.10 UTC) hviler på én kilde (cyclingstage.com) med et avvikende 13.20-treff avvist; korrekt utsatt til verify, ubekreftet denne kjøringen."
+    ]
   },
   "notes": [
-    "Tidlig lørdags-run ~3t etter forrige (03.45Z). Ved kjøretid (06.40 UTC) hadde INGEN av dagens events skjedd ennå (TdF etappe 14 start 11.10 UTC, Warholm DL London 13.03 UTC, F1 Belgia-kvalik 14.00 UTC, VM-bronse 21.00 UTC) → ingen resultater å skrive. Legitim rolig no-op på event-siden; eneste endring er en tracked-korreksjon.",
-    "Tre parallelle scout-subagenter (sykkel/TdF; CS2+sjakk; bred norsk sveip over golf/tennis/F1/friidrett/fotball) + egen uavhengig write-time fact-check, alle med ekte web-søk.",
-    "FACT-CHECK REDDET EN FEIL: bred-sveip-scouten hevdet Kristoffer Reitan MISSET CUTEN i The Open («+3»), men uavhengig fact-check mot VG (scoutens egen kilde) viste det MOTSATTE — Reitan KLARTE CUTEN (par totalt, delt 50., spiller lør./søn.), bekreftet av to søk. tracked-entry korrigert; The Open er statisk event så ingen board-endring, men den feilaktige «trolig ute»-formuleringen er nå rettet. En manglende/feil detalj skulle aldri nådd brukeren.",
-    "SYKKEL (re-verifisert uendret): TdF etappe 14 (Mulhouse–Le Markstein) start 11.10 UTC bekreftet (franceletour + cyclingnews); GC-linja uendret (Pogačar gult, Vingegaard +3.36, Evenepoel +4.06, Pidcock 4. +4.15, Ayuso 5. +4.22, Tobias HJ 15. +14.50; grønn Pedersen 377p, prikket Pogačar, hvit Ayuso); ingen nye norske forfall (kun Træen DNF etappe 6); Danmark Rundt 29. juli–2. aug norsk kringkaster fortsatt ikke publisert (DR/DRTV bekreftet dansk kanal), Arctic Race uendret.",
-    "CS2/SJAKK (re-verifisert uendret): 100 Thieves–Falcons R32 (Bo3) ons. 22. juli 17.30 UTC bekreftet, rain på rosteret (rain/poiii/sirah/dev1ce/Gizmy, gla1ve coach); ingen annen 100T-kamp med fast dato. Ingen ny Carlsen-turnering før EWC (Vegas-Freestyle-treff = 2025-artefakt, avvist igjen); EWC-sjakk 11.–15. aug Paris re-bekreftet; Tari ingen bekreftet event.",
-    "TENNIS/F1/FRIIDRETT/FOTBALL (re-verifisert uendret): Ruud ute av Gstaad, Montreal dato-gated (trekning 31. juli, ingen norsk kanal meldt); F1 Belgia GP normal helg — race søn. 19. 13.00 UTC + kvalik lør. 18. 14.00 UTC bekreftet mot formula1.com, ingen ESPN-fredags-mis-datering; Warholm DL London lør. 18. 13.03 UTC (NRK) bekreftet; Barça Joan Gamper vs Al Ahly 19. aug avspark-TID fortsatt offisielt TBC → holdt av tavla; TO NYE Barça-treningskamper funnet (CE Europa 24. juli + Preston 3. aug) men BEGGE for lukkede dører / ingen kringkaster → IKKE lagt til (uten «hvor kan jeg se det» = liten verdi); Lyn–Strømsgodset borte 25. juli 18.00 uendret; Liverpools PL-åpning bekreftet flyttet til borte mot Newcastle søn. 23. aug 16.30 BST (Sky) — utenfor 4-ukershorisont + PL dekkes statisk, notert for fremtidig run, ikke lagt til.",
-    "MEKANISKE SIGNALER (coverage-gaps.json 21.51Z): 3 entity-gaps, alle false positives og avvist — Premier League (overgangs-headline «Aston Villa punget ut klubbrekord»; sesongstart medio aug, ingen konkret event ennå), British Open (Hovland misset-cut-headline; The Open ligger på tavla som statisk event), Fotball-VM (finale-kommentar-headline; finalen på tavla søn. 19. juli). 0 anomalies.",
-    "validate-events.js: 49 events, 0 errors."
+    "Kveldskjøring (lør. 18. juli ~20.15Z, standard-tier Opus, ~13,5t etter forrige run 06.40Z). Dagens events var nå avgjort → resultatoppdatering + morgendagens «Nå»-linjer. To parallelle scout-subagenter (sykkel/TdF-resultat+GC; bred norsk sveip m/friidrett+F1+golf+fotball+CS2+sjakk+tennis) + egen kryssjekk, alle med ekte web-søk.",
+    "FANGET EN FEIL (recall/korrekthet): RSS-headline antydet «Halland-tvillingene på pallen» på TdF etappe 14. Sykkel-scouten krysssjekket to kilder (cyclinguptodate + Wikipedia): FALSKT/forvrengt — begge tvillingene (Tobias + Anders, Uno-X) var i dagens store brudd sammen med Carapaz, men bruddet ble hentet inn på de siste stigningene; INGEN nordmann på etappepallen. «Charmig droppet» gjelder Anthon Charmig (DANSK Uno-X-domestik), ikke et norsk resultat. Etappe-14-summary skrevet med det korrekte utfallet — et feil resultat nådde aldri tavla.",
+    "SYKKEL: TdF etappe 14 (Mulhouse–Le Markstein) FERDIG — Tadej Pogačar vant soloritt (angrep på Col du Haag), hans 4. etappeseier, foran lagkamerat Isaac del Toro (+38s, UAE-dobbel) og Paul Seixas (Decathlon) 3. GC etter etappe 14 (to kilder): Pogačar gult, Vingegaard +4.30, Evenepoel +5.04, Paul Seixas +5.19 (overtok hvit fra Ayuso), Ayuso +5.22; Tobias HJ beste nordmann ~14. (+16.40, én kilde); grønn Pedersen 397p, prikket Pogačar, hvit Seixas. Etappe-14- og etappe-15-summary oppdatert. Etappe 15 (søn. 19., neste «Nå»): board-tid 10.30 UTC var rent anslag → KORRIGERT til 11.10 UTC (13.10 CEST, cyclingstage.com; verify bekrefter mot ASO).",
+    "FRIIDRETT: Karsten Warholm VANT 400 m hekk på DL London på 46,61 — verdens beste tid i 2026 + ny stevnerekord (Emil Agyekum 2. på tysk rekord 47,45, Samba 3. på 48,10); to kilder (Diamond League offisielt). Event-summary + tracked oppdatert med seieren; tracked expires forlenget til EM (17. aug).",
+    "F1: Belgia GP kvalifisering ferdig — Kimi Antonelli pole (1:44.361), Verstappen 2.; Hamilton krasjet FP3, kvalifiserte 6.; Norris P3 men starter P13 (10-plassers gridstraff). RACET uendret søn. 19. juli 13.00 UTC (Viaplay) — tavla korrekt, ingen board-endring (kun situasjonsbilde). En Sky-side mis-konverterte tiden til «12pm UTC» (BST/UTC-feil) — korrekt er 13.00 UTC.",
+    "FOTBALL-VM: bronsefinale i kveld (21.00 UTC) = Frankrike (tapte semi mot Spania) mot England (tapte mot Argentina); FINALEN søn. 19. juli 19.00 UTC = Spania–Argentina (NRK). Begge event-summary beriket med lagene (to kilder: FIFA + NRK).",
+    "INGEN NYE EVENTS (alt re-verifisert uendret/dato-gated): The Open R3 — Sam Burns leder −10 (Fox/Si Woo Kim −8), Reitans eksakte R3-tall ikke pålitelig bekreftet (statisk event, ikke rørt; advarsel notert: et «−9/2.-plass»-tall tilhører et ANNET 2026-event, ikke Birkdale); Casper Ruud ingen ny bekreftet booking (Montreal dato-gated, trekning 31. juli); CS2 100 Thieves–Falcons ons. 22. juli 17.30 UTC uendret (kveldsscout fikk ikke uavhengig re-bekreftet tiden, men to tidligere uavhengige kilder står → beholdt high, ingen endring); ingen ny Carlsen-turnering før EWC (11.–15. aug Paris).",
+    "validate-events.js: 0 errors (46 events, 7 enriched). Grader-subagent: pass, score 90 (ingen hard-fails; svakheter = to ærlig flaggede én-kilde-detaljer som verify avgjør)."
   ]
 }
