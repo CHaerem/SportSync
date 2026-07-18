@@ -1,19 +1,8 @@
 {
-  "generatedAt": "2026-07-18T14:49:16.155Z",
-  "gapCount": 4,
+  "generatedAt": "2026-07-18T15:53:58.739Z",
+  "gapCount": 3,
   "anomalyCount": 1,
   "gaps": [
-    {
-      "kind": "entity",
-      "entity": "Premier League",
-      "type": "missing",
-      "imminent": false,
-      "headline": "Aston Villa punget ut ny klubbrekord for VM-juvel",
-      "link": "https://www.nrk.no/sport/aston-villa-punget-ut-ny-klubbrekord-for-vm-juvel-1.17961803",
-      "feed": "nrk-sport",
-      "matchCount": 1,
-      "detectedAt": "2026-07-18T14:49:15.763Z"
-    },
     {
       "kind": "entity",
       "entity": "Fotball-VM",
@@ -23,7 +12,7 @@
       "link": "https://www.nrk.no/fotballvm2026/vm-kan-ha-sendt-norske-spelarar-til-toppen-av-onskjelistene-1.17958098",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-18T14:49:15.763Z"
+      "detectedAt": "2026-07-18T15:53:58.271Z"
     },
     {
       "kind": "entity",
@@ -34,7 +23,7 @@
       "link": "https://www.nrk.no/sport/kriserunde-for-hovland-i-british-open-_-klarte-ikke-cuten-1.17961821",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-18T14:49:15.763Z"
+      "detectedAt": "2026-07-18T15:53:58.271Z"
     },
     {
       "kind": "entity",
@@ -45,7 +34,7 @@
       "link": "https://www.nrk.no/sport/formel-1_-hamilton-drama-pa-trening-_-krasjet-bilen-to-timer-for-kvalifiseringen-1.17962188",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-18T14:49:15.763Z"
+      "detectedAt": "2026-07-18T15:53:58.271Z"
     }
   ],
   "anomalies": [
@@ -54,7 +43,7 @@
       "issue": "file-empty",
       "detail": "docs/data/chess.json has no events and none on the board — source may be down or changed",
       "severity": "low",
-      "detectedAt": "2026-07-18T14:49:16.155Z"
+      "detectedAt": "2026-07-18T15:53:58.739Z"
     }
   ],
   "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board (kind entity/sport), or a tracked.json reason that claims an upcoming event the board lacks (kind tracked-claim, RSS-independent). anomalies: a fetcher's own data looks unreliable."
