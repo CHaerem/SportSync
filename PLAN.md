@@ -100,7 +100,7 @@ mennesket, aldri av en agent.
 | WP-91 | CI-nervesystemet (403/push-auth/skill-write) — beskyttede stier | 0G | – | ✅ merget (#301, eier-instruert) — rotårsak A+B: claude-code-action bytter GITHUB_TOKEN med OIDC-app-token (mangler actions:write, trekkes tilbake etter steget) ⇒ eskalering via sentinel + eget steg m/ ekte token + escalation-failed-Issue-alarm; loggcommit re-peker origin; C: skill-write-«blokkering» avlivet som vandrehistorie (denials var Bash-kall, Edit var alltid tillatt) — prompter presisert. VERIFISERES i drift: neste scout/coverage-critic/self-repair-kjøringer (ingen escalation-failed-Issue + logg-commits lander + skill-writes committes) |
 | WP-92 | Relevans-gaten (chess/esport + iOS-låssteg) | 0G | – | ⬜ |
 | WP-93 | Vaktene (grader/gap-detektor/kalibrering) | 0G | – | ⬜ |
-| WP-94 | Drifts-småplukk (kvote-gate/validate-degradering/venue/UCL) | 0G | – | 🔬 PR åpen — kvote-gate-ferskhet + validate-degradering + UCL-placeholder-regel (venue-synk er WP-93/verify.md sitt territorium, ikke med her) |
+| WP-94 | Drifts-småplukk (kvote-gate/validate-degradering/UCL) | 0G | – | ✅ merget (#303) — kvote-gate m/ fersk-henting >10min (pure functions, fail-open bevart; NB: fersk-stien er no-op i kritiske workflows til et lite BESKYTTET workflow-tillegg sender OAuth-token til gate-steget — egen mini-PR til eier); validate-degradering uten workflow-endring (in-prosess-validering før skriving, forrige gyldige data består, build-alert.json-helsesignal; fant+fikset round-trip-valideringsbug); UCL-placeholder-regel i research.md; 506 tester
 
 ---
 
