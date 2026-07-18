@@ -1206,6 +1206,48 @@ time) + entity-matching → en stille seksjon med overskrift · kilde · lenke u
 filtrert av linsen, spoiler-vernet. Tester nyhets-hypotesen på TestFlight-
 testerne uten én ny serverkomponent.
 
+## AI-ØKONOMI ved skalering (eier-dilemma 18.07.2026) · dossier-tillegg
+
+Dagens løkker kjører på eierens Claude Max-abonnement (kontobred kvote, delt
+med interaktiv bruk — auditens røde vinduer var delvis FORÅRSAKET av eierens
+egen utviklingsaktivitet). Omforent analyse:
+
+**Den avgjørende egenskapen er allerede bygget: kost skalerer med DEKNING,
+ikke BRUKERE.** Research/verify/editorial produserer én delt verdens-sannhet
+(events/news) som alle brukere konsumerer likt; personalisering skjer klient-
+side (linsen) til null marginal AI-kost. Marginal bruker ≈ 0 kr. Det som
+koster er dekningsbredde (sporter × kilder × ferskhet) — og inntekt skalerer
+med brukere. Unit-økonomien fungerer PRESIS fordi arkitekturen er to-lags.
+
+**Det som faktisk er 1-bruker-formet i dag** (og må re-formes ved
+kommersialisering):
+1. **Deknings-MÅLET:** interests.json definerer hva research jakter på.
+   Kommersielt: aggregert etterspørselsmodell — kjernekatalog (toppligaer/
+   -sporter, dekket av billige statiske kilder) + langhale utløst av samlet
+   brukerbehov (WP-23 gap-voting er allerede skissen).
+2. **Editorial:** én personlig brief i dag. Løses av VISJON v3-modellen:
+   server destillerer entity-taggede fakta ÉN gang, klienten komponerer den
+   personlige briefen lokalt.
+3. **Coverage-critic/scout:** dømmer mot én persons interesser → dømmer mot
+   etterspørselsmodellen i stedet. Governance-løkkene (self-repair/ui-fix/
+   improve/visual-qa) er bruker-uavhengige fastkostnader — uendret.
+
+**Migrasjonssti (abonnement → API):**
+- **Fase A (nå, hobby):** Max + kvote-governoren — riktig som det er.
+- **Fase B (TestFlight):** SPLITT tokens — pipeline-løkkene over på API-nøkkel
+  (ToS-rent, forutsigbart, uavhengig av eierens interaktive bruk) med hard
+  budsjett-cap + per-løkke kost-telemetri (utvid usage-monitor); dev forblir
+  på Max. Dette fjerner også «eieren jobber mye ⇒ motoren stopper»-koblingen.
+- **Fase C (lansering, WP-21):** serverless cron + batch-API (50 % rabatt på
+  ikke-hastende research/verify-sveip), prompt-caching, formalisert modell-
+  tiering per løkke (scout er alt Haiku; mer av dette).
+
+**Kost-disiplinen som monner mest:** ukens gjennomgående lærdom — **AI
+oppdager, KODE håndhever.** Hver løkke som mekaniseres (WP-90: verify fant
+golf-buggen 5×, fiksen var kode; WP-93: vaktene ble deterministiske sjekker)
+er kvote frigjort permanent. Prinsipp: en AI-løkke som gjentar samme funn ≥3×
+skal produsere en kode-/skjema-endring, ikke flere AI-kjøringer.
+
 ## FASE 1 · Norge-lansering (Q4 2026, dossier P400/P500) — skisse
 
 - **WP-20 · Kildemigrering til primærkilder** (P400 regel #1): erstatt tvkampen-scraperen
