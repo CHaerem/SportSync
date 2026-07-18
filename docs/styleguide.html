@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="Sportivista sin levende stilguide — tokens og kjernekomponenter, rendret med de ekte stilarkene.">
+	<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+	<meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)">
+	<link rel="icon" type="image/png" href="favicon.png">
+	<title>Sportivista · Stilguide</title>
+	<!-- Apply the chosen theme before paint (no flash of wrong theme); js/theme.js owns the toggle
+	     — same pre-paint snippet as index.html/activity.html/rediger.html. -->
+	<script>try { var t = localStorage.getItem('ss-theme'); if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t; } catch (e) {}</script>
+	<!-- The real stylesheets — no duplicated tokens or component CSS. Every swatch
+	     and component below is rendered with these files, unmodified. -->
+	<link rel="stylesheet" href="css/base.css">
+	<link rel="stylesheet" href="css/layout.css">
+	<link rel="stylesheet" href="css/cards.css">
+	<style>
+		/* Styleguide-only chrome (page layout for this page alone — not design
+		   tokens; every colour below is a var(--x) from base.css, never a literal). */
+		.sg-intro { color: var(--fg-2); font-size: 0.95rem; line-height: 1.6; max-width: 62ch; margin: 0 0 8px; }
+		.sg-intro code { font-family: var(--font); background: color-mix(in srgb, var(--fg) 8%, transparent); padding: 1px 5px; border-radius: 4px; font-size: 0.92em; }
+		.sg-links { color: var(--fg-3); font-size: 0.85rem; margin: 0 0 40px; line-height: 1.7; }
+		.sg-links a { color: var(--accent); }
+		.sg-section { margin: 0 0 52px; }
+		.sg-section > h2 {
+			font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;
+			color: var(--accent); font-weight: 700; margin: 0 0 6px;
+			padding-bottom: 8px; border-bottom: 1px solid var(--line);
+		}
+		.sg-section > p.sg-note { color: var(--fg-3); font-size: 0.82rem; font-style: italic; margin: 0 0 18px; line-height: 1.5; }
+
+		/* Colour swatches */
+		.sg-swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+		.sg-swatch { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+		.sg-swatch-fill { height: 56px; }
+		.sg-swatch-info { padding: 8px 10px; }
+		.sg-swatch-name { font-size: 0.82rem; color: var(--fg); font-weight: 600; }
+		.sg-swatch-role { font-size: 0.72rem; color: var(--fg-2); margin-top: 1px; }
+		.sg-swatch-hex { font-size: 0.72rem; color: var(--fg-3); margin-top: 4px; font-variant-numeric: tabular-nums; }
+		.sg-swatch-hex .sg-live-value { color: var(--fg-2); }
+		.sg-swatch.sg-na { opacity: 0.55; }
+		.sg-swatch.sg-na .sg-swatch-hex::after { content: " · ikke i bruk på web"; }
+
+		/* Typography scale table */
+		.sg-type-row { display: grid; grid-template-columns: 150px 1fr; gap: 18px; align-items: baseline; padding: 14px 0; border-bottom: 1px solid var(--line); }
+		.sg-type-row:last-child { border-bottom: none; }
+		.sg-type-label { font-size: 0.78rem; color: var(--fg-3); text-transform: uppercase; letter-spacing: 0.05em; }
+		.sg-type-sample { min-width: 0; }
+		.sg-type-meta { display: block; font-size: 0.72rem; color: var(--fg-3); margin-top: 4px; font-style: italic; }
+
+		/* Spacing scale */
+		.sg-space-row { display: flex; align-items: center; gap: 14px; margin: 10px 0; }
+		.sg-space-box { background: var(--accent); height: 14px; }
+		.sg-space-label { font-size: 0.8rem; color: var(--fg-2); font-variant-numeric: tabular-nums; width: 130px; }
+
+		/* Brand */
+		.sg-brand-row { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; margin-bottom: 18px; }
+		.sg-icon-demo { width: 72px; height: 72px; border-radius: 16px; }
+		.sg-wordmark-demo { font-size: 34px; }
+
+		/* Buttons / "no pills" */
+		.sg-btn-row { display: flex; gap: 22px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+
+		.sg-code { display: block; white-space: pre-wrap; font-family: var(--font); font-size: 0.78rem; color: var(--fg-2); background: color-mix(in srgb, var(--fg) 6%, transparent); border-radius: 8px; padding: 12px 14px; overflow-x: auto; }
+	</style>
+</head>
+<body>
+	<header class="masthead">
+		<div class="wrap masthead-inner">
+			<div class="mast-row mast-row-top">
+				<span class="wordmark-lockup"><span class="wordmark">Sportivista</span><span class="wordmark-colon" aria-hidden="true">:</span></span>
+				<button class="theme-toggle" id="theme-toggle" title="Bytt tema (system / mørk / lys)" aria-label="Bytt tema">◐</button>
+			</div>
+			<div class="mast-row mast-row-sub">
+				<p class="mast-date">Stilguide</p>
+			</div>
+		</div>
+	</header>
+
+	<main class="wrap">
+		<p class="sg-intro">
+			Denne siden er et arbeidsverktøy, ikke en produktflate: tokens og
+			kjernekomponenter rendret med de ekte stilarkene (<code>css/base.css</code>,
+			<code>css/layout.css</code>, <code>css/cards.css</code>) — ingen duplisert
+			CSS. Fargeverdiene under er lest live fra CSS-variablene (bytt tema med
+			◐-knappen for å se begge). <code>design/tokens.json</code> er den
+			maskinlesbare fasiten som binder denne siden, <code>DESIGN.md</code> og
+			<code>ios/Sportivista/DesignTokens.swift</code> sammen — se
+			<code>tests/design-tokens.test.js</code>.
+		</p>
+		<p class="sg-links">
+			Referanse:
+			<a href="https://github.com/CHaerem/sportivista/blob/main/DESIGN.md">DESIGN.md</a> ·
+			<a href="https://github.com/CHaerem/sportivista/blob/main/design/tokens.json">design/tokens.json</a> ·
+			<a href="https://github.com/CHaerem/sportivista/blob/main/design/brand/BRAND.md">design/brand/BRAND.md</a> ·
+			<a href="https://github.com/CHaerem/sportivista/blob/main/design/brand/kolonet.svg">kolonet.svg</a>
+		</p>
+
+		<!-- ── Farger ──────────────────────────────────────────────────────── -->
+		<section class="sg-section">
+			<h2>Farger</h2>
+			<p class="sg-note">Verdiene byttes med temaet — trykk ◐ i toppen. Nøytraler er Apple-systemfarger på iOS; her er de web sine <code>base.css</code>-egenverdier.</p>
+			<div class="sg-swatches" id="sg-swatches"></div>
+		</section>
+
+		<!-- ── Typografi ───────────────────────────────────────────────────── -->
+		<section class="sg-section">
+			<h2>Typografi</h2>
+			<p class="sg-note">Systemfont-stack overalt (San Francisco-familien), tabulære siffer i tidskolonnen. iOS binder hver rolle til en Dynamic Type-tekststil; web-verdiene under er de faktiske <code>font-size</code>-ene i CSS-en (se <code>design/tokens.json</code> for avvik mot DESIGN.md sin prosa-tabell).</p>
+
+			<div class="sg-type-row">
+				<span class="sg-type-label">Stor tittel</span>
+				<div class="sg-type-sample">
+					<span class="wordmark-lockup"><span class="wordmark">Sportivista</span><span class="wordmark-colon" aria-hidden="true">:</span></span>
+					<span class="sg-type-meta">.wordmark — 26px/700 · iOS <code>.largeTitle</code> bold (dokumentert avvik i design/tokens.json — masthead er tunet ned fra DESIGN.md sin 2.125rem)</span>
+				</div>
+			</div>
+			<div class="sg-type-row">
+				<span class="sg-type-label">Seksjonstittel</span>
+				<div class="sg-type-sample">
+					<span style="font-size:16px; font-weight:600;">Eksempel seksjonstittel</span>
+					<span class="sg-type-meta">Ingen egen web-klasse i dag (ingen nestede seksjoner i én-kolonne agendaen) — iOS <code>.headline</code>. Vist her som ren stil, 1.0rem semibold.</span>
+				</div>
+			</div>
+			<div class="sg-type-row">
+				<span class="sg-type-label">Radtittel</span>
+				<div class="sg-type-sample">
+					<span class="ev-title">Manchester United – Liverpool</span>
+					<span class="sg-type-meta">.ev-title — 16px/400 · iOS <code>.body</code></span>
+				</div>
+			</div>
+			<div class="sg-type-row">
+				<span class="sg-type-label">Tid (rad)</span>
+				<div class="sg-type-sample">
+					<span class="ev-time">20:00</span>
+					<span class="sg-type-meta">.ev-time — 16px/600, tabular-nums · iOS <code>.body</code> semibold + <code>monospacedDigit</code></span>
+				</div>
+			</div>
+			<div class="sg-type-row">
+				<span class="sg-type-label">Meta / kanal</span>
+				<div class="sg-type-sample">
+					<span class="ev-meta">Premier League<span class="ev-sep"> · </span><span class="ev-where">TV 2 Sport</span></span>
+					<span class="sg-type-meta">.ev-meta — 14px, --fg-2 · iOS <code>.subheadline</code>, secondaryLabel</span>
+				</div>
+			</div>
+			<div class="sg-type-row">
+				<span class="sg-type-label">Gruppeoverskrift</span>
+				<div class="sg-type-sample">
+					<p class="day-name" style="margin:0;">I DAG</p>
+					<span class="sg-type-meta">.day-name — 13px/700 uppercase, amber (én av de fem godkjente amber-bruken) · iOS <code>.footnote</code> uppercase, secondaryLabel</span>
+				</div>
+			</div>
+			<div class="sg-type-row">
+				<span class="sg-type-label">Caption</span>
+				<div class="sg-type-sample">
+					<span class="ev-status">Utsatt</span>
+					<span class="sg-type-meta">.ev-status / .ev-done — 12px · iOS <code>.caption</code></span>
+				</div>
+			</div>
+		</section>
+
+		<!-- ── Rytme ───────────────────────────────────────────────────────── -->
+		<section class="sg-section">
+			<h2>Rytme &amp; layout</h2>
+			<p class="sg-note">8pt-basisgrid (4pt finjustering) — se <code>ios/Sportivista/DesignTokens.swift</code> SportivistaSpacing + <code>design/tokens.json</code>.</p>
+			<div id="sg-spacing"></div>
+			<p class="sg-note" style="margin-top:14px;">Én lesekolonne, maks <strong style="color:var(--fg-2)">640px</strong>, sentrert (<code>--max-w</code>) · fast tidskolonne <strong style="color:var(--fg-2)">120px</strong> (<code>--time-col</code>, 112px på smale skjermer) · kort-hjørne <strong style="color:var(--fg-2)">12px</strong> · minste tapp-mål <strong style="color:var(--fg-2)">44px</strong>.</p>
+		</section>
+
+		<!-- ── Merkelås ────────────────────────────────────────────────────── -->
+		<section class="sg-section">
+			<h2>Merkelåsen — kolonet</h2>
+			<p class="sg-note">Full spek i <a href="https://github.com/CHaerem/sportivista/blob/main/design/brand/BRAND.md">design/brand/BRAND.md</a>. Kildevektor: <code>design/brand/kolonet.svg</code> — to amber sirkler, radius 118 / avstand 168 på 1024-rammen.</p>
+			<div class="sg-brand-row">
+				<img class="sg-icon-demo" src="icons/icon-512x512.png" alt="Sportivista-ikonet: to amber prikker vertikalt (kolonet) på sort bakgrunn" width="72" height="72">
+				<span class="wordmark-lockup sg-wordmark-demo"><span class="wordmark">Sportivista</span><span class="wordmark-colon" aria-hidden="true">:</span></span>
+			</div>
+			<p class="sg-note">Wordmark + kolon: null mellomrom (<code>.wordmark-lockup</code>), kolonet ett hakk tyngre enn ordmerket (iOS: bold ordmerke + heavy kolon), én tilgjengelighets-etikett («Sportivista»). På web er HELE ordmerket amber (én av de fem godkjente amber-bruken i <code>base.css</code>); på iOS/widget er kun kolonet amber — et dokumentert, bevisst avvik mellom flatene (se BRAND.md).</p>
+		</section>
+
+		<!-- ── Knapper / "ingen pills" ─────────────────────────────────────── -->
+		<section class="sg-section">
+			<h2>Knapper &amp; tagger — ingen pills</h2>
+			<p class="sg-note">DESIGN.md sin forbudsliste utelukker pills/badges. Handlinger er flat tekst med hover-understrek mot amber; tagger er en punktseparert linje, aldri chips.</p>
+			<div class="sg-btn-row">
+				<button class="theme-toggle" style="margin-left:0;" aria-label="Eksempel tema-knapp">◐ tema</button>
+				<button class="ev-act">Følg</button>
+				<button class="ev-act">Demp</button>
+				<button class="agenda-more" style="margin:0; display:inline-block;">Vis resten →</button>
+			</div>
+			<p class="chips-row" style="margin:0;">
+				<span class="chip-follow">Eliteserien</span><span class="chip-follow">Formel 1</span><span class="chip-follow">Sjakk-VM</span>
+			</p>
+		</section>
+
+		<!-- ── Agenda-rad-anatomi ──────────────────────────────────────────── -->
+		<section class="sg-section">
+			<h2>Agenda-rad-anatomi</h2>
+			<p class="sg-note">Nøyaktig samme DOM som <code>docs/js/dashboard.js</code> sin <code>eventRow()</code> bygger — kopiert her, ikke en tilnærming. Ærlighet: ukjent kanal viser et rolig «–», aldri en påstand.</p>
+
+			<div class="day">
+				<p class="day-name">I DAG</p>
+
+				<div class="ev-wrap">
+					<div class="ev must expandable" role="button" tabindex="0" aria-expanded="false">
+						<span class="ev-dot" aria-hidden="true"></span>
+						<span class="ev-time">18:00</span>
+						<span class="ev-main"><span class="ev-title">Norge – Sverige</span><span class="ev-meta">Nations League<span class="ev-sep"> · </span><span class="ev-where"><a href="#" onclick="return false;">TV 2 Play</a></span></span></span>
+						<span class="ev-info" aria-label="Funnet av AI — trykk for kilder">ⓘ</span>
+					</div>
+					<div class="ev-detail" hidden></div>
+				</div>
+
+				<div class="ev-wrap">
+					<div class="ev">
+						<span></span>
+						<span class="ev-time">20:45</span>
+						<span class="ev-main"><span class="ev-title">Bodø/Glimt – Molde</span><span class="ev-meta">Eliteserien<span class="ev-sep"> · </span><span class="ev-where unknown">–</span></span></span>
+						<span></span>
+					</div>
+					<div class="ev-detail" hidden></div>
+				</div>
+
+				<div class="ev-wrap">
+					<div class="ev cancelled">
+						<span></span>
+						<span class="ev-time">14:00</span>
+						<span class="ev-main"><span class="ev-title">Rosenborg – Brann</span><span class="ev-meta">Eliteserien<span class="ev-sep"> · </span><span class="ev-status">Utsatt</span></span></span>
+						<span></span>
+					</div>
+					<div class="ev-detail" hidden></div>
+				</div>
+
+				<div class="ev-wrap">
+					<div class="ev">
+						<span class="ev-dot" aria-hidden="true"></span>
+						<span class="ev-time">Pågår</span>
+						<span class="ev-main"><span class="ev-title">Viktor Hovland — The Open</span><span class="ev-meta">Runde 3<span class="ev-sep"> · </span><span class="ev-where ev-live">−4 (t14)</span></span></span>
+						<span></span>
+					</div>
+					<div class="ev-detail" hidden></div>
+				</div>
+			</div>
+
+			<p class="sg-note" style="margin-top:18px;">[• amber] — «must-see»: favoritt / viktighet ≥ 4 / norsk. Aldri en emoji, aldri en stripe eller kort — kun prikken.</p>
+		</section>
+	</main>
+
+	<footer class="site-footer wrap">
+		<span>Sportivista · stilguide</span>
+		<a href="index.html">Tilbake til agendaen</a>
+	</footer>
+
+	<script src="js/theme.js"></script>
+	<script>
+		// Colour swatches — read the REAL computed CSS custom-property values
+		// (getComputedStyle), never a hardcoded hex, so this page cannot drift
+		// silently from base.css. Re-renders whenever the theme changes (the
+		// toggle button, or the OS-level prefers-color-scheme).
+		const SWATCHES = [
+			{ cssVar: '--bg', name: 'background / groupedBackground', role: 'sideflate' },
+			{ cssVar: '--surface', name: 'cell', role: 'liste-/kort-flate' },
+			{ cssVar: '--fg', name: 'label', role: 'primærtekst' },
+			{ cssVar: '--fg-2', name: 'secondaryLabel', role: 'meta/kanal/dempet' },
+			{ cssVar: '--fg-3', name: 'tertiaryLabel', role: 'fainter (ikke i DESIGN.md-tabellen ennå — se tokens.json)' },
+			{ cssVar: '--line', name: 'separator', role: 'hårlinje/skille' },
+			{ cssVar: '--accent', name: 'accent', role: 'ENESTE aksent (amber)' },
+			{ cssVar: '--accent-ink', name: 'accentInk', role: 'tekst på amber-flate (web-only)' },
+			{ cssVar: '--live', name: 'live / good', role: 'direkte / positiv' },
+		];
+
+		function renderSwatches() {
+			const cs = getComputedStyle(document.documentElement);
+			const el = document.getElementById('sg-swatches');
+			el.innerHTML = SWATCHES.map((s) => {
+				const value = cs.getPropertyValue(s.cssVar).trim();
+				return `<div class="sg-swatch">
+					<div class="sg-swatch-fill" style="background:var(${s.cssVar});"></div>
+					<div class="sg-swatch-info">
+						<div class="sg-swatch-name">${s.cssVar}</div>
+						<div class="sg-swatch-role">${s.role}</div>
+						<div class="sg-swatch-hex"><span class="sg-live-value">${value}</span></div>
+					</div>
+				</div>`;
+			}).join('') + `
+				<div class="sg-swatch sg-na">
+					<div class="sg-swatch-fill" style="background:#2C2C2E;"></div>
+					<div class="sg-swatch-info">
+						<div class="sg-swatch-name">cell2</div>
+						<div class="sg-swatch-role">nøstet/hevet flate</div>
+						<div class="sg-swatch-hex">#2C2C2E / #FFFFFF</div>
+					</div>
+				</div>
+				<div class="sg-swatch sg-na">
+					<div class="sg-swatch-fill" style="background:#FF453A;"></div>
+					<div class="sg-swatch-info">
+						<div class="sg-swatch-name">destructive</div>
+						<div class="sg-swatch-role">slett/nullstill</div>
+						<div class="sg-swatch-hex">#FF453A / #FF3B30</div>
+					</div>
+				</div>`;
+		}
+
+		// Spacing scale — px values verbatim from design/tokens.json / SportivistaSpacing.
+		const SPACING = [
+			{ label: 'xs', px: 4 }, { label: 's', px: 8 }, { label: 'm', px: 12 },
+			{ label: 'l', px: 16 }, { label: 'xl', px: 24 }, { label: 'xxl', px: 32 },
+			{ label: 'day-group (web)', px: 28 },
+		];
+		function renderSpacing() {
+			document.getElementById('sg-spacing').innerHTML = SPACING.map((s) =>
+				`<div class="sg-space-row"><span class="sg-space-label">${s.label} — ${s.px}px</span><span class="sg-space-box" style="width:${s.px * 3}px;"></span></div>`
+			).join('');
+		}
+
+		renderSwatches();
+		renderSpacing();
+		// Re-render swatches after any theme change: the toggle mutates
+		// document.documentElement.dataset.theme, so watch that attribute.
+		new MutationObserver(renderSwatches).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+		window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', renderSwatches);
+	</script>
+</body>
+</html>

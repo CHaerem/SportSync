@@ -1,5 +1,5 @@
 // Zenji v2 Service Worker — fresh data always, network-first shell
-const CACHE_NAME = 'sportivista-v1-3';
+const CACHE_NAME = 'sportivista-v1-4';
 const DATA_PATH_FRAGMENT = '/data/';
 
 const SHELL_FILES = [
@@ -23,7 +23,8 @@ const SHELL_FILES = [
     '/js/chrome.js',
     '/rediger.html',
     '/js/edit.js',
-    '/activity.html'
+    '/activity.html',
+    '/styleguide.html'
 ];
 
 self.addEventListener('install', (event) => {

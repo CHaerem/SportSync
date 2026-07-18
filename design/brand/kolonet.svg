@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+	<!--
+	  Sportivista — kolonet ("the little colon"), the brand mark.
+
+	  Two amber (#FFB000) filled circles, stacked vertically on transparent —
+	  the colon in "18:00", echoing the calm agenda's when·what·where. This is
+	  the SOURCE VECTOR: geometry-only, no background, no text. Composed with
+	  the "SPORTIVISTA" wordmark as a colon glyph (docs/css/layout.css
+	  .wordmark-colon), and rendered onto an opaque background at fixed sizes
+	  by design/brand/generate-icons.swift for the app icon + favicon/PWA set.
+
+	  Geometry (1024×1024 reference frame, verified against the shipped
+	  ios/Sportivista/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png):
+	    - both circles centered on x = 512 (canvas center)
+	    - radius = 118
+	    - vertical gap between the two circles (edge to edge) = 168
+	    - centered as a pair on y = 512 → top circle cy = 310, bottom circle cy = 714
+	  generate-icons.swift computes every size as a fraction of these four
+	  numbers (radius/1024, gap/1024) so every export stays proportional.
+	-->
+	<circle cx="512" cy="310" r="118" fill="#FFB000"/>
+	<circle cx="512" cy="714" r="118" fill="#FFB000"/>
+</svg>
