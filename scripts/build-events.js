@@ -5,7 +5,7 @@ import crypto from "crypto";
 import { readJsonIfExists, rootDataPath, MS_PER_DAY, matchInterest, mustWatchEntity, normalizeParticipants, normalizeNorwegianPlayers, normalizeText, containsName, entityTerms } from "./lib/helpers.js";
 import { resolveStreaming } from "./lib/norwegian-rights.js";
 import { writeManifest } from "./build-manifest.js";
-import { readIosCommit, buildAppVersion } from "./lib/app-version.js";
+import { readIosCommit, buildAppVersion, readTestflight } from "./lib/app-version.js";
 import { fileURLToPath } from "url";
 import { writeEntities } from "./build-entities.js";
 import { validateEvents, loadEventSchema } from "./validate-events.js";
@@ -738,10 +738,13 @@ for (const name of ["tracked.json", "catalog.json"]) {
 
 // Publish app-version.json — the short hash of the last commit touching
 // ios/ — so a sideloaded build can tell whether it is stale (it compares its
-// build-time stamp against this; the manifest sync delivers the file). Runs
-// before writeManifest so the manifest covers it. Skipped gracefully when
-// git/history is unavailable.
-const appVersion = buildAppVersion(readIosCommit(fileURLToPath(new URL("..", import.meta.url))));
+// build-time stamp against this; the manifest sync delivers the file). Since
+// WP-17 it also carries the last recorded TestFlight upload (testflight.json)
+// so TestFlight installs judge against the newest SHIPPABLE build, not the
+// newest commit. Runs before writeManifest so the manifest covers it.
+// Skipped gracefully when git/history is unavailable.
+const repoRoot = fileURLToPath(new URL("..", import.meta.url));
+const appVersion = buildAppVersion(readIosCommit(repoRoot), readTestflight(repoRoot));
 if (appVersion) {
 	fs.writeFileSync(path.join(dataDir, "app-version.json"), JSON.stringify(appVersion, null, 2) + "\n");
 	console.log(`Published app-version.json (ios @ ${appVersion.iosCommit}).`);

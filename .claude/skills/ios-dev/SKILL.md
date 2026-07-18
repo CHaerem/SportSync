@@ -104,6 +104,17 @@ xcodebuild -exportArchive -archivePath <path>.xcarchive \
   multitasking-kravet om alle fire orienteringer i App Store-valideringen.
 - `ITSAppUsesNonExemptEncryption: false` ligger i begge app-Info.plists så
   bygg slipper compliance-spørsmålet og blir tilgjengelige umiddelbart.
+- **Opplastings-ritualet (rekkefølgen er kontrakten):** (1) bump
+  `CURRENT_PROJECT_VERSION` i project.yml (hver opplasting trenger nytt
+  byggnummer — NB: `CFBundleVersion`/`CFBundleShortVersionString` i
+  info.properties MÅ referere `$(CURRENT_PROJECT_VERSION)`/`$(MARKETING_VERSION)`;
+  XcodeGen baker ellers bokstavelig «1» og opplastingen avvises som duplikat),
+  (2) commit så ios/-treet er RENT (dirty tre gir `-dirty`-stempel som aldri
+  matcher), (3) arkiver + last opp, (4) `node scripts/record-testflight.js
+  <bygg> <versjon>` + commit — skriver scripts/config/testflight.json (utenfor
+  ios/ med vilje), som build-events folder inn i app-version.json slik at
+  TestFlight-bygg dømmes mot siste OPPLASTING, ikke siste commit («SISTE»-
+  logikken i AppVersionCheck godtar begge).
 
 - **Kabel slår wifi:** `tunnelState: unavailable` i `devicectl device info
   details` betyr at trådløs-tunnelen ikke står — plugg kabel i stedet for å
