@@ -1278,6 +1278,42 @@ kommersialisering):
   ikke-hastende research/verify-sveip), prompt-caching, formalisert modell-
   tiering per løkke (scout er alt Haiku; mer av dette).
 
+
+**MÅLT KOST (18.07.2026, faktiske `total_cost_usd` fra kjøre-logger × kjøringer/uke):**
+
+| Løkke | $/kjøring | Kjøringer/uke | $/uke |
+|---|---|---|---|
+| research (Opus) | 2,59 | 45 | ~117 |
+| self-repair (Opus) | 4,00 | 8 | ~32 |
+| ui-fix (Opus, est.) | ~3 | 8 | ~24 |
+| coverage-critic (Opus) | 2,55 | 8 | ~20 |
+| editorial (Opus) | 1,17 | 15 | ~18 |
+| verify (Opus) | 2,13 | 8 | ~17 |
+| scout (Haiku) | 0,10 | 72 | ~7 |
+| visual-qa (Sonnet) | 0,84 | 8 | ~7 |
+| improve (Opus, est.) | ~4 | 1 | ~4 |
+| **SUM** | | ~173 | **~246 $/uke ≈ 1 050 $/mnd** |
+
+(Enkelt-kjøring-samples → varians; listepris-ekvivalent.) Dvs.: løkkene brenner
+i dag ~10–11 000 kr/mnd i API-ekvivalent innenfor Max-abonnementet — derfor
+kvote-presset. Rå API-bytte ved dagens scope ≈ 1 050 $/mnd; INGENIØRERT
+API-kost (batch-API −50 % på verify/critic/sveip, prompt-caching, tiering ned
+der korrekthet tåler det, redusert research-kadens i lavsesong, AI→kode-
+krymping) realistisk **300–500 $/mnd**. FASE 2-kalibrering: ~100–200
+Pro-abonnenter à 59 kr dekker ingeniørert kost — unit-økonomien holder.
+
+**VENDOR-AGNOSTISME (eier-bekymring 18.07):** Porteringsprinsippet (CLAUDE.md)
+står: lock-in er BEGRENSET til workflow-filene (runneren); promptene er
+kapabilitets-beskrevet; iOS-assistenten er bak `InterestAssistant`-protokollen
+(og er Apple FM, ikke Anthropic). Strategi: **billig exit fremfor multi-vendor
+nå** — (1) promptene holdes kapabilitets-beskrevet (håndhevet vane), (2) ved
+Fase B rutes API-kall gjennom tynn gateway (LiteLLM-klasse) slik at leverandør
+= konfig, (3) løkke-evals (research-rubrikken er én; tilsvarende for verify)
+gjør modell-/leverandørbytte MÅLBART i stedet for vibes (FM-eval-mønsteret fra
+iOS), (4) «AI oppdager, kode håndhever» krymper eksponeringen strukturelt.
+Ærlig motvekt: korrekthetsløftet avhenger av frontier-kvalitet — ikke bytt
+produktkvalitet mot teoretisk portabilitet; hold exiten billig i stedet.
+
 **Kost-disiplinen som monner mest:** ukens gjennomgående lærdom — **AI
 oppdager, KODE håndhever.** Hver løkke som mekaniseres (WP-90: verify fant
 golf-buggen 5×, fiksen var kode; WP-93: vaktene ble deterministiske sjekker)
