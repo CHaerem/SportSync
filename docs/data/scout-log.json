@@ -1,5 +1,11 @@
 [
   {
+    "runAt": "2026-07-18T12:34:09.038Z",
+    "verdict": "quiet",
+    "reason": "RSS: transfer gossip (Klopp, VM-helter), past-tense results (Wærenskjold Uno-X renewal, Tour/British Open stage updates), VM commentary. Coverage gaps: Premier League/British Open/Fotball-VM (all past-tense result/transfer context, not schedule-impacting). Chess anomaly expected post-championship. No schedule changes, broadcaster announcements, or new upcoming events detected.",
+    "signals": []
+  },
+  {
     "runAt": "2026-07-11T07:15:00.000Z",
     "verdict": "quiet",
     "reason": "RSS: World Cup build-up (Norway-England quarter-final Saturday—already tracked, no changes), Tour de France stage results (Wærenskjold podium—past tense), transfer news, VM commentary. Coverage gaps: Uno-X (result headline, not a future event), chess anomaly (expected). No schedule changes, broadcaster announcements, or new upcoming events detected.",
@@ -591,18 +597,6 @@
     "runAt": "2026-07-18T07:16:49.412Z",
     "verdict": "quiet",
     "reason": "RSS: past-tense results (F1 Belgian GP practice sessions, Tour stage 13, British Open R2, Fotball-VM final commentary), transfer gossip (Ødegaard property, Bowen-West Ham, Aston Villa signing), player contracts (Liverpool, Lillestrøm). Coverage gaps: Premier League (transfer signing news), British Open (R2 result—ongoing event), Fotball-VM (final already tracked). No schedule changes, broadcaster announcements, new concrete upcoming events, or 100 Thieves CS2 match hints. Escalation cap: 0/2 today.",
-    "signals": []
-  },
-  {
-    "runAt": "2026-07-18T09:15:00.000Z",
-    "verdict": "quiet",
-    "reason": "RSS: post-World Cup aftermath (Warholm interviews, Transfer signings—Liverpool/Lillestrøm contracts, Aston Villa signing), F1 Belgian GP practice (tracked race, no changes), Tour stage 13, British Open R2, Fotball-VM final coverage. Coverage gaps: three low-severity entity mentions (Premier League transfer news, British Open R2 result—ongoing event, Fotball-VM—final already tracked). All items past-tense or commentary; no schedule changes, broadcaster announcements, new concrete upcoming events, or 100 Thieves CS2 match hints. Escalation cap: 0/2 today.",
-    "signals": []
-  },
-  {
-    "runAt": "2026-07-18T10:40:00.000Z",
-    "verdict": "quiet",
-    "reason": "RSS: transfer news (Aston Villa signing, contract renewals), past-tense reporting (Tour de France stage results, World Cup analysis), F1 Belgian GP practice (tracked race, no changes), British Open/golf ongoing. Coverage gaps: three low-severity mentions (Premier League—transfer gossip not an event, British Open—R2 already tracked as ongoing, Fotball-VM—final already tracked). Chess anomaly is mechanical/expected. No schedule changes, broadcaster announcements, new concrete upcoming events, or 100 Thieves CS2 match hints. Escalation cap: 0/2 today.",
     "signals": []
   }
 ]
