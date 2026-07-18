@@ -96,6 +96,11 @@ mennesket, aldri av en agent.
 | WP-83 | Navigasjon (NavigationStack) + Deg-skjerm | 0F | WP-81,WP-82 | ✅ merget (#293; samlet bølge-3-verif. grønn m/ #292) — agenda i `NavigationStack` + `gearshape`→Deg; v2-header-glyfer (`»_`/`◐`/klokke) fjernet; hjelperens resultat = native `.sheet` (detents); `AssistantPanel` slanket til samtale/resultat; ny `Profile/DegView.swift` re-hjemmer profil/minne/forsto-ikke/del/varsel/tema/nullstill/eval; alle 4 schemes bygger, 529 unit + 13/13 vektorer bit-like, UI-flyter (Deg-nav/tema/reset/sheet) grønne |
 | WP-84 | Widget token-paritet (web utsatt) | 0F | WP-80 | ✅ widget merget (#294) — WidgetKit av `zenjiMono`-shimen + deprecated farge-aliaser, over på `Font.zenji`/`zenjiTabular` + semantiske tokens; alle 4 schemes bygger, 529 unit. **Web-delen (`docs/css` + `theme.js`) utsatt til rebrandingen** (eierbeslutning 17.07 — web reskin'es uansett da) |
 | WP-85 | Baseline-designsystem + HIG-gate (promoter DESIGN.md) | 0F | WP-80,WP-81,WP-82,WP-83,WP-84 | ✅ merget (#295) — 105 font + 121 farge-kall migrert over de 4 siste filene, `zenjiMono`-shim + aliaser fjernet (null treff), HIG-gate `tests/ios-dynamic-type-gate.test.js` (dekker Zenji+ZenjiWidget), `DESIGN-BASELINE.md`→`DESIGN.md` promotert. Fable 5-sluttreview: KLAR (F1–F3 fikset i PR). Samlet verif.: npm+gate, 4 schemes, 526 unit + 12 UI + 13/13 vektorer |
+| WP-90 | Kanal-korrekthets-kjeden (golf/carry-forward/skill) | 0G | – | ⬜ |
+| WP-91 | CI-nervesystemet (403/push-auth/skill-write) — beskyttede stier | 0G | – | ⬜ |
+| WP-92 | Relevans-gaten (chess/esport + iOS-låssteg) | 0G | – | ⬜ |
+| WP-93 | Vaktene (grader/gap-detektor/kalibrering) | 0G | – | ⬜ |
+| WP-94 | Drifts-småplukk (kvote-gate/validate-degradering/venue/UCL) | 0G | – | ⬜ |
 
 ---
 
@@ -858,6 +863,107 @@ eval-rapport er fasiten for alle:
   «varsler»-type kollisjon (fikset enkeltvis 16.07).
 
 ---
+
+## FASE 0G · Motor-herding før TestFlight (audit 18.07.2026) — ⬜ PLANLAGT
+
+Bakgrunn: eier-beslutning om å herde kjernemotoren (pipeline + research/verify —
+riktig tid, riktig norsk kanal, null tapte events) FØR eksterne TestFlight-testere.
+Fem parallelle READ-ONLY-audits (research-kvalitet, korrekthet, dekning, tavle-
+sanity, robusthet) fant konvergerende funn. Tavle-sanity var betryggende (7/8
+web-verifiserte stikkprøver KORREKTE, inkl. VM-tider/NRK og F1-tittelen) — men
+kjedene RUNDT tavla har reelle brudd.
+
+**Hovedfunnene (konsolidert):**
+1. **Kanal-korrekthets-kjeden er brutt live:** `golf.js` hardkoder Viaplay for all
+   PGA (utdatert — HBO Max/Eurosport fra 2026); `build-events` sin carry-forward
+   fyller kun TOMME felt, så verify-rettelser klobres av fetcher-defaulten HVER
+   time (Corales: 5+ dagers revert-krig; motstridende data på tavla i dag).
+   `norwegian-rights`-skillen sier fortsatt Viaplay [solid].
+2. **Skill-skrivingen «BLOCKED by permission gate» er trolig VANDREHISTORIE:**
+   settings.json har ingen slik regel, workflow-allowlisten tillater Edit +
+   `git add .claude/skills/`, og commit 914b55666 (3. juli) SKREV til fila.
+   Seks kjøringer har gjenfortalt påstanden uten å feilsøke. Må REPRODUSERES.
+3. **Eskaleringsveien død ≥2 uker:** coverage-critic/scout får HTTP 403 på
+   `gh workflow run` (trolig repo-innstilling «Workflow permissions: read»).
+   `escalated: false` i alle 13 kjøringer — fast-lane har aldri virket.
+4. **Selvhelbredelses-loggen mistes:** self-repair/ui-fix sitt «Commit run log»-
+   steg feiler på git-push-auth (Invalid username or token) — logger 8 dager
+   stale, ekte funn tapt, og runs feilmerkes «failure».
+5. **Vaktene sover:** graderen 52/52 pass (klassifiserte den kjente feilen som
+   «note»); mekanisk gap-detektor blind for alt RSS ikke nevner (Gstaad-hullet
+   usett); kalibreringen straffer KORREKTE kilder som retter våre provisoriske
+   verdier (cyclingstage.com 0.27!).
+6. **Relevans-gaten håndhever ikke presiseringene:** `chess` ubetinget i
+   followBroadly + ai-research-autopass ⇒ Barcelona-klubbturnering på tavla
+   tross «kun elite»-interesse; samme hull latent for esport («kun 100 Thieves»
+   beskyttes bare av fetcheren). NB: endring av isRelevant berører de gylne
+   feed-vektorene ⇒ iOS FeedCompiler i lås-steg + re-frysing.
+7. Småplukk: kvote-gate leser inntil 1t gammel snapshot (kritiske agenter
+   hard-feiler i røde vinduer i stedet for grasiøst hopp); validate-feil fryser
+   hele pipeline-timen (bør degradere); venue:"TBD" usynkron med verifisert
+   summary; F1-KVALIFISERING står i interests men mangler hver helg (severity-
+   felle: alltid «low», aldri eskalert — EIERBESLUTNING: vil du ha quali-events,
+   eller justere interests-teksten?); UCL mangler tracked-placeholder; sykkel-
+   evidens = samme to boilerplate-URL-er.
+
+**Eierbeslutninger:** (a) F1-kvalifisering inn på tavla eller ut av interests?
+(b) Repo-innstilling Actions workflow-permissions → read/write (sikkerhetsvalg);
+(c) WP-91 rører `.github/workflows/**` = beskyttet sti ⇒ PR-ene venter på
+menneskelig merge.
+
+### WP-90 · Kanal-korrekthets-kjeden (HASTER — brukersynlig feil nå)
+- **Mål:** Verifiserte verdier overlever; golf-kanalene riktige.
+- **Innhold:** `golf.js` tier-splitt (majors/DPWT→Viaplay, ordinær PGA→HBO Max/
+  Eurosport); `build-events` carry-forward: felt med `verificationStatus:
+  confirmed|amended` vinner over ikke-tom fetcher-default (med TTL) + test;
+  `norwegian-rights`-skillen rettes (PGA-linja + de fire ferdig-utkastede
+  rettelsene i tracked.json-loggen); fjern/rett Corales-motsigelsen på tavla.
+- **Aksept:** npm-suite grønn + ny carry-forward-test; Corales viser HBO Max
+  og OVERLEVER neste pipeline-kjøring.
+
+### WP-91 · CI-nervesystemet (tokens/permissions) — BESKYTTEDE STIER
+- **Mål:** Eskalering virker; run-logger committes; skill-skriving avmystifisert.
+- **Innhold:** Diagnostisér+fiks 403 på workflow-dispatch (repo-innstilling
+  eller PAT); fiks push-auth i «Commit run log»-steget (self-repair/ui-fix/
+  improve); REPRODUSÉR skill-skrive-«blokkeringen» med faktisk feilmelding og
+  fiks rotårsaken; alarm ved feilet eskalering (ikke stille notes-felt).
+- **Aksept:** en test-eskalering går gjennom; run-log-commit lander; en
+  skill-write fra CI-kjøring beviselig committet.
+
+### WP-92 · Relevans-gaten (ro-løftet)
+- **Mål:** interests-presiseringene håndheves i koden, ikke bare i prosa.
+- **Innhold:** `chess` ut av ubetinget followBroadly (krev alwaysTrack-match:
+  Carlsen/Tari/navngitte turneringer); esport-lagsjekk i isRelevant; scope
+  ai-research-autopass til events som OGSÅ matcher en interesse;
+  `research.md` sjakk-scout får elite-terskel. **Lås-steg:** iOS FeedCompiler
+  speiles + gylne vektorer re-fryses bevisst (DIVERGENCES.md-prosedyren).
+- **Aksept:** Sant Martí-klassen filtreres; vektorer re-frosset og bit-like
+  på begge sider; eksisterende relevante events uendret.
+
+### WP-93 · Vaktene (grader + gap-detektor + kalibrering)
+- **Mål:** Vaktene fanger det auditene fant manuelt.
+- **Innhold:** Grader-rubrikk: summary-vs-streaming-selvmotsigelse = hard
+  deduction; uadresserte gjentatte anbefalinger scores; evidens-domene-
+  diversitet telles. `detect-coverage-gaps`: fjerde signal (tracked.json-
+  påstander vs events.json-realitet). `aggregate-calibration`: skill mellom
+  «kilden tok feil» og «kilden rettet vår provisoriske verdi». Gjentatt
+  identisk gap N ganger ⇒ auto-eskaler severity én klasse.
+- **Aksept:** rubrikk-test som beviser Corales-klassen fanges; gap-test for
+  Gstaad-klassen; cyclingstage-reliability normaliseres.
+
+### WP-94 · Drifts-småplukk
+- **Innhold:** kvote-gate: fersk sjekk før kritisk-tier-kall + grasiøst
+  «skippet: kvote» i stedet for hard feil; validate-events-feil degraderer
+  (behold forrige gyldige data + alarm) i stedet for å fryse timen; verify-
+  kontrakten synker `venue` med verifisert summary; UCL tracked-placeholder-
+  regel (hver alwaysTrack-turnering har entry).
+- **Aksept:** npm grønn; simulert rød kvote gir skip-not-fail; simulert
+  validate-brudd publiserer forrige data med alarm.
+
+**Bølge-plan:** 1: WP-90 (+ WP-91-diagnosen) · 2: WP-91-fiks (menneske-merge)
++ WP-93 · 3: WP-92 (lås-steg med iOS) + WP-94. **Porter måles deretter 1–2
+uker normal drift** (dekning: null tapte fulgte events; korrekthet: amend-rate
+nær-term → ~0; robusthet: null stille kritiske stopp) → grønt = TestFlight.
 
 ## FLYTTEDAGEN · Zenji → Sportivista — ✅ UTFØRT 17.07.2026
 
