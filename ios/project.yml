@@ -129,6 +129,15 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: app.sportivista.ios.widget
         CODE_SIGN_ENTITLEMENTS: SportivistaWidget/SportivistaWidget.entitlements
         SKIP_INSTALL: YES
+        # WP-17: target-level signing so the widget can be embedded in the
+        # signed device build (and GUI device runs work without CLI overrides).
+        # Unsigned Simulator builds of the app target are unaffected — Simulator
+        # signing is ad-hoc and the local identity exists on the only Mac that
+        # builds iOS.
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGNING_ALLOWED: YES
+        CODE_SIGN_IDENTITY: "Apple Development"
+        DEVELOPMENT_TEAM: "9LVCB72DT8"
 
   # WP-11: standalone (hostless) logic-test bundle for the Codable models in
   # Sportivista/Models — no TEST_HOST/BUNDLE_LOADER, since these are pure decoding
@@ -244,17 +253,18 @@ targets:
 
   # WP-16: a device-flavoured build of the SAME app sources (path: Sportivista — so it
   # includes Assistant/ and its on-device FoundationModels code) for running on
-  # a PHYSICAL iPhone under a FREE personal Apple Developer team. It handles two
-  # free-account constraints WITHOUT touching the Simulator setup:
-  #   (a) App Groups are unavailable on a free team, so this target uses an EMPTY
-  #       entitlements file (no com.apple.security.application-groups). CacheStore
-  #       then falls back to its Application Support directory (its built-in
-  #       fallback, see CacheStore.swift), and ProfileStore (WP-16) already uses
-  #       Application Support unconditionally.
-  #   (b) A previous device attempt failed with "Embedded binary is not signed
-  #       with the same certificate as the parent app" — so this target does NOT
-  #       depend on / embed SportivistaWidgetExtension. The widget stays Simulator-only
-  #       until a paid account (WP-17).
+  # a PHYSICAL iPhone. WP-17 (18.07.2026, paid Apple Developer team — the free
+  # personal team 9LVCB72DT8 was CONVERTED in place by Individual enrollment, so
+  # the team ID is unchanged): the two free-account constraints are lifted —
+  #   (a) this target now signs against the FULL entitlements file
+  #       (Sportivista/Sportivista.entitlements: App Group + CloudKit) and compiles
+  #       with -D SPORTIVISTA_CLOUDKIT, flipping ProfileSyncBackendFactory to
+  #       CloudKitProfileSync (P360).
+  #   (b) it embeds SportivistaWidgetExtension (the old "Embedded binary is not
+  #       signed with the same certificate" failure was a free-team limitation).
+  # This target and the widget both carry Automatic signing + the team at the
+  # target level, so plain GUI builds work; no CI machine builds iOS (everything
+  # builds on the owner's Mac, where the signing identity lives).
   # The Simulator `Sportivista` target + scheme and every existing test are unchanged;
   # this target is purely additive and lives in its own `SportivistaDeviceDev` scheme.
   SportivistaDeviceDev:
@@ -293,6 +303,10 @@ targets:
       # physical iPhone — this is the build the owner actually runs the eval on.
       - path: SportivistaTests/Fixtures/eval-corpus.json
         buildPhase: resources
+    dependencies:
+      # WP-17: embed the widget on device too (paid team signs both with the
+      # same identity; the free-team embed failure is history).
+      - target: SportivistaWidgetExtension
     info:
       path: SportivistaDeviceDev/Info.plist
       properties:
@@ -332,7 +346,11 @@ targets:
         # (only one is ever installed per destination). Xcode may warn about the
         # shared id; that's expected and harmless here.
         PRODUCT_BUNDLE_IDENTIFIER: app.sportivista.ios
-        CODE_SIGN_ENTITLEMENTS: SportivistaDeviceDev/SportivistaDeviceDev.entitlements
+        # WP-17: full paid-team entitlements (App Group + CloudKit) — the WP-16
+        # empty device entitlements file is gone. -D SPORTIVISTA_CLOUDKIT flips
+        # ProfileSyncBackendFactory to CloudKitProfileSync.
+        CODE_SIGN_ENTITLEMENTS: Sportivista/Sportivista.entitlements
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: "$(inherited) SPORTIVISTA_CLOUDKIT"
         CODE_SIGN_STYLE: Automatic
         CODE_SIGNING_ALLOWED: YES
         CODE_SIGNING_REQUIRED: YES
