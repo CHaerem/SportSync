@@ -32,6 +32,11 @@ jobs:
       changed: ${{ steps.commit.outputs.changed }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          # app-version.json stempler «siste ios/-commit» via git log — en grunn
+          # checkout gjør det til HEAD (enhver datacommit), som ga falske
+          # «NYERE FINNES» i appen. Full historikk er noen sekunder ekstra.
+          fetch-depth: 0
       - uses: actions/setup-node@v5
         with:
           node-version: "22"

@@ -1,0 +1,127 @@
+# TestFlight-release-lanen (WP-17 CI/CD): arkiverer, cloud-signerer og laster
+# opp appen fra en ren checkout — uavhengig av eierens Mac og den flakete
+# Xcode-GUI-sesjonen. Trigges manuelt (gh workflow run ios-release.yml) eller
+# med en `ios-v*`-tag.
+#
+# Krever tre repo-secrets fra en ASC-nøkkel med ADMIN-rolle (App Manager kan
+# ikke cloud-signere — lærdom fra første opplasting): ASC_KEY_ID,
+# ASC_ISSUER_ID, ASC_PRIVATE_KEY (innholdet i .p8-filen).
+#
+# Byggnummer: ASC er fasit (scripts/next-testflight-build.js henter maks+1),
+# så lokale og CI-opplastinger deler én monoton rekke. Etter opplasting
+# registreres bygget (scripts/record-testflight.js) og committes til main —
+# app-version.json får da testflight-blokken som gjør at TestFlight-bygg
+# dømmes «SISTE» mot siste OPPLASTING, ikke siste commit.
+name: iOS Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ["ios-v*"]
+
+concurrency:
+  group: ios-release
+  cancel-in-progress: false
+
+permissions:
+  contents: write # record-testflight-commiten til main
+  actions: write # kicke static-pipeline etter registrering
+
+jobs:
+  release:
+    runs-on: macos-26
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0 # record-testflight trenger ekte siste-ios/-commit
+
+      - name: Velg nyeste Xcode 26
+        run: |
+          XCODE=$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1)
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+
+      - name: Installer XcodeGen
+        run: brew install xcodegen
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      - name: Neste byggnummer fra App Store Connect
+        id: build
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+        run: node scripts/next-testflight-build.js
+
+      - name: Legg API-nøkkelen der xcodebuild leter
+        env:
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.appstoreconnect/private_keys
+          printf '%s' "$ASC_PRIVATE_KEY" > ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.ASC_KEY_ID }}.p8
+          chmod 600 ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.ASC_KEY_ID }}.p8
+
+      - name: Generer prosjekt
+        working-directory: ios
+        run: xcodegen generate
+
+      - name: Arkiver (Release, cloud-signert)
+        working-directory: ios
+        run: |
+          set -o pipefail
+          xcodebuild -project Sportivista.xcodeproj -scheme SportivistaDeviceDev \
+            -destination 'generic/platform=iOS' -archivePath build/Sportivista.xcarchive \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.ASC_KEY_ID }}.p8 \
+            -authenticationKeyID "${{ secrets.ASC_KEY_ID }}" \
+            -authenticationKeyIssuerID "${{ secrets.ASC_ISSUER_ID }}" \
+            CURRENT_PROJECT_VERSION="${{ steps.build.outputs.build }}" \
+            archive | grep -E "ARCHIVE (SUCCEEDED|FAILED)|error:" || true
+          test -d build/Sportivista.xcarchive
+
+      - name: Eksporter + last opp til App Store Connect
+        working-directory: ios
+        run: |
+          set -o pipefail
+          cat > export-options.plist <<'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>9LVCB72DT8</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>uploadSymbols</key><true/>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+          </dict>
+          </plist>
+          EOF
+          xcodebuild -exportArchive -archivePath build/Sportivista.xcarchive \
+            -exportOptionsPlist export-options.plist \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.ASC_KEY_ID }}.p8 \
+            -authenticationKeyID "${{ secrets.ASC_KEY_ID }}" \
+            -authenticationKeyIssuerID "${{ secrets.ASC_ISSUER_ID }}" \
+            | grep -E "EXPORT (SUCCEEDED|FAILED)|Upload succeeded|error" | sort -u
+
+      - name: Registrer opplastingen (app-version-kontrakten)
+        run: |
+          VERSION=$(grep -m1 'MARKETING_VERSION' ios/project.yml | sed 's/[^0-9.]//g')
+          node scripts/record-testflight.js "${{ steps.build.outputs.build }}" "$VERSION"
+          git config user.name "sportivista-release"
+          git config user.email "actions@github.com"
+          git add scripts/config/testflight.json
+          git commit -m "testflight: registrer bygg $VERSION (${{ steps.build.outputs.build }}) [via release-lanen]"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      - name: Kick den statiske pipelinen (publiser app-version.json)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run static-pipeline.yml || echo "(pipeline-kick feilet — neste timekjøring tar den)"

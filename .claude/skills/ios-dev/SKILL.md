@@ -108,6 +108,12 @@ xcodebuild -exportArchive -archivePath <path>.xcarchive \
   lavere `CFBundleShortVersionString` enn det testerne har installert (bygg 3
   «forsvant» fordi 0.1.0 < 1.0 som bygg 1–2 ved et uhell skipte med).
   Versjonslinjen er 1.0.x og kan bare øke.
+- **Foretrukket vei: release-lanen i CI** — `gh workflow run ios-release.yml`
+  (eller tag `ios-v*`). Den henter neste byggnummer fra ASC (delt monoton
+  rekke med lokale opplastinger), cloud-signerer med Admin-API-nøkkelen
+  (secrets: ASC_KEY_ID/ASC_ISSUER_ID/ASC_PRIVATE_KEY), laster opp, kjører
+  record-testflight og committer registreringen til main. Det manuelle
+  ritualet under er reserven når lanen er nede.
 - **Opplastings-ritualet (rekkefølgen er kontrakten):** (1) bump
   `CURRENT_PROJECT_VERSION` i project.yml (hver opplasting trenger nytt
   byggnummer — NB: `CFBundleVersion`/`CFBundleShortVersionString` i

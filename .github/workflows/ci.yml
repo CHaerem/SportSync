@@ -1,0 +1,33 @@
+# Den universelle PR-gaten: npm-suiten (~620 tester, sekunder) kjører på HVER
+# PR uansett hva den rører — dette er sjekken branch-beskyttelsen krever
+# («web-tests»). Før denne fantes gatet testene bare selvhelings-loopene
+# (som re-kjører dem selv i merge-gate.js); PR-er fra mennesker/hovedløkka
+# hadde ingen maskinell gate i det hele tatt.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/**"
+      - "tests/**"
+      - "docs/js/**"
+      - "package*.json"
+      - "vitest.config.js"
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+      - run: npm ci
+      - run: npm test
