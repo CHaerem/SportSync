@@ -258,9 +258,28 @@ lock-in isolert til ett lag).
 - **Konsekvens for WP-22:** merge + backend + entitlement + `ProfileSyncBackendFactory`
   er nå på plass — WP-22 reduseres til å skru på CloudKit-backenden på betalt konto.
 
-### WP-17 · 💰 TestFlight (BESLUTNING: 99 USD/år)
-Apple Developer-konto, signering, 15–20 eksterne testere fra nisjemiljøene.
-**Gjøres av mennesket;** agent kan forberede fastlane/exportOptions.
+### WP-17 · 💰 TestFlight (BESLUTNING: 99 USD/år) — runbook oppdatert 18.07.2026
+
+**Menneskets steg (blokkerende, i rekkefølge):**
+1. **Re-logg Apple-ID i Xcode** (Settings → Accounts → chris.haerem@gmail.com) —
+   økten er utløpt («No Accounts»); trengs også for gratis device-bygg av
+   `app.sportivista.ios` (ny bundle-id ⇒ ny profil må registreres).
+2. **Enroll i Apple Developer Program** (developer.apple.com/programs, 99 USD/år,
+   godkjenning kan ta 24–48 t). Noter den betalte team-ID-en.
+3. Gi agenten team-ID + en **App Store Connect API-nøkkel** (Users and Access →
+   Integrations → App Store Connect API, rolle App Manager) for skriptet opplasting.
+
+**Agentens steg (klare til å kjøres når 1–3 er gjort):**
+- `project.yml`: sett `DEVELOPMENT_TEAM: <betalt team>`, `CODE_SIGNING_ALLOWED/
+  REQUIRED: YES` for app+widget; re-aktiver App Group (`group.app.sportivista`
+  registreres på det betalte teamet) og embedded widget på device-target.
+- App Store Connect: opprett app-record (`app.sportivista.ios`, navn «Sportivista»
+  — sjekk navnetilgjengelighet i App Store), primærspråk nb-NO.
+- `xcodebuild archive` + `-exportArchive` (App Store-metode) + opplasting via
+  `xcrun altool`/`notarytool` med API-nøkkelen; intern TestFlight-gruppe med eieren;
+  deretter 15–20 eksterne testere fra nisjemiljøene.
+- Husk: bundle-id-byttet (rebrand) betyr at TestFlight-appen er en NY app-identitet;
+  gamle enhets-installasjoner (app.zenji.ios) slettes manuelt.
 
 ---
 
