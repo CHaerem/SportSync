@@ -82,6 +82,29 @@ xcrun devicectl device process launch --device <CoreDevice-UUID> app.sportivista
   mer. Robust alternativ når ASC API-nøkkel finnes: `-authenticationKeyPath/-ID/
   -IssuerID` på xcodebuild (trenger ingen GUI-sesjon).
 
+## TestFlight-opplasting (WP-17, virket 18.07.2026)
+
+ASC API-nøkkel: `NHMW747CLA` i `~/.appstoreconnect/private_keys/`, issuer
+`5bd032fd-ad09-468e-b168-1accd8f70326`, rolle App Manager. App-id `6792373768`.
+
+```bash
+xcodebuild -project Sportivista.xcodeproj -scheme SportivistaDeviceDev \
+  -destination 'generic/platform=iOS' -archivePath <path>.xcarchive \
+  -allowProvisioningUpdates archive
+xcodebuild -exportArchive -archivePath <path>.xcarchive \
+  -exportOptionsPlist <plist> -allowProvisioningUpdates   # method app-store-connect, destination upload
+```
+
+- **App Manager-nøkkelen kan IKKE cloud-signere** («Cloud signing permission
+  error») — kjør exportArchive UTEN auth-flaggene så Xcode-kontosesjonen
+  signerer distribusjonen; nøkkelen brukes til API-kall (grupper/testere/
+  byggstatus — se JWT-mønsteret: ES256 + dsaEncoding ieee-p1363 i node).
+- **TARGETED_DEVICE_FAMILY må stå per target** — XcodeGen setter "1,2" på
+  target-nivå som overstyrer prosjekt-settings; "1,2" trigger iPad-
+  multitasking-kravet om alle fire orienteringer i App Store-valideringen.
+- `ITSAppUsesNonExemptEncryption: false` ligger i begge app-Info.plists så
+  bygg slipper compliance-spørsmålet og blir tilgjengelige umiddelbart.
+
 - **Kabel slår wifi:** `tunnelState: unavailable` i `devicectl device info
   details` betyr at trådløs-tunnelen ikke står — plugg kabel i stedet for å
   feilsøke nettet. (`device info details` kan vise CACHEDE data og se «ok» ut
