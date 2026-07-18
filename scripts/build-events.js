@@ -8,6 +8,7 @@ import { writeManifest } from "./build-manifest.js";
 import { readIosCommit, buildAppVersion } from "./lib/app-version.js";
 import { fileURLToPath } from "url";
 import { writeEntities } from "./build-entities.js";
+import { validateEvents, loadEventSchema } from "./validate-events.js";
 
 const dataDir = rootDataPath();
 const configDir =
@@ -596,7 +597,72 @@ for (const e of kept) {
 	// same hash, same id across consecutive builds.
 	e.id = computeEventId(e.sport, e.title, e.time);
 }
-fs.writeFileSync(path.join(dataDir, "events.json"), JSON.stringify(kept, null, 2));
+// WP-94: validate the array in-process BEFORE writing it, and degrade instead
+// of freezing the hourly pipeline on a violation. static-pipeline.yml runs
+// `node scripts/validate-events.js` as its own hard step right after this
+// script — a schema/contract break there used to fail that step and abort the
+// whole job (no coverage-gaps, no calibration, no ICS, no commit/deploy for
+// that hour — see PLAN.md FASE 0G finding). That workflow file is protected
+// and out of scope here, so the fix happens on THIS side of the boundary:
+// reuse validate-events.js's own rules on the array we're about to publish; on
+// a hard error, keep the previous (already-validated) events.json on disk
+// untouched and write docs/data/build-alert.json instead of the new file.
+// This script still exits 0 either way, so the pipeline continues — and the
+// downstream validate-events.js step then re-checks the RETAINED, still-good
+// file and passes. build-alert.json is a persistent health signal (written on
+// every run, ok: true/false) rather than a one-shot failure log, so a fixed
+// build clears the alarm automatically on the next successful pass.
+const eventSchema = loadEventSchema();
+// Validate the ROUND-TRIPPED JSON, not the raw JS array: pushEvent() sets
+// several fields unconditionally to `ev.field || null`-style expressions, and
+// a few (`venue`, `meta`) straight to `ev.venue`/`ev.meta` — which is `undefined`
+// when the source data doesn't have them. JSON.stringify silently drops
+// undefined-valued keys, so that's what validate-events.js's own (file-based)
+// CLI run always saw; validating the pre-serialize object directly would see
+// literal `undefined` properties the schema doesn't expect and false-positive.
+const serialized = JSON.stringify(kept, null, 2);
+const { errors: hardErrorCount, messages: validationMessages } = validateEvents(JSON.parse(serialized), eventSchema);
+const eventsPath = path.join(dataDir, "events.json");
+const alertPath = path.join(dataDir, "build-alert.json");
+const hadPreviousGood = Array.isArray(previousEvents);
+
+if (hardErrorCount > 0) {
+	console.error(`build-events: ${hardErrorCount} validation error(s) in the freshly built array — NOT publishing it.`);
+	for (const m of validationMessages.slice(0, 20)) console.error("  " + m);
+	if (hadPreviousGood) {
+		console.error(`build-events: keeping the previous events.json (${previousEvents.length} event(s)) untouched.`);
+	} else {
+		// No previous good file to fall back on (e.g. the very first build) —
+		// nothing better is available, so publish anyway; the alarm still
+		// records the violation for a human/self-repair to pick up.
+		fs.writeFileSync(eventsPath, serialized);
+		console.error("build-events: no previous events.json to retain — published the flawed array anyway (nothing better available).");
+	}
+	fs.writeFileSync(
+		alertPath,
+		JSON.stringify(
+			{
+				ok: false,
+				checkedAt: new Date().toISOString(),
+				errorCount: hardErrorCount,
+				attemptedEventCount: kept.length,
+				retained: hadPreviousGood,
+				retainedEventCount: hadPreviousGood ? previousEvents.length : kept.length,
+				sampleErrors: validationMessages.slice(0, 10),
+			},
+			null,
+			2
+		)
+	);
+} else {
+	fs.writeFileSync(eventsPath, serialized);
+	// Refresh the healthy marker every good run, so a resolved alarm doesn't
+	// linger — the file always reflects the CURRENT state, not just failures.
+	fs.writeFileSync(
+		alertPath,
+		JSON.stringify({ ok: true, checkedAt: new Date().toISOString(), eventCount: kept.length }, null, 2)
+	);
+}
 console.log(
 	`Aggregated ${kept.length} events (${mustWatchCount} must-watch; filtered ${all.length - kept.length} past/irrelevant, of which ${droppedIrrelevant} off-interest) into events.json`
 );
