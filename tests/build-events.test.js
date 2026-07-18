@@ -4,6 +4,7 @@ import { execFileSync } from "child_process";
 import fs from "fs";
 import os from "os";
 import path from "path";
+import { matchInterest } from "../scripts/lib/helpers.js";
 
 let dataDir, configDir;
 
@@ -429,12 +430,13 @@ describe("build-events", () => {
 		// bare-string participants (scripts/lib/event-normalizer.js). build-events.js's
 		// own pushEvent() must guarantee the canonical shape regardless of what any
 		// sport file emits.
-		// WP-92: chess is now entity-gated (not broadly followed), so track the
-		// player as a chess athlete to keep this event on the board — the point of
-		// this test is participation normalization, not the relevance decision.
+		// WP-92: chess is now entity-gated (not broadly covered), so the catalog must
+		// cover the player to keep this event on the board — the point of this test is
+		// participation normalization, not the coverage decision. WP-96: the compass
+		// is catalog.json (tier2), not interests.json.
 		fs.writeFileSync(
-			path.join(configDir, "interests.json"),
-			JSON.stringify({ alwaysTrack: { athletes: [{ name: "Johan-Sebastian Christiansen", sport: "chess" }] } })
+			path.join(configDir, "catalog.json"),
+			JSON.stringify({ tier2: { athletes: [{ name: "Johan-Sebastian Christiansen", sport: "chess" }] } })
 		);
 		fs.writeFileSync(
 			path.join(dataDir, "chess.json"),
@@ -467,15 +469,16 @@ describe("build-events", () => {
 		expect(ev.norwegianPlayers).toEqual([]);
 	});
 
-	it("keeps a non-broadly-followed event relevant when a tracked athlete appears only in participants", () => {
-		// Regression: isRelevant()'s hay-building used to spread raw participants
+	it("keeps a non-broadly-covered event on the board when a catalog athlete appears only in participants", () => {
+		// Regression: isCovered()'s hay-building used to spread raw participants
 		// strings; once participants became canonical {name} objects, a naive spread
 		// would embed "[object Object]" instead of the name and silently break
-		// interest matching for any event relying purely on participants (tennis,
-		// chess) rather than norwegianPlayers/homeTeam/awayTeam.
+		// entity matching for any event relying purely on participants (tennis,
+		// chess) rather than norwegianPlayers/homeTeam/awayTeam. WP-96: the compass
+		// is catalog.json (tier2).
 		fs.writeFileSync(
-			path.join(configDir, "interests.json"),
-			JSON.stringify({ alwaysTrack: { athletes: ["Casper Ruud"] } })
+			path.join(configDir, "catalog.json"),
+			JSON.stringify({ tier2: { athletes: ["Casper Ruud"] } })
 		);
 		fs.writeFileSync(
 			path.join(dataDir, "tennis.json"),
@@ -487,12 +490,14 @@ describe("build-events", () => {
 		expect(events.find((e) => e.title === "R32 Match")).toBeDefined();
 	});
 
-	// WP-92 · the relevance gate. chess/esports are NOT followed broadly — a
-	// chess/esports event is kept ONLY when it names a tracked entity (sport-scoped),
+	// WP-92/WP-96 · the coverage gate. chess/esports are NOT covered wholesale — a
+	// chess/esports event is kept ONLY when it names a CATALOG entity (sport-scoped),
 	// and the norwegian/favorite/importance/ai-research shortcuts do NOT rescue it.
-	describe("WP-92 relevance gate (chess/esports entity-gated)", () => {
-		const gateInterests = {
-			alwaysTrack: {
+	// WP-96: the compass is catalog.json (tier2), not one person's interests.json.
+	describe("WP-92/96 coverage gate (chess/esports entity-gated, catalog-keyed)", () => {
+		const gateCatalog = {
+			tier1: ["football", "golf", "f1", "cycling", "biathlon", "cross-country", "alpine", "nordic", "ski jumping"],
+			tier2: {
 				athletes: [{ name: "Magnus Carlsen", aliases: ["Carlsen"], sport: "chess" }],
 				teams: [
 					{ name: "Barcelona", aliases: ["FC Barcelona", "Barça"], sport: "football" },
@@ -504,7 +509,7 @@ describe("build-events", () => {
 		// they arrive as source:"ai-research" preserved from the previous events.json.
 		const ai = (extra) => ({ source: "ai-research", confidence: "high", evidence: ["https://ex.com/1", "https://ex.com/2"], ...extra });
 		function seedGate() {
-			fs.writeFileSync(path.join(configDir, "interests.json"), JSON.stringify(gateInterests));
+			fs.writeFileSync(path.join(configDir, "catalog.json"), JSON.stringify(gateCatalog));
 			fs.writeFileSync(
 				path.join(dataDir, "events.json"),
 				JSON.stringify([
@@ -539,11 +544,118 @@ describe("build-events", () => {
 			expect(events.filter((e) => e.sport === "chess" || e.sport === "esports")).toHaveLength(2);
 		});
 
-		it("keeps ordinary followBroadly-sport events untouched (football stays)", () => {
+		it("keeps ordinary tier1-sport events untouched (football stays)", () => {
 			seedGate();
 			const events = runBuild();
-			// The default beforeEach football.json event is a broadly-followed sport.
+			// The default beforeEach football.json event is a wholesale-covered sport.
 			expect(events.find((e) => e.title === "Liverpool vs Arsenal")).toBeDefined();
+		});
+	});
+
+	// WP-96 · the flerbruker-split acceptance: the SERVER publishes ONE
+	// catalog-scoped feed; TWO DISJOINT client profiles each get a meaningful,
+	// disjoint slice of it through their own on-device lens — and the owner's own
+	// lens yields exactly what it did before the split. Proves the server no
+	// longer scopes to one person: the catalog is the compass, the lens is per-user.
+	describe("WP-96 two-profile split (catalog feed → disjoint client lenses)", () => {
+		// The catalog COVERS a broad elite chess + tier-1 CS2 set (a moderate
+		// superset of any one person's follows).
+		const twoProfileCatalog = {
+			tier1: ["football", "golf", "f1", "cycling", "biathlon", "cross-country", "alpine", "nordic", "ski jumping"],
+			tier2: {
+				athletes: [
+					{ name: "Magnus Carlsen", aliases: ["Carlsen"], sport: "chess" },
+					{ name: "Hikaru Nakamura", aliases: ["Nakamura"], sport: "chess" },
+				],
+				teams: [
+					{ name: "100 Thieves", aliases: ["100T"], sport: "esports" },
+					{ name: "Natus Vincere", aliases: ["NAVI"], sport: "esports" },
+				],
+			},
+		};
+		const ai = (extra) => ({ source: "ai-research", confidence: "high", evidence: ["https://ex.com/1", "https://ex.com/2"], ...extra });
+
+		// The client lens (FeedCompiler.isRelevant / serverRelevant reference):
+		// per-user relevance over the ALREADY-catalog-scoped feed. Entity-gated
+		// sports need a SPORT-SCOPED profile-entity match; other non-broad sports
+		// use the norwegian/favorite/importance blanket + an unscoped match.
+		function lensRelevant(e, profile) {
+			const sport = (e.sport || "").toLowerCase();
+			const broad = new Set((profile.followBroadly || []).map((s) => s.toLowerCase()));
+			if (broad.has(sport)) return true;
+			const entities = [
+				...(profile.alwaysTrack?.teams || []),
+				...(profile.alwaysTrack?.athletes || []),
+				...(profile.alwaysTrack?.tournaments || []),
+			];
+			const hay = [e.title, e.tournament, e.homeTeam, e.awayTeam,
+				...(e.norwegianPlayers || []).map((p) => p?.name || p),
+				...(e.participants || []).map((p) => p?.name || p)].join(" ");
+			if (["chess", "esports"].includes(sport)) {
+				return matchInterest(hay, entities, { sport: e.sport }) != null;
+			}
+			if (e.norwegian || e.isFavorite || (e.importance || 0) >= 4) return true;
+			return matchInterest(hay, entities) != null;
+		}
+
+		function seedTwoProfiles() {
+			fs.writeFileSync(path.join(configDir, "catalog.json"), JSON.stringify(twoProfileCatalog));
+			fs.writeFileSync(
+				path.join(dataDir, "events.json"),
+				JSON.stringify([
+					ai({ sport: "chess", title: "Norway Chess 2026 – Carlsen vs Nakamura", time: future(2), norwegianPlayers: [{ name: "Magnus Carlsen" }], participants: [{ name: "Magnus Carlsen" }, { name: "Hikaru Nakamura" }] }),
+					ai({ sport: "chess", title: "Tata Steel 2026 – Nakamura vs Giri", time: future(3), participants: [{ name: "Hikaru Nakamura" }, { name: "Anish Giri" }] }),
+					ai({ sport: "esports", title: "IEM Cologne: 100 Thieves vs FaZe", time: future(2), homeTeam: "100 Thieves", awayTeam: "FaZe" }),
+					ai({ sport: "esports", title: "IEM Cologne: NAVI vs Vitality", time: future(3), homeTeam: "Natus Vincere", awayTeam: "Team Vitality" }),
+					// Not covered by the catalog → never reaches ANY client.
+					ai({ sport: "chess", title: "XXVI Obert Sant Martí – round 1", time: future(4), norwegian: true, participants: [{ name: "Local Player" }] }),
+					ai({ sport: "esports", title: "ESEA: TeamX vs TeamY", time: future(4), homeTeam: "TeamX", awayTeam: "TeamY" }),
+				])
+			);
+		}
+
+		it("the catalog feed feeds two disjoint profiles, and the owner's feed is unchanged", () => {
+			seedTwoProfiles();
+			const feed = runBuild(); // ONE server-published, catalog-scoped feed.
+
+			// Server scope: only the four covered events survive; uncovered dropped.
+			const gated = feed.filter((e) => e.sport === "chess" || e.sport === "esports");
+			expect(gated).toHaveLength(4);
+			expect(feed.find((e) => e.title.includes("Sant Martí"))).toBeUndefined();
+			expect(feed.find((e) => e.title.includes("ESEA"))).toBeUndefined();
+
+			// Owner profile (Carlsen chess + 100 Thieves) — same follows as today.
+			const owner = { alwaysTrack: { athletes: [{ name: "Magnus Carlsen", aliases: ["Carlsen"], sport: "chess" }], teams: [{ name: "100 Thieves", aliases: ["100T"], sport: "esports" }] } };
+			// Profile A: an EXTERNAL tester who follows Nakamura chess (not Carlsen).
+			const profileA = { alwaysTrack: { athletes: [{ name: "Hikaru Nakamura", aliases: ["Nakamura"], sport: "chess" }] } };
+			// Profile B: an EXTERNAL tester who follows a DIFFERENT tier-1 CS2 team.
+			const profileB = { alwaysTrack: { teams: [{ name: "Natus Vincere", aliases: ["NAVI"], sport: "esports" }] } };
+
+			const lensTitles = (p) => feed.filter((e) => lensRelevant(e, p)).map((e) => e.title).sort();
+			const ownerFeed = lensTitles(owner);
+			const aFeed = lensTitles(profileA);
+			const bFeed = lensTitles(profileB);
+
+			// Each profile gets meaningful, NON-EMPTY events from the same feed.
+			expect(ownerFeed.length).toBeGreaterThan(0);
+			expect(aFeed.length).toBeGreaterThan(0);
+			expect(bFeed.length).toBeGreaterThan(0);
+
+			// Owner sees Carlsen's chess + 100 Thieves' CS2 (his historical feed) — and
+			// NOT Nakamura's Tata Steel nor NAVI's match.
+			expect(ownerFeed).toContain("Norway Chess 2026 – Carlsen vs Nakamura");
+			expect(ownerFeed).toContain("IEM Cologne: 100 Thieves vs FaZe");
+			expect(ownerFeed).not.toContain("Tata Steel 2026 – Nakamura vs Giri");
+			expect(ownerFeed).not.toContain("IEM Cologne: NAVI vs Vitality");
+
+			// Profile A gets Nakamura's events (incl. the Carlsen-vs-Nakamura game),
+			// but NOT the 100 Thieves / NAVI CS2 matches.
+			expect(aFeed).toContain("Tata Steel 2026 – Nakamura vs Giri");
+			expect(aFeed.some((t) => t.includes("100 Thieves"))).toBe(false);
+			expect(aFeed.some((t) => t.includes("NAVI"))).toBe(false);
+
+			// Profile B gets its NAVI match, but no chess and not the 100 Thieves game.
+			expect(bFeed).toEqual(["IEM Cologne: NAVI vs Vitality"]);
 		});
 	});
 });

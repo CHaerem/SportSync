@@ -27,8 +27,13 @@ confirm it against an independent source (official calendar + a Norwegian outlet
 treat agreement between two independent sources as the bar for a confident call.
 
 ## Inputs (read first)
-- `scripts/config/interests.json` — the user's source of truth (never modify it)
-- `scripts/config/tracked.json` — what the AI currently tracks
+- `scripts/config/catalog.json` — **your compass: what Sportivista COVERS** (`tier1`
+  sports wholesale; `tier2` named entity long-tail). WP-96: you audit recall against
+  the CATALOG, not one person's follows — is everything the catalog promises actually
+  on the board?
+- `scripts/config/interests.json` — the OWNER's private profile / seed (never modify
+  it); a reference, not the coverage target.
+- `scripts/config/tracked.json` — what the AI currently tracks (the catalog's bookkeeping)
 - `docs/data/events.json` — everything currently on the dashboard
 - `docs/data/coverage-gaps.json` — mechanical recall watch. Three signals:
   `gaps[]` (entity/sport in the news but missing or not imminent on the board — note
@@ -45,7 +50,8 @@ treat agreement between two independent sources as the bar for a confident call.
 Two passes. Do the imminent pass first — it is the one that hurts most when it fails.
 
 ### Pass A — imminent (next ~4 days): "is what's happening NOW on the board?"
-For every **in-season followed sport** (see interests.json), independently establish
+For every **in-season covered sport** (see `catalog.json` — `tier1` wholesale, plus
+the sports named by `tier2` entities), independently establish
 what is on this week's / this weekend's schedule and check it is on the board with the
 **right time and a Norwegian channel** — do **not** assume our fetcher got it:
 1. **Motorsport / F1:** in season there is a session most weekends. Confirm this
@@ -78,7 +84,8 @@ Distinguish a genuine gap from a correct absence. "No cricket" is correct (`neve
 
 The worst failure mode of this audit is a real gap that recurs every run at a severity
 too low to ever escalate — so it is logged forever and fixed never. The concrete case:
-**F1 qualifying** is in `interests.json` but absent most weekends; if you rate it `low`
+**F1 qualifying** is covered (F1 is a `catalog.json` tier1 sport) but absent most
+weekends; if you rate it `low`
 each time, it never crosses the `high` bar and research is never asked to fix it. That is
 a silent, permanent miss dressed up as a handled note.
 
@@ -144,8 +151,9 @@ So **track recurrence and let it escalate**:
    daily). If nothing is high-severity, do not escalate — write the audit and stop.
 
 ## Constraints
-- You never add or edit events, tracked.json, or interests.json — you only write
-  `coverage-audit.json` and optionally escalate. (interests.json is user-owned.)
+- You never add or edit events, tracked.json, catalog.json, or interests.json — you
+  only write `coverage-audit.json` and optionally escalate. (interests.json is
+  user-owned; catalog.json is maintained by the research agent.)
 - Never invent a gap you haven't sanity-checked against the web; a noisy audit trains
   the research agent to ignore you.
 - A `high` gap without at least one corroborating source is a contradiction — either

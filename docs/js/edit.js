@@ -188,14 +188,21 @@ function onSearch(q) {
 	}, 300);
 }
 
+// WP-96: this page now shows what Sportivista COVERS (catalog.json) and lets a
+// user REQUEST additional coverage — interests.json is no longer published. The
+// catalog's tier2 maps onto the alwaysTrack shape render() expects. TODO (WP-96
+// follow-up): the follow-request Issue Form + apply-follow-request.js still write
+// the owner's interests.json (the OWNER-gated seed path); rewiring the public
+// "request coverage" flow to feed catalog tier2 / demand-aggregation is WP-23.
 Promise.all([
-	fetch('data/interests.json', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({})),
+	fetch('data/catalog.json', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({})),
 	fetch('data/events.json', { cache: 'no-store' }).then((r) => r.json()).catch(() => []),
 	fetch('data/standings.json', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({})),
 	fetch('data/tracked.json', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({})),
-]).then(([interests, events, standings, tracked]) => {
-	render(interests, tracked);
-	localCandidates = buildLocalCandidates(events, standings, interests);
+]).then(([catalog, events, standings, tracked]) => {
+	const covered = { alwaysTrack: (catalog && catalog.tier2) || {}, interests: [] };
+	render(covered, tracked);
+	localCandidates = buildLocalCandidates(events, standings, covered);
 	document.getElementById('add-search')?.addEventListener('input', (e) => onSearch(e.target.value));
 }).catch(() => {
 	document.getElementById('edit-root').innerHTML = '<p class="muted">Kunne ikke laste lista. Prøv å laste siden på nytt.</p>';

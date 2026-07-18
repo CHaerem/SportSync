@@ -105,17 +105,28 @@ this is what makes the "Casper Ruud pulls a tennis event onto the board" and the
 
 ## The five predicates (exact semantics + source of truth)
 
-| Predicate  | Question                                   | Server (Node)                                              | Client (browser)                                   |
+> **WP-96 note.** `relevant` pins the **personal lens** — "given a user's
+> interests, what's in THEIR feed?". WP-96 (the flerbruker-split) moved this
+> predicate off the server: `build-events.js` now applies `isCovered(catalog.json)`
+> ("does Sportivista COVER this?", a superset), and the personal narrowing lives
+> ONLY on the clients (iOS `FeedCompiler.isRelevant`; the web board is catalog-wide).
+> The lens **algorithm is unchanged**, so these vectors are **not** re-frozen — see
+> [`DIVERGENCES.md` §6](./DIVERGENCES.md). The server `isCovered` predicate has no
+> client mirror and is tested in `tests/build-events.test.js`, not here.
+
+| Predicate  | Question                                   | Reference (Node)                                           | Client (browser)                                   |
 |------------|--------------------------------------------|------------------------------------------------------------|----------------------------------------------------|
-| `relevant` | Is the event in the feed at all?           | `build-events.js` `isRelevant` + 14-day cutoff (405–432)   | — (client renders whatever `events.json` contains) |
+| `relevant` | Is the event in the user's personal feed?  | the lens `lensRelevant` (JS twin of `FeedCompiler.isRelevant`) + 14-day cutoff | iOS `FeedCompiler.isRelevant`; web board is catalog-wide |
 | `mustWatch`| Does it get a reminder bell 🔔?            | `helpers.js` `mustWatchEntity` → `e.mustWatch`             | reads precomputed `e.mustWatch`                    |
 | `mustSee`  | Does it get the quiet visual accent?       | —                                                          | `dashboard.js` `isMustSee` (176–192)               |
 | `inWindow` | Does it overlap an agenda window?          | `helpers.js` `isEventInWindow`                             | `shared-constants.js` `isEventInWindow` (identical)|
 | `series`   | How do stage races collapse?               | —                                                          | `dashboard.js` `collapseSeries` (375–405)          |
 
-### §relevant — feed inclusion (server)
+### §relevant — personal feed inclusion (the lens)
 
-Kept iff **both**:
+The personal lens (iOS `FeedCompiler.isRelevant`; JS reference `lensRelevant`).
+WP-96 moved it off the server — the server now filters by `isCovered(catalog)` —
+but the algorithm below is unchanged. Kept iff **both**:
 
 1. **Retention cutoff.** With `t = endTime ?? time`, keep only if
    `t >= now - 14 days` (multi-day events survive on their *end*, not their start).
@@ -197,10 +208,10 @@ npm test -- feed-vectors     # just these vectors
 npm test                     # whole suite
 ```
 
-`tests/feed-vectors.test.js` is the executable reference: it reconstructs
-`serverRelevant` from the exported `matchInterest` (mirroring build-events.js),
-calls the real `mustWatchEntity` and `isEventInWindow`, and drives the real client
-`isMustSee`/`collapseSeries` in a `vm` sandbox.
+`tests/feed-vectors.test.js` is the executable reference: it reconstructs the
+personal lens `lensRelevant` from the exported `matchInterest` (the JS twin of
+`FeedCompiler.isRelevant`), calls the real `mustWatchEntity` and `isEventInWindow`,
+and drives the real client `isMustSee`/`collapseSeries` in a `vm` sandbox.
 
 ## Replaying from XCTest (WP-13)
 

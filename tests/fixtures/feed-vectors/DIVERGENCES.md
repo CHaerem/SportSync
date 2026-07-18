@@ -163,6 +163,45 @@ not a reversal of §1.
 
 ---
 
+## 6. The interests→catalog split: `relevant` now pins the client LENS (WP-96)
+
+WP-96 (the flerbruker-split) separated two questions that used to be one:
+
+| Question | Predicate | Where it lives (after WP-96) | Keyed off |
+|----------|-----------|------------------------------|-----------|
+| Does Sportivista **cover** this event? | `isCovered` | **server** `build-events.js` | `scripts/config/catalog.json` (what we cover) |
+| Is this relevant to **THIS user**? | `isRelevant` (the lens) | **clients** — iOS `FeedCompiler.isRelevant`; the web board is catalog-wide | the user's personal profile (`interests.json` shape) |
+
+Before WP-96 there was one user, so the server filtered the shared board directly
+by that user's `interests.json`. An external tester who followed *other* chess
+players / CS2 teams got an empty board — the server dropped the content before
+their lens ever saw it. WP-96 makes the server scope to the **catalog** (a
+moderate superset) and leaves the personal narrowing entirely to the client lens.
+
+**Decision for these vectors — NOT re-frozen.** The golden vectors pin the
+**personal lens** (`f(events, interests) → this user's feed`), and the lens
+**algorithm did not change**: `followBroadly` wholesale → chess/esports
+sport-scoped entity gate → norwegian/favorite/importance blanket → unscoped
+tracked-entity match, over a personal profile (§1, §4, §5 all still hold verbatim).
+What changed is only *where* that algorithm runs (server → clients) and *what
+reaches it* (a catalog-scoped feed instead of a raw superset). So:
+
+- The `relevant` expectation sets are **bit-identical** — they describe the lens,
+  which is unchanged. iOS `FeedCompiler.isRelevant` and the JS `lensRelevant`
+  reference (in `feed-vectors.test.js`, formerly `serverRelevant`) both still
+  reproduce them.
+- The JS reference does **not** share code with the new server `isCovered`
+  (`isCovered` is a separate function keyed off `catalog.json`, tested in
+  `tests/build-events.test.js` — including the WP-96 two-profile acceptance).
+  So there is no coupling that would force a re-freeze.
+- Practically: the two-profile test proves that ONE catalog-scoped server feed,
+  passed through TWO disjoint client lenses, yields two disjoint meaningful feeds
+  — and the owner's own lens yields exactly his historical feed.
+
+The porter's contract is unchanged: reproduce `relevant` as the personal lens.
+`isCovered` has no client mirror (clients never see the catalog) and is not part
+of the cross-platform vector suite.
+
 ## Summary for the porter
 
 - Implement **three** predicates, not one. Keep the bell sport-scoped +

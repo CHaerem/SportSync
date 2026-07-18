@@ -63,8 +63,12 @@ class Dashboard {
 
 	async loadData() {
 		const load = (f) => fetch(`data/${f}?t=${Date.now()}`).then((r) => (r.ok ? r.json() : null)).catch(() => null);
-		const [events, featured, standings, results, tracked, interests, meta, usage] = await Promise.all([
-			load('events.json'), load('featured.json'), load('standings.json'), load('recent-results.json'), load('tracked.json'), load('interests.json'), load('meta.json'), load('usage-state.json'),
+		// WP-96: the web board is catalog-wide (what Sportivista COVERS). It loads
+		// catalog.json — NOT a personal interests.json (that is no longer published;
+		// the owner's personal view is the iOS app). `this.interests` stays null, so
+		// the personal accents/lens degrade to event-intrinsic signals only.
+		const [events, featured, standings, results, tracked, catalog, meta, usage] = await Promise.all([
+			load('events.json'), load('featured.json'), load('standings.json'), load('recent-results.json'), load('tracked.json'), load('catalog.json'), load('meta.json'), load('usage-state.json'),
 		]);
 		this.allEvents = Array.isArray(events) ? events : [];
 		// Prefer the server's stable id (build-events.js, WP-02) — a hash of
@@ -78,7 +82,13 @@ class Dashboard {
 		this.standings = standings;
 		this.recentResults = results;
 		this.tracked = tracked;
-		this.interests = interests;
+		this.catalog = catalog;
+		// WP-96: no personal profile on the web board. Expose the catalog's tier2 in
+		// an alwaysTrack-shaped view so the "Dette dekker vi" surface (followed.js)
+		// and the "next up" glance render from what we COVER. `this.interests`
+		// itself stays null — isMustSee/emphasize then use only intrinsic signals.
+		this.covers = catalog && catalog.tier2 ? { alwaysTrack: catalog.tier2 } : null;
+		this.interests = null;
 		this.meta = meta;
 		this.usage = usage;
 	}

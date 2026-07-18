@@ -535,80 +535,97 @@ if (keptConfirmed > 0) {
 	console.log(`Kept ${keptConfirmed} confirmed channel(s) over a tentative re-guess.`);
 }
 
-// Relevance filter — keep only what the user actually follows, so the agenda
-// isn't cluttered with, e.g., minor tennis events with no tracked player.
+// Coverage filter (WP-96 · the flerbruker-split) — keep only what Sportivista
+// COVERS, so the shared board carries everything any user's on-device lens might
+// want, and NOTHING scoped to one person. The compass is catalog.json ("hva vi
+// DEKKER"), NOT interests.json ("hva DU følger"): personal precision (Carlsen-
+// only, 100-Thieves-only, …) is removed from the server and owned by the client
+// lens alone (docs/js + iOS FeedCompiler — proven safe to move by WP-92). The
+// interests.json read below is a SEPARATE concern: the owner-scoped must-watch /
+// calendar bell (see mustWatchEntity), which stays an owner artifact.
+const catalog = readJsonIfExists(path.join(configDir, "catalog.json")) || {};
 const interests = readJsonIfExists(path.join(configDir, "interests.json")) || {};
-// Sports the user follows WHOLESALE (every in-sport event stays). NB: chess and
-// esports are deliberately NOT here (WP-92) — the owner's interest in them is
-// precise, not broad (interests.json: "Sjakk på elite-nivå (Magnus Carlsen,
-// Norway Chess, World Championship)" and "CS2 KUN når 100 Thieves spiller"), so
-// they are entity-gated below instead of admitted wholesale.
-const followBroadly = new Set(
-	(interests.followBroadly || ["football", "golf", "f1", "cycling", "biathlon", "cross-country", "alpine", "nordic", "ski jumping"]).map((s) => s.toLowerCase())
+// Sports covered WHOLESALE (every in-sport event stays) — catalog tier1. NB:
+// chess and esports are deliberately NOT here — Sportivista covers them through a
+// named-entity catalog (elite tournaments + top players / tier-1 teams), not
+// wholesale, so they are entity-gated below. Default mirrors the pre-WP-96
+// followBroadly set for a catalog-less run (tests, first build).
+const coveredBroadly = new Set(
+	(catalog.tier1 || ["football", "golf", "f1", "cycling", "biathlon", "cross-country", "alpine", "nordic", "ski jumping"]).map((s) => s.toLowerCase())
 );
-// Entity-gated sports (WP-92 · the relevance gate): sports the user tracks ONLY
-// through named entities, never wholesale. For these, a sport-scoped
-// tracked-entity match is REQUIRED — the norwegian / favorite / importance /
+// Entity-gated sports (WP-92 gate, now catalog-keyed): sports we cover ONLY
+// through the named catalog long-tail, never wholesale. For these a sport-scoped
+// catalog-entity match is REQUIRED — the norwegian / favorite / importance /
 // ai-research shortcuts do NOT apply. Without this a minor open with a lone
 // Norwegian club player (the live "XXVI Obert Internacional Sant Martí" case) or
-// any non-100-Thieves CS2 match slips onto the board, because such events are
-// often flagged norwegian:true or arrive as source:"ai-research". followBroadly
-// still wins (checked first), so an owner who ever adds "chess" to
-// interests.json's followBroadly gets it wholesale again. The entity NAMES live
-// in interests.json — never hard-coded here.
+// a CS2 match between two uncovered teams slips onto the board, because such
+// events are often flagged norwegian:true or arrive as source:"ai-research".
+// tier1 still wins (checked first). The entity NAMES live in catalog.json.
 const ENTITY_GATED_SPORTS = new Set(["chess", "esports"]);
-const trackedEntities = [
-	...(interests.alwaysTrack?.teams || []),
-	...(interests.alwaysTrack?.athletes || []),
-	...(interests.alwaysTrack?.tournaments || []),
+const catalogEntities = [
+	...(catalog.tier2?.teams || []),
+	...(catalog.tier2?.athletes || []),
+	...(catalog.tier2?.tournaments || []),
 ];
 
-// The haystack the relevance/bell matchers scan (mirrors helpers.js
-// mustWatchEntity): title + tournament + home/away + Norwegian players +
-// participants. Deliberately excludes venue.
+// The haystack the coverage matcher scans (mirrors helpers.js mustWatchEntity):
+// title + tournament + home/away + Norwegian players + participants.
+// Deliberately excludes venue.
 function relevanceHaystack(e) {
 	return [e.title, e.tournament, e.homeTeam, e.awayTeam,
 		...(e.norwegianPlayers || []).map((p) => p?.name || p),
 		...(e.participants || []).map((p) => p?.name || p)].join(" ");
 }
 
-function isRelevant(e) {
+// isCovered — "does Sportivista cover this event?" (server scope). Structurally
+// identical to the pre-WP-96 isRelevant, but keyed off catalog.json instead of
+// interests.json. The per-user "is this relevant to ME?" decision is NOT made
+// here any more — it is the client lens's job (FeedCompiler.isRelevant), which
+// still reads a personal profile. The golden feed-vectors' `relevant` set pins
+// that (unchanged) client lens; this server filter is a superset upstream of it
+// (see tests/fixtures/feed-vectors/DIVERGENCES.md §6 + the isCovered tests in
+// tests/build-events.test.js).
+function isCovered(e) {
 	const sport = (e.sport || "").toLowerCase();
-	// (1) Followed-wholesale sport → in. Checked first so it wins over the gate.
-	if (followBroadly.has(sport)) return true;
+	// (1) Wholesale-covered sport → in. Checked first so it wins over the gate.
+	if (coveredBroadly.has(sport)) return true;
 	const hay = relevanceHaystack(e);
-	// (2) Entity-gated sport (chess/esports): a SPORT-SCOPED tracked-entity match
+	// (2) Entity-gated sport (chess/esports): a SPORT-SCOPED catalog-entity match
 	// is the only way in — no norwegian/favorite/importance/ai-research blanket.
 	// Sport-scoping stops a cross-sport entity from admitting it (e.g. a chess
 	// event held in the city of Barcelona must not match the football club
-	// "Barcelona"; the bell has always been sport-scoped, see helpers.js).
+	// "Barcelona").
 	if (ENTITY_GATED_SPORTS.has(sport)) {
-		return matchInterest(hay, trackedEntities, { sport: e.sport }) != null;
+		return matchInterest(hay, catalogEntities, { sport: e.sport }) != null;
 	}
 	// (3) Any other non-broad sport (e.g. tennis): a Norwegian / favorite /
-	// high-importance event stays. ai-research is NO LONGER a blanket pass on its
-	// own (WP-92) — an AI-found event must ALSO be a followBroadly sport (handled
-	// at (1)) or match a tracked entity (at (4)).
+	// high-importance event stays. ai-research is NOT a blanket pass on its own —
+	// an AI-found event must ALSO be a tier1 sport (at (1)) or match a catalog
+	// entity (at (4)).
 	if (e.norwegian || e.isFavorite || (e.importance || 0) >= 4) return true;
-	// (4) Tracked-entity match, UNSCOPED (a deliberate divergence from the bell —
+	// (4) Catalog-entity match, UNSCOPED (a deliberate divergence from the bell —
 	// see tests/fixtures/feed-vectors/DIVERGENCES.md §1).
-	return matchInterest(hay, trackedEntities) != null;
+	return matchInterest(hay, catalogEntities) != null;
 }
 
-// Keep events from the last 14 days + upcoming, and only those we follow
+// Keep events from the last 14 days + upcoming, and only those the catalog covers
 const cutoff = Date.now() - 14 * MS_PER_DAY;
 let droppedIrrelevant = 0;
 const kept = all.filter((e) => {
 	if (!e.time) return false;
 	const relevantTime = e.endTime ? Date.parse(e.endTime) : Date.parse(e.time);
 	if (relevantTime < cutoff) return false;
-	if (!isRelevant(e)) { droppedIrrelevant++; return false; }
+	if (!isCovered(e)) { droppedIrrelevant++; return false; }
 	return true;
 });
 kept.sort((a, b) => new Date(a.time) - new Date(b.time));
-// Tag must-watch deterministically from interests.json — the single source of
-// truth for "you'll get a reminder for this". The client reads e.mustWatch to
-// mark rows; build-ics reads it to decide VALARM + the must-watch feed.
+// Tag must-watch deterministically from interests.json — the OWNER'S calendar
+// bell (WP-96: this is the ONE server field still keyed off the owner's personal
+// profile; it feeds the owner's events.ics VALARM + the owner web board's row
+// mark). For external users the bell is a client concern — iOS FeedCompiler
+// recomputes mustWatch from each device's own profile and ignores this stamp.
+// The compass for what's ON the board is the catalog (isCovered above), never
+// interests; this stamp only annotates already-covered events for the owner.
 let mustWatchCount = 0;
 for (const e of kept) {
 	// WP-04: recompute canonical participation form for every output event —
@@ -706,9 +723,12 @@ console.log(
 	`Aggregated ${kept.length} events (${mustWatchCount} must-watch; filtered ${all.length - kept.length} past/irrelevant, of which ${droppedIrrelevant} off-interest) into events.json`
 );
 
-// Publish tracked.json + interests.json so the dashboard's "Hva vi følger"
-// surface can show both what you asked for and what the AI discovered.
-for (const name of ["tracked.json", "interests.json"]) {
+// Publish tracked.json (AI bookkeeping) + catalog.json (what we cover) so the
+// dashboard's "Dette dekker vi" surface can show both. WP-96: interests.json is
+// NO LONGER published — it is the owner's private profile (the seed for their
+// on-device lens), not a shared artifact. The public web board is catalog-wide;
+// each user's personal view is their own device's lens (iOS app).
+for (const name of ["tracked.json", "catalog.json"]) {
 	const src = path.join(configDir, name);
 	if (fs.existsSync(src)) {
 		fs.copyFileSync(src, path.join(dataDir, name));

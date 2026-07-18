@@ -115,12 +115,18 @@ const CATEGORIES = {
 	},
 };
 
-/** followBroadly set (lowercased), from interests.json or the default. */
+/**
+ * Broad-coverage sport set (lowercased). WP-96: the compass is the catalog's
+ * `tier1` ("what we cover wholesale"); falls back to interests.json's
+ * `followBroadly` (owner reference), then the default — kept deliberately in
+ * sync with build-events.js's `coveredBroadly`.
+ */
 function readFollowBroadly(configDir) {
+	const catalog = readJsonIfExists(path.join(configDir, "catalog.json"));
 	const interests = readJsonIfExists(path.join(configDir, "interests.json"));
-	const list = Array.isArray(interests?.followBroadly) && interests.followBroadly.length
-		? interests.followBroadly
-		: DEFAULT_FOLLOW_BROADLY;
+	const list = (Array.isArray(catalog?.tier1) && catalog.tier1.length && catalog.tier1)
+		|| (Array.isArray(interests?.followBroadly) && interests.followBroadly.length && interests.followBroadly)
+		|| DEFAULT_FOLLOW_BROADLY;
 	return list.map((s) => String(s).toLowerCase());
 }
 

@@ -16,11 +16,18 @@
 //   • mustWatch (bell) → server helper mustWatchEntity (client only reads the
 //     precomputed e.mustWatch, so there is no second implementation to run).
 //   • mustSee (accent) + collapseSeries → client only (docs/js/dashboard.js).
-//   • relevant (feed inclusion) → a faithful mirror of scripts/build-events.js
-//     (isRelevant + the 14-day retention cutoff), built on the exported
-//     matchInterest. isRelevant is not exported, so it is reconstructed here and
-//     annotated with its source lines; this reconstruction IS the JS reference
-//     the Swift port is proven against.
+//   • relevant (feed inclusion) → the PERSONAL LENS: "given a user's interests,
+//     what is in THEIR feed?". WP-96 (the flerbruker-split) moved this predicate
+//     off the server: build-events.js now applies isCovered(catalog.json) — "does
+//     Sportivista COVER this?" — a per-CATALOG superset, no longer a per-person
+//     filter. The lens itself is UNCHANGED (still `followBroadly`/entity-gate/
+//     blanket/tracked-match over a personal profile) and now lives ONLY on the
+//     clients (iOS FeedCompiler.isRelevant; the web board is catalog-wide). The
+//     reference below (`lensRelevant`) is that unchanged lens algorithm — the JS
+//     twin of FeedCompiler.isRelevant the Swift port is proven against. The
+//     vectors are therefore NOT re-frozen by WP-96 (the lens didn't change); the
+//     new server isCovered is a separate, server-only predicate tested in
+//     tests/build-events.test.js. See DIVERGENCES.md §6.
 
 import { describe, it, expect, beforeAll } from "vitest";
 import fs from "fs";
@@ -45,17 +52,19 @@ function loadVectors() {
 }
 const VECTORS = loadVectors();
 
-// --- Server reference: relevance (feed inclusion) ----------------------------
-// Mirrors scripts/build-events.js isRelevant() + the 14-day cutoff verbatim:
-//   • the default followBroadly list — WP-92: chess/esports are NO LONGER here;
-//     the owner tracks them only via named entities (elite chess / 100 Thieves).
-//   • isRelevant() (build-events.js): (1) followBroadly wholesale, (2) chess/
-//     esports entity-gate (SPORT-SCOPED match; no norwegian/favorite/importance/
-//     ai-research blanket), (3) the norwegian/favorite/importance blanket for
-//     every other non-broad sport — ai-research is no longer a blanket pass on
-//     its own — and (4) an UNSCOPED tracked-entity match (DIVERGENCES.md §1).
-//     WP-04: norwegianPlayers/participants are canonical {name} objects now, so
-//     the hay-building maps both through `p.name || p` (kept for pre-WP-04 data).
+// --- Client-lens reference: relevance (personal feed inclusion) ---------------
+// The PERSONAL LENS — the JS twin of iOS FeedCompiler.isRelevant. WP-96 moved
+// this off the server (build-events.js now does isCovered(catalog), a superset),
+// but the lens ALGORITHM is unchanged, so this reference is unchanged too:
+//   • the default followBroadly list — WP-92: chess/esports are NOT here; a
+//     profile tracks them only via named entities (elite chess / a CS2 team).
+//   • the lens (== the pre-WP-96 build-events isRelevant): (1) followBroadly
+//     wholesale, (2) chess/esports entity-gate (SPORT-SCOPED match; no norwegian/
+//     favorite/importance/ai-research blanket), (3) the norwegian/favorite/
+//     importance blanket for every other non-broad sport — ai-research is not a
+//     blanket pass on its own — and (4) an UNSCOPED tracked-entity match
+//     (DIVERGENCES.md §1). WP-04: norwegianPlayers/participants are canonical
+//     {name} objects, so the hay-building maps both through `p.name || p`.
 //   • the 14-day retention cutoff, which keys off endTime when present, else start.
 const DEFAULT_FOLLOW_BROADLY = [
 	"football", "golf", "f1", "cycling",
@@ -63,7 +72,7 @@ const DEFAULT_FOLLOW_BROADLY = [
 ];
 const ENTITY_GATED_SPORTS = new Set(["chess", "esports"]);
 
-function serverRelevant(event, interests, nowMs) {
+function lensRelevant(event, interests, nowMs) {
 	if (!event.time) return false;
 	const relevantTime = event.endTime ? Date.parse(event.endTime) : Date.parse(event.time);
 	if (relevantTime < nowMs - 14 * MS_PER_DAY) return false; // dropped: too old
@@ -160,8 +169,8 @@ for (const v of VECTORS) {
 		const nowMs = v.input.now ? Date.parse(v.input.now) : Date.now();
 
 		if (v.expected.relevant) {
-			it("server: relevant events match (build-events.js isRelevant + 14d cutoff)", () => {
-				expect(idsWhere(events, (e) => serverRelevant(e, interests, nowMs))).toEqual(sortIds(v.expected.relevant));
+			it("lens: relevant events match (personal lens == FeedCompiler.isRelevant + 14d cutoff)", () => {
+				expect(idsWhere(events, (e) => lensRelevant(e, interests, nowMs))).toEqual(sortIds(v.expected.relevant));
 			});
 		}
 

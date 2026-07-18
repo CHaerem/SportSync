@@ -7,9 +7,12 @@ import { fileURLToPath } from "url";
 import path from "path";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const interestsPath = path.join(__dirname, "..", "config", "interests.json");
-const interests = readJsonIfExists(interestsPath) || {};
-const FAVORITE_TEAMS = interests.alwaysTrack?.teams || ["Barcelona", "Liverpool", "Lyn"];
+// WP-96: highlight the catalog's covered clubs (tier2), falling back to the
+// owner's interests.json seed, then a hard default. Favorite-tagging on the
+// shared board reflects coverage, not one person's follows.
+const catalog = readJsonIfExists(path.join(__dirname, "..", "config", "catalog.json")) || {};
+const interests = readJsonIfExists(path.join(__dirname, "..", "config", "interests.json")) || {};
+const FAVORITE_TEAMS = catalog.tier2?.teams || interests.alwaysTrack?.teams || ["Barcelona", "Liverpool", "Lyn"];
 
 export class FootballFetcher extends ESPNAdapter {
 	constructor() {
