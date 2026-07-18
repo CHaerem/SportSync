@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-18T13:07:34.283Z",
+  "generatedAt": "2026-07-18T13:37:15.578Z",
   "gapCount": 4,
   "anomalyCount": 1,
   "gaps": [
@@ -12,29 +12,7 @@
       "link": "https://www.nrk.no/sport/aston-villa-punget-ut-ny-klubbrekord-for-vm-juvel-1.17961803",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-18T13:07:34.044Z"
-    },
-    {
-      "kind": "entity",
-      "entity": "British Open",
-      "type": "missing",
-      "imminent": false,
-      "headline": "Kriserunde for Hovland i British Open – klarte ikke cuten",
-      "link": "https://www.nrk.no/sport/kriserunde-for-hovland-i-british-open-_-klarte-ikke-cuten-1.17961821",
-      "feed": "nrk-sport",
-      "matchCount": 1,
-      "detectedAt": "2026-07-18T13:07:34.044Z"
-    },
-    {
-      "kind": "entity",
-      "entity": "Formel 1",
-      "type": "missing",
-      "imminent": false,
-      "headline": "Formel 1: Hamilton-drama på trening – krasjet bilen to timer før kvalifiseringen",
-      "link": "https://www.nrk.no/sport/formel-1_-hamilton-drama-pa-trening-_-krasjet-bilen-to-timer-for-kvalifiseringen-1.17962188",
-      "feed": "nrk-sport",
-      "matchCount": 1,
-      "detectedAt": "2026-07-18T13:07:34.044Z"
+      "detectedAt": "2026-07-18T13:37:15.093Z"
     },
     {
       "kind": "entity",
@@ -45,7 +23,29 @@
       "link": "https://www.nrk.no/fotballvm2026/vm-kan-ha-sendt-norske-spelarar-til-toppen-av-onskjelistene-1.17958098",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-18T13:07:34.044Z"
+      "detectedAt": "2026-07-18T13:37:15.093Z"
+    },
+    {
+      "kind": "entity",
+      "entity": "British Open",
+      "type": "missing",
+      "imminent": false,
+      "headline": "Kriserunde for Hovland i British Open – klarte ikke cuten",
+      "link": "https://www.nrk.no/sport/kriserunde-for-hovland-i-british-open-_-klarte-ikke-cuten-1.17961821",
+      "feed": "nrk-sport",
+      "matchCount": 1,
+      "detectedAt": "2026-07-18T13:37:15.093Z"
+    },
+    {
+      "kind": "entity",
+      "entity": "Formel 1",
+      "type": "missing",
+      "imminent": false,
+      "headline": "Formel 1: Hamilton-drama på trening – krasjet bilen to timer før kvalifiseringen",
+      "link": "https://www.nrk.no/sport/formel-1_-hamilton-drama-pa-trening-_-krasjet-bilen-to-timer-for-kvalifiseringen-1.17962188",
+      "feed": "nrk-sport",
+      "matchCount": 1,
+      "detectedAt": "2026-07-18T13:37:15.093Z"
     }
   ],
   "anomalies": [
@@ -54,7 +54,7 @@
       "issue": "dropped-in-build",
       "detail": "1 upcoming chess event(s) in the source file but 0 on the board — build/normalisation may be dropping them",
       "severity": "high",
-      "detectedAt": "2026-07-18T13:07:34.283Z"
+      "detectedAt": "2026-07-18T13:37:15.577Z"
     }
   ],
   "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board (kind entity/sport), or a tracked.json reason that claims an upcoming event the board lacks (kind tracked-claim, RSS-independent). anomalies: a fetcher's own data looks unreliable."
