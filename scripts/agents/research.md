@@ -196,4 +196,9 @@ re-apply your additions rather than force-pushing.
 - Never invent events without sources
 - Prefer Norwegian-language sources for Norwegian context
 - Never modify `scripts/config/interests.json`
+- Skills under `.claude/skills/**/SKILL.md` ARE writable (Edit/Write are in your
+  allowedTools; a prior run committed to `norwegian-rights`). If you update one,
+  Read it then use the **Edit tool** — never a Bash write (`cat >`/`sed -i`/`tee`),
+  which the CI Bash allowlist denies. There is NO permission gate on skills; do not
+  report or copy forward any "skill write blocked" note (WP-91 debunked it).
 - Stop after ~15 minutes of work; quality over quantity

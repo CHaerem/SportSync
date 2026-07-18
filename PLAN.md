@@ -97,7 +97,7 @@ mennesket, aldri av en agent.
 | WP-84 | Widget token-paritet (web utsatt) | 0F | WP-80 | ✅ widget merget (#294) — WidgetKit av `zenjiMono`-shimen + deprecated farge-aliaser, over på `Font.zenji`/`zenjiTabular` + semantiske tokens; alle 4 schemes bygger, 529 unit. **Web-delen (`docs/css` + `theme.js`) utsatt til rebrandingen** (eierbeslutning 17.07 — web reskin'es uansett da) |
 | WP-85 | Baseline-designsystem + HIG-gate (promoter DESIGN.md) | 0F | WP-80,WP-81,WP-82,WP-83,WP-84 | ✅ merget (#295) — 105 font + 121 farge-kall migrert over de 4 siste filene, `zenjiMono`-shim + aliaser fjernet (null treff), HIG-gate `tests/ios-dynamic-type-gate.test.js` (dekker Zenji+ZenjiWidget), `DESIGN-BASELINE.md`→`DESIGN.md` promotert. Fable 5-sluttreview: KLAR (F1–F3 fikset i PR). Samlet verif.: npm+gate, 4 schemes, 526 unit + 12 UI + 13/13 vektorer |
 | WP-90 | Kanal-korrekthets-kjeden (golf/carry-forward/skill) | 0G | – | ✅ merget (#302) — reell rotårsak lå i norwegian-rights-KARTET (appliseres etter carry-forward); verified-wins m/ 14d-TTL + verificationSources-korroborasjonsvakt (håndterer korrupte revert-vrak); golf tier-splitt web-verifisert; 486 tester (+11), vektorer urørt. LIVE-BEKREFTET: Corales flippet Viaplay→HBO Max på tavla 2 min etter pipeline-kjøring |
-| WP-91 | CI-nervesystemet (403/push-auth/skill-write) — beskyttede stier | 0G | – | ⬜ |
+| WP-91 | CI-nervesystemet (403/push-auth/skill-write) — beskyttede stier | 0G | – | 🔬 |
 | WP-92 | Relevans-gaten (chess/esport + iOS-låssteg) | 0G | – | ⬜ |
 | WP-93 | Vaktene (grader/gap-detektor/kalibrering) | 0G | – | ⬜ |
 | WP-94 | Drifts-småplukk (kvote-gate/validate-degradering/venue/UCL) | 0G | – | ⬜ |

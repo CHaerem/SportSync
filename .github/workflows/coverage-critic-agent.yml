@@ -16,7 +16,8 @@ jobs:
     permissions:
       contents: write
       id-token: write
-      actions: write # allows escalation via `gh workflow run research-agent.yml`
+      actions: write # dispatch research-agent.yml from the escalate step (NOT the agent)
+      issues: write # raise an `escalation-failed` alarm if that dispatch fails
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -40,3 +41,14 @@ jobs:
               git add docs/data/coverage-audit.json
               git commit -m "coverage-critic: recall audit"
               git push || (git pull --rebase -X theirs origin main && git push)
+
+      # Escalation is decoupled from the agent: the agent's OIDC app token lacks
+      # `actions: write`, so a dispatch from inside claude-code-action 403s. Instead
+      # the agent writes `escalate.request`; this step dispatches with the job's
+      # GITHUB_TOKEN (which HAS actions:write via the permissions block) and raises a
+      # loud `escalation-failed` issue if the dispatch still fails. (WP-91)
+      - name: Escalate to research (if the audit requested it)
+        if: steps.usage.outputs.run == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/escalate-research.js coverage-critic

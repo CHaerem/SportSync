@@ -106,11 +106,16 @@ Distinguish a genuine gap from a correct absence. "No cricket" is correct (`neve
   current round, an empty file, a wrong time/channel) so the pattern is visible over time.
 - Keep gaps concrete and actionable — each should tell the research agent exactly what to find.
 
-2. **Escalate** when there is at least one `high`-severity gap: run
-   `gh workflow run research-agent.yml -f tier=deep` (a high-severity gap warrants
-   the deep tier — Fable 5) so research fills them, and set
-   `"escalated": true`. **Max 1 escalation per run** (this agent runs daily). If nothing
-   is high-severity, do not escalate — write the audit and stop.
+2. **Escalate** when there is at least one `high`-severity gap: **request it by
+   writing the file `escalate.request` at the repo root, containing the single word
+   `deep`** (use the Write tool). A workflow step then runs
+   `gh workflow run research-agent.yml -f tier=deep` on your behalf with a token that
+   actually has `actions: write` (a high-severity gap warrants the deep tier — Fable
+   5) so research fills them. Set `"escalated": true` in the audit to record that you
+   requested it. **Do NOT run `gh workflow run` yourself** — the token inside this
+   agent lacks `actions: write` and the dispatch 403s (the bug WP-91 fixed; the
+   sentinel file is the working path). **Max 1 escalation per run** (this agent runs
+   daily). If nothing is high-severity, do not escalate — write the audit and stop.
 
 ## Constraints
 - You never add or edit events, tracked.json, or interests.json — you only write

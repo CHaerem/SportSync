@@ -30,9 +30,14 @@ schedule impact, opinion pieces, anything already reflected in events.json.
 3. **Escalation cap: max 2 escalations per calendar day (UTC).** Count today's
    `"escalate"` entries in scout-log.json before escalating — if already 2, log
    `"quiet"` with reason "cap reached: <signal>" instead.
-4. If escalating: run `gh workflow run research-agent.yml -f tier=deep` (an
-   escalation is a heavy run — the deep tier uses Fable 5) and include what you
-   saw in the log entry so the research agent's next run can find it.
+4. If escalating: **request it by writing the file `escalate.request` at the repo
+   root, containing the single word `deep`** (use the Write tool). A workflow step
+   then runs `gh workflow run research-agent.yml -f tier=deep` on your behalf with a
+   token that actually has `actions: write` (an escalation is a heavy run — the deep
+   tier uses Fable 5). **Do NOT run `gh workflow run` yourself** — the token inside
+   this agent lacks `actions: write` and the dispatch 403s (this is the bug WP-91
+   fixed; the sentinel file is the working path). Still include what you saw in the
+   log entry so the research agent's next run can find it.
 5. Commit only `docs/data/scout-log.json`:
    `git add docs/data/scout-log.json && git commit -m "scout: <verdict>" && git push || (git pull --rebase origin main && git push)`
 
