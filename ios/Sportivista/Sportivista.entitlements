@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.apple.security.application-groups</key>
+	<array>
+		<string>group.app.sportivista</string>
+	</array>
+	<!--
+	  WP-19 — CloudKit for the USER'S OWN private profile sync (P360). Like the
+	  App Group above, this is a PAID-account capability: it is declared here on
+	  the signed/full-account target so CloudKitProfileSync can be switched on
+	  (compile with -D SPORTIVISTA_CLOUDKIT — see ProfileSyncBackendFactory) with no
+	  further wiring. The free personal team cannot provision it, so the device
+	  build (SportivistaDeviceDev.entitlements) stays EMPTY and uses LocalOnlyProfileSync.
+	  Unsigned Simulator builds (CODE_SIGNING_ALLOWED=NO) ignore these keys, so
+	  the app + test builds are unaffected.
+	-->
+	<key>com.apple.developer.icloud-container-identifiers</key>
+	<array>
+		<string>iCloud.app.sportivista.ios</string>
+	</array>
+	<key>com.apple.developer.icloud-services</key>
+	<array>
+		<string>CloudKit</string>
+	</array>
+</dict>
+</plist>

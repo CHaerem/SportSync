@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	  WP-16 — DELIBERATELY EMPTY. A free personal Apple Developer team cannot
+	  provision App Groups, so the device build declares no entitlements at all;
+	  CacheStore then uses its Application Support fallback and ProfileStore is
+	  Application-Support-only regardless. Local notifications (UNUserNotification
+	  Center) need no entitlement. Flip App Groups / push back on for WP-17
+	  (paid account) — see the Sportivista.entitlements sibling.
+	-->
+</dict>
+</plist>

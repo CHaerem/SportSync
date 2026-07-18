@@ -1,18 +1,18 @@
 #!/usr/bin/env swift
 //
 //  enso-icon.swift
-//  Zenji — ensō app/PWA icon generator
+//  Sportivista — ensō app/PWA icon generator
 //
 //  CHOSEN VARIANT: v3-grov-contig (teletext mosaic, coarse contiguous 18×18
 //  grid). Verified byte-identical (WP-49) to every shipped icon:
-//    variants/v3-grov-contig/enso-1024.png = ios/Zenji/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png
+//    variants/v3-grov-contig/enso-1024.png = ios/Sportivista/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png
 //    variants/v3-grov-contig/enso-512.png  = docs/icons/icon-512x512.png
 //    variants/v3-grov-contig/enso-192.png  = docs/icons/icon-192x192.png (= docs/favicon.png)
 //    variants/v3-grov-contig/enso-180.png  = docs/icons/icon-180x180.png
 //
 //  REGENERATE the shipped icons (deterministic — seeded RNG, fixed grid):
 //    swift ios/tools/enso-icon.swift /tmp/enso-out
-//    cp /tmp/enso-out/variants/v3-grov-contig/enso-1024.png ios/Zenji/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png
+//    cp /tmp/enso-out/variants/v3-grov-contig/enso-1024.png ios/Sportivista/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png
 //    cp /tmp/enso-out/variants/v3-grov-contig/enso-512.png  docs/icons/icon-512x512.png
 //    cp /tmp/enso-out/variants/v3-grov-contig/enso-192.png  docs/icons/icon-192x192.png
 //    cp /tmp/enso-out/variants/v3-grov-contig/enso-192.png  docs/favicon.png
@@ -21,9 +21,9 @@
 //  (variants/ + review grids) were removed from git in WP-49 and must not
 //  be re-committed — only the shipped icon files above belong in the repo.
 //
-//  Draws the Zenji mark: an ensō (円相) — the zen circle painted in one
+//  Draws the Sportivista mark: an ensō (円相) — the zen circle painted in one
 //  brushstroke — in flat teletext amber (#FFB000) on the near-black page
-//  (#0A0A0C), matching ios/Zenji/DesignTokens.swift. The identity is
+//  (#0A0A0C), matching ios/Sportivista/DesignTokens.swift. The identity is
 //  Tekst-TV, so the ensō is meant to read DIGITAL-japanese, not
 //  watercolour-japanese: "a calligrapher drawing with a CRT beam".
 //
