@@ -101,6 +101,7 @@ mennesket, aldri av en agent.
 | WP-92 | Relevans-gaten (chess/esport + iOS-låssteg) | 0G | – | ✅ merget (#306) — chess/esports ut av ubetinget followBroadly (sport-scopet entitets-match kreves, lest fra interests — aldri hardkodet); ai-research-autopass scopet til reelle interesser; iOS FeedCompiler speilet i låssteg; 13 vektorer re-frosset + ny vektor 14 (fryser gaten); 526 tester begge plattformer, bit-like, 4 schemes. Live-diff: 49→47 — kun Sant Martí (bevist støy) + Sjakk-NM-eliteklassen (GRENSETILFELLE dokumentert: matcher ikke Carlsen/Norway Chess/VM mekanisk; EIER avgjør via interests.json om NM skal inn) |
 | WP-93 | Vaktene (grader/gap-detektor/kalibrering) | 0G | – | ✅ merget (#304) — grader: hard failure #6 (summary-vs-streaming-selvmotsigelse, kan strukturelt ikke degraderes til «note») + gjentatte-anbefalinger + evidens-monokultur; gap-detektor: fjerde RSS-uavhengige signal `tracked-claim` (Gstaad-klassen, 0 falske positiver live etter to presisjons-iterasjoner); kalibrering: `boardWasProvisional` (kilde-retter-oss = styrke, redder cyclingstage 0.27, bakoverkompatibel); coverage-critic: recall-utmattelse auto-eskalerer gjentatte gap (F1-quali-fella); venue-sync i verify. Samlet bølge-2-verif.: 522 tester + build/validate/gap/kalibrering rent
 | WP-94 | Drifts-småplukk (kvote-gate/validate-degradering/UCL) | 0G | – | ✅ merget (#303) — kvote-gate m/ fersk-henting >10min (pure functions, fail-open bevart; NB: fersk-stien er no-op i kritiske workflows til et lite BESKYTTET workflow-tillegg sender OAuth-token til gate-steget — egen mini-PR til eier); validate-degradering uten workflow-endring (in-prosess-validering før skriving, forrige gyldige data består, build-alert.json-helsesignal; fant+fikset round-trip-valideringsbug); UCL-placeholder-regel i research.md; 506 tester
+| WP-95 | Deltakelses-ferskhet (cut/trekning — eier-funn) | 0G | – | ⬜ |
 
 ---
 
@@ -985,6 +986,30 @@ menneskelig merge.
 uker normal drift** (dekning: null tapte fulgte events; korrekthet: amend-rate
 nær-term → ~0; robusthet: null stille kritiske stopp) → grønt = TestFlight.
 
+### WP-95 · Deltakelses-ferskhet (eier-funn 18.07 — NY FEILKLASSE)
+Eieren fant live-feil auditen ikke målte: Hovland vises som aktiv i The Open +
+morgen-headline «Hovland ut i tredje runde» — generert TIMER etter at han røk
+cutten (web-bekreftet: fem over fredag, to slag bak cut-linjen). Auditen målte
+tid/kanal — ikke DELTAKELSE (cut/trekning/eliminering midt i turneringer).
+Diagnose: `norwegianPlayers`-berikelsen (golf.js/pgatour-scraper) har INTET
+status-begrep; iOS-linsen (`LensRenderer`) har allerede et `status`-felt som
+rendres ordrett — serveren sender det bare aldri.
+- **Mål:** En fulgt utøver som er ute av en pågående turnering vises ALDRI som
+  aktiv, og redaksjonen kan aldri skrive en deltakelses-påstand mot stale data.
+- **Innhold:** (a) Server: cut-/status-deteksjon i golf-berikelsen (ESPN-
+  leaderboard har per-spiller-status/MC) → `norwegianPlayers[].status` («røk
+  cutten» o.l.) + fjern tee-rader for spillere ute; (b) `verify.md`: deltakelses-
+  sjekk for fulgte utøvere i pågående turneringer (cut/WD/startliste) — samme
+  prioritet som tid/kanal; (c) `editorial.md`: hard regel — enhver «spiller
+  i dag»-påstand om fulgt utøver krysssjekkes mot fersk kilde før headline;
+  (d) klient: lens/web viser rolig «røk cutten»-status i stedet for tee-rad
+  (iOS-feltet finnes; web sjekkes); (e) grader-rubrikk: deltakelses-påstand i
+  brief uten kilde = trekk.
+- **Aksept:** The Open-oppføringen viser korrekt Hovland-status og OVERLEVER
+  pipeline-rebuild; test som reproduserer cut-klassen; kveldsbrief 15:00 UTC
+  skriver ikke feilen på nytt. **NY PORT i portmålingen:** null feilaktige
+  deltaker-statuser for fulgte utøvere.
+
 ## FLYTTEDAGEN · Zenji → Sportivista — ✅ UTFØRT 17.07.2026
 
 Eierbeslutning (varemerke-søk utsatt, risiko akseptert av eier): repo omdøpt til
@@ -1144,6 +1169,42 @@ Etter ~4 uker TestFlight: åpner folk appen daglig uten push-mas? D7-retention?
 Alt under denne linjen er skisse som re-planlegges ved gaten.
 
 ---
+
+## VISJON v3 (eier, 18.07.2026) · Den komplette personlige feeden — dossier-tillegg
+
+Sportivista er på sikt **den komplette personlige nyhetsfeeden for alt du
+følger**: nyheter om det du følger + live-status + kommende events med hvor
+du ser det. Strategiske rammer (drøftet og omforent):
+
+- **Posisjonen er DET PERSONLIGE FILTERET** — tverrsnittet ingen eier:
+  FotMob/F1/PGA-appene = vertikal dybde; nyhetshusene = horisontal bredde uten
+  personalisering. Sportivista = personlig horisontal (alt du følger, inkl.
+  esport, ingenting annet, rolig, med tider/kanaler du stoler på). Spoilervernet
+  blir en genuin differensiator i nyhetskontekst.
+- **Ikke konkurrer på dekning eller live-dybde.** Live = «hva er på nå,
+  stillingen, hvor ser jeg det» + deep-link til spesialisten (FotMob/F1-appen/
+  kringkaster). Rights-trygt (fakta er frie); offisielle datalisenser
+  (Opta/Sportradar-klassen) er andres voll.
+- **Nyhets-juss designes rundt fra dag én:** DSM art. 15 (publisher-retten) gjør
+  AI-sammendrag av enkeltartikler grått. Strategien er «facts are free»:
+  destiller FAKTA på tvers av kilder til egen brief-tekst + lenk kildene
+  (dagens editorial-mønster). Overskrift+lenke ut er trygt.
+- **Arkitektur = dagens to-lags-mønster, ny datatype:** server aggregerer/
+  klynger/destillerer med entity-tags → `news.json` via manifest-syncen;
+  klienten personaliserer med ren Swift-linse (FeedCompiler-mønsteret,
+  golden-vector-testbart) + on-device FM for Q&A/sammendrag. (NB: PCC er
+  Apples egen infra — tredjeparter deployer ikke dit; personalisering skjer
+  on-device + egen server, personvernløftet holdes ved at serveren aldri ser
+  interessene.)
+- **Formen forblir tavle, ikke strøm:** entitets-sentrerte kort (nyhet ·
+  resultat · kommende · live) i rolig dagsrytme med redaksjonelt tak — aldri
+  uendelig scroll. Ro-identiteten ER differensiatoren.
+
+**WP-100 · Nyhets-v0 «Nyheter om det du følger» (ETTER G1):** nesten gratis
+innenfor dagens arkitektur — `rss-digest.json` (11 kilder, hentes alt hver
+time) + entity-matching → en stille seksjon med overskrift · kilde · lenke ut,
+filtrert av linsen, spoiler-vernet. Tester nyhets-hypotesen på TestFlight-
+testerne uten én ny serverkomponent.
 
 ## FASE 1 · Norge-lansering (Q4 2026, dossier P400/P500) — skisse
 
