@@ -104,6 +104,10 @@ xcodebuild -exportArchive -archivePath <path>.xcarchive \
   multitasking-kravet om alle fire orienteringer i App Store-valideringen.
 - `ITSAppUsesNonExemptEncryption: false` ligger i begge app-Info.plists så
   bygg slipper compliance-spørsmålet og blir tilgjengelige umiddelbart.
+- **Versjonsstrengen kan ALDRI gå ned:** TestFlight viser aldri et bygg med
+  lavere `CFBundleShortVersionString` enn det testerne har installert (bygg 3
+  «forsvant» fordi 0.1.0 < 1.0 som bygg 1–2 ved et uhell skipte med).
+  Versjonslinjen er 1.0.x og kan bare øke.
 - **Opplastings-ritualet (rekkefølgen er kontrakten):** (1) bump
   `CURRENT_PROJECT_VERSION` i project.yml (hver opplasting trenger nytt
   byggnummer — NB: `CFBundleVersion`/`CFBundleShortVersionString` i
