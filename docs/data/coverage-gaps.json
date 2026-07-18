@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-18T10:36:08.744Z",
+  "generatedAt": "2026-07-18T11:51:37.039Z",
   "gapCount": 3,
   "anomalyCount": 1,
   "gaps": [
@@ -12,7 +12,7 @@
       "link": "https://www.nrk.no/sport/aston-villa-punget-ut-ny-klubbrekord-for-vm-juvel-1.17961803",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-18T10:36:08.438Z"
+      "detectedAt": "2026-07-18T11:51:36.724Z"
     },
     {
       "kind": "entity",
@@ -22,8 +22,8 @@
       "headline": "Kriserunde for Hovland i British Open – klarte ikke cuten",
       "link": "https://www.nrk.no/sport/kriserunde-for-hovland-i-british-open-_-klarte-ikke-cuten-1.17961821",
       "feed": "nrk-sport",
-      "matchCount": 2,
-      "detectedAt": "2026-07-18T10:36:08.438Z"
+      "matchCount": 1,
+      "detectedAt": "2026-07-18T11:51:36.724Z"
     },
     {
       "kind": "entity",
@@ -34,7 +34,7 @@
       "link": "https://www.nrk.no/fotballvm2026/vm-kan-ha-sendt-norske-spelarar-til-toppen-av-onskjelistene-1.17958098",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-18T10:36:08.438Z"
+      "detectedAt": "2026-07-18T11:51:36.724Z"
     }
   ],
   "anomalies": [
@@ -43,7 +43,7 @@
       "issue": "dropped-in-build",
       "detail": "1 upcoming chess event(s) in the source file but 0 on the board — build/normalisation may be dropping them",
       "severity": "high",
-      "detectedAt": "2026-07-18T10:36:08.744Z"
+      "detectedAt": "2026-07-18T11:51:37.039Z"
     }
   ],
   "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board (kind entity/sport), or a tracked.json reason that claims an upcoming event the board lacks (kind tracked-claim, RSS-independent). anomalies: a fetcher's own data looks unreliable."
