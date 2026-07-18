@@ -1,24 +1,21 @@
 {
-  "runAt": "2026-07-18T03:45:00Z",
+  "runAt": "2026-07-18T06:40:00Z",
   "eventsAdded": 0,
   "eventsRemoved": 0,
-  "eventsAmended": 1,
-  "trackedDelta": "Ingen entries lagt til/fjernet. Tre reasons oppdatert: (1) havard-rain-nygaard + (2) blast-bounty-2026-s2 — 100 Thieves–Falcons-kampen (ons. 22. juli 17.30 UTC) fikk tiden bekreftet, oppgradert medium→high, tentativ-flagg fjernet; (3) esports-world-cup-2026-chess — dato/sted (11.–15. aug Paris) re-bekreftet mot et avvist «4.–6. aug»-rykte.",
+  "eventsAmended": 0,
+  "trackedDelta": "Ingen entries lagt til/fjernet. Én reason korrigert: kristoffer-reitan — fra «trolig ute / kildene spriker» til «KLARTE CUTEN i The Open (par totalt, delt 50., spiller helgen)» etter uavhengig write-time fact-check mot VG som avslørte at en scout mis-leste artikkelen som «misset cut». Hovland misset cuten (uendret, korrekt).",
   "quality": {
     "pass": true,
-    "score": 94,
-    "failures": [
-      "Rådgivende (ingen hard failure): BLAST Bounty-tidens oppgradering til «high» hviler på én utledningsmetode (HLTV-nedtelling aritmetisk + blast.tv-programmet) framfor en autoritativ publisert terminliste — dekker 2-URL-kontrakten, men verify bør re-bekrefte eksakt 17.30 UTC på kampdagen.",
-      "Rådgivende: coverage-gaps.json ble ikke gitt graderen, så gap-oppløsning ble ikke uavhengig verifisert; run-notene hevder full imminent + ~4-ukers dekning."
-    ]
+    "score": 97,
+    "failures": []
   },
   "notes": [
-    "Tidlig lørdags-run ~6,5t etter forrige (17. juli 21.00Z). Ved kjøretid (03.45 UTC) hadde INGEN av dagens events skjedd ennå (TdF etappe 14 start 11.10 UTC, Warholm DL London 13.03 UTC, F1 Belgia-kvalik 14.00 UTC, VM-bronse 21.00 UTC) → ingen resultater å skrive.",
-    "Tre parallelle scout-subagenter (CS2/100T; sykkel/TdF; bred norsk sveip over golf/tennis/F1/friidrett/sjakk/fotball) + én uavhengig write-time fact-checker, alle med ekte web-søk.",
-    "ENESTE BOARD-ENDRING: BLAST Bounty S2 100 Thieves–Falcons (R32, Bo3) — tiden ons. 22. juli 17.30 UTC (19.30 CEST) BEKREFTET av to uavhengige signaler (HLTV-kampsidens live-nedtelling landet aritmetisk eksakt på 17.30 UTC + blast.tv-programmet). Event oppgradert confidence medium→high; summary omskrevet uten tentativ-flagg; format-nyanse notert (online-stadiet = «vinn to Bo3-serier for LAN», ikke ren single-elim). rain-roster intakt.",
-    "FACT-CHECK BEKREFTET (ingen feil nådde tavla): sveip flagget et sekundært «EWC-sjakk 4.–6. aug»-rykte; uavhengig fact-check avviste det — 11.–15. aug i Paris står (Liquipedia + chess.com enige; EWC flyttet Riyadh→Paris 20. mai 2026). tracked-reason styrket, ingen dato-endring.",
-    "SYKKEL: TdF etappe 13 (Schmid-seier) + GC-linja (Pogačar gul, Vingegaard +3.36, Evenepoel +4.06, Pidcock 4. +4.15, Ayuso 5. +4.22, Tobias HJ 15. +14.50; grønn Pedersen, prikket Pogačar, hvit Ayuso) re-verifisert uendret mot tre kilder; etappe 14 (i dag) ikke startet ved kjøretid; ingen nye norske forfall (kun Træen); Danmark Rundt 29. juli–2. aug datoer re-bekreftet.",
-    "GOLF/TENNIS/F1/FRIIDRETT/FOTBALL/SJAKK: alt uendret. Hovland misset cut The Open (FedEx St. Jude ranking-gated); Ruud ute av Gstaad (Montreal dato-gated); F1 Belgia normal helg (kvalik 14.00 UTC + race 13.00 UTC søn., Viaplay); Warholm DL London 13.03 UTC (NRK) på plass; Barça Birmingham-treningskamp 31. juli bekreftet, Joan Gamper vs Al Ahly 19. aug fortsatt uten offisiell avspark-tid (holdt av tavla); Lyn–Strømsgodset 25. juli uendret; VM bronse+finale (NRK) uendret; ingen ny Carlsen-turnering før EWC; Tari ingen bekreftet Andorra-påmelding (2026-utgaven startet i dag; «Tari vant Andorra» = 2025-artefakt).",
+    "Tidlig lørdags-run ~3t etter forrige (03.45Z). Ved kjøretid (06.40 UTC) hadde INGEN av dagens events skjedd ennå (TdF etappe 14 start 11.10 UTC, Warholm DL London 13.03 UTC, F1 Belgia-kvalik 14.00 UTC, VM-bronse 21.00 UTC) → ingen resultater å skrive. Legitim rolig no-op på event-siden; eneste endring er en tracked-korreksjon.",
+    "Tre parallelle scout-subagenter (sykkel/TdF; CS2+sjakk; bred norsk sveip over golf/tennis/F1/friidrett/fotball) + egen uavhengig write-time fact-check, alle med ekte web-søk.",
+    "FACT-CHECK REDDET EN FEIL: bred-sveip-scouten hevdet Kristoffer Reitan MISSET CUTEN i The Open («+3»), men uavhengig fact-check mot VG (scoutens egen kilde) viste det MOTSATTE — Reitan KLARTE CUTEN (par totalt, delt 50., spiller lør./søn.), bekreftet av to søk. tracked-entry korrigert; The Open er statisk event så ingen board-endring, men den feilaktige «trolig ute»-formuleringen er nå rettet. En manglende/feil detalj skulle aldri nådd brukeren.",
+    "SYKKEL (re-verifisert uendret): TdF etappe 14 (Mulhouse–Le Markstein) start 11.10 UTC bekreftet (franceletour + cyclingnews); GC-linja uendret (Pogačar gult, Vingegaard +3.36, Evenepoel +4.06, Pidcock 4. +4.15, Ayuso 5. +4.22, Tobias HJ 15. +14.50; grønn Pedersen 377p, prikket Pogačar, hvit Ayuso); ingen nye norske forfall (kun Træen DNF etappe 6); Danmark Rundt 29. juli–2. aug norsk kringkaster fortsatt ikke publisert (DR/DRTV bekreftet dansk kanal), Arctic Race uendret.",
+    "CS2/SJAKK (re-verifisert uendret): 100 Thieves–Falcons R32 (Bo3) ons. 22. juli 17.30 UTC bekreftet, rain på rosteret (rain/poiii/sirah/dev1ce/Gizmy, gla1ve coach); ingen annen 100T-kamp med fast dato. Ingen ny Carlsen-turnering før EWC (Vegas-Freestyle-treff = 2025-artefakt, avvist igjen); EWC-sjakk 11.–15. aug Paris re-bekreftet; Tari ingen bekreftet event.",
+    "TENNIS/F1/FRIIDRETT/FOTBALL (re-verifisert uendret): Ruud ute av Gstaad, Montreal dato-gated (trekning 31. juli, ingen norsk kanal meldt); F1 Belgia GP normal helg — race søn. 19. 13.00 UTC + kvalik lør. 18. 14.00 UTC bekreftet mot formula1.com, ingen ESPN-fredags-mis-datering; Warholm DL London lør. 18. 13.03 UTC (NRK) bekreftet; Barça Joan Gamper vs Al Ahly 19. aug avspark-TID fortsatt offisielt TBC → holdt av tavla; TO NYE Barça-treningskamper funnet (CE Europa 24. juli + Preston 3. aug) men BEGGE for lukkede dører / ingen kringkaster → IKKE lagt til (uten «hvor kan jeg se det» = liten verdi); Lyn–Strømsgodset borte 25. juli 18.00 uendret; Liverpools PL-åpning bekreftet flyttet til borte mot Newcastle søn. 23. aug 16.30 BST (Sky) — utenfor 4-ukershorisont + PL dekkes statisk, notert for fremtidig run, ikke lagt til.",
     "MEKANISKE SIGNALER (coverage-gaps.json 21.51Z): 3 entity-gaps, alle false positives og avvist — Premier League (overgangs-headline «Aston Villa punget ut klubbrekord»; sesongstart medio aug, ingen konkret event ennå), British Open (Hovland misset-cut-headline; The Open ligger på tavla som statisk event), Fotball-VM (finale-kommentar-headline; finalen på tavla søn. 19. juli). 0 anomalies.",
     "validate-events.js: 49 events, 0 errors."
   ]
