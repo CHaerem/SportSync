@@ -103,7 +103,7 @@ mennesket, aldri av en agent.
 | WP-94 | Drifts-småplukk (kvote-gate/validate-degradering/UCL) | 0G | – | ✅ merget (#303) — kvote-gate m/ fersk-henting >10min (pure functions, fail-open bevart; NB: fersk-stien er no-op i kritiske workflows til et lite BESKYTTET workflow-tillegg sender OAuth-token til gate-steget — egen mini-PR til eier); validate-degradering uten workflow-endring (in-prosess-validering før skriving, forrige gyldige data består, build-alert.json-helsesignal; fant+fikset round-trip-valideringsbug); UCL-placeholder-regel i research.md; 506 tester
 | WP-95 | Deltakelses-ferskhet (cut/trekning — eier-funn) | 0G | – | ✅ merget (#307) — ESPN core-API competitor-status (lett-scoreboardet skjuler cut mid-turnering; én billig henting per fulgt spiller, fail-soft); verify/editorial/grader-kontrakter tettet; web viser rolig status; iOS trengte null endring (LensRenderer var klar). 536 tester. LIVE-BEKREFTET: Hovland «røk cutten» på tavla 12:47 UTC — før kveldsbriefen 15:00. NY PORT: null feilaktige deltaker-statuser |
 | WP-96 | Flerbruker-splitten (interests → katalog) — GATE for eksterne testere | 0G | portmåling | ✅ merget (#308) — `catalog.json` (tier1 bredt + tier2 elite-langhale, nøkternt seedet; tennis via tier2-majors for å unngå ATP/WTA-flom); `isCovered(catalog)` server-side, personlig presisjon eies av linsen alene; vektorer IKKE re-frosset (semantisk riktig: linsen uendret — pinner nå klienten, DIVERGENCES §6); to-profil-aksepttest (eier uendret + Nakamura-sjakk + NAVI-CS2 → alle meningsfulle fra samme feed); interests.json avpublisert, web viser «Dette dekker vi»; agent-kompass → katalogen; ICS/mustWatch bevisst eier-artefakt; rediger = «be om dekning» (skrivevei → WP-23). 542 JS + 526 iOS + vektorer bit-like + 4 schemes |
-| WP-97 | Design-biblioteket (tokens.json + koherens + brand-assets + styleguide) | 0G | – | ⬜ |
+| WP-97 | Design-biblioteket (tokens.json + koherens + brand-assets + styleguide) | 0G | – | 🔬 PR åpen |
 
 ---
 
@@ -1047,7 +1047,7 @@ enn eieren får TOM tavle (serveren droppet innholdet før deres linse så det).
   research-/verify-omfang — koordineres med API-splitten (Fase B i
   AI-ØKONOMI-tillegget).
 
-### WP-97 · Design-biblioteket (én token-sannhet + koherens-tester)
+### WP-97 · Design-biblioteket (én token-sannhet + koherens-tester) — 🔬 PR åpen
 Eier-beslutning 18.07: konsistent branding-stil trenger bibliotek. I dag lever
 tokens i TRE parallelle sannheter (DESIGN.md-prosa, DesignTokens.swift,
 base.css) holdt i takt for hånd, og app-ikon-scriptet finnes kun i en sesjons-
@@ -1066,6 +1066,29 @@ scratchpad. Repoets signaturgrep anvendes: verifisering fremfor kodegen.
   virkeligheten, endrer den ikke); styleguide-siden viser alle tokens +
   kjernekomponenter i begge temaer; ikonet kan regenereres fra innsjekket
   script byte-likt dagens.
+- **Levert i denne PR-en:** `design/tokens.json` (W3C-format) + 48 tester i
+  `tests/design-tokens.test.js` som krysssjekker tokens.json ⇄ base.css ⇄
+  DesignTokens.swift ⇄ DESIGN.md § Tokens (rødt bevist på en ekte
+  verdi-mutasjon, revertert); `design/brand/kolonet.svg` (kilde-vektor,
+  radius 118 / avstand 168 på 1024-rammen — utledet ved pikselinspeksjon av
+  det skipede ikonet, ikke antatt) + `design/brand/generate-icons.swift`
+  (innsjekket, parametrisert — `--all <dir>` regenererer hele settet); 1024-
+  utgaven verifisert **PIKSEL-IDENTISK** (null delta i alle RGBA-kanaler) mot
+  `AppIcon-1024.png`, samme for alle fire web-ikonene — PNG-filene selv er
+  12 byte større (kun `eXIf`-metadata, `IDAT`-lengden er identisk); `design/brand/BRAND.md`
+  (konstruksjon, avstand, minstestørrelser fra faktisk kildekode-grep, feil
+  bruk, tagline); `docs/styleguide.html` (lenker ekte base.css/layout.css/
+  cards.css, ingen duplisert CSS; fargeswatcher leser CSS-variablene live via
+  `getComputedStyle`; skjermbilder tatt i begge temaer). **Avvik funnet, IKKE
+  stille rettet** (se `design/tokens.json` `$extensions.sportivista.discrepancy`
+  per token/rolle): (1) `tertiaryLabel`/`--fg-3` brukes på begge flater men
+  mangler i DESIGN.md § Farge-tabellen OG i `SportivistaTokens`-enumet (iOS-
+  views kaller `Color(uiColor: .tertiaryLabel)` direkte); (2) wordmarkens
+  «Stor tittel»-rolle er 26px på web, ikke DESIGN.md sin dokumenterte
+  2.125rem (34px) — en reell, ikke-avrundings-differanse; (3) web sitt
+  ordmerke er HELT amber (én av fem sanksjonerte amber-bruk i `base.css`),
+  mens iOS/widget kun farger kolonet amber — dokumentert som bevisst
+  flate-avvik i BRAND.md, ikke rettet.
 
 ## FLYTTEDAGEN · Zenji → Sportivista — ✅ UTFØRT 17.07.2026
 

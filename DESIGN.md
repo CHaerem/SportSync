@@ -46,6 +46,12 @@ ved forstørret Dynamic Type før merge. Eieren er siste smaksinstans.
 Alle farger er **semantiske**, ikke rå hex i komponentene. Verdiene under er
 Apple-system-farger + én amber-aksent. Ved rebrand endres KUN denne tabellen.
 
+> **Maskinlesbar fasit:** [`design/tokens.json`](design/tokens.json) speiler denne
+> tabellen (+ typografi/spacing/radius) i W3C design-tokens-format; koherens-testen
+> `tests/design-tokens.test.js` håndhever takten mellom denne prosa-tabellen,
+> `docs/css/base.css` og `ios/Sportivista/DesignTokens.swift` — drift på noen av de
+> tre er en CI-feil, ikke en stille rettelse.
+
 ### Farge
 
 | Token | Rolle | Mørk | Lys |
