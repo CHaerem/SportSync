@@ -100,7 +100,7 @@ mennesket, aldri av en agent.
 | WP-91 | CI-nervesystemet (403/push-auth/skill-write) — beskyttede stier | 0G | – | ✅ merget (#301, eier-instruert) — rotårsak A+B: claude-code-action bytter GITHUB_TOKEN med OIDC-app-token (mangler actions:write, trekkes tilbake etter steget) ⇒ eskalering via sentinel + eget steg m/ ekte token + escalation-failed-Issue-alarm; loggcommit re-peker origin; C: skill-write-«blokkering» avlivet som vandrehistorie (denials var Bash-kall, Edit var alltid tillatt) — prompter presisert. VERIFISERES i drift: neste scout/coverage-critic/self-repair-kjøringer (ingen escalation-failed-Issue + logg-commits lander + skill-writes committes) |
 | WP-92 | Relevans-gaten (chess/esport + iOS-låssteg) | 0G | – | ⬜ |
 | WP-93 | Vaktene (grader/gap-detektor/kalibrering) | 0G | – | ⬜ |
-| WP-94 | Drifts-småplukk (kvote-gate/validate-degradering/venue/UCL) | 0G | – | ⬜ |
+| WP-94 | Drifts-småplukk (kvote-gate/validate-degradering/venue/UCL) | 0G | – | 🔬 PR åpen — kvote-gate-ferskhet + validate-degradering + UCL-placeholder-regel (venue-synk er WP-93/verify.md sitt territorium, ikke med her) |
 
 ---
 
@@ -951,12 +951,32 @@ menneskelig merge.
 - **Aksept:** rubrikk-test som beviser Corales-klassen fanges; gap-test for
   Gstaad-klassen; cyclingstage-reliability normaliseres.
 
-### WP-94 · Drifts-småplukk
+### WP-94 · Drifts-småplukk — 🔬 PR åpen
 - **Innhold:** kvote-gate: fersk sjekk før kritisk-tier-kall + grasiøst
   «skippet: kvote» i stedet for hard feil; validate-events-feil degraderer
   (behold forrige gyldige data + alarm) i stedet for å fryse timen; verify-
   kontrakten synker `venue` med verifisert summary; UCL tracked-placeholder-
   regel (hver alwaysTrack-turnering har entry).
+- **Levert i denne PR-en:** (1) `usage-gate.js` henter selv en fersk
+  ratelimit-avlesning (gjenbruker `check-usage.js`) når den cachede
+  `usage-state.json`-snapshoten er eldre enn ~10 min, med fail-open bevart og
+  `source` (fresh/cached-fresh/cached-stale-fetch-unavailable/none) logget i
+  gate-outputen — NB: live-lesningen trenger `CLAUDE_CODE_OAUTH_TOKEN` i
+  akkurat det workflow-steget, som i dag kun `usage-monitor.yml` har; de
+  kritiske agent-workflowene (research/verify/scout) må selv eksponere den til
+  usage-gate-steget for at fresh-veien faktisk skal slå inn — det er en
+  `.github/workflows/**`-endring (beskyttet sti), ikke gjort her, degraderer nå
+  trygt til det gamle cached/fail-open-oppførselen. (2) `build-events.js`
+  validerer selv (gjenbruker `validate-events.js` sin nye eksporterte
+  `validateEvents()`) FØR den skriver `events.json`; ved brudd beholdes forrige
+  gyldige fil urørt + `docs/data/build-alert.json` skrives (ok:true/false,
+  persistent helse-signal, ikke bare en engangs-feillogg) — scriptet exit(0)
+  uansett, så pipeline-jobben (og det påfølgende harde `validate-events.js`-
+  steget, som da re-validerer den BEHOLDTE gode filen) fortsetter uavbrutt. (3)
+  `research.md` Steg 1 presisert: hver `alwaysTrack.tournaments`-oppføring
+  krever en tracked.json-entry, av-sesong-placeholder inkludert. **Ikke i
+  denne PR-en:** `venue`/summary-synk i verify-kontrakten — det er
+  `verify.md`, WP-93 sitt territorium (parallell nabo, ikke rørt her).
 - **Aksept:** npm grønn; simulert rød kvote gir skip-not-fail; simulert
   validate-brudd publiserer forrige data med alarm.
 

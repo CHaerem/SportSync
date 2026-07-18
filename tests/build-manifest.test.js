@@ -256,9 +256,16 @@ describe("build-events.js integration (WP-03)", () => {
 		execFileSync("node", ["scripts/build-events.js"], { env }); // re-reads its own events.json output, rebuilds
 		const second = JSON.parse(fs.readFileSync(path.join(dataDir, MANIFEST_NAME), "utf-8"));
 
-		const { generatedAt: g1, ...rest1 } = first;
-		const { generatedAt: g2, ...rest2 } = second;
-		expect(rest1).toEqual(rest2);
+		// build-alert.json (WP-94) carries its own per-run `checkedAt` timestamp —
+		// like manifest.generatedAt, it legitimately differs run-to-run even when
+		// nothing else changed, so its entry is excluded the same way.
+		const stripVolatile = (m) => {
+			const { generatedAt, ...rest } = m;
+			const files = { ...rest.files };
+			delete files["build-alert.json"];
+			return { ...rest, files };
+		};
+		expect(stripVolatile(first)).toEqual(stripVolatile(second));
 
 		fs.rmSync(dataDir, { recursive: true, force: true });
 		fs.rmSync(configDir, { recursive: true, force: true });

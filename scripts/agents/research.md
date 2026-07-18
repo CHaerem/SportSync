@@ -39,6 +39,20 @@ tracked.json. For each broad item in `interests[]`, write 1–5 concrete tracked
 entries (e.g. "Norske utøvere" → research who's competing this week).
 Drop expired entries. Every entry must have a `reason` you can defend.
 
+**Every `alwaysTrack.tournaments` entry needs a tracked.json entry — no silent
+gaps.** Check each one by name (in `tournaments` or, for a league, `leagues`)
+before moving on. If it's genuinely off-season with nothing concrete to track
+yet (e.g. UEFA Champions League group stage hasn't started), write an explicit
+**placeholder entry** anyway rather than leaving it absent — an entry that says
+"off-season, følger med" with a real `reason` (why it's dormant + when it
+resumes, e.g. group-stage draw / qualifying rounds) is the honest signal;
+silently having no entry at all reads as "nobody checked" and is exactly the
+kind of creeping gap coverage-critic can't distinguish from a missed event. A
+placeholder still needs `addedAt`/`addedBy`/`evidence` like any other entry —
+cite whatever confirms the dormant state (last season's final, or the next
+season's fixture-list-not-yet-published date) — and gets upgraded to a real
+entry (fixtures, tracked matches) the moment the tournament actually starts.
+
 ### Step 2 — Find what static APIs miss (PRIMARY VALUE)
 
 **Fan out with parallel subagents.** Delegate one scout subagent per active

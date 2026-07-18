@@ -143,7 +143,7 @@ export function appendUsageHistory(state, dir = rootDataPath()) {
 		.filter(Boolean);
 }
 
-async function fetchUsageHeaders(token) {
+export async function fetchUsageHeaders(token) {
 	const res = await fetch("https://api.anthropic.com/v1/messages", {
 		method: "POST",
 		headers: {
