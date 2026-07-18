@@ -1,0 +1,87 @@
+{
+	"name": "Entity-gated sports (WP-92): chess/esports need a sport-scoped tracked-entity match — no wholesale, no norwegian/ai-research blanket",
+	"description": "WP-92 removed chess and esports from the DEFAULT followBroadly (this vector omits followBroadly on purpose, so the default applies). For an entity-gated sport a tracked-entity match is the ONLY way onto the board: the norwegian / favorite / importance / ai-research shortcuts do NOT apply. So a minor Norwegian chess open with a lone club player drops (chess-open-norsk — the live 'XXVI Obert Internacional Sant Martí' class), a chess event mentioning the CITY that shares a name with a tracked FOOTBALL club drops because the match is sport-scoped (chess-barcelona — the football club 'Barcelona' cannot admit a chess event), and a CS2 match between two untracked teams drops even when it is source:'ai-research' (cs2-airesearch-other). Only events that name a tracked chess/esports entity stay: Magnus Carlsen (chess-carlsen), 100 Thieves (cs2-100t), and Håvard «rain» Nygaard (cs2-nygaard) — and those three also ring the bell (mustWatch), since athletes and teams notify by default. mustSee follows its own client rules and is not asserted here.",
+	"input": {
+		"now": "2026-07-13T12:00:00Z",
+		"interests": {
+			"alwaysTrack": {
+				"athletes": [
+					{ "name": "Magnus Carlsen", "aliases": ["Carlsen"], "sport": "chess" },
+					{ "name": "Aryan Tari", "aliases": ["Tari"], "sport": "chess" },
+					{ "name": "Håvard Nygaard", "aliases": [], "sport": "esports" }
+				],
+				"teams": [
+					{ "name": "Barcelona", "aliases": ["FC Barcelona", "Barça", "Barca"], "sport": "football" },
+					{ "name": "100 Thieves", "aliases": ["100T"], "sport": "esports" }
+				],
+				"tournaments": []
+			},
+			"notify": { "leadMinutes": 30 }
+		},
+		"events": [
+			{
+				"id": "chess-open-norsk",
+				"sport": "chess",
+				"title": "Round 6 – XXVI Obert Internacional Sant Martí 2026",
+				"tournament": "XXVI Obert Internacional Sant Martí 2026",
+				"time": "2026-07-16T15:00:00Z",
+				"norwegian": true,
+				"participants": [{ "name": "Johan-Sebastian Christiansen" }]
+			},
+			{
+				"id": "chess-carlsen",
+				"sport": "chess",
+				"title": "Esports World Cup 2026 – sjakk",
+				"tournament": "Esports World Cup 2026",
+				"time": "2026-07-17T13:00:00Z",
+				"source": "ai-research",
+				"confidence": "high",
+				"evidence": ["https://example.com/a", "https://example.com/b"],
+				"norwegian": true,
+				"norwegianPlayers": [{ "name": "Magnus Carlsen" }]
+			},
+			{
+				"id": "chess-barcelona",
+				"sport": "chess",
+				"title": "Barcelona Chess Open 2026 – round 1",
+				"tournament": "Barcelona Chess Open 2026",
+				"time": "2026-07-18T15:00:00Z",
+				"norwegian": true,
+				"participants": [{ "name": "Some Local Player" }]
+			},
+			{
+				"id": "cs2-100t",
+				"sport": "esports",
+				"title": "BLAST Bounty S2: 100 Thieves vs Falcons",
+				"tournament": "BLAST Bounty 2026 Season 2",
+				"time": "2026-07-16T18:00:00Z",
+				"homeTeam": "100 Thieves",
+				"awayTeam": "Falcons"
+			},
+			{
+				"id": "cs2-nygaard",
+				"sport": "esports",
+				"title": "IEM Cologne 2026 – group stage",
+				"tournament": "IEM Cologne 2026",
+				"time": "2026-07-17T16:00:00Z",
+				"norwegianPlayers": [{ "name": "Håvard Nygaard" }]
+			},
+			{
+				"id": "cs2-airesearch-other",
+				"sport": "esports",
+				"title": "ESL Pro League: Vitality vs Spirit",
+				"tournament": "ESL Pro League Season 24",
+				"time": "2026-07-18T16:00:00Z",
+				"source": "ai-research",
+				"confidence": "medium",
+				"evidence": ["https://example.com/c"],
+				"homeTeam": "Vitality",
+				"awayTeam": "Spirit"
+			}
+		]
+	},
+	"expected": {
+		"relevant": ["chess-carlsen", "cs2-100t", "cs2-nygaard"],
+		"mustWatch": ["chess-carlsen", "cs2-100t", "cs2-nygaard"]
+	}
+}

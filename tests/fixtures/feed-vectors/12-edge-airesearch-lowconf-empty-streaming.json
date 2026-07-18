@@ -1,10 +1,10 @@
 {
-	"name": "AI-research events stay on the board regardless of confidence; empty streaming never drops an event",
-	"description": "source:'ai-research' makes an event relevant on its own — even a low-confidence one in a sport that is not broadly followed and with no tracked entity. confidence does NOT gate feed inclusion today (a notification planner, WP-15, may gate low confidence later — the FEED does not). Empty streaming is a 'where to watch unknown' rendering state, never a reason to drop. The accent still follows the ordinary must-see rules, so a low-confidence Norwegian biathlon sprint with a Norwegian in the field is accented while a bare tennis challenger is not.",
+	"name": "AI-research alone no longer forces a non-broad, untracked event onto the board (WP-92); confidence still does not gate; empty streaming never drops an event",
+	"description": "WP-92 scoped the old ai-research auto-pass: source:'ai-research' is NO LONGER relevant on its own. An AI-found event must ALSO be a broadly-followed sport OR match a tracked entity — so a low-confidence tennis challenger with no tracked player drops (ai-low-tennis), while a low-confidence biathlon sprint stays because biathlon IS broadly followed (ai-low-norsk). Among the events that ARE relevant, confidence still does NOT gate feed inclusion (a notification planner, WP-15, may gate low confidence later — the FEED does not), and empty streaming is a 'where to watch unknown' rendering state, never a reason to drop. The accent still follows the ordinary must-see rules, so the Norwegian biathlon sprint with a Norwegian in the field is accented.",
 	"input": {
 		"now": "2026-07-13T12:00:00Z",
 		"interests": {
-			"followBroadly": ["football", "golf", "f1", "cycling", "chess", "esports", "biathlon", "cross-country", "alpine"],
+			"followBroadly": ["football", "golf", "f1", "cycling", "biathlon", "cross-country", "alpine"],
 			"alwaysTrack": {
 				"athletes": [
 					{ "name": "Viktor Hovland", "aliases": ["Hovland"], "sport": "golf" },
@@ -57,7 +57,7 @@
 		]
 	},
 	"expected": {
-		"relevant": ["ai-low-norsk", "ai-low-tennis", "plain-empty"],
+		"relevant": ["ai-low-norsk", "plain-empty"],
 		"mustWatch": [],
 		"mustSee": ["ai-low-norsk"]
 	}

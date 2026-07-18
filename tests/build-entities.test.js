@@ -352,6 +352,13 @@ describe("build-events.js integration (WP-05 entity enrichment)", () => {
 			path.join(configDir, "tracked.json"),
 			JSON.stringify({ athletes: [{ id: "magnus-carlsen", name: "Magnus Carlsen", sport: "chess" }] })
 		);
+		// WP-92: chess is entity-gated for relevance (which reads interests.json, not
+		// tracked.json) — track Carlsen so the event stays on the board and we can
+		// assert its entityId enrichment (built from tracked.json/entities.json).
+		fs.writeFileSync(
+			path.join(configDir, "interests.json"),
+			JSON.stringify({ alwaysTrack: { athletes: [{ name: "Magnus Carlsen", aliases: ["Carlsen"], sport: "chess" }] } })
+		);
 		fs.writeFileSync(
 			path.join(dataDir, "events.json"),
 			JSON.stringify([

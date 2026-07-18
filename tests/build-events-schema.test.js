@@ -113,10 +113,13 @@ describe("build-events stable event id (WP-02)", () => {
 		// client/notification diff treats it as remove+add, not an update.
 		const { dataDir, configDir } = freshDirs();
 		const time = new Date(Date.now() + 4 * 86400000).toISOString();
+		// WP-92: use a broadly-followed sport so the event survives the relevance
+		// gate (chess is now entity-gated) — this test is about id stability under a
+		// title amendment, not the relevance decision.
 		fs.writeFileSync(
 			path.join(dataDir, "events.json"),
 			JSON.stringify([
-				{ sport: "chess", title: "World Cup Round 1", time, source: "ai-research", confidence: "high", evidence: ["a", "b"] },
+				{ sport: "biathlon", title: "World Cup Round 1", time, source: "ai-research", confidence: "high", evidence: ["a", "b"] },
 			])
 		);
 		const before = runBuild(dataDir, configDir);

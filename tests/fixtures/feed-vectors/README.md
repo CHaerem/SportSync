@@ -84,8 +84,11 @@ reused across every vector so results are comparable:
 
 ```jsonc
 {
-  "followBroadly": ["football","golf","f1","cycling","chess","esports",
+  "followBroadly": ["football","golf","f1","cycling",
                     "biathlon","cross-country","alpine"],   // sports kept wholesale
+                    // WP-92: chess & esports are NOT here — they are entity-gated.
+                    // Omitting followBroadly entirely falls back to the same default
+                    // (vector 14 does this to exercise the gate against the default).
   "alwaysTrack": {
     "athletes":    [{ "name","aliases":[...],"sport" }, ...],
     "teams":       [{ "name","aliases":[...],"sport" }, ...],
@@ -116,13 +119,20 @@ Kept iff **both**:
 
 1. **Retention cutoff.** With `t = endTime ?? time`, keep only if
    `t >= now - 14 days` (multi-day events survive on their *end*, not their start).
-2. **isRelevant.** Keep if any of:
-   - `sport ∈ followBroadly`, OR
-   - `norwegian == true`, OR `isFavorite == true`, OR `importance >= 4`, OR
-     `source == "ai-research"`, OR
-   - a tracked entity (teams ∪ athletes ∪ tournaments) matches the haystack
-     `title + tournament + homeTeam + awayTeam + norwegianPlayers[].name + participants`.
-     **This match is NOT sport-scoped** (see DIVERGENCES.md §1).
+2. **isRelevant** (in this order — WP-92):
+   1. `sport ∈ followBroadly` → **in** (wholesale). Checked first, so it wins over
+      the gate below. NB: **chess and esports are NOT in the default followBroadly**
+      — the owner tracks them only through named entities (elite chess / 100 Thieves).
+   2. **Entity-gated sport** (chess, esports): keep **only** if a tracked entity
+      matches, and that match **is sport-scoped** (DIVERGENCES.md §5). The
+      norwegian / favorite / importance / ai-research shortcuts do **not** apply here.
+   3. Any other non-broad sport (e.g. tennis): keep if `norwegian == true` OR
+      `isFavorite == true` OR `importance >= 4`. **`source == "ai-research"` is NOT a
+      standalone pass** (WP-92 scoped it — an AI find must also be a followBroadly
+      sport or match a tracked entity).
+   4. A tracked entity (teams ∪ athletes ∪ tournaments) matches the haystack
+      `title + tournament + homeTeam + awayTeam + norwegianPlayers[].name + participants`.
+      **This match is NOT sport-scoped** (see DIVERGENCES.md §1).
 
 Matching uses word-boundary, diacritic-insensitive containment (`helpers.js`
 `containsName`): `"Barça"` ≡ `"Barca"`; `"Lyn"` matches `"Lyn Oslo"` but not

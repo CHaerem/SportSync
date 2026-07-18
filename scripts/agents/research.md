@@ -66,6 +66,22 @@ the confidence rules, and write the outputs yourself. Intervene if a scout goes
 off track. Do not delegate Steps 1, 3 or 4 — reconciliation and file writes are
 yours alone.
 
+**Respect the relevance gate — chess and esports are ELITE/ENTITY-ONLY.** These
+two sports are not followed broadly (see interests.json); `build-events.js` keeps a
+chess/esports event **only** when it names a tracked entity, so writing anything
+else just wastes budget and never reaches the board:
+- **Chess scout — elite threshold.** Only events involving the *named* tracked
+  entities: **Magnus Carlsen** or **Aryan Tari** playing, or the elite tournaments
+  the owner calls out (**Norway Chess**, the **World Championship** cycle). Do
+  **not** write generic Norwegian FIDE events, club opens, or the ordinary Sjakk-NM
+  field just because a Norwegian plays — a minor open with a lone Norwegian club
+  player (e.g. "Obert Internacional Sant Martí") is out of scope and will be filtered.
+  Name Carlsen/Tari in `norwegianPlayers` when they actually play so the event resolves.
+- **CS2 scout — 100 Thieves only.** Write a CS2 match **only when 100 Thieves
+  (rain / Håvard Nygaard) plays it** — no other teams, tournaments, or "big" matches.
+  Put "100 Thieves" on the event (`homeTeam`/`awayTeam` or title) and list Håvard
+  Nygaard in `norwegianPlayers`, so both the club and his row resolve.
+
 Static fetchers (ESPN-driven) miss:
 - Norwegian events (NM, OBOS-ligaen beyond Lyn, ski-VM, skiskyting, hopping)
 - Tournaments not in ESPN (Norway Chess, FIDE events, cycling stage races)
