@@ -103,6 +103,7 @@ mennesket, aldri av en agent.
 | WP-94 | Drifts-småplukk (kvote-gate/validate-degradering/UCL) | 0G | – | ✅ merget (#303) — kvote-gate m/ fersk-henting >10min (pure functions, fail-open bevart; NB: fersk-stien er no-op i kritiske workflows til et lite BESKYTTET workflow-tillegg sender OAuth-token til gate-steget — egen mini-PR til eier); validate-degradering uten workflow-endring (in-prosess-validering før skriving, forrige gyldige data består, build-alert.json-helsesignal; fant+fikset round-trip-valideringsbug); UCL-placeholder-regel i research.md; 506 tester
 | WP-95 | Deltakelses-ferskhet (cut/trekning — eier-funn) | 0G | – | ✅ merget (#307) — ESPN core-API competitor-status (lett-scoreboardet skjuler cut mid-turnering; én billig henting per fulgt spiller, fail-soft); verify/editorial/grader-kontrakter tettet; web viser rolig status; iOS trengte null endring (LensRenderer var klar). 536 tester. LIVE-BEKREFTET: Hovland «røk cutten» på tavla 12:47 UTC — før kveldsbriefen 15:00. NY PORT: null feilaktige deltaker-statuser |
 | WP-96 | Flerbruker-splitten (interests → katalog) — GATE for eksterne testere | 0G | portmåling | ✅ merget (#308) — `catalog.json` (tier1 bredt + tier2 elite-langhale, nøkternt seedet; tennis via tier2-majors for å unngå ATP/WTA-flom); `isCovered(catalog)` server-side, personlig presisjon eies av linsen alene; vektorer IKKE re-frosset (semantisk riktig: linsen uendret — pinner nå klienten, DIVERGENCES §6); to-profil-aksepttest (eier uendret + Nakamura-sjakk + NAVI-CS2 → alle meningsfulle fra samme feed); interests.json avpublisert, web viser «Dette dekker vi»; agent-kompass → katalogen; ICS/mustWatch bevisst eier-artefakt; rediger = «be om dekning» (skrivevei → WP-23). 542 JS + 526 iOS + vektorer bit-like + 4 schemes |
+| WP-97 | Design-biblioteket (tokens.json + koherens + brand-assets + styleguide) | 0G | – | ⬜ |
 
 ---
 
@@ -1046,6 +1047,26 @@ enn eieren får TOM tavle (serveren droppet innholdet før deres linse så det).
   research-/verify-omfang — koordineres med API-splitten (Fase B i
   AI-ØKONOMI-tillegget).
 
+### WP-97 · Design-biblioteket (én token-sannhet + koherens-tester)
+Eier-beslutning 18.07: konsistent branding-stil trenger bibliotek. I dag lever
+tokens i TRE parallelle sannheter (DESIGN.md-prosa, DesignTokens.swift,
+base.css) holdt i takt for hånd, og app-ikon-scriptet finnes kun i en sesjons-
+scratchpad. Repoets signaturgrep anvendes: verifisering fremfor kodegen.
+- **Innhold:** `design/tokens.json` (W3C-format, én kilde: farger mørk/lys,
+  typografi-roller, spacing, radius — inkl. semantiske system-farge-mappinger
+  for iOS der hex ikke finnes); `tests/design-tokens.test.js` (koherens:
+  base.css-hex OG DesignTokens.swift-mappinger verifiseres mot tokens.json —
+  drift = CI-feil); `design/brand/` (kolonet.svg kilde-vektor, innsjekket
+  parametrisert ikon-script for alle størrelser, merkelås-spek med avstand/
+  minstestørrelse/feil-bruk, favicon-sett); `docs/styleguide.html` (levende
+  styleguide rendret fra ekte base.css — tokens + komponenter; referanse for
+  visual-qa); DESIGN.md §Tokens peker på tokens.json som fasit.
+- **Ikke-mål:** Figma/eksterne verktøy; kodegen; iOS-komponentgalleri (senere).
+- **Aksept:** koherens-testen grønn mot DAGENS verdier (biblioteket låser
+  virkeligheten, endrer den ikke); styleguide-siden viser alle tokens +
+  kjernekomponenter i begge temaer; ikonet kan regenereres fra innsjekket
+  script byte-likt dagens.
+
 ## FLYTTEDAGEN · Zenji → Sportivista — ✅ UTFØRT 17.07.2026
 
 Eierbeslutning (varemerke-søk utsatt, risiko akseptert av eier): repo omdøpt til
@@ -1270,6 +1291,10 @@ kommersialisering):
 
 **Migrasjonssti (abonnement → API):**
 - **Fase A (nå, hobby):** Max + kvote-governoren — riktig som det er.
+- **Fase A.5 (eier-beslutning 18.07, utviklings-perioden):** DEDIKERT Max-sub
+  til prosjektet — billigste broen (~1–2k kr/mnd for ~11k API-ekvivalent
+  løkke-arbeid), og løser «eierens egen bruk skaper røde vinduer»-problemet.
+  Bytte = nytt CLAUDE_CODE_OAUTH_TOKEN-secret i repoet, ingenting annet.
 - **Fase B (TestFlight):** SPLITT tokens — pipeline-løkkene over på API-nøkkel
   (ToS-rent, forutsigbart, uavhengig av eierens interaktive bruk) med hard
   budsjett-cap + per-løkke kost-telemetri (utvid usage-monitor); dev forblir
