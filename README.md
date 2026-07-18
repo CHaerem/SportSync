@@ -147,7 +147,13 @@ data.
 
 ### Transparent tracking
 
-- **`scripts/config/interests.json`** — the human's source of truth. AI never touches it.
+- **`scripts/config/catalog.json`** — the server's coverage compass: what Sportivista
+  *covers* (broad tier-1 sports + a named tier-2 long tail), AI-managed and published
+  read-only as "Dette dekker vi". Personal precision lives only in each client's
+  on-device lens — the server never knows what any one person follows.
+- **`scripts/config/interests.json`** — the owner's private profile (and catalog seed).
+  The human's file; AI never touches it, and since the multi-user split it is no
+  longer published.
 - **`scripts/config/tracked.json`** — what the AI currently tracks. Every entry carries
   `reason`, `addedBy`, `evidence`, and an optional `expires` — inspectable on the
   dashboard under *"Hva vi følger"*.
@@ -179,20 +185,28 @@ to fit iPhone widths, installable on iOS/Android.
 npm ci
 npm run build      # fetch data + build events + calendar
 npm run dev        # localhost:8000
-npm test           # 36 focused test files (~470 tests), a few seconds
+npm test           # 43 focused test files (~600 tests), a few seconds
 npm run screenshot # Playwright visual check
 ```
+
+CI/CD: every PR is gated by `web-tests` (the npm suite) and `ios-tests`
+(the Swift suite on a free macOS runner — it skips itself when `ios/` is
+untouched). The self-fixing loops re-run tests *and* wait for these checks
+before auto-merging. TestFlight builds ship through `ios-release.yml`
+(one command: archive → cloud-sign → upload → record), with App Store
+Connect as the build-number source of truth.
 
 See [CLAUDE.md](CLAUDE.md) for the full architecture reference.
 
 ## iOS app
 
-`ios/` holds a native SwiftUI companion app (agenda + widget, on-device
-Foundation Models assistant that edits your interests, answers questions and
-runs app commands in Norwegian — all local, no accounts). It consumes the same
-published data contract (`manifest.json`-driven sync) and is verified by its
-own test suite (500+ unit tests, UI flows, and a versioned real-model eval
-corpus). See [ios/README.md](ios/README.md).
+`ios/` holds a native SwiftUI companion app (agenda + home-screen widget,
+on-device Foundation Models assistant that edits your interests, answers
+questions and runs app commands in Norwegian — all local, no accounts). It
+consumes the same published data contract (`manifest.json`-driven sync), is
+verified by its own test suite (500+ unit tests, UI flows, and a versioned
+real-model eval corpus), and ships to **TestFlight** through the scripted
+release lane. See [ios/README.md](ios/README.md).
 
 ## License
 

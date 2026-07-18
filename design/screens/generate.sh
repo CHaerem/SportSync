@@ -62,6 +62,7 @@ MODES=(
 	reset-onboarding
 	diff
 	answer
+	command-focused
 )
 THEMES=(dark light)
 

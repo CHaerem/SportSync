@@ -44,7 +44,7 @@ properties, never the generated plists).
 | `SportivistaWidgetExtension` | app-extension | `SportivistaWidgetExtension` | The widget. Compiles a deliberate subset of `Sportivista/` (see [Widget](#widget)). |
 | `SportivistaTests` | unit-test bundle | (runs under `Sportivista`) | Hostless logic bundle — see [Testing](#testing). |
 | `SportivistaUITests` | ui-test bundle | `SportivistaUITests` | XCUITest that drives the app in the Simulator — see [UI-flyter](#ui-flyter-wp-70--xcuitest-i-simulator). |
-| `SportivistaDeviceDev` | application | `SportivistaDeviceDev` | Device build under a **free** Apple team — see below. |
+| `SportivistaDeviceDev` | application | `SportivistaDeviceDev` | Device/TestFlight build (paid team since WP-17) — see below. |
 
 - **Bundle ids:** `app.sportivista.ios` (app + `SportivistaDeviceDev`), `.widget`, `.tests`, `.uitests`.
   **Deployment target:** iOS 26.0 everywhere; Swift 6.0.
@@ -55,42 +55,41 @@ properties, never the generated plists).
 ### Signing
 
 The base config uses `CODE_SIGN_STYLE: Automatic` with
-`CODE_SIGNING_ALLOWED/REQUIRED: NO` and no `DEVELOPMENT_TEAM` — the app builds and
-runs on the **Simulator with no Apple Developer account**. Each target still points
-`CODE_SIGN_ENTITLEMENTS` at its App Group entitlements file (`group.app.sportivista`, in
-`Sportivista.entitlements` + `SportivistaWidget.entitlements` — the shared cache container the
-app writes and the widget reads, fallback under [Sync](#sync)), so enabling real
-signing for TestFlight (WP-17) is just flipping those two settings back on and
-filling in a team ID.
+`CODE_SIGNING_ALLOWED/REQUIRED: NO` and no `DEVELOPMENT_TEAM` — the Simulator app
+builds and runs **with no signing at all**. The device target and the widget carry
+target-level Automatic signing against team `9LVCB72DT8` (**paid** since WP-17 —
+the Individual enrollment converted the old free personal team in place, same ID),
+with `CODE_SIGN_ENTITLEMENTS` pointing at the full entitlements
+(`group.app.sportivista` App Group + CloudKit — `Sportivista.entitlements` /
+`SportivistaWidget.entitlements`).
 
-### `SportivistaDeviceDev` — running on a physical iPhone with a free account
+### `SportivistaDeviceDev` — the device/TestFlight build
 
 A device-flavoured build of the same app sources (so it includes the on-device
-Foundation Models code, which only *runs* on real hardware), handling two
-free-team constraints without touching the Simulator setup: **no App Groups**
-(empty entitlements file → `CacheStore`/`ProfileStore` use Application Support) and
-**no embedded widget** (a prior attempt failed *"Embedded binary is not signed with
-the same certificate as the parent app"* — so no `SportivistaWidgetExtension` dependency;
-the widget stays Simulator-only until WP-17). It reuses bundle id `app.sportivista.ios`
-(the free team's existing provisioning profile) with a distinct `PRODUCT_NAME` so
-its product never collides with `Sportivista.app` (home-screen name stays "Sportivista").
+Foundation Models code, which only *runs* on real hardware). Since WP-17 it signs
+with the full paid-team entitlements, **embeds the widget**, and compiles with
+`-D SPORTIVISTA_CLOUDKIT` (flipping `ProfileSyncBackendFactory` to CloudKit profile
+sync). It reuses bundle id `app.sportivista.ios` with a distinct `PRODUCT_NAME` so
+its product never collides with `Sportivista.app` (home-screen name stays
+"Sportivista").
 
 ```sh
 cd ios && xcodegen generate
 xcodebuild -project Sportivista.xcodeproj -scheme SportivistaDeviceDev \
-  -destination 'platform=iOS,id=<device-id from `xcrun devicectl list devices`>' \
-  -allowProvisioningUpdates CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic \
-  DEVELOPMENT_TEAM=<team> build
-APP=~/Library/Developer/Xcode/DerivedData/Sportivista-*/Build/Products/Debug-iphoneos/SportivistaDeviceDev.app
-xcrun devicectl device install app --device <hardware-udid> "$APP"
-xcrun devicectl device process launch --device <hardware-udid> app.sportivista.ios
+  -destination 'generic/platform=iOS' -derivedDataPath build/DerivedData \
+  -allowProvisioningUpdates build
+APP=build/DerivedData/Build/Products/Debug-iphoneos/SportivistaDeviceDev.app
+xcrun devicectl device install app --device <CoreDevice-UUID> "$APP"
+xcrun devicectl device process launch --device <CoreDevice-UUID> app.sportivista.ios
 ```
 
-**One-time on-device trust step:** iOS blocks the first launch of a free-team build
-until the developer certificate is trusted manually (*Innstillinger → Generelt →
-VPN og enhetsadministrering → Utviklerapp → Stol på …* — can't be scripted). After
-that the app launches normally and the Foundation Models flows can be verified by
-hand.
+**TestFlight** ships through the repo's release lane —
+`gh workflow run ios-release.yml` archives, cloud-signs (Admin ASC API key from
+repo secrets), uploads with the next App-Store-Connect-assigned build number, and
+records the upload in `scripts/config/testflight.json` (which `app-version.json`
+folds in, so TestFlight installs judge "SISTE" against the last *upload*, not the
+last commit). The manual fallback ritual + the versioning traps live in
+`.claude/skills/ios-dev`.
 
 ## Directory layout
 
@@ -122,7 +121,7 @@ ios/
 │   └── Assets.xcassets/
 ├── SportivistaWidget/                   WidgetKit extension: SportivistaWidgetBundle + SportivistaWidget
 │   │                              (TimelineProvider), Info.plist, entitlements (App Group)
-├── SportivistaDeviceDev/                free-account device build: Info.plist + empty entitlements
+├── SportivistaDeviceDev/                device/TestFlight build: Info.plist (entitlements shared with the app since WP-17)
 └── SportivistaTests/                    hostless logic-test bundle (*Tests.swift + doubles +
                                    Fixtures/ frozen snapshots) — see Testing
 ```
@@ -211,7 +210,8 @@ SyncResult`):
    `.failure(SyncError)` (the manifest fetch failed — cache + state untouched).
 
 **`CacheStore`** prefers the `group.app.sportivista` App Group container, falling back to
-Application Support when it's unavailable (a free-account device build). Since the
+Application Support when it's unavailable (a pre-WP-17 free-team build — kept as a
+safety net). Since the
 Simulator resolves the container even for an unsigned build, `CacheStoreTests`
 proves the fallback via a `FileManager` subclass returning `nil`. **`DataStore`** is
 the read-only facade: `loadEvents()`/`loadEntities()`/`loadTracked()`/
@@ -414,8 +414,9 @@ plus its sync/share/reset/effective-merge machinery. **Our server never sees thi
 - **`InterestProfile.swift` / `ProfileStore.swift`** — a flat list of
   `InterestRule`s (each with an always-filled Norwegian `reason`, the transparency
   contract `tracked.json` uses server-side; `applying(_:)` is the pure
-  upsert/remove diff), persisted as JSON in Application Support (**no** App Group →
-  works on the free-account device build). Assistant + `AgendaViewModel` share ONE.
+  upsert/remove diff), persisted as JSON in Application Support (**no** App Group by
+  design — profile data stays app-private; the widget never reads it). Assistant +
+  `AgendaViewModel` share ONE.
 - **`ProfileSyncModel.swift` / `ProfileMerge.swift`** — the mergeable transport
   shape + **the heart of sync**: a pure, deterministic, order-independent CRDT-like
   `merge(local, remote) → (state, push set)`, testable with **no iCloud account**
@@ -687,5 +688,6 @@ and is read via `DataStore`:
 
 ## What plugs in next
 
-- **TestFlight (WP-17)** — a paid Apple Developer account, real signing, and
-  re-enabling the App Group + embedded widget on device.
+- **External TestFlight testers** — the app is live on TestFlight (internal
+  group); externals are gated on the engine port-measurement going green plus
+  the formal trademark check.

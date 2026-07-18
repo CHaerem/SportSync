@@ -23,7 +23,7 @@ capturing.
 
 ## What gets captured
 
-One PNG per `(mode, theme)` pair — 17 modes × 2 themes = 34 screenshots,
+One PNG per `(mode, theme)` pair — 18 modes × 2 themes = 36 screenshots,
 named `<mode>-<theme>.png`:
 
 | Mode | Screen |
@@ -45,6 +45,7 @@ named `<mode>-<theme>.png`:
 | `reset-onboarding` | The real reset flow re-raising onboarding |
 | `diff` | Assistant result sheet: a grounded follow proposal (diff) |
 | `answer` | Assistant result sheet: an answer with agenda rows |
+| `command-focused` | The command line focused with keyboard up: discovery pills (standing «Hva kan du gjøre?» first) + dismiss glyph (WP-99) |
 
 The complete, authoritative mode list lives in
 `ios/Sportivista/ContentView.swift`'s `.task` demo-seeding switch,
