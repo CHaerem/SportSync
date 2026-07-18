@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-18T16:54:59.816Z",
-  "gapCount": 3,
+  "generatedAt": "2026-07-18T17:54:51.645Z",
+  "gapCount": 2,
   "anomalyCount": 1,
   "gaps": [
     {
@@ -12,18 +12,7 @@
       "link": "https://www.nrk.no/sport/tvilling-show-for-uno-x_-_-i-dag-gjor-vi-alt-riktig-1.17962341",
       "feed": "nrk-sport",
       "matchCount": 3,
-      "detectedAt": "2026-07-18T16:54:59.442Z"
-    },
-    {
-      "kind": "entity",
-      "entity": "Fotball-VM",
-      "type": "missing",
-      "imminent": false,
-      "headline": "Ville hente Nyland før VM:– Trur det blir ganske vrient no",
-      "link": "https://www.nrk.no/fotballvm2026/vm-kan-ha-sendt-norske-spelarar-til-toppen-av-onskjelistene-1.17958098",
-      "feed": "nrk-sport",
-      "matchCount": 1,
-      "detectedAt": "2026-07-18T16:54:59.442Z"
+      "detectedAt": "2026-07-18T17:54:51.273Z"
     },
     {
       "kind": "entity",
@@ -34,7 +23,7 @@
       "link": "https://www.nrk.no/sport/formel-1_-hamilton-drama-pa-trening-_-krasjet-bilen-to-timer-for-kvalifiseringen-1.17962188",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-18T16:54:59.442Z"
+      "detectedAt": "2026-07-18T17:54:51.273Z"
     }
   ],
   "anomalies": [
@@ -43,7 +32,7 @@
       "issue": "file-empty",
       "detail": "docs/data/chess.json has no events and none on the board — source may be down or changed",
       "severity": "low",
-      "detectedAt": "2026-07-18T16:54:59.816Z"
+      "detectedAt": "2026-07-18T17:54:51.645Z"
     }
   ],
   "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board (kind entity/sport), or a tracked.json reason that claims an upcoming event the board lacks (kind tracked-claim, RSS-independent). anomalies: a fetcher's own data looks unreliable."
