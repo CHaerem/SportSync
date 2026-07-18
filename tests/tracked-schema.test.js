@@ -28,13 +28,16 @@ describe("tracked.json", () => {
 		}
 	});
 
-	it("every entry cites its user-owned basis (interests.json# provenance)", () => {
+	it("every entry cites its coverage basis (catalog.json# or interests.json# provenance)", () => {
+		// WP-96: tracked.json is the CATALOG's bookkeeping — an entry should trace to
+		// a catalog.json# basis (tier1/tier2). interests.json# stays accepted: it is
+		// the owner's seed/reference, and existing entries were filed against it.
 		const entries = [...tracked.leagues, ...tracked.athletes, ...tracked.tournaments];
 		for (const entry of entries) {
 			const hasProvenance = (entry.evidence || []).some(
-				(e) => typeof e === "string" && e.startsWith("interests.json#")
+				(e) => typeof e === "string" && (e.startsWith("catalog.json#") || e.startsWith("interests.json#"))
 			);
-			expect(hasProvenance, `${entry.id}: evidence must cite an interests.json# basis`).toBe(true);
+			expect(hasProvenance, `${entry.id}: evidence must cite a catalog.json# or interests.json# basis`).toBe(true);
 		}
 	});
 

@@ -67,13 +67,19 @@ export function mergeResults(existing, fresh, keyOf, retainDays) {
 }
 
 const ESPN_SITE = "https://site.api.espn.com/apis/site/v2/sports";
-const INTERESTS_PATH = path.resolve(process.cwd(), "scripts", "config", "interests.json");
+const CONFIG_DIR = path.resolve(process.cwd(), "scripts", "config");
+const CATALOG_PATH = path.join(CONFIG_DIR, "catalog.json");
+const INTERESTS_PATH = path.join(CONFIG_DIR, "interests.json");
 
+// WP-96: highlight what the catalog COVERS (tier2 teams/athletes), not one
+// person's follows — the results digest is a shared artifact. Falls back to the
+// owner's interests.json (seed/reference) when no catalog is present.
 function loadUserContext() {
+	const catalog = readJsonIfExists(CATALOG_PATH) || {};
 	const interests = readJsonIfExists(INTERESTS_PATH) || {};
 	return {
-		favoriteTeams: interests.alwaysTrack?.teams || [],
-		favoritePlayers: interests.alwaysTrack?.athletes || [],
+		favoriteTeams: catalog.tier2?.teams || interests.alwaysTrack?.teams || [],
+		favoritePlayers: catalog.tier2?.athletes || interests.alwaysTrack?.athletes || [],
 	};
 }
 

@@ -144,5 +144,7 @@ After writing files, run `node scripts/validate-events.js` and fix any errors it
   (`.claude/skills/x-sources/SKILL.md`) — official-account announcements count as
   one authoritative source; anything else needs independent corroboration before
   an event keeps `high` confidence
-- Never modify `scripts/config/interests.json`
+- Never modify `scripts/config/interests.json` (owner-seed) or
+  `scripts/config/catalog.json` (the coverage compass, maintained by research). The
+  board you verify is catalog-scoped, not one person's follows.
 - Stop after ~10 minutes

@@ -142,9 +142,10 @@ Object.assign(window.Dashboard.prototype, {
 					cut = { n, label: n > 0 ? `+${n}` : (n === 0 ? 'E' : String(n)) };
 				}
 			}
-			// Your tracked Norwegian golfers' live positions — the thing you actually
-			// want — flagged inside/outside the projected cut.
-			const terms = trackedTerms((this.interests?.alwaysTrack?.athletes || []).filter((a) => (a && a.sport) === 'golf')).map((t) => t.toLowerCase());
+			// The covered golfers' live positions, flagged inside/outside the
+			// projected cut. WP-96: sourced from the catalog (this.covers), not a
+			// personal profile — the web board is catalog-wide.
+			const terms = trackedTerms((this.covers?.alwaysTrack?.athletes || []).filter((a) => (a && a.sport) === 'golf')).map((t) => t.toLowerCase());
 			const tracked = comps.map(row).filter((r) => terms.some((t) => ssContainsTerm(r.player, t)))
 				.map((r) => ({ ...r, out: cut != null && toNum(r.score) != null && toNum(r.score) > cut.n }));
 			this.liveLeaderboard = { name: ev.name || '', state, top: comps.slice(0, 8).map(row), tracked, cut, round };

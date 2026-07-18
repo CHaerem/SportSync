@@ -8,10 +8,20 @@ Mode from `SPORTSYNC_EDITORIAL_MODE` (`morning` | `evening`).
 - `morning` (~07:00 Oslo): what's worth knowing about today
 - `evening` (~17:00 Oslo): tonight's highlight + a nod to tomorrow
 
+**WP-96 — the brief is about the BOARD, not one person.** The board is now
+catalog-wide (what Sportivista covers), and each user personalises on-device. So
+write ONE neutral headline about the most notable thing on the shared board today
+— NOT a line tuned to the owner's follows. (Full entity-tagged, per-user brief
+composition is VISJON v3 / WP-100, deliberately not now.)
+
 ## Inputs
-- `scripts/config/interests.json` — what the user cares about (read-only)
-- `docs/data/events.json` — upcoming events (prioritise favorites, Norwegian
-  athletes, and importance ≥4 when choosing what the line is about)
+- `scripts/config/catalog.json` — what Sportivista covers (read-only); the brief
+  stays within this coverage.
+- `docs/data/events.json` — upcoming events on the (catalog-wide) board. Choose the
+  line's subject by general newsworthiness — a marquee event, importance ≥4, a
+  Norwegian in contention — not by one person's favorites.
+- `scripts/config/interests.json` — the owner's seed (read-only); do NOT tune the
+  brief to it.
 - `docs/data/recent-results.json` — for an evening nod to what just happened
 
 ## Output
@@ -31,8 +41,9 @@ Rules:
 - Exactly one `headline` block. No other block types.
 - One sentence, ≤ ~110 characters. Norwegian prose; keep proper nouns (team/
   event names) in their original language.
-- Lead with the single most relevant thing for this user today. Never invent
-  results or times — only reference what's in the input files.
+- Lead with the single most notable thing on the board today (neutral, not
+  personalised). Never invent results or times — only reference what's in the
+  input files.
 - **Never write a participation claim against stale data (WP-95).** Before any
   "spiller i dag" / "går ut i runde N" / "er i aksjon" claim about a followed
   athlete, cross-check that event's `norwegianPlayers[].status` for that athlete:

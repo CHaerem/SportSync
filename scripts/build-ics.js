@@ -30,6 +30,10 @@ if (!Array.isArray(events)) {
 	process.exit(1);
 }
 
+// WP-96: events.ics is deliberately an OWNER artifact. The board itself is now
+// catalog-wide (build-events isCovered), but the calendar's reminders follow the
+// owner's personal profile (interests.json → must-watch + lead time). External
+// users get per-device reminders from the iOS NotificationPlanner, not this file.
 const interests = readJsonIfExists(path.join(configDir, "interests.json")) || {};
 const leadMinutes = Number(interests?.notify?.leadMinutes) > 0
 	? Math.round(Number(interests.notify.leadMinutes))

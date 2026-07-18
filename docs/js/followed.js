@@ -11,7 +11,8 @@ Object.assign(window.Dashboard.prototype, {
 	/** Followed athletes/teams that have an upcoming event, nearest first. The
 	 *  pure selection behind "Dine neste" (upcoming-only; gaps live at the bottom). */
 	nextUpEntries() {
-		const at = this.interests && this.interests.alwaysTrack;
+		// WP-96: sourced from the catalog (what we cover), not a personal profile.
+		const at = this.covers && this.covers.alwaysTrack;
 		if (!at) return [];
 		return [...(at.athletes || []), ...(at.teams || [])]
 			.map((entry) => ({ entry, next: this.nextEventForEntity(entry) }))
@@ -27,9 +28,9 @@ Object.assign(window.Dashboard.prototype, {
 		const MAX = 5;
 		const shown = all.slice(0, MAX);
 		const more = all.length - shown.length;
-		el.innerHTML = '<div class="nu-label">Dine neste</div>'
+		el.innerHTML = '<div class="nu-label">Neste opp</div>'
 			+ `<ul class="follow-next">${shown.map((x) => this.followRow(x.entry, true)).join('')}</ul>`
-			+ (more > 0 ? `<button type="button" class="nu-more">+ ${more} til i «Hva vi følger»</button>` : '');
+			+ (more > 0 ? `<button type="button" class="nu-more">+ ${more} til i «Dette dekker vi»</button>` : '');
 		el.hidden = false;
 	},
 
@@ -42,7 +43,8 @@ Object.assign(window.Dashboard.prototype, {
 		const wrap = document.getElementById('followed');
 		const body = document.getElementById('followed-body');
 		if (!wrap || !body) return;
-		const at = this.interests && this.interests.alwaysTrack;
+		// WP-96: "Dette dekker vi" renders the catalog (tier2), not a personal profile.
+		const at = this.covers && this.covers.alwaysTrack;
 		if (!at) { wrap.hidden = true; return; }
 
 		const chip = (x) => `<span class="chip-follow">${escapeHtml(ssEntityName(x))}</span>`;
@@ -56,7 +58,7 @@ Object.assign(window.Dashboard.prototype, {
 			+ nextGroup('Utøvere', at.athletes, true)
 			+ nextGroup('Lag', at.teams, true)
 			+ chipGroup('Turneringer', at.tournaments, false)
-			+ `<div class="followed-hint">Varsel = kalendervarsel ${this.notifyLead()} min før start · trykk en rad for detaljer. <a class="followed-edit" href="rediger.html">Se og rediger alt du følger →</a></div>`
+			+ `<div class="followed-hint">Dette er sportene og navnene Sportivista dekker · trykk en rad for detaljer. <a class="followed-edit" href="rediger.html">Savner du noe? Be om dekning →</a></div>`
 			+ '</div>';
 		wrap.hidden = false;
 	},

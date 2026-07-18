@@ -1,0 +1,66 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "Sportivista – hva vi dekker (katalog)",
+	"description": "What Sportivista covers. AI-managed compass; the server coverage filter (build-events.js isCovered) and the research/verify/coverage agents key off this. Personal precision lives in each user's on-device lens, never here.",
+	"type": "object",
+	"required": ["tier1", "tier2"],
+	"additionalProperties": false,
+	"properties": {
+		"$schema": {
+			"type": "string",
+			"description": "Fritekst-notat (ikke en skjema-URL). La stå."
+		},
+		"language": { "type": "string", "description": "F.eks. \"nb-NO\"." },
+		"timezone": { "type": "string", "description": "F.eks. \"Europe/Oslo\"." },
+		"tier1": {
+			"type": "array",
+			"description": "Sporter dekket WHOLESALE — hvert event i sporten er dekket. Speiler build-events isCovered sitt followBroadly-sett.",
+			"items": {
+				"type": "string",
+				"enum": ["football", "golf", "tennis", "f1", "cycling", "chess", "esports", "athletics", "biathlon", "cross-country", "alpine", "nordic", "ski jumping"]
+			}
+		},
+		"tier2": {
+			"type": "object",
+			"description": "Navngitt entitets-langhale. Admitterer events i sporter vi IKKE dekker wholesale (chess/esports entitets-gates; tennis via majors + navn). Matches deterministisk på navn + aliaser à la interests.alwaysTrack.",
+			"additionalProperties": false,
+			"properties": {
+				"athletes": { "type": "array", "description": "Utøvere katalogen dekker.", "items": { "$ref": "#/definitions/entity" } },
+				"teams": { "type": "array", "description": "Lag katalogen dekker.", "items": { "$ref": "#/definitions/entity" } },
+				"tournaments": { "type": "array", "description": "Turneringer/serier katalogen dekker.", "items": { "$ref": "#/definitions/entity" } }
+			}
+		},
+		"neverCover": {
+			"type": "array",
+			"description": "Ting katalogen aldri dekker (fritekst til agentene).",
+			"items": { "type": "string" }
+		},
+		"notes": { "type": "string", "description": "Fritt notat til agentene." }
+	},
+	"definitions": {
+		"entity": {
+			"description": "En ting katalogen dekker. Objekt-form (navn + aliaser + sport) matcher best; bare streng godtas defensivt.",
+			"anyOf": [
+				{ "type": "string" },
+				{
+					"type": "object",
+					"required": ["name"],
+					"additionalProperties": false,
+					"properties": {
+						"name": { "type": "string", "description": "Kanonisk navn, f.eks. \"Norway Chess\"." },
+						"aliases": {
+							"type": "array",
+							"description": "Andre navn/kortformer så matchingen treffer, f.eks. [\"NAVI\", \"Na'Vi\"].",
+							"items": { "type": "string" }
+						},
+						"sport": {
+							"type": "string",
+							"description": "Sport-scoper matchingen så navnet ikke treffer en annen sport.",
+							"enum": ["football", "golf", "tennis", "f1", "cycling", "chess", "esports", "athletics", "biathlon", "cross-country", "alpine", "nordic", "ski jumping"]
+						}
+					}
+				}
+			]
+		}
+	}
+}

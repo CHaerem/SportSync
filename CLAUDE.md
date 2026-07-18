@@ -135,8 +135,9 @@ The product's primary goal is **correct when/where info and complete coverage**
 
 ### Config model
 
-- **`scripts/config/interests.json`** — user source of truth. **The human owns this; AI never writes here.** "AI never writes here" is precise: the two ways it changes are both the human's own intent — (a) the human edits the file directly (github.dev or a local session), or (b) the human submits a *follow-request* (below), which a deterministic script transcribes. No autonomous agent authors it.
-- **`scripts/config/tracked.json`** — AI-managed, transparent. Every entry has `reason`, `addedAt`, `addedBy`, `evidence`, optional `expires`. Rewritten by the research agent, seeded manually at v2 launch.
+- **`scripts/config/catalog.json`** — **the server's coverage compass (WP-96): "what Sportivista COVERS", not what any one person follows.** `tier1` = sports covered wholesale; `tier2` = the named entity long-tail (athletes/teams/tournaments) that admits events in sports we do NOT cover wholesale (chess/esports entity-gated; tennis via majors + names). `build-events.js`'s `isCovered` and the research/verify/coverage agents key off this. AI-managed (research rewrites it); validated by `catalog.schema.json`. Personal precision (Carlsen-only, 100-Thieves-only, …) is REMOVED from the server and lives only in each user's on-device lens (`docs/js` on the catalog-wide web board; iOS `FeedCompiler` per profile).
+- **`scripts/config/interests.json`** — the OWNER's private profile / catalog seed. **The human owns this; AI never writes here.** Since WP-96 it is no longer the server compass (catalog.json is) and is no longer published to `docs/data/`; it seeds the catalog and remains the owner's personal lens profile + the still-owner-scoped `events.ics`/`mustWatch`. "AI never writes here" is precise: the two ways it changes are both the human's own intent — (a) the human edits the file directly, or (b) a *follow-request* (below) which a deterministic script transcribes.
+- **`scripts/config/tracked.json`** — AI-managed, transparent — the catalog's bookkeeping (the concrete, dated events/entities behind the catalog's coverage). Every entry has `reason`, `addedAt`, `addedBy`, `evidence` (which must cite a `catalog.json#`/`interests.json#` basis), optional `expires`. Rewritten by the research agent, seeded manually at v2 launch.
 - `scripts/config/sports-config.js` + `norwegian-golfers.json` — static fetcher infrastructure (not curated event data).
 
 ### Follow-request flow (human-initiated edits to interests.json)
@@ -186,7 +187,7 @@ stay verifiable against `base.css`; DESIGN.md is the source of intent behind the
 `entities.json` (stable-id index of known athletes/teams/tournaments/leagues, published by `build-entities.js`; `build-events.js` uses it to stamp `entityId` onto matched events),
 `manifest.json` (per-file `bytes` + `sha256`, published by `build-manifest.js` — the sync contract that lets a client diff its cache without re-downloading everything),
 `app-version.json` (siste ios/-commit, published by `build-events.js` via `scripts/lib/app-version.js` — the iOS app compares its build-time stamp against it and shows «SISTE / NYERE FINNES»),
-`interests.json` (a published read-only copy of `scripts/config/interests.json` so the dashboard's "Hva vi følger" can render it),
+`catalog.json` (a published read-only copy of `scripts/config/catalog.json` — "what we cover" — so the dashboard's "Dette dekker vi" surface can render it; WP-96 replaced the published `interests.json`, which is now the owner's private profile and is no longer published),
 per-sport source files (`football.json` …), `events.ics`.
 
 New data files must be whitelisted in `.gitignore` (which ignores `docs/data/*.json`

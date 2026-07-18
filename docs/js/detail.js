@@ -113,9 +113,11 @@ Object.assign(window.Dashboard.prototype, {
 		return html;
 	},
 
-	/** Why this event is on your board — the deterministic relevance reason. */
+	/** Why this event is on the board — the deterministic coverage reason.
+	 *  WP-96: the web board is catalog-wide, so this explains what Sportivista
+	 *  COVERS (this.covers), not one person's follows. */
 	whyShown(e) {
-		const at = this.interests?.alwaysTrack || {};
+		const at = this.covers?.alwaysTrack || {};
 		const hay = [e.title, e.tournament, e.homeTeam, e.awayTeam,
 			...(e.norwegianPlayers || []).map((p) => p.name || p), ...(e.participants || []).map((p) => p.name || p)].filter(Boolean).join(' ');
 		// Sport-scoped so e.g. FC Barcelona doesn't match a Tour stage in the city Barcelona.
@@ -136,14 +138,14 @@ Object.assign(window.Dashboard.prototype, {
 		let why;
 		if (athlete) why = `Fordi <strong>${escapeHtml(athlete)}</strong> ${plays}`;
 		else if (team) why = `Fordi <strong>${escapeHtml(team)}</strong> ${plays}`;
-		else if (tourn) why = `Del av <strong>${escapeHtml(tourn)}</strong>, som du følger`;
+		else if (tourn) why = `Del av <strong>${escapeHtml(tourn)}</strong>, som vi dekker`;
 		else if (e.source === 'ai-research') {
 			const r = this.trackedReasonFor(e);
-			why = r ? `AI valgte dette: ${escapeHtml(ssShortReason(r, 95))}` : 'AI-research fant dette for deg';
+			why = r ? `AI valgte dette: ${escapeHtml(ssShortReason(r, 95))}` : 'AI-research fant dette';
 		}
 		else if (e.norwegian) why = 'Norsk deltakelse';
-		else if (SPORT[e.sport]) why = `Du følger ${escapeHtml(SPORT[e.sport])}`;
-		else why = 'Passer interessene dine';
+		else if (SPORT[e.sport]) why = `Vi dekker ${escapeHtml(SPORT[e.sport])}`;
+		else why = 'Del av det vi dekker';
 		if (e.mustWatch) why += ` · varsel ${this.notifyLead()} min før`;
 		return why;
 	},

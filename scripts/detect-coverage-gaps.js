@@ -382,7 +382,15 @@ function main() {
 	const configDir = process.env.SPORTSYNC_CONFIG_DIR || path.resolve(process.cwd(), "scripts", "config");
 	const rss = readJsonIfExists(path.join(dataDir, "rss-digest.json"));
 	const events = readJsonIfExists(path.join(dataDir, "events.json")) || [];
-	const interests = readJsonIfExists(path.join(configDir, "interests.json"));
+	// WP-96: the recall net watches what the catalog COVERS, not one person's
+	// follows. buildWatchlist reads an `alwaysTrack` shape, so map catalog tier2
+	// into it (falling back to the owner's interests.json seed). Same function,
+	// catalog compass.
+	const catalog = readJsonIfExists(path.join(configDir, "catalog.json"));
+	const interestsSeed = readJsonIfExists(path.join(configDir, "interests.json"));
+	const interests = catalog?.tier2
+		? { alwaysTrack: catalog.tier2 }
+		: interestsSeed;
 	const tracked = readJsonIfExists(path.join(configDir, "tracked.json"));
 	const sources = readSources(dataDir);
 
