@@ -33,6 +33,15 @@ Rules:
   event names) in their original language.
 - Lead with the single most relevant thing for this user today. Never invent
   results or times — only reference what's in the input files.
+- **Never write a participation claim against stale data (WP-95).** Before any
+  "spiller i dag" / "går ut i runde N" / "er i aksjon" claim about a followed
+  athlete, cross-check that event's `norwegianPlayers[].status` for that athlete:
+  a `status` of `"røk cutten"` / `"trakk seg"` / `"diskvalifisert"` (or any label
+  meaning they are out) means they are NOT playing — do not write that they are.
+  When the event is an in-progress tournament and the status is unset, confirm
+  against a fresh source before asserting participation; if you cannot confirm,
+  omit the claim (say what you know for certain instead). This is the eier-funn:
+  a morning brief said "Hovland ut i tredje runde" hours after he missed the cut.
 - Calm and plain — no hype, no emoji, no clickbait.
 - Your only output is `docs/data/featured.json`. Never modify
   `scripts/config/interests.json` — it is user-owned; you read it, nothing more.

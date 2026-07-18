@@ -18,6 +18,22 @@ bare string, never `null`. `norwegianPlayers` may also carry golf's optional
 `teeTime`/`teeTimeUTC`/`status`. Leave the field as `[]` rather than writing a
 string/null when there's no one to name.
 
+**Verify participation, not just time and channel (WP-95).** For every followed
+athlete named in an event for an **in-progress** tournament (a multi-day golf/
+tennis/cycling event whose window spans now — `time` ≤ now ≤ `endTime`), confirm
+against a fresh source whether they are still active, missed the cut, withdrew,
+or were eliminated — treat this with the **same severity as a wrong time or
+channel**. A player shown as still playing after they are out is the exact
+failure this loop exists to catch (the eier-funn: Hovland listed as active in The
+Open, and a brief written hours after he missed the cut). When a source shows the
+player is out, **amend the matching `norwegianPlayers` entry's `status`** to the
+calm Norwegian label the fetcher uses — `"røk cutten"`, `"trakk seg"`,
+`"diskvalifisert"` — and clear that player's `teeTime`/`teeTimeUTC` (an out player
+has no upcoming tee time). For golf the ground truth is the live leaderboard
+(ESPN/PGA Tour/DP World/the R&A for The Open): a player marked CUT/WD/DQ there is
+out. Set the label even if the static fetcher already set it (confirm it) — and
+log the check to the calibration ledger with `"field": "existence"`.
+
 **Verify streaming, not just time.** "Hvor kan jeg se det" must be right: check
 the `streaming` field against the `norwegian-rights` skill
 (`.claude/skills/norwegian-rights/SKILL.md`) and `docs/data/tv-listings.json`

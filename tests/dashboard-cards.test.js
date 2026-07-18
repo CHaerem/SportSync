@@ -162,6 +162,21 @@ describe("golf detail: who plays, tee times, featured group", () => {
 		expect(html).toContain("Kristoffer Ventura");
 		expect(html).toContain("i feltet");
 	});
+	it("shows a cut player's status verbatim, never a tee time or «i feltet» (WP-95)", () => {
+		const html = dash.eventDetail({
+			sport: "golf", title: "The Open", time: soon(),
+			norwegianPlayers: [
+				{ name: "Viktor Hovland", teeTime: null, teeTimeUTC: null, status: "røk cutten" },
+				{ name: "Kristoffer Reitan", teeTime: "15:50", status: null },
+			],
+			featuredGroups: [{ player: "Kristoffer Reitan", teeTime: "15:50", groupmates: [{ name: "Shane Lowry" }] }],
+			totalPlayers: 156,
+		});
+		expect(html).toContain("Kristoffer Reitan");
+		expect(html).toContain("15:50");                 // active player keeps his tee
+		// Hovland's own row shows the cut status verbatim, not a tee or «i feltet».
+		expect(html).toContain('<span class="d-k">Viktor Hovland</span><span class="d-v">røk cutten</span>');
+	});
 });
 
 describe("stage-race detail (TdF): Norwegian squad + current context", () => {
@@ -283,6 +298,20 @@ describe("followed 'neste' index — answers 'when's X next?'", () => {
 		dash.allEvents = [{ sport: "golf", title: "US Open", time: inDays(3), norwegianPlayers: [{ name: "Kristoffer Ventura" }] }];
 		const html = dash.followRow({ name: "Kristoffer Ventura", sport: "golf" }, true);
 		expect(html).not.toContain("Tee-tid");
+	});
+
+	it("shows a cut golfer's status instead of «pågår nå» for the ongoing tournament (WP-95)", () => {
+		// The tournament is live (window spans now) so relDay alone would say
+		// «pågår nå», but this golfer is out — the row must show the status.
+		dash.allEvents = [{
+			sport: "golf", title: "The Open", time: inDays(-2), endTime: inDays(1),
+			norwegianPlayers: [{ name: "Viktor Hovland", teeTime: null, teeTimeUTC: null, status: "røk cutten" }],
+		}];
+		const html = dash.followRow({ name: "Viktor Hovland", aliases: ["Hovland"], sport: "golf" }, true);
+		expect(html).toContain("røk cutten");
+		expect(html).not.toContain("pågår nå");
+		expect(html).not.toContain("Tee-tid");
+		expect(html).toContain("Status"); // and a calm status row in the detail
 	});
 });
 

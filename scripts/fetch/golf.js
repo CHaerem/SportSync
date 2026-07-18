@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { pathToFileURL } from "url";
 import { fetchJson, iso, normalizeToUTC, espnDateRange } from "../lib/helpers.js";
+import { golfParticipationStatus, isOutOfTournament } from "../lib/golf.js";
 import { validateESPNScoreboard } from "../lib/response-validator.js";
 import { fetchPGATourField, fetchPGATourTeeTimes, tournamentNameMatches } from "../lib/pgatour-scraper.js";
 
@@ -173,6 +174,34 @@ function buildGolfTournament(tourName, ev, venue, { norwegian, norwegianPlayers,
 	return { name: tourName, events: [event] };
 }
 
+/**
+ * Fetch per-player participation status (cut/WD/DQ) for the Norwegian competitors
+ * of an in-progress tournament from ESPN's core-API competitor status endpoint.
+ * The scoreboard competitor `id` doubles as the core-API competitor id, so this
+ * is one cheap fetch per followed player — not per full field. Returns a
+ * Map<competitorId, norwegianLabel> holding only players who are OUT (active
+ * players are omitted). Fail-soft: a failed fetch leaves that player unlabelled.
+ * @param {string} leagueSlug  ESPN golf league slug ("pga" | "eur")
+ * @param {string} eventId     ESPN event id
+ * @param {object[]} competitors  scoreboard competitors (need `.id`)
+ * @param {Function} [fetcher]  injectable JSON fetcher (for tests)
+ */
+export async function fetchGolfPlayerStatuses(leagueSlug, eventId, competitors, fetcher = fetchJson) {
+	const out = new Map();
+	if (!leagueSlug || !eventId) return out;
+	await Promise.all((competitors || []).map(async (comp) => {
+		if (!comp?.id) return;
+		const url = `https://sports.core.api.espn.com/v2/sports/golf/leagues/${leagueSlug}/events/${eventId}/competitions/${eventId}/competitors/${comp.id}/status`;
+		try {
+			const label = golfParticipationStatus(await fetcher(url));
+			if (label) out.set(comp.id, label);
+		} catch (err) {
+			console.warn(`Golf status fetch failed for competitor ${comp.id} (${eventId}): ${err.message}`);
+		}
+	}));
+	return out;
+}
+
 export async function fetchGolfESPN() {
 	// Get golfers filtered by tour
 	const getGolfersForTour = (tourName) => {
@@ -295,40 +324,57 @@ export async function fetchGolfESPN() {
 					const teeTimesMatch = isPGATour && pgaTeeTimes && tournamentNameMatches(ev.name, pgaTeeTimes.tournamentName);
 					const fieldMatch = isPGATour && pgaField && tournamentNameMatches(ev.name, pgaField.tournamentName);
 
+					// WP-95 participation freshness: for a tournament already under way,
+					// pull each Norwegian's cut/WD/DQ status so an eliminated player is
+					// never shown as still playing. Only when the event has begun (a
+					// scheduled future tournament cannot have a cut yet).
+					const leagueSlug = tour.url.match(/sports\/golf\/([^/]+)\//)?.[1] || null;
+					const eventStarted = ev.status?.type?.state && ev.status.type.state !== "pre";
+					const statusById = eventStarted
+						? await fetchGolfPlayerStatuses(leagueSlug, ev.id, norwegianCompetitors)
+						: new Map();
+
 					const norwegianPlayersList = norwegianCompetitors.map(comp => {
 						const name = comp.athlete?.displayName || "Unknown";
+						const status = statusById.get(comp.id) || null;
 						let teeTime = null;
 						let teeTimeUTC = null;
-						// Prefer tee-times page (has real tee times during in-progress tournaments)
-						if (teeTimesMatch) {
-							const info = pgaTeeTimes.playerTeeTimes.get(name.toLowerCase());
-							if (info?.teeTime) {
-								teeTime = info.teeTime;
-								teeTimeUTC = info.teeTimeUTC;
+						// A player who is out of the tournament (cut/WD/DQ) gets no tee
+						// time or featured group for the remaining rounds.
+						if (!isOutOfTournament(status)) {
+							// Prefer tee-times page (has real tee times during in-progress tournaments)
+							if (teeTimesMatch) {
+								const info = pgaTeeTimes.playerTeeTimes.get(name.toLowerCase());
+								if (info?.teeTime) {
+									teeTime = info.teeTime;
+									teeTimeUTC = info.teeTimeUTC;
+								}
 							}
-						}
-						// Fallback to leaderboard field
-						if (!teeTime && fieldMatch) {
-							const golfer = tourGolfers.find(g => playerNameMatches(name, g));
-							if (golfer) {
-								const fieldPlayer = findFieldPlayer(golfer, pgaField);
-								if (fieldPlayer?.teeTime) {
-									teeTime = fieldPlayer.teeTime;
-									teeTimeUTC = fieldPlayer.teeTimeUTC;
+							// Fallback to leaderboard field
+							if (!teeTime && fieldMatch) {
+								const golfer = tourGolfers.find(g => playerNameMatches(name, g));
+								if (golfer) {
+									const fieldPlayer = findFieldPlayer(golfer, pgaField);
+									if (fieldPlayer?.teeTime) {
+										teeTime = fieldPlayer.teeTime;
+										teeTimeUTC = fieldPlayer.teeTimeUTC;
+									}
 								}
 							}
 						}
-						return { name, teeTime, teeTimeUTC, status: comp.status || null };
+						return { name, teeTime, teeTimeUTC, status };
 					});
 
-					console.log(`Found ${norwegianCompetitors.length} Norwegian player(s) in ${ev.name}: ${norwegianPlayersList.map(p => p.name).join(", ")}`);
+					console.log(`Found ${norwegianCompetitors.length} Norwegian player(s) in ${ev.name}: ${norwegianPlayersList.map(p => p.status ? `${p.name} (${p.status})` : p.name).join(", ")}`);
 
+					// Players who are out of the tournament get no featured groups either.
+					const activePlayers = norwegianPlayersList.filter(p => !isOutOfTournament(p.status));
 					const matchedTeeTimes = teeTimesMatch ? pgaTeeTimes : null;
 					tournaments.push(buildGolfTournament(tour.name, ev, venue, {
 						norwegian: true,
 						norwegianPlayers: norwegianPlayersList,
 						featuredGroups: (teeTimesMatch || fieldMatch)
-							? buildFeaturedGroups(norwegianPlayersList, fieldMatch ? pgaField : null, matchedTeeTimes)
+							? buildFeaturedGroups(activePlayers, fieldMatch ? pgaField : null, matchedTeeTimes)
 							: [],
 						totalPlayers: competitors.length,
 					}));
