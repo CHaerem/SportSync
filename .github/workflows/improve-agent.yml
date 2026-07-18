@@ -57,6 +57,8 @@ jobs:
       # workspace. Runs before the merge gate so the log survives a failed gate.
       - name: Commit run log
         if: steps.usage.outputs.run == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           LOG=docs/data/improve-log.json
           [ -n "$(git status --porcelain -- "$LOG")" ] || { echo "Run log unchanged — nothing to commit."; exit 0; }
@@ -68,6 +70,10 @@ jobs:
           git config user.name "GitHub Action"
           git add "$LOG"
           git commit -m "improve: run log"
+          # claude-code-action leaves the remote pointing at its now-expired OIDC app
+          # token ("Invalid username or token" on push). Re-point origin at this job's
+          # GITHUB_TOKEN (contents:write) before pushing the log commit.
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git push || (git pull --rebase -X theirs origin main && git push)
 
       # Re-gate tests + auto-merge via the shared merge gate (scripts/merge-gate.js,

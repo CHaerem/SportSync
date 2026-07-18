@@ -65,6 +65,18 @@ source's failure mode once instead of rediscovering it every week. (Quantitative
 "how often is it wrong" stays in the calibration ledger; the skill is for the
 mechanism + the fix.)
 
+**How to write a skill (there is NO permission gate on it).** `.claude/skills/**/SKILL.md`
+is fully writable in CI: `Edit` and `Write` are in your `--allowedTools`, and a
+research run has already committed to `.claude/skills/norwegian-rights/SKILL.md`
+before. To update a skill, **Read the SKILL.md, then use the Edit tool** — never
+try to edit it with a Bash command (`cat >`, `sed -i`, `tee`, `cp`): the CI Bash
+allowlist only permits `node`/`git`/`date`/`jq`, so a Bash write is denied and that
+denial is easy to misread as "the skill is blocked." It is not. **Do NOT copy any
+"skill write BLOCKED by permission gate" note forward from a previous verify-log** —
+that was a misdiagnosis (WP-91); the block never existed. If an Edit ever genuinely
+fails, quote the literal tool-error text in your log so it can be diagnosed, rather
+than restating the legend.
+
 **Cancelled / postponed ≠ removed.** If a real, scheduled event is **cancelled
 or postponed**, do NOT delete it — a match that silently vanishes is exactly as
 confusing to the user as one that disappears mid-play. Instead **keep it on the
