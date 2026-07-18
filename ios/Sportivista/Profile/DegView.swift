@@ -65,6 +65,9 @@ struct DegView: View {
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
+        // WP-99: HIG keyboard avoidance for any editable field reached from Deg
+        // (e.g. a memory-edit sheet) — dragging the list puts the keyboard away.
+        .scrollDismissesKeyboard(.interactively)
         .background(SportivistaTokens.background)
         .foregroundStyle(SportivistaTokens.label)
         .navigationTitle("Deg")

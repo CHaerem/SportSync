@@ -75,6 +75,16 @@ class SportivistaUITestCase: XCTestCase {
 		XCTAssertEqual(result, .completed, "Expected label «\(expected)», got «\(element.label)»", file: file, line: line)
 	}
 
+	/// Assert an element STOPS existing within `timeout` — the mirror of
+	/// `assertExists`, for behaviours that make a control go away (e.g. releasing
+	/// the command line's focus collapses its discovery row / dismiss glyph).
+	func assertVanishes(_ element: XCUIElement, _ message: String, file: StaticString = #filePath, line: UInt = #line) {
+		let predicate = NSPredicate(format: "exists == false")
+		let exp = expectation(for: predicate, evaluatedWith: element)
+		let result = XCTWaiter().wait(for: [exp], timeout: timeout)
+		XCTAssertEqual(result, .completed, message, file: file, line: line)
+	}
+
 	/// The first staticText whose label CONTAINS `substring` — for labels that
 	/// carry a variable tail (e.g. the "· varsler deg før start" suffix).
 	/// Uses `.matching` (the element's OWN label), not `.containing` (which

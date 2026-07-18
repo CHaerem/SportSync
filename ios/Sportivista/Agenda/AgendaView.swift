@@ -95,6 +95,10 @@ struct AgendaView: View {
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
+        // WP-99: HIG keyboard avoidance — dragging the agenda dismisses the
+        // command line's keyboard interactively (DESIGN § Hjelperen: "scroll
+        // lukker tastaturet"). The command line rides above via safeAreaInset.
+        .scrollDismissesKeyboard(.interactively)
         .background(SportivistaTokens.background)
         .refreshable {
             await viewModel.refresh()
@@ -133,6 +137,10 @@ struct AgendaView: View {
         Text(label)
             .font(.sportivista(.footnote, weight: .semibold))
             .foregroundStyle(SportivistaTokens.secondaryLabel)
+            // WP-99: label-independent handle for UI tests — the label is
+            // time-of-day-dependent («I DAG» has no section late at night,
+            // when the seeded now+Nh events tip past midnight).
+            .accessibilityIdentifier("agenda.dayHeader")
     }
 
     // MARK: - Rows
@@ -240,7 +248,14 @@ struct EventRowView: View {
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             MustSeeDot(on: row.isMustSee)
+            // WP-99: the time column must win width negotiation. A multi-day
+            // WINDOW ("16.–19. juli") is far wider than a clock, and without a
+            // higher layout priority the flexible RowBody (maxWidth .infinity)
+            // squeezes the column below its intrinsic width — its fixed-size text
+            // then draws OVER (and off the left of) the title. Priority makes the
+            // HStack reserve the column's full width first, RowBody takes the rest.
             TimeColumn(text: row.timeLabel)
+                .layoutPriority(1)
             RowBody(title: row.title, meta: row.metaLabel, channel: row.channelLabel)
             TrailingMarkers(reminder: row.mustWatch, aiResearch: row.isAIResearch)
         }
@@ -256,7 +271,8 @@ struct SeriesRowView: View {
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
             MustSeeDot(on: false) // series rows are never visually accented (FeedCompiler.isMustSee)
-            TimeColumn(text: row.timeLabel)
+            TimeColumn(text: row.timeLabel) // WP-99: see EventRowView — priority so a wide window never draws over the title
+                .layoutPriority(1)
             RowBody(title: row.summaryLabel, meta: nil, channel: row.channelLabel)
             TrailingMarkers(reminder: row.mustWatch, aiResearch: row.isAIResearch)
         }

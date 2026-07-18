@@ -184,6 +184,15 @@ struct ContentView: View {
                 filterLine
                 AgendaView(viewModel: agenda, onFollow: follow, onOpen: { assistant.recordOpened($0) },
                            openEventID: $requestedEventID)
+                    // WP-99: a tap anywhere on the agenda resigns the command
+                    // line's focus (DESIGN § Hjelperen: "tapp utenfor … lukker
+                    // tastaturet"). A SIMULTANEOUS gesture, so it rides ALONGSIDE
+                    // a row's own tap — the row still opens its detail; the
+                    // keyboard just also goes away. (A drag/scroll never triggers
+                    // a TapGesture, so scrolling is untouched.)
+                    .simultaneousGesture(
+                        TapGesture().onEnded { if commandFocused { commandFocused = false } }
+                    )
             }
             // Liquid Glass (iOS 26): the command line is the app's ONE custom
             // control surface — it floats over the agenda as a glass capsule
@@ -341,6 +350,13 @@ struct ContentView: View {
                             assistant.toggleStarterPack(golf)
                         }
                     case "onboarding-landing", "onboarding-landed":
+                        // WP-99: seed a deterministic golf board (two multi-day
+                        // tournaments spanning today) so the post-onboarding
+                        // agenda renders OFFLINE — the multi-day WINDOW rows this
+                        // catalog screen is meant to show can't come from the live
+                        // board in a network-free screenshot run.
+                        GolfBoardDemoSeed.seed(profileStore: profileStore)
+                        assistant.reloadProfile()
                         if let golf = StarterPacks.all.first(where: { $0.id == "norske-golfere" }) {
                             assistant.toggleStarterPack(golf)
                         }
@@ -371,6 +387,17 @@ struct ContentView: View {
                     default:
                         break
                     }
+                }
+                // WP-99: the FOCUSED command line — the discovery row (standing
+                // «Hva kan du gjøre?» help pill + example pills) and, since the
+                // line is empty, the keyboard-dismiss glyph in the trailing slot.
+                // A screenshot mode so the focused affordances are capturable
+                // deterministically (focus can't be driven by a still image).
+                if mode == "command-focused" {
+                    GolfBoardDemoSeed.seed(profileStore: profileStore)
+                    assistant.reloadProfile()
+                    agenda.reloadFromCache(now: Date())
+                    commandFocused = true
                 }
                 assistant.demoSeed(mode)
                 // WP-83: a diff/answer screenshot renders the (slimmed) result

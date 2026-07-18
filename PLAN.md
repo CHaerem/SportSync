@@ -105,6 +105,7 @@ mennesket, aldri av en agent.
 | WP-96 | Flerbruker-splitten (interests → katalog) — GATE for eksterne testere | 0G | portmåling | ✅ merget (#308) — `catalog.json` (tier1 bredt + tier2 elite-langhale, nøkternt seedet; tennis via tier2-majors for å unngå ATP/WTA-flom); `isCovered(catalog)` server-side, personlig presisjon eies av linsen alene; vektorer IKKE re-frosset (semantisk riktig: linsen uendret — pinner nå klienten, DIVERGENCES §6); to-profil-aksepttest (eier uendret + Nakamura-sjakk + NAVI-CS2 → alle meningsfulle fra samme feed); interests.json avpublisert, web viser «Dette dekker vi»; agent-kompass → katalogen; ICS/mustWatch bevisst eier-artefakt; rediger = «be om dekning» (skrivevei → WP-23). 542 JS + 526 iOS + vektorer bit-like + 4 schemes |
 | WP-97 | Design-biblioteket (tokens.json + koherens + brand-assets + styleguide) | 0G | – | ✅ merget (#309) — tokens.json (W3C) + 48 koherens-tester m/ rød-bevis; kolonet.svg pikselskannet fra shipped ikon; generate-icons.swift piksel-identisk verifisert; BRAND.md fra faktisk kilde; styleguide.html fra ekte CSS begge temaer; 590 tester. TRE AVVIK DOKUMENTERT (ikke stille fikset): (1) tertiaryLabel brukt men udokumentert/utenom token-enum; (2) web-wordmark 26px vs DESIGN.md 34px; (3) web-wordmark helamber vs iOS' label+amber-kolon-merkelås — web avviker fra godkjent merkelås. Oppfølger: harmoniser de tre |
 | WP-98 | Brand-harmonisering + skjermkatalog | 0G | WP-97 | ✅ merget (#310) — web-merkelås rettet til godkjent (label+amber-kolon, 28px; DESIGN.md-rad korrigert: ingen skjerm bruker largeTitle); tertiaryLabel inn i token-systemet (enum+migrering+test 48→52); skjermkatalog: 17 demo-moduser × 2 temaer = 34 PNG on-demand (design/screens/generate.sh). TO NYE FUNN fra kjøringen: reset-entry/-confirm rendrer samme skjerm (harness-begrensning) + EKTE AgendaView-layoutbug (overlappende tekst i flerdags-golfrader, onboarding-landing/landed, begge temaer) — logget som oppfølger. 594 JS + 526 iOS grønne |
+| WP-99 | Tastatur-lukking + assistent-klarhet + agenda-layoutbug (eier-dogfooding) | 0G | WP-98 | 🔬 PR åpen — TRE eier-funn fra fysisk-iPhone-dogfooding: (1) tastaturet i kommandolinja kunne ikke lukkes — HIG-native fiks: `.scrollDismissesKeyboard(.interactively)` på agenda+Deg, tapp-utenfor (simultaneous gesture, stjeler ikke rad-tap), lukke-glyf (`keyboard.chevron.compact.down`) i tom-fokusert-hullet; (2) uklart hva chatten kan → stående FØRSTE «Hva kan du gjøre?»-pill som ruter til eksisterende hjelp-arm (WP-68), verifisert at fokus-forslag ikke er mock-only; (3) rotårsak flerdags-golf-overlapp: `TimeColumn` (fixedSize+minWidth 58) tapte bredde-forhandlingen mot grådig `RowBody` (maxWidth .infinity) → bred dato-vindu-tekst tegnet OVER tittelen — fikset med `.layoutPriority(1)` på tidskolonnen; deterministisk offline-repro (GolfBoardDemoSeed) for onboarding-landed/-landing. Vektorer urørt (ren layout). 4 nye UI-tester + 1 unit; før/etter-skjermbilder |
 
 ---
 
@@ -1135,6 +1136,45 @@ web-captures).
   på live-siten (meningen: retter drift mot godkjent design), øvrig er
   dokumentasjons-/token-/test-harmonisering + det nye, innsjekkede
   skjerm-scriptet.
+
+### WP-99 · Tastatur-lukking + assistent-klarhet + agenda-layoutbug — 🔬 PR åpen
+Eier-funn fra dogfooding på fysisk iPhone. Tre uavhengige feil, alle på
+assistent-/agenda-flaten, fikset minimalt og HIG-native.
+- **Funn 1 — tastaturet kunne ikke lukkes (kontraktsbrudd mot DESIGN § Hjelperen).**
+  Tre native lukke-veier lagt til: (a) `.scrollDismissesKeyboard(.interactively)`
+  på agendaens `List` (`AgendaView`) + Deg-lista (`DegView`) — dra for å lukke;
+  (b) tapp-utenfor: `.simultaneousGesture(TapGesture)` på `AgendaView` i
+  `ContentView` som resignerer `commandFocused` — SIMULTAN, så en rad-tapp fortsatt
+  åpner detaljen (bevist av ny UI-test); (c) en stille lukke-glyf
+  (`keyboard.chevron.compact.down`, ≥44pt, a11y «Lukk tastaturet») i
+  trailing-slotten når feltet er TOMT og fokusert — nettopp hullet eieren traff
+  (feltet-med-tekst har send, tenking har Avbryt).
+- **Funn 2 — uklart hva chatten kan.** En stående FØRSTE pill «Hva kan du gjøre?»
+  i fokus-forslagene (`CommandLineView.focusSuggestions`), som SUBMITTER
+  (`AssistantViewModel.askForHelp`) og ruter til den EKSISTERENDE hjelp-armen
+  (WP-68 `AssistantHelp`/`getHelp`; mock-answereren matcher «kan du») — ingen ny
+  intent-logikk. Verifisert at fokus-forslagsraden IKKE er mock-only: den leser
+  `viewModel.focusSuggestions` (ren computed prop) og vises på `focused &&
+  tom`, uavhengig av FM-tilgjengelighet.
+- **Funn 3 — flerdags-golf-rad-overlapp (WP-98-oppfølger).** Rotårsak: i
+  `EventRowView`/`SeriesRowView` tapte `TimeColumn` (`.fixedSize(horizontal:)` +
+  `.frame(minWidth: 58)`) bredde-forhandlingen mot en grådig `RowBody`
+  (`.frame(maxWidth: .infinity)`). En klokke («23:20») får plass i 58pt så alt
+  gikk bra; et bredt dato-VINDU («16.–19. juli») ble under-proposert bredde,
+  rammen klemte til 58pt mens den indre fixedSize-teksten tegnet sin fulle ~130pt
+  — altså OPPÅ (og delvis av venstre kant på) tittelen. Fiks: `.layoutPriority(1)`
+  på tidskolonnen så HStacken reserverer dens fulle bredde først. Ren layout —
+  gylne vektorer/`FeedCompiler` urørt. Ny `GolfBoardDemoSeed` gir deterministisk
+  OFFLINE-repro for `onboarding-landed`/`-landing` (før lente de seg på live-
+  tavlen → nettverksfritt skjermbilde fanget bare «Henter data …»).
+- **Ikke-mål/urørt:** beskyttede stier, relevans-/feed-logikk, `docs/**`,
+  FM-intent-tolkningen (hjelp-pillen bruker eksisterende arm).
+- **Aksept:** `xcodegen generate`; full unit-suite grønn (+ 1 ny:
+  `AssistantViewModelTests.test_askForHelp_*`); vektorer bit-like; alle 4
+  schemes bygger; `SportivistaUITests` grønn inkl. 4 nye flyter (tapp-agenda
+  lukker · rad-tapp åpner detalj under fokus · tom-fokusert lukke-glyf ·
+  hjelp-pill gir svar); før/etter-skjermbilder av golf-raden + fokusert
+  tilstand; `npx vitest run --maxWorkers=1` grønn (urørt web).
 
 ## FLYTTEDAGEN · Zenji → Sportivista — ✅ UTFØRT 17.07.2026
 

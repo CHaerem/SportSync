@@ -325,4 +325,90 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		app.buttons["Lukk"].tap()
 		assertExists(app.textFields["command.field"], "closing the result sheet returns to the agenda")
 	}
+
+	// MARK: - Flow 12 · Keyboard dismissal — tapping the agenda releases focus (WP-99)
+
+	func testTappingAgendaDismissesKeyboard() {
+		let app = launchApp(state: "agenda")
+
+		// Focus the command line — its discovery row (the standing help pill) rises,
+		// a reliable proxy for "the line is focused / keyboard is up".
+		let field = app.textFields["command.field"]
+		assertExists(field, "the command line should be present")
+		field.tap()
+		let helpPill = app.buttons["assistant.help"]
+		assertExists(helpPill, "focusing the line raises the discovery row")
+
+		// Tap the agenda (a day header — part of the board, NOT a row button,
+		// so nothing opens): focus is released and the discovery row collapses,
+		// i.e. the keyboard is dismissed (DESIGN § Hjelperen). Matched by the
+		// label-independent id — the label text is time-of-day-dependent (late
+		// at night the seeded now+Nh events tip past midnight and «I DAG» has
+		// no section), which made a label match flaky.
+		let dayHeader = app.staticTexts.matching(identifier: "agenda.dayHeader").firstMatch
+		assertExists(dayHeader, "the seeded board shows a day group header")
+		dayHeader.tap()
+		assertVanishes(helpPill, "tapping the agenda should release focus and dismiss the keyboard")
+		// Still on the agenda — no sheet was opened by the outside-tap.
+		assertExists(app.textFields["command.field"], "the agenda (and its command line) stays put")
+	}
+
+	// MARK: - Flow 13 · A row tap still opens detail while the line is focused (WP-99)
+
+	func testRowTapStillOpensDetailWhileFocused() {
+		let app = launchApp(state: "agenda")
+
+		// Focus the command line first, THEN tap a row: the tap-outside dismissal
+		// is a SIMULTANEOUS gesture, so it must not steal the row's own tap.
+		let field = app.textFields["command.field"]
+		assertExists(field, "the command line should be present")
+		field.tap()
+		assertExists(app.buttons["assistant.help"], "the line is focused")
+
+		let row = agendaRow(UITestFixture.footballTitle, in: app)
+		assertExists(row, "the followed football row should be tappable")
+		row.tap()
+		// The detail sheet opened → the row's tap was NOT swallowed by the gesture.
+		assertExists(app.staticTexts["Hvorfor vises denne?"],
+		             "a row tap must still open its detail sheet while the command line is focused")
+	}
+
+	// MARK: - Flow 14 · Empty-focused keyboard-dismiss glyph (WP-99)
+
+	func testEmptyFocusedShowsKeyboardDismissGlyph() {
+		let app = launchApp(state: "agenda")
+
+		// Focusing the EMPTY line surfaces the keyboard-dismiss glyph in the
+		// trailing slot (where send lives once there's text) — the empty-focused
+		// hole the owner hit, with no way to put the keyboard away.
+		let field = app.textFields["command.field"]
+		assertExists(field, "the command line should be present")
+		field.tap()
+		let dismiss = app.buttons["command.dismissKeyboard"]
+		assertExists(dismiss, "an empty, focused line should offer a keyboard-dismiss glyph")
+
+		// Tapping it releases focus → the glyph (and the discovery row) collapse.
+		dismiss.tap()
+		assertVanishes(dismiss, "tapping the glyph should dismiss the keyboard / release focus")
+		assertExists(app.textFields["command.field"], "the command line stays present after dismissing")
+	}
+
+	// MARK: - Flow 15 · The standing help pill answers "what can you do?" (WP-99)
+
+	func testHelpPillAnswersCapabilityQuestion() {
+		let app = launchApp(state: "agenda")
+
+		// The standing first pill is present on focus and routes to the EXISTING
+		// help arm (WP-68), showing the capability answer in the result sheet.
+		let field = app.textFields["command.field"]
+		assertExists(field, "the command line should be present")
+		field.tap()
+		let helpPill = app.buttons["assistant.help"]
+		assertExists(helpPill, "the standing help pill should show on focus")
+		helpPill.tap()
+
+		assertExists(app.staticTexts["ASSISTENT"], "tapping the help pill should raise the assistant result sheet")
+		assertExists(staticText(containing: "Jeg kan tre ting", in: app),
+		             "the help pill should show the curated capability overview")
+	}
 }

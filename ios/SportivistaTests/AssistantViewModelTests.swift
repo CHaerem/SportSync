@@ -85,6 +85,22 @@ final class AssistantViewModelTests: XCTestCase {
         XCTAssertTrue(tally?.summary.contains("fant ikke") ?? false)
     }
 
+    // MARK: - WP-99 — the standing "Hva kan du gjøre?" help affordance
+
+    func test_askForHelp_routesToCuratedCapabilityAnswer() async {
+        let vm = makeVM()
+        // askForHelp() fires a fire-and-forget Task; drive the underlying submit
+        // deterministically (same as run() does) after setting the standing prompt.
+        vm.utterance = AssistantViewModel.helpPrompt
+        await vm.submit()
+
+        XCTAssertNotNil(vm.answer, "«Hva kan du gjøre?» routes to the answer arm")
+        XCTAssertTrue(vm.answer?.text.contains("Jeg kan tre ting") ?? false,
+                      "the answer is the curated capability overview, not an agenda answer")
+        XCTAssertTrue(vm.pending.isEmpty, "help is read-only — there is nothing to confirm")
+        XCTAssertNil(vm.errorMessage, "a capability question is never an error")
+    }
+
     func test_submit_groundsIntoPending_withoutApplying() async {
         let vm = makeVM()
         vm.utterance = "Følg Casper Ruud bare i Grand Slams"
