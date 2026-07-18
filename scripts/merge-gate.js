@@ -66,6 +66,10 @@ export function runMergeGate({ prefix, validateEvents = false }, io) {
 	io.run("npm", ["ci"]);
 	io.run("npm", ["test"]);
 	if (validateEvents) io.run("node", ["scripts/validate-events.js"]);
+	// Wait for the PR's own CI checks (web-tests/ios-tests) before merging:
+	// branch protection requires them, and a red check must leave the PR open
+	// + fail this run loudly — same contract as the local test gate above.
+	io.waitForChecks(pr.number);
 	io.merge(pr.number);
 	io.log(`Auto-merged PR #${pr.number}.`);
 	io.setOutput("merged", "true");
@@ -88,6 +92,10 @@ function realIo() {
 		},
 		checkoutPr: (n) => sh("gh", ["pr", "checkout", String(n)]),
 		run: sh,
+		// --watch venter til alle checks er ferdige; --fail-fast avbryter (exit ≠ 0)
+		// på første røde. Exit ≠ 0 kaster → PR-en blir stående åpen og kjøringen
+		// feiler høyt, akkurat som en rød lokal testkjøring.
+		waitForChecks: (n) => sh("gh", ["pr", "checks", String(n), "--watch", "--fail-fast"]),
 		merge: (n) => sh("gh", ["pr", "merge", String(n), "--merge", "--delete-branch"]),
 		setOutput: (key, value) => {
 			console.log(`${key}=${value}`);

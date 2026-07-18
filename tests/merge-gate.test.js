@@ -5,7 +5,7 @@ import { PROTECTED_PATHS, findProtectedPaths, pickLatestPr, runMergeGate } from 
 
 // A fake io that records every side effect the gate takes.
 function fakeIo({ prs = [], files = [] } = {}) {
-	const calls = { labels: [], runs: [], merged: [], checkedOut: [], outputs: {} };
+	const calls = { labels: [], runs: [], merged: [], checkedOut: [], checksAwaited: [], outputs: {} };
 	return {
 		calls,
 		log: () => {},
@@ -14,6 +14,7 @@ function fakeIo({ prs = [], files = [] } = {}) {
 		addLabel: (n, label) => calls.labels.push([n, label]),
 		checkoutPr: (n) => calls.checkedOut.push(n),
 		run: (cmd, args) => calls.runs.push([cmd, ...args].join(" ")),
+		waitForChecks: (n) => calls.checksAwaited.push(n),
 		merge: (n) => calls.merged.push(n),
 		setOutput: (k, v) => (calls.outputs[k] = v),
 	};
@@ -84,15 +85,25 @@ describe("runMergeGate", () => {
 		expect(io.calls.outputs.merged).toBe("false");
 	});
 
-	it("a safe PR is re-gated (npm ci + npm test) and auto-merged", () => {
+	it("a safe PR is re-gated (npm ci + npm test), awaits CI checks, and auto-merges", () => {
 		const io = fakeIo({ prs: pr, files: ["scripts/fetch/golf.js", "docs/css/cards.css"] });
 		const res = runMergeGate({ prefix: "self-repair/" }, io);
 		expect(res.merged).toBe(true);
 		expect(io.calls.checkedOut).toEqual([42]);
 		expect(io.calls.runs).toEqual(["npm ci", "npm test"]);
+		expect(io.calls.checksAwaited).toEqual([42]); // required checks (web-tests/ios-tests) må være grønne
 		expect(io.calls.merged).toEqual([42]);
 		expect(io.calls.labels).toEqual([]);
 		expect(io.calls.outputs.merged).toBe("true");
+	});
+
+	it("red CI checks propagate (PR stays open, no merge)", () => {
+		const io = fakeIo({ prs: pr, files: ["scripts/fetch/golf.js"] });
+		io.waitForChecks = () => {
+			throw new Error("checks failed");
+		};
+		expect(() => runMergeGate({ prefix: "self-repair/" }, io)).toThrow("checks failed");
+		expect(io.calls.merged).toEqual([]);
 	});
 
 	it("--validate-events adds the events contract to the gate", () => {
