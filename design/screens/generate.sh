@@ -83,6 +83,10 @@ echo "    $SIMULATOR_NAME -> $SIM_UDID"
 
 echo "==> Booting simulator (blocks until fully booted; no-op if already booted)"
 xcrun simctl bootstatus "$SIM_UDID" -b
+# The QuickPath ("slide to type") one-time education card otherwise pops over
+# the keyboard on the first keyboard-focused capture (bit the command-focused
+# light shot 19.07) — mark it as already shown.
+xcrun simctl spawn "$SIM_UDID" defaults write com.apple.Preferences DidShowContinuousPathIntroduction -bool true || true
 open -a Simulator --args -CurrentDeviceUDID "$SIM_UDID" >/dev/null 2>&1 || true
 sleep 3
 
