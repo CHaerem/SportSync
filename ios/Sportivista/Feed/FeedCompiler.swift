@@ -36,10 +36,21 @@ enum FeedCompiler {
 
     /// Server default when `interests.followBroadly` is ABSENT (nil). An
     /// explicit `[]` in the config is honoured as-is — see Interests.followBroadly.
+    /// WP-92: chess & esports are deliberately NOT here — the owner tracks them
+    /// only through named entities (elite chess / 100 Thieves), so they are
+    /// entity-gated (see `entityGatedSports` + `isRelevantIgnoringTime`), not
+    /// admitted wholesale. Mirrors build-events.js's default list.
     static let defaultFollowBroadly: [String] = [
-        "football", "golf", "f1", "cycling", "chess", "esports",
+        "football", "golf", "f1", "cycling",
         "biathlon", "cross-country", "alpine", "nordic", "ski jumping",
     ]
+
+    /// WP-92 · the relevance gate. Sports the user tracks ONLY through named
+    /// entities, never wholesale. For these, `isRelevant` requires a SPORT-SCOPED
+    /// tracked-entity match — no norwegian/favorite/importance/ai-research
+    /// blanket. `followBroadly` still wins first, so an owner who explicitly
+    /// followBroadly-s "chess" gets it wholesale again. Mirrors build-events.js.
+    static let entityGatedSports: Set<String> = ["chess", "esports"]
 
     private static let msPerDay: TimeInterval = 86_400 // seconds
     static let osloTimeZone = TimeZone(identifier: "Europe/Oslo")!
@@ -77,18 +88,28 @@ enum FeedCompiler {
 
     // MARK: - §relevant — feed inclusion (SERVER, build-events.js:477 + cutoff)
 
-    /// `isRelevant` on its own (no time gate) — build-events.js:477-484.
-    /// NOTE: the tracked-entity match is deliberately NOT sport-scoped
-    /// (DIVERGENCES §1), so e.g. the football club "Barcelona" can pull a
-    /// tennis "Barcelona Open" onto the board.
+    /// `isRelevant` on its own (no time gate) — mirrors build-events.js
+    /// `isRelevant`. Order (WP-92):
+    ///  1. followBroadly sport → in (wholesale; wins over the gate);
+    ///  2. entity-gated sport (chess/esports) → a SPORT-SCOPED tracked-entity
+    ///     match is the ONLY way in (no norwegian/favorite/importance/ai-research
+    ///     blanket) — DIVERGENCES §5;
+    ///  3. any other non-broad sport → norwegian / favorite / importance≥4 blanket
+    ///     (`source == "ai-research"` is NO LONGER a standalone pass — WP-92);
+    ///  4. UNSCOPED tracked-entity match (DIVERGENCES §1: the football club
+    ///     "Barcelona" can still pull a tennis "Barcelona Open" onto the board).
     static func isRelevantIgnoringTime(_ e: FeedEvent, interests: Interests) -> Bool {
         let follow = Set((interests.followBroadly ?? defaultFollowBroadly).map { $0.lowercased() })
-        if follow.contains(e.sport.lowercased()) { return true }
-        if e.norwegian || e.isFavorite || (e.importance ?? 0) >= 4 || e.source == "ai-research" { return true }
+        let sport = e.sport.lowercased()
+        if follow.contains(sport) { return true }                       // (1)
         let tracked = interests.alwaysTrack.teams
             + interests.alwaysTrack.athletes
             + interests.alwaysTrack.tournaments
-        return matchInterest(serverHaystack(e), tracked) != nil // unscoped
+        if entityGatedSports.contains(sport) {                          // (2)
+            return matchInterest(serverHaystack(e), tracked, sport: e.sport) != nil
+        }
+        if e.norwegian || e.isFavorite || (e.importance ?? 0) >= 4 { return true } // (3)
+        return matchInterest(serverHaystack(e), tracked) != nil         // (4) unscoped
     }
 
     /// Full server feed inclusion = the 14-day retention cutoff AND

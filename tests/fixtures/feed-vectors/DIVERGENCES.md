@@ -23,7 +23,7 @@ and they are *intended* to differ:
 
 | Predicate  | Product question         | Where it lives                         | Inputs it keys off                                            |
 |------------|--------------------------|----------------------------------------|---------------------------------------------------------------|
-| `relevant` | In the feed at all?      | server `isRelevant` + 14-day cutoff    | sport, norwegian, isFavorite, importance≥4, ai-research, any tracked entity (unscoped) |
+| `relevant` | In the feed at all?      | server `isRelevant` + 14-day cutoff    | sport (followBroadly), the entity-gate for chess/esports, norwegian, isFavorite, importance≥4, any tracked entity (unscoped). **WP-92:** `ai-research` is no longer a standalone pass; chess/esports need a sport-scoped entity match (see §5) |
 | `mustWatch`| Reminder bell 🔔?        | server `mustWatchEntity`               | interests notify-set only (teams+athletes, tournaments if notify:true), **sport-scoped** |
 | `mustSee`  | Visual accent?           | client `isMustSee`                     | isFavorite, importance≥4, norwegian+players, national team, tracked team/athlete (substring) |
 
@@ -108,27 +108,67 @@ meant to be equal. The Swift port must keep them as two functions.
 
 ---
 
-## 4. `confidence` does not gate feed inclusion
+## 4. `confidence` does not gate feed inclusion (but `ai-research` is no longer a free pass — WP-92)
 
-`source == "ai-research"` makes an event `relevant` regardless of `confidence`
-(`build-events.js:479`) — a `confidence: "low"` research event in an
-otherwise-unfollowed sport still reaches the board.
+`confidence` never gates the feed: an `ai-research` event that IS relevant reaches
+the board whether it is `high` or `low`. The WP-15 NotificationPlanner may withhold
+notifications for `confidence: low` without a fresh re-fetch, but the **feed** does
+not filter on confidence today — the port must not "tighten" that by reflex.
 
-**Pinned by** `12-edge-airesearch-lowconf-empty-streaming.json` (`ai-low-tennis`:
-low-confidence, tennis, no tracked player → `relevant: true`).
+**Changed by WP-92 (this is the deliberate re-freeze):** `source == "ai-research"`
+is **no longer** a standalone relevance pass. An AI-found event now reaches the
+board only if it *also* is a broadly-followed sport OR matches a tracked entity —
+exactly like any other event. The old behaviour ("ai-research alone → relevant,
+even in an unfollowed sport with no tracked entity") is gone.
 
-This is not a server/client divergence, but it is a semantic the port must not
-"tighten" by reflex: the WP-15 NotificationPlanner may withhold notifications for
-`confidence: low` without a fresh re-fetch, but the **feed** does not filter on
-confidence today.
+**Pinned by** `12-edge-airesearch-lowconf-empty-streaming.json`:
+- `ai-low-tennis` (low-confidence, tennis, no tracked player, `source:"ai-research"`)
+  → `relevant: false` — dropped, because ai-research no longer rescues it and tennis
+  is not broadly followed. *(Before WP-92 this was `relevant: true`.)*
+- `ai-low-norsk` (low-confidence biathlon) → `relevant: true`, because **biathlon**
+  is a broadly-followed sport — the AI find is preserved for a sport the owner
+  follows wholesale, which is the whole point of keeping ai-research on the board.
+
+---
+
+## 5. Entity-gated sports: chess & esports need a SPORT-SCOPED entity match (WP-92)
+
+The owner's interest in chess and CS2 is **precise, not broad**
+(`interests.json`: "Sjakk på elite-nivå (Magnus Carlsen, Norway Chess, World
+Championship)" and "CS2 esports KUN når 100 Thieves spiller"). WP-92 removed both
+sports from the default `followBroadly` and gates them: a chess/esports event is
+relevant **only** if a tracked entity matches it, and — unlike §1 — that match **is
+sport-scoped**. The norwegian / favorite / importance / ai-research shortcuts do
+**not** apply to a gated sport.
+
+`followBroadly` still wins first, so an owner who explicitly adds `"chess"` to
+`interests.json`'s `followBroadly` gets chess wholesale again — the gate only bites
+sports that are *not* broadly followed.
+
+**Pinned by** `14-relevance-entity-gated-chess-esports.json`:
+
+| Event                                    | `relevant` | Why                                                                            |
+|------------------------------------------|------------|--------------------------------------------------------------------------------|
+| `chess-open-norsk` (norwegian:true)      | `false`    | gated: no tracked chess entity; norwegian does NOT rescue it (the live "Sant Martí" case) |
+| `chess-barcelona` (title "Barcelona …")  | `false`    | gated + **sport-scoped**: the football club "Barcelona" cannot admit a chess event |
+| `chess-carlsen`                          | `true`     | names Magnus Carlsen (tracked chess athlete)                                   |
+| `cs2-100t` (homeTeam "100 Thieves")      | `true`     | names 100 Thieves (tracked esports team)                                       |
+| `cs2-nygaard` (player "Håvard Nygaard")  | `true`     | names Håvard Nygaard (tracked esports athlete)                                 |
+| `cs2-airesearch-other` (ai-research)     | `false`    | gated: two untracked teams; ai-research does NOT rescue it                      |
+
+Contrast with §1: `relevant` stays **unscoped for non-gated sports** (the football
+club "Barcelona" still pulls the tennis "Barcelona Open" onto the board). The
+sport-scoping is applied *only* on the chess/esports gate — a targeted refinement,
+not a reversal of §1.
 
 ---
 
 ## Summary for the porter
 
 - Implement **three** predicates, not one. Keep the bell sport-scoped +
-  word-boundary; keep relevance unscoped; keep the accent's naive-substring
-  behaviour (or change it *deliberately*, with a vector update + note).
+  word-boundary; keep relevance unscoped **except** the chess/esports gate (§5,
+  sport-scoped); keep the accent's naive-substring behaviour (or change it
+  *deliberately*, with a vector update + note).
 - `isEventInWindow` is the shared truth — port it once, use it everywhere.
-- Reproduce §1, §2, §4 exactly to pass WP-13; if any is later judged a real bug,
-  fix it in one place and update the affected vector in the same change.
+- Reproduce §1, §2, §4, §5 exactly to pass WP-13; if any is later judged a real
+  bug, fix it in one place and update the affected vector in the same change.

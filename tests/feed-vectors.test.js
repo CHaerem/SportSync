@@ -46,18 +46,22 @@ function loadVectors() {
 const VECTORS = loadVectors();
 
 // --- Server reference: relevance (feed inclusion) ----------------------------
-// Mirrors scripts/build-events.js:411-436 verbatim:
-//   • the default followBroadly list (build-events.js:411)
-//   • isRelevant() (build-events.js:420-427) — NOTE: matchInterest is called
-//     WITHOUT a sport scope here, unlike mustWatchEntity (see DIVERGENCES.md).
+// Mirrors scripts/build-events.js isRelevant() + the 14-day cutoff verbatim:
+//   • the default followBroadly list — WP-92: chess/esports are NO LONGER here;
+//     the owner tracks them only via named entities (elite chess / 100 Thieves).
+//   • isRelevant() (build-events.js): (1) followBroadly wholesale, (2) chess/
+//     esports entity-gate (SPORT-SCOPED match; no norwegian/favorite/importance/
+//     ai-research blanket), (3) the norwegian/favorite/importance blanket for
+//     every other non-broad sport — ai-research is no longer a blanket pass on
+//     its own — and (4) an UNSCOPED tracked-entity match (DIVERGENCES.md §1).
 //     WP-04: norwegianPlayers/participants are canonical {name} objects now, so
 //     the hay-building maps both through `p.name || p` (kept for pre-WP-04 data).
-//   • the 14-day retention cutoff (build-events.js:430-436), which keys off
-//     endTime when present, else start.
+//   • the 14-day retention cutoff, which keys off endTime when present, else start.
 const DEFAULT_FOLLOW_BROADLY = [
-	"football", "golf", "f1", "cycling", "chess", "esports",
+	"football", "golf", "f1", "cycling",
 	"biathlon", "cross-country", "alpine", "nordic", "ski jumping",
 ];
+const ENTITY_GATED_SPORTS = new Set(["chess", "esports"]);
 
 function serverRelevant(event, interests, nowMs) {
 	if (!event.time) return false;
@@ -67,8 +71,8 @@ function serverRelevant(event, interests, nowMs) {
 	const followBroadly = new Set(
 		(interests.followBroadly || DEFAULT_FOLLOW_BROADLY).map((s) => s.toLowerCase())
 	);
-	if (followBroadly.has((event.sport || "").toLowerCase())) return true;
-	if (event.norwegian || event.isFavorite || (event.importance || 0) >= 4 || event.source === "ai-research") return true;
+	const sport = (event.sport || "").toLowerCase();
+	if (followBroadly.has(sport)) return true; // (1) wholesale, wins over the gate
 
 	const trackedEntities = [
 		...(interests.alwaysTrack?.teams || []),
@@ -80,7 +84,14 @@ function serverRelevant(event, interests, nowMs) {
 		...(event.norwegianPlayers || []).map((p) => p.name || p),
 		...(event.participants || []).map((p) => p.name || p),
 	].join(" ");
-	return matchInterest(hay, trackedEntities) != null; // NOT sport-scoped
+	// (2) chess/esports: sport-scoped entity match only.
+	if (ENTITY_GATED_SPORTS.has(sport)) {
+		return matchInterest(hay, trackedEntities, { sport: event.sport }) != null;
+	}
+	// (3) other non-broad sports: norwegian/favorite/importance blanket (NO ai-research).
+	if (event.norwegian || event.isFavorite || (event.importance || 0) >= 4) return true;
+	// (4) unscoped tracked-entity match (DIVERGENCES §1).
+	return matchInterest(hay, trackedEntities) != null;
 }
 
 // --- Client reference: shared sandbox ----------------------------------------

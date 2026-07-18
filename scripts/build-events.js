@@ -538,21 +538,60 @@ if (keptConfirmed > 0) {
 // Relevance filter — keep only what the user actually follows, so the agenda
 // isn't cluttered with, e.g., minor tennis events with no tracked player.
 const interests = readJsonIfExists(path.join(configDir, "interests.json")) || {};
+// Sports the user follows WHOLESALE (every in-sport event stays). NB: chess and
+// esports are deliberately NOT here (WP-92) — the owner's interest in them is
+// precise, not broad (interests.json: "Sjakk på elite-nivå (Magnus Carlsen,
+// Norway Chess, World Championship)" and "CS2 KUN når 100 Thieves spiller"), so
+// they are entity-gated below instead of admitted wholesale.
 const followBroadly = new Set(
-	(interests.followBroadly || ["football", "golf", "f1", "cycling", "chess", "esports", "biathlon", "cross-country", "alpine", "nordic", "ski jumping"]).map((s) => s.toLowerCase())
+	(interests.followBroadly || ["football", "golf", "f1", "cycling", "biathlon", "cross-country", "alpine", "nordic", "ski jumping"]).map((s) => s.toLowerCase())
 );
+// Entity-gated sports (WP-92 · the relevance gate): sports the user tracks ONLY
+// through named entities, never wholesale. For these, a sport-scoped
+// tracked-entity match is REQUIRED — the norwegian / favorite / importance /
+// ai-research shortcuts do NOT apply. Without this a minor open with a lone
+// Norwegian club player (the live "XXVI Obert Internacional Sant Martí" case) or
+// any non-100-Thieves CS2 match slips onto the board, because such events are
+// often flagged norwegian:true or arrive as source:"ai-research". followBroadly
+// still wins (checked first), so an owner who ever adds "chess" to
+// interests.json's followBroadly gets it wholesale again. The entity NAMES live
+// in interests.json — never hard-coded here.
+const ENTITY_GATED_SPORTS = new Set(["chess", "esports"]);
 const trackedEntities = [
 	...(interests.alwaysTrack?.teams || []),
 	...(interests.alwaysTrack?.athletes || []),
 	...(interests.alwaysTrack?.tournaments || []),
 ];
 
-function isRelevant(e) {
-	if (followBroadly.has((e.sport || "").toLowerCase())) return true;
-	if (e.norwegian || e.isFavorite || (e.importance || 0) >= 4 || e.source === "ai-research") return true;
-	const hay = [e.title, e.tournament, e.homeTeam, e.awayTeam,
+// The haystack the relevance/bell matchers scan (mirrors helpers.js
+// mustWatchEntity): title + tournament + home/away + Norwegian players +
+// participants. Deliberately excludes venue.
+function relevanceHaystack(e) {
+	return [e.title, e.tournament, e.homeTeam, e.awayTeam,
 		...(e.norwegianPlayers || []).map((p) => p?.name || p),
 		...(e.participants || []).map((p) => p?.name || p)].join(" ");
+}
+
+function isRelevant(e) {
+	const sport = (e.sport || "").toLowerCase();
+	// (1) Followed-wholesale sport → in. Checked first so it wins over the gate.
+	if (followBroadly.has(sport)) return true;
+	const hay = relevanceHaystack(e);
+	// (2) Entity-gated sport (chess/esports): a SPORT-SCOPED tracked-entity match
+	// is the only way in — no norwegian/favorite/importance/ai-research blanket.
+	// Sport-scoping stops a cross-sport entity from admitting it (e.g. a chess
+	// event held in the city of Barcelona must not match the football club
+	// "Barcelona"; the bell has always been sport-scoped, see helpers.js).
+	if (ENTITY_GATED_SPORTS.has(sport)) {
+		return matchInterest(hay, trackedEntities, { sport: e.sport }) != null;
+	}
+	// (3) Any other non-broad sport (e.g. tennis): a Norwegian / favorite /
+	// high-importance event stays. ai-research is NO LONGER a blanket pass on its
+	// own (WP-92) — an AI-found event must ALSO be a followBroadly sport (handled
+	// at (1)) or match a tracked entity (at (4)).
+	if (e.norwegian || e.isFavorite || (e.importance || 0) >= 4) return true;
+	// (4) Tracked-entity match, UNSCOPED (a deliberate divergence from the bell —
+	// see tests/fixtures/feed-vectors/DIVERGENCES.md §1).
 	return matchInterest(hay, trackedEntities) != null;
 }
 

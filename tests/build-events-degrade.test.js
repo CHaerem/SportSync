@@ -37,7 +37,7 @@ describe("build-events validate-degrade (WP-94)", () => {
 		// error (ad-hoc rule, not just the formal schema) with no static fetcher involved.
 		fs.writeFileSync(
 			path.join(configDir, "broken.json"),
-			JSON.stringify({ sport: "chess", name: "Bad Config", events: [{ title: "Broken Event", time: future(1), importance: 99 }] })
+			JSON.stringify({ sport: "biathlon", name: "Bad Config", events: [{ title: "Broken Event", time: future(1), importance: 99 }] })
 		);
 
 		runBuild();
@@ -58,7 +58,7 @@ describe("build-events validate-degrade (WP-94)", () => {
 		// No pre-existing events.json in dataDir at all.
 		fs.writeFileSync(
 			path.join(configDir, "broken.json"),
-			JSON.stringify({ sport: "chess", name: "Bad Config", events: [{ title: "Broken Event", time: future(1), importance: 99 }] })
+			JSON.stringify({ sport: "biathlon", name: "Bad Config", events: [{ title: "Broken Event", time: future(1), importance: 99 }] })
 		);
 
 		runBuild();
@@ -75,7 +75,7 @@ describe("build-events validate-degrade (WP-94)", () => {
 		fs.writeFileSync(path.join(dataDir, "events.json"), JSON.stringify([{ sport: "golf", title: "Open", time: future(2) }], null, 2));
 		fs.writeFileSync(
 			path.join(configDir, "broken.json"),
-			JSON.stringify({ sport: "chess", name: "Bad Config", events: [{ title: "Broken Event", time: future(1), importance: 99 }] })
+			JSON.stringify({ sport: "biathlon", name: "Bad Config", events: [{ title: "Broken Event", time: future(1), importance: 99 }] })
 		);
 		expect(() => runBuild()).not.toThrow();
 	});
@@ -85,7 +85,7 @@ describe("build-events validate-degrade (WP-94)", () => {
 		fs.writeFileSync(path.join(dataDir, "events.json"), JSON.stringify(goodPrevious, null, 2));
 		fs.writeFileSync(
 			path.join(configDir, "broken.json"),
-			JSON.stringify({ sport: "chess", name: "Bad Config", events: [{ title: "Broken Event", time: future(1), importance: 99 }] })
+			JSON.stringify({ sport: "biathlon", name: "Bad Config", events: [{ title: "Broken Event", time: future(1), importance: 99 }] })
 		);
 
 		runBuild();

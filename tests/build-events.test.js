@@ -429,6 +429,13 @@ describe("build-events", () => {
 		// bare-string participants (scripts/lib/event-normalizer.js). build-events.js's
 		// own pushEvent() must guarantee the canonical shape regardless of what any
 		// sport file emits.
+		// WP-92: chess is now entity-gated (not broadly followed), so track the
+		// player as a chess athlete to keep this event on the board — the point of
+		// this test is participation normalization, not the relevance decision.
+		fs.writeFileSync(
+			path.join(configDir, "interests.json"),
+			JSON.stringify({ alwaysTrack: { athletes: [{ name: "Johan-Sebastian Christiansen", sport: "chess" }] } })
+		);
 		fs.writeFileSync(
 			path.join(dataDir, "chess.json"),
 			JSON.stringify({ tournaments: [{ name: "Sant Martí", events: [
@@ -478,5 +485,65 @@ describe("build-events", () => {
 		);
 		const events = runBuild();
 		expect(events.find((e) => e.title === "R32 Match")).toBeDefined();
+	});
+
+	// WP-92 · the relevance gate. chess/esports are NOT followed broadly — a
+	// chess/esports event is kept ONLY when it names a tracked entity (sport-scoped),
+	// and the norwegian/favorite/importance/ai-research shortcuts do NOT rescue it.
+	describe("WP-92 relevance gate (chess/esports entity-gated)", () => {
+		const gateInterests = {
+			alwaysTrack: {
+				athletes: [{ name: "Magnus Carlsen", aliases: ["Carlsen"], sport: "chess" }],
+				teams: [
+					{ name: "Barcelona", aliases: ["FC Barcelona", "Barça"], sport: "football" },
+					{ name: "100 Thieves", aliases: ["100T"], sport: "esports" },
+				],
+			},
+		};
+		// Chess/esports have no static fetcher — the research agent writes them, so
+		// they arrive as source:"ai-research" preserved from the previous events.json.
+		const ai = (extra) => ({ source: "ai-research", confidence: "high", evidence: ["https://ex.com/1", "https://ex.com/2"], ...extra });
+		function seedGate() {
+			fs.writeFileSync(path.join(configDir, "interests.json"), JSON.stringify(gateInterests));
+			fs.writeFileSync(
+				path.join(dataDir, "events.json"),
+				JSON.stringify([
+					// Sant Martí class: a minor Norwegian chess open, one club player,
+					// neither Carlsen nor Tari. norwegian:true must NOT rescue it.
+					ai({ sport: "chess", title: "Round 6 – XXVI Obert Internacional Sant Martí 2026", time: future(3), norwegian: true, participants: [{ name: "Johan-Sebastian Christiansen" }] }),
+					// Cross-sport trap: a chess event held in the CITY of Barcelona must
+					// NOT match the tracked FOOTBALL club "Barcelona" (sport-scoped gate).
+					ai({ sport: "chess", title: "Barcelona Chess Open 2026 – round 1", time: future(4), norwegian: true, participants: [{ name: "Some Local Player" }] }),
+					// Kept: names a tracked chess athlete.
+					ai({ sport: "chess", title: "Esports World Cup 2026 – sjakk", time: future(5), norwegian: true, norwegianPlayers: [{ name: "Magnus Carlsen" }] }),
+					// Kept: names the tracked esports team.
+					ai({ sport: "esports", title: "BLAST Bounty S2: 100 Thieves vs Falcons", time: future(2), homeTeam: "100 Thieves", awayTeam: "Falcons" }),
+					// Dropped: a CS2 match between two untracked teams — ai-research does NOT rescue it.
+					ai({ sport: "esports", title: "ESL Pro League: Vitality vs Spirit", time: future(2), homeTeam: "Vitality", awayTeam: "Spirit" }),
+				])
+			);
+		}
+
+		it("filters the Sant Martí class and other off-interest chess/esports while keeping Carlsen + 100 Thieves", () => {
+			seedGate();
+			const events = runBuild();
+			const titles = events.map((e) => e.title);
+			// Dropped
+			expect(titles.find((t) => t.includes("Sant Martí"))).toBeUndefined();
+			expect(titles.find((t) => t.includes("Barcelona Chess Open"))).toBeUndefined();
+			expect(titles.find((t) => t.includes("Vitality vs Spirit"))).toBeUndefined();
+			// Kept
+			expect(titles).toContain("Esports World Cup 2026 – sjakk");
+			expect(titles).toContain("BLAST Bounty S2: 100 Thieves vs Falcons");
+			// Sanity: exactly two of the five gated events survived.
+			expect(events.filter((e) => e.sport === "chess" || e.sport === "esports")).toHaveLength(2);
+		});
+
+		it("keeps ordinary followBroadly-sport events untouched (football stays)", () => {
+			seedGate();
+			const events = runBuild();
+			// The default beforeEach football.json event is a broadly-followed sport.
+			expect(events.find((e) => e.title === "Liverpool vs Arsenal")).toBeDefined();
+		});
 	});
 });
