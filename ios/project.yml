@@ -15,7 +15,10 @@ settings:
     SWIFT_VERSION: "6.0"
     MARKETING_VERSION: "0.1.0"
     CURRENT_PROJECT_VERSION: "1"
-    TARGETED_DEVICE_FAMILY: "1,2"
+    # WP-17: iPhone-only (iPad runs the app in compatibility mode). "1,2" made
+    # App Store validation demand all four iPad-multitasking orientations,
+    # which fights the portrait-only calm design.
+    TARGETED_DEVICE_FAMILY: "1"
     IPHONEOS_DEPLOYMENT_TARGET: "26.0"
     ENABLE_PREVIEWS: YES
     # WP-10 scaffold must build+run on the Simulator with no Apple Developer
@@ -65,6 +68,9 @@ targets:
         CFBundleDisplayName: Sportivista
         CFBundlePackageType: APPL
         LSRequiresIPhoneOS: true
+        # WP-17: standard HTTPS only — declares the exemption once so every
+        # TestFlight upload skips the manual encryption-compliance question.
+        ITSAppUsesNonExemptEncryption: false
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
         UILaunchScreen: {}
@@ -89,6 +95,9 @@ targets:
         PRODUCT_NAME: Sportivista
         PRODUCT_BUNDLE_IDENTIFIER: app.sportivista.ios
         CODE_SIGN_ENTITLEMENTS: Sportivista/Sportivista.entitlements
+        # WP-17: iPhone-only — XcodeGen's per-target default is "1,2", which the
+        # project-level setting does NOT override; must be set on each target.
+        TARGETED_DEVICE_FAMILY: "1"
     dependencies:
       - target: SportivistaWidgetExtension
         embed: true
@@ -129,6 +138,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: app.sportivista.ios.widget
         CODE_SIGN_ENTITLEMENTS: SportivistaWidget/SportivistaWidget.entitlements
         SKIP_INSTALL: YES
+        TARGETED_DEVICE_FAMILY: "1"
         # WP-17: target-level signing so the widget can be embedded in the
         # signed device build (and GUI device runs work without CLI overrides).
         # Unsigned Simulator builds of the app target are unaffected — Simulator
@@ -314,6 +324,9 @@ targets:
         CFBundleDisplayName: Sportivista
         CFBundlePackageType: APPL
         LSRequiresIPhoneOS: true
+        # WP-17: standard HTTPS only — declares the exemption once so every
+        # TestFlight upload skips the manual encryption-compliance question.
+        ITSAppUsesNonExemptEncryption: false
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
         UILaunchScreen: {}
@@ -351,6 +364,7 @@ targets:
         # ProfileSyncBackendFactory to CloudKitProfileSync.
         CODE_SIGN_ENTITLEMENTS: Sportivista/Sportivista.entitlements
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: "$(inherited) SPORTIVISTA_CLOUDKIT"
+        TARGETED_DEVICE_FAMILY: "1"
         CODE_SIGN_STYLE: Automatic
         CODE_SIGNING_ALLOWED: YES
         CODE_SIGNING_REQUIRED: YES
