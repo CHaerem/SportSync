@@ -8,7 +8,18 @@
  *
  * Ledger record shape (written by verify.md):
  *   { "checkedAt": ISO, "sport": "golf", "source": "pgatour.com",
- *     "field": "time"|"streaming"|"existence", "agreed": true|false, "note": "..." }
+ *     "field": "time"|"streaming"|"existence", "agreed": true|false,
+ *     "boardWasProvisional": true, "note": "..." }
+ *
+ * `boardWasProvisional` (optional) distinguishes the two very different meanings of
+ * `agreed: false`: (a) the SOURCE was wrong (it disagreed with a value we had good
+ * reason to trust) vs (b) the source CORRECTED a value that was only ever an estimate
+ * (medium/low confidence, a standard-slot guess, a provisional time). A correction is
+ * the source being *right* — penalising it inverts the signal (this is why the official
+ * TdF source cyclingstage.com scored 0.27: every time it fixed our provisional stage
+ * time we counted it as a strike). When `boardWasProvisional: true` and `agreed: false`,
+ * we treat the check as agreement (the source proved reliable) and track it separately
+ * as a `correction`. Records without the field behave exactly as before (back-compat).
  *
  * No LLM here — pure counting. The research agent interprets the stats.
  */
@@ -59,20 +70,25 @@ export function aggregate(lines, now = Date.now()) {
 		used++;
 		const key = normalizeSource(rec.source);
 		if (!sources[key]) {
-			sources[key] = { checks: 0, agreed: 0, bySport: {}, byField: {}, lastChecked: null };
+			sources[key] = { checks: 0, agreed: 0, corrections: 0, bySport: {}, byField: {}, lastChecked: null };
 		}
 		const s = sources[key];
+		// A disagreement against a value we ourselves flagged as provisional is the source
+		// CORRECTING us — count it as agreement (reliability) and tally it as a correction.
+		const corrected = rec.agreed === false && rec.boardWasProvisional === true;
+		const effectiveAgreed = rec.agreed === true || corrected;
 		s.checks++;
-		if (rec.agreed) s.agreed++;
+		if (effectiveAgreed) s.agreed++;
+		if (corrected) s.corrections++;
 		if (rec.sport) {
 			s.bySport[rec.sport] = s.bySport[rec.sport] || { checks: 0, agreed: 0 };
 			s.bySport[rec.sport].checks++;
-			if (rec.agreed) s.bySport[rec.sport].agreed++;
+			if (effectiveAgreed) s.bySport[rec.sport].agreed++;
 		}
 		if (rec.field) {
 			s.byField[rec.field] = s.byField[rec.field] || { checks: 0, agreed: 0 };
 			s.byField[rec.field].checks++;
-			if (rec.agreed) s.byField[rec.field].agreed++;
+			if (effectiveAgreed) s.byField[rec.field].agreed++;
 		}
 		if (!s.lastChecked || Date.parse(rec.checkedAt) > Date.parse(s.lastChecked)) {
 			s.lastChecked = rec.checkedAt;

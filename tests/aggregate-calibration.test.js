@@ -60,4 +60,51 @@ describe("aggregate-calibration", () => {
 		expect(s.byField.streaming.agreed).toBe(0);
 		expect(s.bySport.golf.checks).toBe(2);
 	});
+
+	describe("boardWasProvisional — a source correcting our estimate is not a strike", () => {
+		// The cyclingstage.com case: every time the official TdF source fixed a provisional
+		// stage time we had logged agreed:false, dragging reliability to 0.27. Marking the
+		// board value as provisional flips that into a demonstration of the source's reliability.
+		const cs = (over = {}) =>
+			JSON.stringify({ checkedAt: "2026-07-01T06:00:00Z", sport: "cycling", source: "cyclingstage.com", field: "time", ...over });
+
+		it("counts a correction of a provisional value as agreement, not disagreement", () => {
+			const lines = [
+				cs({ agreed: false, boardWasProvisional: true }),
+				cs({ agreed: false, boardWasProvisional: true }),
+				cs({ agreed: false, boardWasProvisional: true }),
+				cs({ agreed: false, boardWasProvisional: true }),
+				cs({ agreed: false, boardWasProvisional: true }),
+			];
+			const out = aggregate(lines, NOW);
+			const s = out.sources["cyclingstage.com"];
+			expect(s.agreed).toBe(5);
+			expect(s.corrections).toBe(5);
+			expect(s.reliability).toBe(1); // was 0 under the old counting
+			expect(s.byField.time.agreed).toBe(5);
+		});
+
+		it("still penalises a genuine disagreement (source was wrong, board was solid)", () => {
+			const lines = [
+				cs({ agreed: false }), // no boardWasProvisional ⇒ the source really was wrong
+				cs({ agreed: true }),
+				cs({ agreed: true }),
+				cs({ agreed: true }),
+				cs({ agreed: true }),
+			];
+			const out = aggregate(lines, NOW);
+			const s = out.sources["cyclingstage.com"];
+			expect(s.agreed).toBe(4);
+			expect(s.corrections).toBe(0);
+			expect(s.reliability).toBe(0.8);
+		});
+
+		it("is backward-compatible: records without the field behave exactly as before", () => {
+			const lines = [rec(), rec({ agreed: false })];
+			const out = aggregate(lines, NOW);
+			const s = out.sources["pgatour.com"];
+			expect(s.agreed).toBe(1);
+			expect(s.corrections).toBe(0);
+		});
+	});
 });

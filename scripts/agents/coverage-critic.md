@@ -74,6 +74,29 @@ check is inconclusive but the event is plausible and important, lean toward flag
 Distinguish a genuine gap from a correct absence. "No cricket" is correct (`neverTrack`).
 "No F1 race this weekend during the season" is almost certainly a gap.
 
+### Recall-exhaustion: a gap that keeps recurring must climb, not calcify
+
+The worst failure mode of this audit is a real gap that recurs every run at a severity
+too low to ever escalate — so it is logged forever and fixed never. The concrete case:
+**F1 qualifying** is in `interests.json` but absent most weekends; if you rate it `low`
+each time, it never crosses the `high` bar and research is never asked to fix it. That is
+a silent, permanent miss dressed up as a handled note.
+
+So **track recurrence and let it escalate**:
+1. Read the **previous** `docs/data/coverage-audit.json` before you write the new one.
+2. A gap this run is "the same" as a previous one when it concerns the same interest and
+   the same missing thing (match on `interest` + the substance of `whatsMissing`, not on
+   exact wording). Carry forward `firstSeen` (ISO of the first run that saw it) and set
+   `recurrences` = previous `recurrences` + 1. A brand-new gap starts at
+   `recurrences: 0`, `firstSeen`: now.
+3. **When a gap has recurred unaddressed ≥3 times** (`recurrences >= 3`) and is still
+   real this run, **bump its severity one class**: `low → medium`, `medium → high`.
+   Record `severityBumpedFor: "recurred N runs unaddressed"` in the gap so the escalation
+   is auditable. A gap that reaches `high` this way escalates through the normal path
+   below — this is the ONLY route by which a perennial low-severity gap ever gets fixed.
+   (If a recurring gap turns out to be a correct absence, drop it and note why; don't keep
+   escalating a non-gap.)
+
 ## Output contract
 
 1. `docs/data/coverage-audit.json`:
@@ -88,7 +111,10 @@ Distinguish a genuine gap from a correct absence. "No cricket" is correct (`neve
       "why": "ESPN dated the weekend to Friday + marked it FINAL, so our filter dropped it; confirmed on formula1.com and NRK",
       "corroboration": ["https://formula1.com/...", "https://nrk.no/sport/..."],
       "suggestedSource": "https://formula1.com/...",
-      "severity": "high"
+      "severity": "high",
+      "firstSeen": "2026-07-01T04:00:00Z",
+      "recurrences": 3,
+      "severityBumpedFor": "recurred 3 runs unaddressed"
     }
   ],
   "sourceIssues": [

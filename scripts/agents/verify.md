@@ -49,9 +49,31 @@ actually reached.
 
 **Feed the calibration ledger.** For every source you consult, append one line
 to `docs/data/calibration-ledger.jsonl` (create if missing):
-`{ "checkedAt": ISO, "sport": "...", "source": "domain.tld", "field": "time"|"streaming"|"existence", "agreed": true|false, "note": "..." }`
+`{ "checkedAt": ISO, "sport": "...", "source": "domain.tld", "field": "time"|"streaming"|"existence", "agreed": true|false, "boardWasProvisional": true, "note": "..." }`
 `agreed` = did the source match what we had? These records aggregate mechanically
 into `calibration.json`, which teaches the research agent who to trust.
+
+**Distinguish "the source was wrong" from "the source corrected our estimate."** This
+matters enormously and used to be invisible. When `agreed: false`, ask: *what was the
+board value worth before this check?* If our value was **provisional** — a
+standard-slot guess, a `confidence` of `medium`/`low`, a time we ourselves flagged as
+estimated, a `tentative` channel — then the source DISAGREEING means the source
+**corrected us**, which is the source being *right*. In that case set
+`"boardWasProvisional": true` on the ledger line. The aggregator then counts that check
+as agreement (a demonstration of reliability), not a strike. Only leave the flag off (or
+`false`) when the board value was something we had good reason to trust and the source
+genuinely contradicted a solid value. Omitting the field keeps the old behaviour, so this
+is safe on older lines. (This is the fix for the official Tour de France source
+`cyclingstage.com` scoring 0.27 — every time it fixed a provisional stage time we had
+logged it as a strike, inverting the signal and teaching research to distrust the one
+source that was consistently right.)
+
+**Sync `venue` with what you confirm.** Events routinely sit with `venue: "TBD"` while
+their `summary` prose (and the source you just fetched) names the real venue — e.g.
+"The Open … på Royal Birkdale (Southport)" with `venue: "TBD"`. When you verify an event
+and the summary/source states the venue, **write it into the `venue` field** (drop the
+"TBD"). Same rule as time/streaming: the structured field must not lag the prose the user
+can already read. Only leave `venue` as "TBD" when the venue is genuinely still unset.
 
 **Compensate for known source quirks, and capture new ones.** Read the
 `source-quirks` skill (`.claude/skills/source-quirks/SKILL.md`) first — it lists

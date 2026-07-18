@@ -23,7 +23,7 @@
 import fs from "fs";
 import path from "path";
 import { pathToFileURL } from "url";
-import { readJsonIfExists, rootDataPath, writeJsonPretty, iso, MS_PER_DAY, containsName, normalizeEntity, entityTerms, isEventInWindow } from "./lib/helpers.js";
+import { readJsonIfExists, rootDataPath, writeJsonPretty, iso, MS_PER_DAY, containsName, normalizeText, normalizeEntity, entityTerms, isEventInWindow } from "./lib/helpers.js";
 
 // Re-export so existing importers (tests) keep resolving containsName from here.
 export { containsName };
@@ -211,6 +211,163 @@ export function detectSourceAnomalies({ sources, events, now = Date.now() }) {
 	return anomalies;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// (4) Tracked-claim gaps — RSS-INDEPENDENT. tracked.json's `reason` prose routinely
+// names a concrete upcoming date ("lørdag 25. juli", "torsdag 27. august") that the
+// AI believes it has put on the board. When such a claim exists but events.json has
+// NO matching event, the board silently disagrees with its own tracking rationale.
+// This is the Gstaad class: tracked.json claimed Ruud's Swiss Open coverage while the
+// event was absent — no RSS headline and no entity/sport signal would ever catch it,
+// because the only witness is tracked.json itself.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** How far ahead we still count a matching event as backing a coverage claim. */
+export const TRACKED_CLAIM_HORIZON_DAYS = 400;
+
+/**
+ * Unambiguous phrases the research agent uses when it has actually put an event on the
+ * board. Kept strict on purpose — "lagt til" is excluded because it also appears in the
+ * negation "Ingen event lagt til" / "ikke lagt til", which would invert the signal.
+ * These are the AI asserting coverage; if the assertion has no event behind it, that is
+ * the silent miss we want (the Gstaad class).
+ */
+export const COVERAGE_CLAIM_MARKERS = [
+	"pa tavla", "pa tavlen", "ai-research-event", "ligger inne", "ligger na inne", "ligger naa inne",
+];
+
+/** Norwegian month names/abbreviations → 0-based month index. */
+export const NOR_MONTHS = {
+	januar: 0, jan: 0, februar: 1, feb: 1, mars: 2, mar: 2, april: 3, apr: 3, mai: 4,
+	juni: 5, jun: 5, juli: 6, jul: 6, august: 7, aug: 7, september: 8, sept: 8, sep: 8,
+	oktober: 9, okt: 9, november: 10, nov: 10, desember: 11, des: 11,
+};
+
+const NOR_DATE_RE = new RegExp(
+	`(\\d{1,2})\\.\\s*(${Object.keys(NOR_MONTHS).sort((a, b) => b.length - a.length).join("|")})\\b`,
+	"gi"
+);
+
+/**
+ * Language near a date that says "we did NOT put this on the board (yet)". A claim
+ * wrapped in hold-off prose is an intentional non-coverage, not a silent miss — so we
+ * must not flag it. Kept deliberately specific so it can't swallow real claims.
+ */
+export const HOLD_OFF_MARKERS = [
+	"holdt av tavla", "holdes av tavla", "holdt av tavlen", "holdes av tavlen",
+	"ikke pa tavla", "ikke pa tavlen", "ikke lagt til", "ikke lagt inn",
+	"utenfor horisonten", "ikke pa tavla enna", "ubekreftet", "ikke bekreftet",
+	"tid ikke satt", "avspark-tid er ikke", "tbd", "holdes av",
+];
+
+/**
+ * Parse Norwegian "<day>. <month>" dates out of free prose and resolve each to a UTC
+ * timestamp near `now` (the year is implicit in tracked reasons). Returns
+ * `{ ts, index }` per match so callers can inspect the surrounding text.
+ */
+export function parseNorwegianDates(text, now = Date.now()) {
+	const out = [];
+	if (!text) return out;
+	for (const m of text.matchAll(NOR_DATE_RE)) {
+		const day = parseInt(m[1], 10);
+		const monthIdx = NOR_MONTHS[m[2].toLowerCase()];
+		if (day < 1 || day > 31 || monthIdx == null) continue;
+		const year = new Date(now).getUTCFullYear();
+		let ts = Date.UTC(year, monthIdx, day);
+		if (ts < now - 60 * MS_PER_DAY) ts = Date.UTC(year + 1, monthIdx, day);
+		else if (ts > now + 300 * MS_PER_DAY) ts = Date.UTC(year - 1, monthIdx, day);
+		out.push({ ts, index: m.index ?? 0 });
+	}
+	return out;
+}
+
+/** Is there hold-off prose within a window of `index` in `text`? */
+function heldOffNear(text, index) {
+	const norm = normalizeText(text.slice(Math.max(0, index - 110), index + 60));
+	return HOLD_OFF_MARKERS.some((mk) => norm.includes(mk));
+}
+
+/** Does the reason assert the AI put an event on the board? */
+export function reasonClaimsCoverage(reason) {
+	const norm = normalizeText(reason);
+	return COVERAGE_CLAIM_MARKERS.some((m) => norm.includes(m));
+}
+
+/**
+ * Distinctive words to match a tracked entry against event text. Includes parenthetical
+ * content (the parenthesis usually holds the distinctive entity — "(Lyn Oslo)",
+ * "(Kristoffer Ventura)", "(100 Thieves)") and drops years, month names and generic
+ * sport words that would match unrelated events.
+ */
+/** Short connector words that carry no identity even scoped to a sport. */
+const TERM_STOP = new Set(["the", "fra", "mot", "cup", "and", "for", "los"]);
+
+export function entryClaimTerms(entry) {
+	const name = String(entry?.name || "").replace(/[()]/g, " ");
+	// Keep short distinctive names (3-char "Lyn", "Odd") but drop structural noise
+	// (years, month names, connectors). Genuinely generic words ("Open", "Championship")
+	// are KEPT — the sport filter already scopes matches to the right sport, and dropping
+	// them cost us a real match (an under-labelled "The Open" event vs a "The Open
+	// Championship … Royal Birkdale" entry).
+	return [...name.matchAll(/[\p{L}][\p{L}\d]{2,}/gu)]
+		.map((m) => m[0])
+		.filter((w) => !/^\d{4}$/.test(w) && !(w.toLowerCase() in NOR_MONTHS) && !TERM_STOP.has(w.toLowerCase()));
+}
+
+/** Is there ANY upcoming (or ongoing) event matching this entry's sport + a distinctive term? */
+function boardBacksEntry(entry, terms, events, now, horizonDays) {
+	const windowStart = now - MS_PER_DAY;
+	const windowEnd = now + horizonDays * MS_PER_DAY;
+	return events.some((e) => {
+		if (entry.sport && e.sport && normalizeText(e.sport) !== normalizeText(entry.sport)) return false;
+		if (!isEventInWindow(e, windowStart, windowEnd)) return false;
+		return terms.some((t) => eventMentionsName(e, t));
+	});
+}
+
+/**
+ * Flag a tracked entry whose `reason` ASSERTS board coverage ("på tavla",
+ * "ai-research-event", "ligger inne") but for which events.json carries NO matching
+ * upcoming event at all. RSS-independent: the only witness is tracked.json disagreeing
+ * with the board. This is the Gstaad class — the AI's tracking rationale said Ruud's
+ * Swiss Open was on the board while the event was in fact absent, which no headline or
+ * sport/entity signal could catch. Gated on an unambiguous claim marker (not a date
+ * scattered through the prose) to stay precise: a noisy audit trains agents to ignore it.
+ */
+export function detectTrackedClaims({ tracked, events, now = Date.now(), horizonDays = TRACKED_CLAIM_HORIZON_DAYS }) {
+	const gaps = [];
+	if (!tracked || typeof tracked !== "object") return gaps;
+	for (const group of ["leagues", "teams", "athletes", "tournaments"]) {
+		for (const entry of tracked[group] || []) {
+			if (!entry?.name || !entry.reason) continue;
+			// An entry meant to lapse is not a live coverage claim.
+			if (entry.expires && Date.parse(entry.expires) < now) continue;
+			if (!reasonClaimsCoverage(entry.reason)) continue;
+
+			const terms = entryClaimTerms(entry);
+			if (terms.length === 0) continue;
+			if (boardBacksEntry(entry, terms, events, now, horizonDays)) continue;
+
+			// Enrich with the soonest non-held-off date the prose names, if any.
+			const dated = parseNorwegianDates(entry.reason, now)
+				.filter((d) => d.ts >= now - MS_PER_DAY && !heldOffNear(entry.reason, d.index))
+				.sort((a, b) => a.ts - b.ts)[0];
+			gaps.push({
+				kind: "tracked-claim",
+				entity: entry.name,
+				group,
+				sport: entry.sport || null,
+				type: "missing",
+				imminent: dated ? dated.ts <= now + IMMINENT_DAYS * MS_PER_DAY : false,
+				claimedDate: dated ? iso(dated.ts) : null,
+				reason: "tracked.json asserts board coverage for this interest, but no matching event is on the board",
+				trackedId: entry.id || null,
+				detectedAt: iso(now),
+			});
+		}
+	}
+	return gaps;
+}
+
 function readSources(dataDir) {
 	const sources = {};
 	for (const sport of EXPECTED_SPORT_FILES) {
@@ -230,17 +387,19 @@ function main() {
 	const sources = readSources(dataDir);
 
 	const gaps = detectGaps({ rss, events, interests, tracked });
+	const trackedClaims = detectTrackedClaims({ tracked, events });
+	const allGaps = [...gaps, ...trackedClaims];
 	const anomalies = detectSourceAnomalies({ sources, events });
 	writeJsonPretty(path.join(dataDir, "coverage-gaps.json"), {
 		generatedAt: iso(),
-		gapCount: gaps.length,
+		gapCount: allGaps.length,
 		anomalyCount: anomalies.length,
-		gaps,
+		gaps: allGaps,
 		anomalies,
-		note: "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board. anomalies: a fetcher's own data looks unreliable.",
+		note: "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board (kind entity/sport), or a tracked.json reason that claims an upcoming event the board lacks (kind tracked-claim, RSS-independent). anomalies: a fetcher's own data looks unreliable.",
 	});
 	console.log(
-		`Coverage gaps: ${gaps.length} (${gaps.filter((g) => g.imminent).length} imminent); source anomalies: ${anomalies.length}`
+		`Coverage gaps: ${allGaps.length} (${allGaps.filter((g) => g.imminent).length} imminent, ${trackedClaims.length} tracked-claim); source anomalies: ${anomalies.length}`
 	);
 }
 
