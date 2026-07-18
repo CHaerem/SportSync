@@ -40,7 +40,12 @@ jobs:
             echo "mode=evening" >> $GITHUB_OUTPUT
           fi
       - id: usage
-        run: node scripts/usage-gate.js optional # editorial is a nice-to-have — skip it first under quota pressure
+        run: node scripts/usage-gate.js optional
+        env:
+          # WP-94-oppfølger: gate-steget kan nå hente FERSK kvote-avlesning
+          # (usage-gate.js >10min-stien) i stedet for å stole på inntil 1t gammel
+          # snapshot — tokenet er samme secret usage-monitor bruker, read-only kall.
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }} # editorial is a nice-to-have — skip it first under quota pressure
       - if: steps.usage.outputs.run == 'true'
         uses: anthropics/claude-code-action@v1
         env:

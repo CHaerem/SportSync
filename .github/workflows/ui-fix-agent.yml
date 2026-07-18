@@ -36,7 +36,12 @@ jobs:
           node-version: "22"
       - run: npm ci
       - id: usage
-        run: node scripts/usage-gate.js optional # a nice-to-have — skip under quota pressure
+        run: node scripts/usage-gate.js optional
+        env:
+          # WP-94-oppfølger: gate-steget kan nå hente FERSK kvote-avlesning
+          # (usage-gate.js >10min-stien) i stedet for å stole på inntil 1t gammel
+          # snapshot — tokenet er samme secret usage-monitor bruker, read-only kall.
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }} # a nice-to-have — skip under quota pressure
       - run: npx playwright install --with-deps chromium # for before/after screenshots
         if: steps.usage.outputs.run == 'true'
       - if: steps.usage.outputs.run == 'true'
