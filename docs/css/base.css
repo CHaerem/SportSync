@@ -1,53 +1,55 @@
-/* Zenji — design tokens, reset, typography. The normative contract is DESIGN.md.
+/* Sportivista — design tokens, reset, typography. The normative contract is DESIGN.md.
    One purpose: a quiet, scannable overview of the events you follow — when · what ·
-   where. One mono typeface (tabular numerals), one accent (amber, used sparingly),
-   flat rows on hairlines. No cards, no washes, no second colour. */
+   where. Apple-native baseline: the system font (tabular numerals where digits align),
+   one accent (amber, used sparingly), flat rows on hairlines. No cards, no washes,
+   no second colour. */
 
-/* Token values are the DESIGN.md table verbatim. Amber is the ONLY accent and is
-   used only for: wordmark, day headers, the must-see dot, the clock, selected
-   state. Live is a sparse semantic green. Hairlines are solid, not translucent. */
+/* Token values are the DESIGN.md § Tokens table verbatim (Apple system colours + one
+   amber accent). Amber is the ONLY accent and is used only for: wordmark, day headers,
+   the must-see dot, the clock, selected state. Live is systemGreen, sparse. Separators
+   are the Apple hairline tokens. */
 :root {
-	/* Dark — the merkevare default (near-black "page") */
-	--bg: #0A0A0C;
-	--surface: #131316;        /* ark / detalj surface — used only in detail sheets */
-	--fg: #E8E6E0;
-	--fg-2: #8A877E;           /* dempet */
-	--fg-3: #5C5A52;           /* fainter — derived, one step below dempet */
-	--line: #26251F;           /* hårlinje */
-	--accent: #FFB000;         /* amber — the ONLY accent */
-	--accent-ink: #0A0A0C;     /* ink on an amber block */
-	--live: #5BD990;           /* live — semantic, sparse */
+	/* Dark — the baseline default (true-black "page", system cell for depth) */
+	--bg: #000000;
+	--surface: #1C1C1E;                  /* cell — list/detail surface */
+	--fg: #FFFFFF;                        /* label */
+	--fg-2: rgba(235, 235, 245, 0.6);     /* secondaryLabel — dempet */
+	--fg-3: rgba(235, 235, 245, 0.3);     /* tertiaryLabel — fainter, one step below dempet */
+	--line: rgba(84, 84, 88, 0.6);        /* separator — hairline */
+	--accent: #FFB000;                    /* amber — the ONLY accent */
+	--accent-ink: #000000;                /* ink on an amber block */
+	--live: #30D158;                      /* systemGreen (dark) — live, sparse */
 
-	--font: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, "Cascadia Mono", "Roboto Mono", monospace;
+	--font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, system-ui, sans-serif;
 	--display: var(--font);
 	--max-w: 640px;            /* one column, max 640 on large surfaces, centered */
 	--time-col: 120px;         /* fixed time column so titles align + a date window fits one line */
 }
 
 :root[data-theme="light"] {
-	/* Light — the warm-paper sibling (equally polished; never a plain inversion) */
-	--bg: #F5F1E6;
-	--surface: #EDE8D9;
-	--fg: #1D1B15;
-	--fg-2: #6E6A5C;
-	--fg-3: #9A9484;
-	--line: #D9D3C0;
-	--accent: #8F6400;
-	--accent-ink: #F5F1E6;
-	--live: #2E7D4F;
+	/* Light — the Apple grouped-light sibling (never a plain inversion) */
+	--bg: #F2F2F7;                        /* systemGroupedBackground */
+	--surface: #FFFFFF;                   /* cell */
+	--fg: #000000;                        /* label */
+	--fg-2: rgba(60, 60, 67, 0.6);        /* secondaryLabel — dempet */
+	--fg-3: rgba(60, 60, 67, 0.3);        /* tertiaryLabel — fainter */
+	--line: #C6C6C8;                      /* separator */
+	--accent: #9A6800;                    /* amber (light) — AA on paper */
+	--accent-ink: #FFFFFF;                /* ink on an amber block */
+	--live: #34C759;                      /* systemGreen (light) */
 }
 
 @media (prefers-color-scheme: light) {
 	:root:not([data-theme="dark"]) {
-		--bg: #F5F1E6;
-		--surface: #EDE8D9;
-		--fg: #1D1B15;
-		--fg-2: #6E6A5C;
-		--fg-3: #9A9484;
-		--line: #D9D3C0;
-		--accent: #8F6400;
-		--accent-ink: #F5F1E6;
-		--live: #2E7D4F;
+		--bg: #F2F2F7;
+		--surface: #FFFFFF;
+		--fg: #000000;
+		--fg-2: rgba(60, 60, 67, 0.6);
+		--fg-3: rgba(60, 60, 67, 0.3);
+		--line: #C6C6C8;
+		--accent: #9A6800;
+		--accent-ink: #FFFFFF;
+		--live: #34C759;
 	}
 }
 
@@ -61,7 +63,8 @@ body {
 	font-size: 15px;
 	line-height: 1.5;
 	font-weight: 400;
-	font-feature-settings: "tnum" 1;   /* tabular numerals — times line up */
+	/* Proportional numerals in prose (Apple baseline); tabular is opted into where
+	   digits must line up (time column, clock, scores) via font-variant-numeric. */
 	-webkit-font-smoothing: antialiased;
 	text-rendering: optimizeLegibility;
 	padding-bottom: env(safe-area-inset-bottom);

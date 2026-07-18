@@ -3,7 +3,7 @@
 Dette er den **levende designkontrakten**. iOS-appen og widgeten følger denne
 Apple-native baselinen: systemfont, semantiske system-farger, SF Symbols, native
 lister/sheets/navigasjon — med **amber som eneste aksent-token**. Web (`docs/`)
-beholder inntil videre Tekst-TV-uttrykket fra v2 (se § Cross-surface).
+følger nå de samme baseline-tokenene (se § Cross-surface).
 
 > **Om den senere rebrandingen:** Vi kommer sannsynligvis til å gjøre en full
 > rebranding (nytt navn — «Zenji» oppleves for lite intuitivt — og en egen
@@ -238,10 +238,14 @@ skal likevel bestå denne før merge; håndhev det som kan håndheves i CI:
 
 - **iOS-app + widget = baseline (nå).** Begge følger denne kontrakten fullt ut;
   widgeten er en miniatyr av samme språk (semantiske farger + Dynamic Type).
-- **Web (docs/) er det bevisste unntaket inntil rebrandingen.** Web beholder
-  Tekst-TV-uttrykket fra v2 (mono type-stack, amber, near-black side) — en
-  eierbeslutning: web-migreringen tas sammen med rebrandingen, ikke før. Til da
-  er `docs/`-flatens levende kontrakt fortsatt v2-tekst-TV-verdiene i `base.css`.
+- **Web (docs/) = baseline (nå).** Unntaket er lukket: `docs/`-flaten følger de
+  samme § Tokens-verdiene som appen — system-font-stacken, Apple-system-fargene
+  (true-black `#000000`-side i mørk, `#F2F2F7` grouped-light) og amber som eneste
+  aksent. Verdiene er tokenisert i `base.css` og skal stå verifiserbart mot
+  denne tabellen. Web beholder sine egne layout-detaljer (én kolonne maks 640px,
+  dag-gruppert agenda, den tikkende amber-klokka i toppen), men fargene og
+  typografien er baseline. Det historiske Tekst-TV-uttrykket (mono type-stack,
+  near-black `#0A0A0C`, varmt-papir) er dermed avviklet.
 - **Stemme:** norsk, lavmælt, presis. «Kanal ukjent», ikke «Ingen streaming!».
   Aldri utropstegn i kromet. Feil forklarer hva og hvorfor.
 
