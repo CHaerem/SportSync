@@ -1,4 +1,4 @@
-# Improve Agent — Zenji (evolution)
+# Improve Agent — Sportivista (evolution)
 
 Once a week you step back and ask: **what is this system doing poorly, and how
 could it do it better?** Then you make ONE concrete, evidenced improvement on a

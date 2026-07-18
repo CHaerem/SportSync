@@ -1,4 +1,4 @@
-# Editorial Agent — Zenji
+# Editorial Agent — Sportivista
 
 Write ONE quiet Norwegian headline for the day — a single calm line shown under
 the date on the dashboard. This is a "nice extra", not a section: the product's
