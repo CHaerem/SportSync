@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-07-18T06:59:36.881Z",
+  "generatedAt": "2026-07-18T08:54:10.167Z",
   "windowDays": 180,
   "records": {
-    "used": 63,
+    "used": 71,
     "skipped": 0
   },
   "sources": {
@@ -47,12 +47,12 @@
       "reliability": null
     },
     "cyclingstage.com": {
-      "checks": 11,
-      "agreed": 3,
+      "checks": 12,
+      "agreed": 4,
       "bySport": {
         "cycling": {
-          "checks": 11,
-          "agreed": 3
+          "checks": 12,
+          "agreed": 4
         }
       },
       "byField": {
@@ -61,12 +61,12 @@
           "agreed": 2
         },
         "existence": {
-          "checks": 1,
-          "agreed": 1
+          "checks": 2,
+          "agreed": 2
         }
       },
-      "lastChecked": "2026-07-17T07:35:00.000Z",
-      "reliability": 0.27
+      "lastChecked": "2026-07-18T07:35:00.000Z",
+      "reliability": 0.33
     },
     "tvkampen.com": {
       "checks": 2,
@@ -181,44 +181,48 @@
       "reliability": null
     },
     "kommunikasjon.ntb.no": {
-      "checks": 2,
-      "agreed": 1,
+      "checks": 3,
+      "agreed": 2,
       "bySport": {
         "football": {
-          "checks": 2,
-          "agreed": 1
+          "checks": 3,
+          "agreed": 2
         }
       },
       "byField": {
         "streaming": {
           "checks": 2,
           "agreed": 1
+        },
+        "time": {
+          "checks": 1,
+          "agreed": 1
         }
       },
-      "lastChecked": "2026-07-12T09:30:00.000Z",
+      "lastChecked": "2026-07-18T07:35:00.000Z",
       "reliability": null
     },
     "nrk.no": {
-      "checks": 5,
-      "agreed": 3,
+      "checks": 6,
+      "agreed": 4,
       "bySport": {
         "football": {
-          "checks": 5,
-          "agreed": 3
+          "checks": 6,
+          "agreed": 4
         }
       },
       "byField": {
         "streaming": {
-          "checks": 4,
-          "agreed": 3
+          "checks": 5,
+          "agreed": 4
         },
         "existence": {
           "checks": 1,
           "agreed": 0
         }
       },
-      "lastChecked": "2026-07-10T09:30:00.000Z",
-      "reliability": 0.6
+      "lastChecked": "2026-07-18T07:35:00.000Z",
+      "reliability": 0.67
     },
     "sjakknm2026.no": {
       "checks": 1,
@@ -257,8 +261,8 @@
       "reliability": null
     },
     "en.wikipedia.org": {
-      "checks": 4,
-      "agreed": 4,
+      "checks": 5,
+      "agreed": 5,
       "bySport": {
         "cycling": {
           "checks": 2,
@@ -267,16 +271,24 @@
         "tennis": {
           "checks": 2,
           "agreed": 2
+        },
+        "football": {
+          "checks": 1,
+          "agreed": 1
         }
       },
       "byField": {
         "existence": {
           "checks": 4,
           "agreed": 4
+        },
+        "time": {
+          "checks": 1,
+          "agreed": 1
         }
       },
-      "lastChecked": "2026-07-13T05:30:00.000Z",
-      "reliability": null
+      "lastChecked": "2026-07-18T07:35:00.000Z",
+      "reliability": 1
     },
     "nettavisen.no": {
       "checks": 2,
@@ -499,21 +511,25 @@
       "reliability": null
     },
     "hltv.org": {
-      "checks": 1,
-      "agreed": 1,
+      "checks": 2,
+      "agreed": 2,
       "bySport": {
         "esports": {
-          "checks": 1,
-          "agreed": 1
+          "checks": 2,
+          "agreed": 2
         }
       },
       "byField": {
         "existence": {
           "checks": 1,
           "agreed": 1
+        },
+        "time": {
+          "checks": 1,
+          "agreed": 1
         }
       },
-      "lastChecked": "2026-07-14T05:30:00.000Z",
+      "lastChecked": "2026-07-18T07:35:00.000Z",
       "reliability": null
     },
     "atptour.com": {
@@ -586,6 +602,60 @@
         }
       },
       "lastChecked": "2026-07-16T05:30:00.000Z",
+      "reliability": null
+    },
+    "blast.tv": {
+      "checks": 1,
+      "agreed": 1,
+      "bySport": {
+        "esports": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "byField": {
+        "streaming": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "lastChecked": "2026-07-18T07:35:00.000Z",
+      "reliability": null
+    },
+    "liquipedia.net": {
+      "checks": 1,
+      "agreed": 1,
+      "bySport": {
+        "esports": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "byField": {
+        "existence": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "lastChecked": "2026-07-18T07:35:00.000Z",
+      "reliability": null
+    },
+    "olympics.com": {
+      "checks": 1,
+      "agreed": 1,
+      "bySport": {
+        "cycling": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "byField": {
+        "time": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "lastChecked": "2026-07-18T07:35:00.000Z",
       "reliability": null
     }
   }
