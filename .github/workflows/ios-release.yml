@@ -118,8 +118,16 @@ jobs:
           git config user.email "actions@github.com"
           git add scripts/config/testflight.json
           git commit -m "testflight: registrer bygg $VERSION (${{ steps.build.outputs.build }}) [via release-lanen]"
-          git pull --rebase origin main
-          git push origin HEAD:main
+          # Samme rebase-retry som static-pipeline: en samtidig datacommit på
+          # main skal ikke felle en ellers vellykket opplasting (bitt av
+          # branch-protection-varianten 19.07 — bygget var oppe, recorden røk).
+          pushed=""
+          for attempt in 1 2 3 4 5; do
+            if git push origin HEAD:main; then pushed=1; break; fi
+            echo "push avvist — rebaser mot main (forsøk $attempt)"
+            git pull --rebase origin main || { git rebase --abort || true; }
+          done
+          [ -n "$pushed" ] || { echo "::error::fikk ikke pushet testflight-recorden etter 5 forsøk — kjør scripts/record-testflight.js ${{ steps.build.outputs.build }} $VERSION lokalt"; exit 1; }
 
       - name: Kick den statiske pipelinen (publiser app-version.json)
         env:
