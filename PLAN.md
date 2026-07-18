@@ -1302,6 +1302,32 @@ der korrekthet tåler det, redusert research-kadens i lavsesong, AI→kode-
 krymping) realistisk **300–500 $/mnd**. FASE 2-kalibrering: ~100–200
 Pro-abonnenter à 59 kr dekker ingeniørert kost — unit-økonomien holder.
 
+
+**KOST-KURVEN (eier-presisering 18.07):** målt kost er OPPDAGELSES-kost, ikke
+steady-state. Løkkens hovedjobb er å BYGGE datagrunnlaget: hver research-
+oppdagelse av en stabil kilde (forbunds-terminliste, EPG, ICS) skal bli
+fetcher-kode (WP-20 primærkilder = kost-kurvens viktigste fiks). Steady-state-
+mål: 80–90 % av events fra gratis strukturerte kilder; AI = QA + gap-filler +
+delta (endringer/nye turneringer/breaking). Kost per dekningsenhet skal falle
+måned for måned. «AI oppdager, kode håndhever» gjelder INNHOLD, ikke bare bugs.
+
+**WP-101 · Dekningsplanleggeren (prediktiv katalog) — etter G1:** billig
+månedlig/sesongvis løkke (Sonnet-klasse) som ser 1–3 mnd frem i sports-
+kalenderen og pre-utvider catalog.json FØR etterspørselen («VM i skiskyting om
+6 uker → kilder+entiteter klare»). Komplementær til WP-23 (etterspørsels-
+aggregat = reaktivt signal; planleggeren = proaktivt). Popularitets-priors
+vedlikeholdes mot kalenderen.
+
+**WP-102 · Forslags-pills (interesse-friksjon ned) — etter G1:** eier-funn:
+dagens oppsett krever for mye spesifisering. StarterPacks ER pills-mønsteret —
+evolusjon: (1) pakker/pills genereres dynamisk fra catalog.json + popularitet
+(kuratert først, WP-23-aggregat senere); (2) kontekstuelle forslag («følger du
+Hovland → Ryder Cup») fra samfølge-mønstre; (3) forslags-pills i Deg + etter
+onboarding (sveip-Følg på rader finnes); (4) chat beholdes for presisjonen
+(«bare når Carlsen spiller klassisk») — pills tar de vanlige 80 %.
+Personvern: forslag bygges av ANONYME aggregat-tellinger/kuratering — aldri
+individdata (arkitekturprinsippet står).
+
 **VENDOR-AGNOSTISME (eier-bekymring 18.07):** Porteringsprinsippet (CLAUDE.md)
 står: lock-in er BEGRENSET til workflow-filene (runneren); promptene er
 kapabilitets-beskrevet; iOS-assistenten er bak `InterestAssistant`-protokollen
