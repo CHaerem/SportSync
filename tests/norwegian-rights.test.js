@@ -38,15 +38,30 @@ describe("normalizeStreaming", () => {
 
 import { resolveStreaming, matchTvListing } from "../scripts/lib/norwegian-rights.js";
 
-describe("Viaplay sports (golf, F1) link to the sport section, not the homepage", () => {
+describe("Viaplay's F1 links to the sport section, not the homepage", () => {
 	it("F1 resolves to Viaplay's sport section", () => {
 		const s = normalizeStreaming({ sport: "f1", tournament: "Belgian Grand Prix" });
 		expect(s[0].platform).toBe("Viaplay");
 		expect(s[0].url).toBe("https://viaplay.no/no-no/sport");
 	});
-	it("golf resolves to Viaplay's sport section", () => {
-		const s = normalizeStreaming({ sport: "golf", tournament: "PGA Tour" });
-		expect(s[0].url).toBe("https://viaplay.no/no-no/sport");
+});
+
+describe("golf rights are tiered for 2026 (not a flat Viaplay)", () => {
+	it("ordinary PGA Tour → HBO Max (Sport) / Eurosport, NOT Viaplay (the Corales class)", () => {
+		const s = normalizeStreaming({ sport: "golf", tournament: "PGA Tour", title: "Corales Puntacana Championship" });
+		expect(s.map((c) => c.platform)).toEqual(["HBO Max (Sport)", "Eurosport"]);
+		expect(s.some((c) => c.platform === "Viaplay")).toBe(false);
+	});
+	it("The Open + US Open stay on Viaplay", () => {
+		expect(normalizeStreaming({ sport: "golf", title: "The Open Championship" })[0].platform).toBe("Viaplay");
+		expect(normalizeStreaming({ sport: "golf", title: "U.S. Open" })[0].platform).toBe("Viaplay");
+	});
+	it("DP World Tour → Viaplay", () => {
+		expect(normalizeStreaming({ sport: "golf", tournament: "DP World Tour", title: "BMW International Open" })[0].platform).toBe("Viaplay");
+	});
+	it("The Masters + PGA Championship → Warner Bros. Discovery", () => {
+		expect(normalizeStreaming({ sport: "golf", title: "The Masters" })[0].platform).toBe("Discovery+");
+		expect(normalizeStreaming({ sport: "golf", title: "PGA Championship" })[0].platform).toBe("Discovery+");
 	});
 });
 

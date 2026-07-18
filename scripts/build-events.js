@@ -193,6 +193,54 @@ const CARRY_FORWARD_FIELDS = [
 	"participants",
 	"summary",
 ];
+// A verified streaming channel must beat a *non-empty* default — not just fill an
+// empty one. The carry-forward above only fills gaps, and the streaming-resolution
+// pass further down re-derives the channel from the deterministic rights map
+// (`resolveStreaming`) on every rebuild. So when that map hard-codes the WRONG (but
+// confident, non-tentative) channel, it silently overwrites the verify agent's
+// correction every hour: the Corales Puntacana revert-war (the golf map emitted
+// Viaplay while verify had amended the channel to HBO Max — reverted for 5+ days).
+// Fix: when the previous event carries a *fresh* verify decision
+// (`confirmed`/`amended` within the TTL) whose channel differs from what the map
+// re-derives, the verified channel wins (enforced in the streaming-resolution pass).
+// The TTL lets a genuinely CHANGED value (a real rights move, or a corrected map
+// default) reclaim the field once the stale verification ages out — verify
+// re-checks near-term events daily, so a still-true decision is refreshed long
+// before it expires.
+const VERIFICATION_TTL_MS = 14 * 24 * 60 * 60 * 1000;
+function verifiedDecisionIsFresh(prev, now) {
+	if (!prev) return false;
+	if (prev.verificationStatus !== "confirmed" && prev.verificationStatus !== "amended") return false;
+	const verifiedAt = Date.parse(prev.verifiedAt);
+	// No usable timestamp ⇒ can't establish freshness ⇒ don't override the map.
+	if (!Number.isFinite(verifiedAt)) return false;
+	return now - verifiedAt <= VERIFICATION_TTL_MS;
+}
+// Which broadcaster a `verificationSources` URL corroborates — used to spot a
+// STALE revert-war casualty: an event whose stored `streaming` array is the wrong
+// channel (the old confident-but-wrong map wrote it AFTER verify recorded the right
+// answer in its sources/summary), so the array must NOT be trusted over the
+// corrected map. Distinctive domain/name tokens only (no generic "sport"/"tv").
+const PLATFORM_SOURCE_TOKENS = [
+	{ match: /viaplay|v sport/, tokens: ["viaplay"] },
+	{ match: /hbo\s*max/, tokens: ["hbomax", "hbo-max"] },
+	{ match: /eurosport/, tokens: ["eurosport"] },
+	{ match: /discovery/, tokens: ["discoveryplus", "discovery.no", "presse.discovery", "warnerbrosdiscovery"] },
+	{ match: /\bmax\b/, tokens: ["max.com"] },
+	{ match: /nrk/, tokens: ["nrk.no"] },
+	{ match: /tv\s*2/, tokens: ["tv2.no", "tv 2"] },
+];
+function streamingBackedBySources(streaming, sources) {
+	if (!Array.isArray(streaming) || !Array.isArray(sources) || !sources.length) return false;
+	const src = sources.join(" ").toLowerCase();
+	for (const c of streaming) {
+		const p = ((c && c.platform) || "").toLowerCase();
+		for (const { match, tokens } of PLATFORM_SOURCE_TOKENS) {
+			if (match.test(p) && tokens.some((t) => src.includes(t))) return true;
+		}
+	}
+	return false;
+}
 // Fuzzy "same event" check, to de-dupe an ai-research event against a static one
 // when a sport|title|time key misses them. Two ways two sources point at one event:
 //   • "title": same sport + ≥2 shared title words (or one title's words ⊆ the
@@ -379,13 +427,16 @@ if (Array.isArray(previousEvents)) {
 // without this the hourly rebuild would overwrite it with the guess again.
 const prevConfirmedStreaming = new Map();
 const prevStreamingByKey = new Map();
+const prevByKey = new Map();
 if (Array.isArray(previousEvents)) {
 	for (const prev of previousEvents) {
+		const key = `${prev.sport}|${prev.title}|${prev.time}`;
+		prevByKey.set(key, prev);
 		const s = prev.streaming;
 		if (Array.isArray(s) && s.length) {
-			prevStreamingByKey.set(`${prev.sport}|${prev.title}|${prev.time}`, s);
+			prevStreamingByKey.set(key, s);
 			if (!s.some((c) => c && c.tentative)) {
-				prevConfirmedStreaming.set(`${prev.sport}|${prev.title}|${prev.time}`, s);
+				prevConfirmedStreaming.set(key, s);
 			}
 		}
 	}
@@ -435,6 +486,7 @@ function upgradeLanding(streaming) {
 // Resolve streaming to Norwegian channels — prefer REAL tvkampen.com listings
 // for football, fall back to the deterministic rights map (never FOX/ESPN).
 const tvListings = readJsonIfExists(path.join(dataDir, "tv-listings.json"))?.listings || [];
+const nowMs = Date.now();
 let fromTv = 0;
 let keptConfirmed = 0;
 for (const e of all) {
@@ -443,7 +495,25 @@ for (const e of all) {
 	const resolved = resolveStreaming(e, tvListings);
 	const resolvedTentative = !resolved.length || resolved.some((c) => c && c.tentative);
 	const priorConfirmed = prevConfirmedStreaming.get(key);
-	if (resolvedTentative && priorConfirmed) {
+	const prevEvent = prevByKey.get(key);
+	// A fresh verify decision (confirmed/amended within the TTL) wins over the map's
+	// re-derived channel when the two DIFFER — otherwise a confident-but-wrong map
+	// entry clobbers the correction every rebuild (the Corales revert-war). Stale
+	// verifications age out (TTL) so a corrected map default can reclaim the field.
+	const verifiedFresh =
+		priorConfirmed &&
+		verifiedDecisionIsFresh(prevEvent, nowMs) &&
+		JSON.stringify(priorConfirmed) !== JSON.stringify(resolved);
+	// …but if the event's OWN verification sources corroborate the (corrected) map's
+	// channel and NOT the stored array, the array is a stale revert-war casualty —
+	// the old wrong map overwrote it after verify recorded the right answer. Trust
+	// the corrected map, not the leftover array (the actual live Corales state:
+	// streaming=Viaplay, but sources=hbomax.com + summary=HBO Max).
+	const arrayIsStaleCasualty =
+		verifiedFresh &&
+		streamingBackedBySources(resolved, prevEvent?.verificationSources) &&
+		!streamingBackedBySources(priorConfirmed, prevEvent?.verificationSources);
+	if (priorConfirmed && (resolvedTentative || (verifiedFresh && !arrayIsStaleCasualty))) {
 		e.streaming = priorConfirmed; // keep the confirmed channel, don't re-guess
 		keptConfirmed++;
 	} else {

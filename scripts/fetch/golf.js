@@ -5,15 +5,41 @@ import { fetchJson, iso, normalizeToUTC, espnDateRange } from "../lib/helpers.js
 import { validateESPNScoreboard } from "../lib/response-validator.js";
 import { fetchPGATourField, fetchPGATourTeeTimes, tournamentNameMatches } from "../lib/pgatour-scraper.js";
 
-// Norwegian streaming for golf (was lib/norwegian-streaming.js — v2 keeps a local map)
-function getNorwegianStreaming(_sport, tourName = "") {
-	if (/masters/i.test(tourName)) {
-		return [{ platform: "Discovery+", url: "https://www.discoveryplus.no", type: "streaming" }];
+// Norwegian golf broadcast rights, 2026 season (web-verified 2026-07-18 — see
+// `.claude/skills/norwegian-rights/SKILL.md` "Golf" for sources). The rights are
+// TIERED, not a flat "all golf → Viaplay" (the pre-2026 assumption that produced
+// the Corales Puntacana revert-war):
+//   • Ordinary PGA Tour (incl. opposite-field events, e.g. Corales) → HBO Max
+//     (Sport) / Eurosport Norge — Warner Bros. Discovery took PGA Tour for 2026;
+//     Viaplay LOST it. (hbomax.com/no lists Corales/3M Open/Rocket Classic.)
+//   • The Open Championship + US Open → Viaplay.
+//   • DP World Tour + Ryder Cup → Viaplay.
+//   • The Masters + PGA Championship → Warner Bros. Discovery (Discovery+/Max).
+// Tier is decided by the event name (majors ride the PGA Tour scoreboard), with
+// the tour name as a fallback for DP World Tour events.
+const GOLF_STREAM = {
+	viaplay: { platform: "Viaplay", url: "https://viaplay.no", type: "streaming" },
+	hbomax: { platform: "HBO Max (Sport)", url: "https://www.hbomax.com/no/no/sports/pga-tour", type: "streaming" },
+	eurosport: { platform: "Eurosport Norge", url: "https://www.hbomax.com/no/no/sports/pga-tour", type: "streaming" },
+	discovery: { platform: "Discovery+", url: "https://www.discoveryplus.no", type: "streaming" },
+};
+
+function getNorwegianStreaming(_sport, tourName = "", eventName = "") {
+	const name = `${eventName} ${tourName}`.toLowerCase();
+	// The Masters + PGA Championship → Warner Bros. Discovery (Discovery+/Max).
+	if (/\bmasters\b|pga championship/.test(name)) {
+		return [GOLF_STREAM.discovery];
 	}
-	return [
-		{ platform: "Viaplay", url: "https://viaplay.no", type: "streaming" },
-		{ platform: "Discovery+", url: "https://www.discoveryplus.no", type: "streaming" },
-	];
+	// The Open Championship + US Open → Viaplay.
+	if (/\bthe open\b|open championship|british open|u\.?s\.? open/.test(name)) {
+		return [GOLF_STREAM.viaplay];
+	}
+	// DP World Tour + Ryder Cup → Viaplay.
+	if (tourName === "DP World Tour" || /dp world|ryder cup/.test(name)) {
+		return [GOLF_STREAM.viaplay];
+	}
+	// Ordinary PGA Tour (incl. opposite-field, e.g. Corales) → HBO Max / Eurosport.
+	return [GOLF_STREAM.hbomax, GOLF_STREAM.eurosport];
 }
 
 // Load Norwegian golfers from config
@@ -137,7 +163,7 @@ function buildGolfTournament(tourName, ev, venue, { norwegian, norwegianPlayers,
 		endTime: tournamentEndTime(startTime),
 		venue,
 		sport: "golf",
-		streaming: getNorwegianStreaming("golf", tourName),
+		streaming: getNorwegianStreaming("golf", tourName, ev.name),
 		norwegian,
 		norwegianPlayers,
 		featuredGroups,
@@ -374,7 +400,7 @@ export async function fetchGolfESPN() {
 }
 
 // Exported for testing
-export { playerNameMatches, filterNorwegiansAgainstField, buildFeaturedGroups, buildGolfTournament };
+export { playerNameMatches, filterNorwegiansAgainstField, buildFeaturedGroups, buildGolfTournament, getNorwegianStreaming };
 
 // Run if executed directly
 if (import.meta.url === pathToFileURL(process.argv[1] || "").href) {

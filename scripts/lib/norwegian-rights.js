@@ -12,6 +12,7 @@ const CH = {
 	nrk: { platform: "NRK", url: "https://tv.nrk.no/direkte" },
 	discovery: { platform: "Discovery+", url: "https://www.discoveryplus.no" },
 	eurosport: { platform: "Eurosport", url: "https://www.eurosport.no" },
+	hbomax: { platform: "HBO Max (Sport)", url: "https://www.hbomax.com/no/no/sports/pga-tour" },
 	max: { platform: "Max", url: "https://www.max.com" },
 };
 
@@ -84,7 +85,16 @@ export function norwegianRights(ev) {
 		if (isNationVsNation(ev)) return [WC_SHARED]; // landskamp / WC labelled only "International"
 		return [];
 	}
-	if (sport === "golf") return /masters/.test(hay) ? [CH.discovery] : [CH.viaplay];
+	if (sport === "golf") {
+		// Tiered rights, 2026 season (web-verified 2026-07-18; see the golf section of
+		// .claude/skills/norwegian-rights/SKILL.md). NOT a flat "all golf → Viaplay":
+		// Warner Bros. Discovery took ordinary PGA Tour + the Masters/PGA Championship,
+		// Viaplay keeps The Open + US Open + DP World Tour + Ryder Cup.
+		if (/masters|pga championship/.test(hay)) return [CH.discovery];
+		if (/\bthe open\b|open championship|british open|u\.?s\.? open/.test(hay)) return [CH.viaplay];
+		if (/dp world|ryder cup/.test(hay)) return [CH.viaplay];
+		return [CH.hbomax, CH.eurosport]; // ordinary PGA Tour (incl. opposite-field, e.g. Corales)
+	}
 	if (sport === "f1" || sport === "formula1") return [CH.viaplay];
 	// Tour de France 2026 rights are shared: TV 2 (Play/Direkte) + WBD (Max/Eurosport
 	// carries the first hour of each stage). The owner follows the Tour on TV 2 Play,

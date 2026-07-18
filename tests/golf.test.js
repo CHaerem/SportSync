@@ -4,6 +4,7 @@ import {
 	filterNorwegiansAgainstField,
 	buildFeaturedGroups,
 	buildGolfTournament,
+	getNorwegianStreaming,
 } from "../scripts/fetch/golf.js";
 
 // --- playerNameMatches ---
@@ -100,8 +101,8 @@ describe("buildGolfTournament", () => {
 				venue: "Test National",
 				sport: "golf",
 				streaming: [
-					{ platform: "Viaplay", url: "https://viaplay.no", type: "streaming" },
-					{ platform: "Discovery+", url: "https://www.discoveryplus.no", type: "streaming" },
+					{ platform: "HBO Max (Sport)", url: "https://www.hbomax.com/no/no/sports/pga-tour", type: "streaming" },
+					{ platform: "Eurosport Norge", url: "https://www.hbomax.com/no/no/sports/pga-tour", type: "streaming" },
 				],
 				norwegian: true,
 				norwegianPlayers: [{ name: "Kristoffer Ventura", teeTime: null, teeTimeUTC: null, status: null }],
@@ -131,5 +132,39 @@ describe("buildGolfTournament", () => {
 		expect(out.events[0].streaming).toEqual([
 			{ platform: "Discovery+", url: "https://www.discoveryplus.no", type: "streaming" },
 		]);
+	});
+});
+
+// --- getNorwegianStreaming (2026 tiered golf rights) ---
+
+describe("getNorwegianStreaming (golf, 2026 tiers)", () => {
+	const platforms = (name, tour = "PGA Tour") =>
+		getNorwegianStreaming("golf", tour, name).map((s) => s.platform);
+
+	it("routes ordinary PGA Tour events (incl. Corales) to HBO Max / Eurosport, NOT Viaplay", () => {
+		// This is the Corales revert-war class: the flat Viaplay default was wrong.
+		expect(platforms("Corales Puntacana Championship")).toEqual(["HBO Max (Sport)", "Eurosport Norge"]);
+		expect(platforms("3M Open")).toEqual(["HBO Max (Sport)", "Eurosport Norge"]);
+		expect(platforms("Rocket Classic")).toEqual(["HBO Max (Sport)", "Eurosport Norge"]);
+	});
+
+	it("keeps The Open Championship + US Open on Viaplay", () => {
+		expect(platforms("The Open")).toEqual(["Viaplay"]);
+		expect(platforms("The Open Championship")).toEqual(["Viaplay"]);
+		expect(platforms("U.S. Open")).toEqual(["Viaplay"]);
+	});
+
+	it("does not mistake a regular 'Open' event for a major", () => {
+		expect(platforms("Genesis Scottish Open")).toEqual(["HBO Max (Sport)", "Eurosport Norge"]);
+		expect(platforms("RBC Canadian Open")).toEqual(["HBO Max (Sport)", "Eurosport Norge"]);
+	});
+
+	it("routes DP World Tour to Viaplay", () => {
+		expect(platforms("BMW International Open", "DP World Tour")).toEqual(["Viaplay"]);
+	});
+
+	it("routes The Masters + PGA Championship to Warner Bros. Discovery", () => {
+		expect(platforms("The Masters")).toEqual(["Discovery+"]);
+		expect(platforms("PGA Championship")).toEqual(["Discovery+"]);
 	});
 });
