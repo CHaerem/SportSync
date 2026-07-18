@@ -1,0 +1,64 @@
+# iOS-testgaten (WP-17-oppfølger): kjører Swift-unit-suiten (hostless bundles
+# via Sportivista-skjemaet, inkl. golden-vektorene som pinner JS↔Swift bit-likt)
+# på hver PR som rører ios/. Offentlig repo ⇒ macOS-runnere er gratis.
+# Simulator-tester trenger ingen signering (CODE_SIGNING_ALLOWED=NO er
+# prosjekt-default), så jobben er sekretløs. UI-testene kjøres IKKE her (de
+# drives lokalt/av agenter mot det deterministiske harnesset — for trege og
+# skjøre for PR-gaten); target-et bygges likevel som del av skjemaet.
+name: iOS Tests
+
+on:
+  pull_request:
+    paths:
+      - "ios/**"
+      - ".github/workflows/ios-tests.yml"
+  push:
+    branches: [main]
+    paths:
+      - "ios/**"
+
+concurrency:
+  group: ios-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: macos-26
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Velg nyeste Xcode 26
+        run: |
+          XCODE=$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1)
+          echo "Bruker $XCODE"
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+
+      - name: Installer XcodeGen
+        run: brew install xcodegen
+
+      - name: Generer prosjekt
+        working-directory: ios
+        run: xcodegen generate
+
+      - name: Finn simulator
+        id: sim
+        run: |
+          DEVICE=$(xcrun simctl list devices available | grep -oE 'iPhone [^(]+' | head -1 | xargs)
+          if [ -z "$DEVICE" ]; then echo "Ingen iPhone-simulator på imaget"; exit 1; fi
+          echo "device=$DEVICE" >> "$GITHUB_OUTPUT"
+          echo "Bruker simulator: $DEVICE"
+
+      - name: Kjør Swift-testene
+        working-directory: ios
+        run: |
+          set -o pipefail
+          xcodebuild -project Sportivista.xcodeproj -scheme Sportivista \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.device }}" \
+            -resultBundlePath TestResults.xcresult \
+            test | grep -E "Test Suite|Executed|error:|BUILD|TEST" || true
+          # Fasit hentes fra resultatbunten — greppet over er kun logg-støy-kutt.
+          SUMMARY=$(xcrun xcresulttool get test-results summary --path TestResults.xcresult)
+          echo "$SUMMARY" | grep -E '"result"|"passedTests"|"failedTests"'
+          echo "$SUMMARY" | grep -q '"result" : "Passed"'
