@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-18T22:19:18.243Z",
+  "generatedAt": "2026-07-18T22:50:24.967Z",
   "gapCount": 3,
   "anomalyCount": 1,
   "gaps": [
@@ -12,7 +12,7 @@
       "link": "https://www.nrk.no/sport/tvilling-show-for-uno-x_-_-i-dag-gjor-vi-alt-riktig-1.17962341",
       "feed": "nrk-sport",
       "matchCount": 2,
-      "detectedAt": "2026-07-18T22:19:17.750Z"
+      "detectedAt": "2026-07-18T22:50:24.574Z"
     },
     {
       "kind": "entity",
@@ -23,7 +23,7 @@
       "link": "https://www.nrk.no/sport/reitan-loft-for-siste-runde-i-british-open-1.17962468",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-18T22:19:17.750Z"
+      "detectedAt": "2026-07-18T22:50:24.574Z"
     },
     {
       "kind": "entity",
@@ -34,7 +34,7 @@
       "link": "https://www.nrk.no/sport/formel-1_-hamilton-drama-pa-trening-_-krasjet-bilen-to-timer-for-kvalifiseringen-1.17962188",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-18T22:19:17.750Z"
+      "detectedAt": "2026-07-18T22:50:24.574Z"
     }
   ],
   "anomalies": [
@@ -43,7 +43,7 @@
       "issue": "dropped-in-build",
       "detail": "1 upcoming chess event(s) in the source file but 0 on the board — build/normalisation may be dropping them",
       "severity": "high",
-      "detectedAt": "2026-07-18T22:19:18.243Z"
+      "detectedAt": "2026-07-18T22:50:24.967Z"
     }
   ],
   "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board (kind entity/sport), or a tracked.json reason that claims an upcoming event the board lacks (kind tracked-claim, RSS-independent). anomalies: a fetcher's own data looks unreliable."
