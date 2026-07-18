@@ -102,6 +102,7 @@ mennesket, aldri av en agent.
 | WP-93 | Vaktene (grader/gap-detektor/kalibrering) | 0G | – | ✅ merget (#304) — grader: hard failure #6 (summary-vs-streaming-selvmotsigelse, kan strukturelt ikke degraderes til «note») + gjentatte-anbefalinger + evidens-monokultur; gap-detektor: fjerde RSS-uavhengige signal `tracked-claim` (Gstaad-klassen, 0 falske positiver live etter to presisjons-iterasjoner); kalibrering: `boardWasProvisional` (kilde-retter-oss = styrke, redder cyclingstage 0.27, bakoverkompatibel); coverage-critic: recall-utmattelse auto-eskalerer gjentatte gap (F1-quali-fella); venue-sync i verify. Samlet bølge-2-verif.: 522 tester + build/validate/gap/kalibrering rent
 | WP-94 | Drifts-småplukk (kvote-gate/validate-degradering/UCL) | 0G | – | ✅ merget (#303) — kvote-gate m/ fersk-henting >10min (pure functions, fail-open bevart; NB: fersk-stien er no-op i kritiske workflows til et lite BESKYTTET workflow-tillegg sender OAuth-token til gate-steget — egen mini-PR til eier); validate-degradering uten workflow-endring (in-prosess-validering før skriving, forrige gyldige data består, build-alert.json-helsesignal; fant+fikset round-trip-valideringsbug); UCL-placeholder-regel i research.md; 506 tester
 | WP-95 | Deltakelses-ferskhet (cut/trekning — eier-funn) | 0G | – | ✅ merget (#307) — ESPN core-API competitor-status (lett-scoreboardet skjuler cut mid-turnering; én billig henting per fulgt spiller, fail-soft); verify/editorial/grader-kontrakter tettet; web viser rolig status; iOS trengte null endring (LensRenderer var klar). 536 tester. LIVE-BEKREFTET: Hovland «røk cutten» på tavla 12:47 UTC — før kveldsbriefen 15:00. NY PORT: null feilaktige deltaker-statuser |
+| WP-96 | Flerbruker-splitten (interests → katalog) — GATE for eksterne testere | 0G | portmåling | ⬜ |
 
 ---
 
@@ -281,6 +282,8 @@ lock-in isolert til ett lag).
   registreres på det betalte teamet) og embedded widget på device-target.
 - App Store Connect: opprett app-record (`app.sportivista.ios`, navn «Sportivista»
   — sjekk navnetilgjengelighet i App Store), primærspråk nb-NO.
+- **GATE: eksterne testere inviteres IKKE før WP-96 (flerbruker-splitten) er
+  landet** — ellers tester de eierens tavle, ikke sin egen (se WP-96).
 - `xcodebuild archive` + `-exportArchive` (App Store-metode) + opplasting via
   `xcrun altool`/`notarytool` med API-nøkkelen; intern TestFlight-gruppe med eieren;
   deretter 15–20 eksterne testere fra nisjemiljøene.
@@ -1009,6 +1012,39 @@ rendres ordrett — serveren sender det bare aldri.
   pipeline-rebuild; test som reproduserer cut-klassen; kveldsbrief 15:00 UTC
   skriver ikke feilen på nytt. **NY PORT i portmålingen:** null feilaktige
   deltaker-statuser for fulgte utøvere.
+
+### WP-96 · Flerbruker-splitten: interests → katalog + etterspørsel (GATE for eksterne testere)
+Ærlig systemvurdering 18.07 (verifisert i kode: interests.json leses av ~10
+server-skript + styrer 6 agent-prompter): klient-halvdelen + distribusjons-
+planet er kommersielt klare (linsen bærer ALL personlig relevans — bevist av
+WP-92s låssteg); men SERVER-motorens kompass er eierens interests.json i hvert
+ledd. Konsekvens i dag: `isRelevant()` filtrerer den delte tavla etter ÉN
+persons interesser — en ekstern tester som følger andre sjakkspillere/CS-lag
+enn eieren får TOM tavle (serveren droppet innholdet før deres linse så det).
+- **Mål:** Server-relevans («hva DU følger») → katalog-scoping («hva Sportivista
+  DEKKER»); all personlig filtrering skjer i klient-linsen der den alt bor.
+- **Innhold:** (a) ny `scripts/config/catalog.json` (tier 1: toppligaer/-sporter
+  bredt; tier 2: entitets-langhale, senere etterspørselsdrevet à la WP-23) —
+  seedes fra dagens interests + rimelig norsk generalist-bredde; (b)
+  `build-events` `isRelevant` → `isCovered(catalog)`; klient-linsen uendret
+  (den personlige presisjonen består per bruker); vektorer re-fryses bevisst
+  (WP-92-prosedyren); (c) research/verify/coverage-critic/scout retter seg mot
+  katalogen (tracked.json blir katalogens bokføring); (d) editorial → entity-
+  taggede nøytrale fakta (VISJON v3-modellen), klienten komponerer den
+  personlige briefen; (e) `build-ics` parameteriseres/flyttes klient-side;
+  (f) `docs/data/interests.json` avpubliseres — eierens interests.json blir
+  første brukers on-device-profil + katalog-seed («Hva vi følger»-web-flaten
+  vises fra katalogen i stedet).
+- **Ikke-mål:** kontosystem/server-personalisering (aldri — arkitekturprinsipp);
+  etterspørsels-aggregering (WP-23, senere).
+- **Aksept:** to test-profiler med DISJUNKTE interesser (f.eks. annen sjakk-
+  spiller + annet CS-lag) får begge meningsfull tavle fra samme publiserte
+  katalog-feed via egen linse; eierens egen feed er uendret (linsen hans
+  filtrerer som før); vektorer bit-like begge plattformer etter re-frys.
+- **Sekvensering:** ETTER portmålingen, FØR eksterne TestFlight-invitasjoner
+  (interne testere/eieren trenger den ikke). Kost-note: bredere katalog øker
+  research-/verify-omfang — koordineres med API-splitten (Fase B i
+  AI-ØKONOMI-tillegget).
 
 ## FLYTTEDAGEN · Zenji → Sportivista — ✅ UTFØRT 17.07.2026
 
