@@ -24,7 +24,12 @@ jobs:
         with:
           node-version: "22"
       - id: usage
-        run: node scripts/usage-gate.js critical # skips only if quota is near-exhausted
+        run: node scripts/usage-gate.js critical
+        env:
+          # WP-94-oppfølger: gate-steget kan nå hente FERSK kvote-avlesning
+          # (usage-gate.js >10min-stien) i stedet for å stole på inntil 1t gammel
+          # snapshot — tokenet er samme secret usage-monitor bruker, read-only kall.
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }} # skips only if quota is near-exhausted
       - if: steps.usage.outputs.run == 'true'
         uses: anthropics/claude-code-action@v1
         env:
