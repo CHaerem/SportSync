@@ -1,18 +1,31 @@
 {
-  "checkedAt": "2026-07-17T11:53:00Z",
+  "checkedAt": "2026-07-18T11:20:00Z",
   "widths": [375, 393, 900],
-  "verdict": "pass",
-  "findings": [],
+  "verdict": "issues",
+  "findings": [
+    {
+      "width": 393,
+      "area": "footer / page background",
+      "issue": "A faint diagonal hatch/checkerboard pattern is visible filling the space below the footer line ('Oppdatert for 25 min siden · Abonner i kalender · last ned · Aktivitet · AI-budsjett …') at the very bottom of the full-page capture. Same pattern is visible at 375px but does not appear at 900px, where the background stays a flat colour all the way to the bottom edge. Suggests the page background colour isn't filling the full scrollable height on narrow widths, exposing an unstyled/transparent area below the real content.",
+      "severity": "low"
+    },
+    {
+      "width": 393,
+      "area": "agenda row — VM-finalen 2026",
+      "issue": "The channel label wraps as 'NRK' on one line and an orphaned '1' alone on the next ('FIFA World Cup · Finale · NRK / 1'). Same row fits on one line at 375px and 900px, so this is a narrow-range wrapping quirk specific to 393px, not a content-hiding truncation.",
+      "severity": "low"
+    }
+  ],
   "notes": [
-    "No horizontal scroll or edge clipping at 375px; single quiet column holds at all three widths, layout scales cleanly up to 900px without turning into a grid.",
-    "Event/fixture names read in full, nothing truncated: 'Casper Ruud i kvartfinale i Gstaad, Hovland på even par i The Open, og Uno-X i Tour-etappe 13 mot Belfort' (headline), 'EFG Swiss Open Gstaad', 'Corales Puntacana Championship', 'London Athletics Meet – Karsten Warholm (400m hekk)', 'Round 5 – XXVI Obert Internacional Sant Martí 2026', 'BLAST Bounty S2 – 100 Thieves (online-stadiet)', 'Moët & Chandon Belgian Grand Prix', 'NM friidrett 2026 (Trondheim)'.",
-    "Norwegian-channel contract holds: only Viaplay, TV 2 Play, HBO Max +1, NRK1/NRK TV, NRK 1, BLAST.tv (gratis offisiell strøm) appear as 'where to watch' — no ESPN/FOX/Sky at any width; consistent with prior reviews accepting HBO Max as legitimate Norwegian streaming.",
-    "One row (Round 5 – XXVI Obert Internacional Sant Martí 2026, chess) exercises the honest empty '–' channel placeholder, distinguishable from a missing/broken value.",
-    "No flags/crests/other images are used anywhere in this design (pure monospace text, per the Tekst-TV identity) — so there was nothing to check for broken image icons; not a defect.",
-    "'DINE NESTE' tracked list (Viktor Hovland, Kristoffer Ventura, Kristoffer Reitan, Casper Ruud, 100 Thieves) renders fully with correct relative-time labels (pågår nå / i dag / om 4 dager), no truncation.",
-    "Must-see accent dot appears on roughly 6 of 12 visible rows today (The Open, Corales Puntacana, EFG Swiss Open Gstaad, Warholm, VM-finalen, BLAST Bounty) — a fairly high density, but each is plausibly a followed/high-importance entry (favorites, Norwegian interest, or cup finals), not an indiscriminate blanket accent. Worth a periodic recheck if the ratio keeps climbing, but not a regression today.",
-    "Header, day-group headings ('I DAG' / 'I MORGEN' / 'SØNDAG 19. JULI' / etc.), 'Hva vi følger' disclosure + 'Rediger' link, and footer (Oppdatert 17.7.2026 / Abonner i kalender / last ned / Aktivitet / AI-budsjett: uke 27% · økt 27%) are intact and aligned at every width.",
-    "Live clock in the header updates correctly across the three captures (11:52:30 → 11:52:34 → 11:52:37).",
-    "Could not assess: whether every ⓘ AI-provenance badge (EFG Swiss Open Gstaad, Warholm meet, VM-bronsefinale, VM-finalen, BLAST Bounty, NM friidrett) opens a working source modal — that requires interaction, not just a static screenshot."
+    "No horizontal scroll or edge clipping at 375px; single quiet column holds at all three widths, layout scales cleanly to the 900px desktop width without turning into a grid.",
+    "Match/event names read in full, nothing truncated in a way that hides key info: 'The Open', 'Corales Puntacana Championship', 'EFG Swiss Open Gstaad', 'Tour de France 2026', 'London Athletics Meet – Karsten Warholm (400m hekk)', 'Round 6 – XXVI Obert Internacional Sant Martí 2026', 'VM-bronsefinale', 'Moët & Chandon Belgian Grand Prix', 'VM-finalen 2026', '100 Thieves – Falcons', 'NM friidrett 2026 (Trondheim)'.",
+    "Norwegian-channel contract holds: only Viaplay, TV 2 Play, NRK1/NRK TV, NRK 1, BLAST.tv (gratis offisiell strøm) appear as 'where to watch' at any width — no ESPN/FOX/Sky seen.",
+    "One row (Round 6 – XXVI Obert Internacional Sant Martí 2026, chess) shows the honest empty '–' channel placeholder, clearly distinguishable from a missing/broken value.",
+    "No flags/crests/images are used anywhere in this design (pure monospace text, per the Tekst-TV identity) — nothing to check for broken image icons; not a defect.",
+    "'DINE NESTE' tracked list (Viktor Hovland, Kristoffer Ventura, Kristoffer Reitan, Casper Ruud, 100 Thieves, '+4 til i «Hva vi følger»') renders fully with correct relative-time labels (pågår nå / om 4 dager), no truncation.",
+    "Must-see accent dot appears on 6 of 11 visible rows today (The Open, Corales Puntacana, EFG Swiss Open Gstaad, Warholm, VM-finalen, 100 Thieves–Falcons) — a fairly high density but each is plausibly a followed/high-importance entry, not an indiscriminate blanket accent; worth a periodic recheck if the ratio keeps climbing.",
+    "Header, day-group headings ('I DAG' / 'I MORGEN' / 'ONSDAG 22. JULI' / 'TORSDAG 23. JULI'), 'Vis resten av de neste to ukene', 'Hva vi følger' disclosure + 'Rediger' link, and footer (Oppdatert for 25 min siden / Abonner i kalender / last ned / Aktivitet / AI-budsjett: uke 60% · økt 8%) are all intact and aligned at every width.",
+    "Live clock in the header updates correctly across the three captures (11:19:21 → 11:19:25 → 11:19:29).",
+    "Could not assess: whether the ⓘ AI-provenance badges (EFG Swiss Open Gstaad, Warholm meet, VM-bronsefinale, VM-finalen, 100 Thieves–Falcons, NM friidrett) open a working source modal — that requires interaction, not just a static screenshot."
   ]
 }
