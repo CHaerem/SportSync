@@ -27,6 +27,30 @@ final class AppVersionCheckTests: XCTestCase {
         XCTAssertEqual(AppVersionCheck.isCurrent(stamp: "0ff1ce0-dirty", published: published), false)
     }
 
+    // WP-17: current = newest code ELLER newest shippable (TestFlight) build —
+    // a tester cannot be more current than the last upload, so unshipped
+    // commits must not nag them.
+    func test_stampMatchingRecordedTestflightUpload_isCurrent_evenWhenCodeMovedOn() {
+        let shipped = AppVersion(
+            iosCommit: "a1b2c3d", committedAt: nil, generatedAt: nil,
+            testflight: TestFlightVersion(stamp: "0ff1ce0", build: 3, version: "0.1.0", uploadedAt: nil)
+        )
+        XCTAssertEqual(AppVersionCheck.isCurrent(stamp: "0ff1ce0", published: shipped), true)
+        XCTAssertEqual(AppVersionCheck.isCurrent(stamp: "0ff1ce0-dirty", published: shipped), true)
+        // Neither the newest code nor the shipped build → genuinely stale.
+        XCTAssertEqual(AppVersionCheck.isCurrent(stamp: "dead000", published: shipped), false)
+        // The newest code is always current, testflight block or not.
+        XCTAssertEqual(AppVersionCheck.isCurrent(stamp: "a1b2c3d", published: shipped), true)
+    }
+
+    func test_publishedWithoutTestflightBlock_decodesAndJudgesAsBefore() throws {
+        let json = #"{"iosCommit":"a1b2c3d","committedAt":null}"#
+        let decoded = try JSONDecoder().decode(AppVersion.self, from: Data(json.utf8))
+        XCTAssertNil(decoded.testflight)
+        XCTAssertEqual(AppVersionCheck.isCurrent(stamp: "a1b2c3d", published: decoded), true)
+        XCTAssertEqual(AppVersionCheck.isCurrent(stamp: "0ff1ce0", published: decoded), false)
+    }
+
     func test_noPublishedTruth_orUnstampedBuild_hasNoVerdict() {
         XCTAssertNil(AppVersionCheck.isCurrent(stamp: "a1b2c3d", published: nil))
         XCTAssertNil(AppVersionCheck.isCurrent(stamp: "ukjent", published: published))

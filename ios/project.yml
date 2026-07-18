@@ -14,7 +14,7 @@ settings:
   base:
     SWIFT_VERSION: "6.0"
     MARKETING_VERSION: "0.1.0"
-    CURRENT_PROJECT_VERSION: "2"
+    CURRENT_PROJECT_VERSION: "3"
     # WP-17: iPhone-only (iPad runs the app in compatibility mode). "1,2" made
     # App Store validation demand all four iPad-multitasking orientations,
     # which fights the portrait-only calm design.
@@ -66,6 +66,11 @@ targets:
       properties:
         CFBundleDevelopmentRegion: nb
         CFBundleDisplayName: Sportivista
+        # WP-17: XcodeGen bakes LITERAL "1.0"/"1" unless the keys explicitly
+        # reference the build settings — TestFlight build 2 shipped as
+        # CFBundleVersion 1 because of this (duplicate, rejected in processing).
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         CFBundlePackageType: APPL
         LSRequiresIPhoneOS: true
         # WP-17: standard HTTPS only — declares the exemption once so every
@@ -130,6 +135,11 @@ targets:
       properties:
         CFBundleDevelopmentRegion: nb
         CFBundleDisplayName: Sportivista
+        # WP-17: XcodeGen bakes LITERAL "1.0"/"1" unless the keys explicitly
+        # reference the build settings — TestFlight build 2 shipped as
+        # CFBundleVersion 1 because of this (duplicate, rejected in processing).
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
@@ -322,6 +332,11 @@ targets:
       properties:
         CFBundleDevelopmentRegion: nb
         CFBundleDisplayName: Sportivista
+        # WP-17: XcodeGen bakes LITERAL "1.0"/"1" unless the keys explicitly
+        # reference the build settings — TestFlight build 2 shipped as
+        # CFBundleVersion 1 because of this (duplicate, rejected in processing).
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         CFBundlePackageType: APPL
         LSRequiresIPhoneOS: true
         # WP-17: standard HTTPS only — declares the exemption once so every
