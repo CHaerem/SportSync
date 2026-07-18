@@ -138,6 +138,68 @@ describe("build-events", () => {
 		expect(derby.verificationStatus).toBe("confirmed");
 	});
 
+	// The Corales revert-war fix. Helper: a golf event the rights map sends to X,
+	// with a prior events.json carrying a verify amendment to Y.
+	const runGolfRevertWar = ({ title, tournament, priorStreaming, verifiedAt, verificationSources }) => {
+		const time = future(2);
+		fs.writeFileSync(
+			path.join(dataDir, "golf.json"),
+			JSON.stringify({ tournaments: [{ name: tournament, events: [
+				{ title, time, norwegian: true, norwegianPlayers: [{ name: "Someone" }] },
+			] }] })
+		);
+		fs.writeFileSync(
+			path.join(dataDir, "events.json"),
+			JSON.stringify([
+				{
+					sport: "golf", tournament, title, time,
+					norwegian: true, norwegianPlayers: [{ name: "Someone" }],
+					streaming: priorStreaming,
+					verificationStatus: "amended",
+					verifiedAt,
+					verificationSources,
+				},
+			])
+		);
+		const golf = runBuild().find((e) => e.title === title);
+		expect(golf).toBeTruthy();
+		return golf.streaming.map((s) => s.platform);
+	};
+
+	it("a fresh verify amendment survives a differing confident map default (verified-wins)", () => {
+		// The Open maps to Viaplay; verify amended to HBO Max and its SOURCES back HBO Max.
+		const platforms = runGolfRevertWar({
+			title: "The Open Championship", tournament: "PGA Tour",
+			priorStreaming: [{ platform: "HBO Max (Sport)", url: "https://www.hbomax.com/no/no/sports/pga-tour" }],
+			verifiedAt: new Date().toISOString(),
+			verificationSources: ["https://www.hbomax.com/no/no/sports/pga-tour"],
+		});
+		expect(platforms).toEqual(["HBO Max (Sport)"]); // verify's correction wins over the map's Viaplay
+	});
+
+	it("lets the map default reclaim the channel once the verification ages past its TTL", () => {
+		const platforms = runGolfRevertWar({
+			title: "The Open Championship", tournament: "PGA Tour",
+			priorStreaming: [{ platform: "HBO Max (Sport)", url: "https://www.hbomax.com/no/no/sports/pga-tour" }],
+			verifiedAt: new Date(Date.now() - 20 * 86400000).toISOString(), // 20 days — past the 14-day TTL
+			verificationSources: ["https://www.hbomax.com/no/no/sports/pga-tour"],
+		});
+		expect(platforms).toEqual(["Viaplay"]); // stale ⇒ the fresh map default wins again
+	});
+
+	it("discards a stale revert-war array the map + the event's own sources contradict (the live Corales state)", () => {
+		// The actual corrupt live state: streaming=Viaplay, but verificationSources
+		// point at hbomax.com and the map now (correctly) says HBO Max. The leftover
+		// Viaplay array must NOT be re-pinned — the corrected map wins.
+		const platforms = runGolfRevertWar({
+			title: "Corales Puntacana Championship", tournament: "PGA Tour",
+			priorStreaming: [{ platform: "Viaplay", url: "https://viaplay.no/no-no/sport" }],
+			verifiedAt: new Date().toISOString(),
+			verificationSources: ["https://golferen.no/tv-kampguiden-til-golfarrangementer/", "https://www.hbomax.com/no/en/sports/pga-tour"],
+		});
+		expect(platforms).toEqual(["HBO Max (Sport)", "Eurosport"]); // corrected map, not the stale Viaplay
+	});
+
 	it("upgrades a generic landing URL to a deeper per-event URL from the previous build", () => {
 		const time = future(2);
 		// biathlon → rights map returns the NRK sport-section landing (tv.nrk.no/direkte, depth 1).

@@ -37,15 +37,23 @@ known URL per broadcaster and won't clobber it with the generic landing.
 
 ## Football
 - Premier League → **TV 2 Play / TV 2 Sport Premium** [solid]
-- La Liga → **TV 2 Play** [verify]
+- La Liga → **TV 2 Play** [solid] (TV 2 renewed the Norwegian rights through summer 2030 — NTB press release kommunikasjon.ntb.no/pressemelding/18978442; the Disney+/ESPN shift is DK/SE/FI/IS only, not Norway; verified 2026-07-18)
 - Champions League / Europa League → **TV 2 Play** [solid]
 - OBOS-ligaen + Eliteserien → **TV 2 Play** [solid]
 - FIFA World Cup 2026 → **NRK + TV 2** (shared, per-match split) [verify per match]
 - Cross-check every football entry against `docs/data/tv-listings.json` when present.
 
 ## Golf
-- PGA Tour, DP World Tour, Masters, PGA Championship, The Open, US Open, Ryder Cup → **Viaplay** [solid]
-- Some overlap with **Discovery+/Eurosport** for majors [verify]
+Rights are **tiered for 2026** — the old "all golf → Viaplay" is WRONG and caused the
+Corales Puntacana revert-war (verify kept amending the channel to HBO Max, the fetcher
+map kept reverting it to Viaplay). Warner Bros. Discovery took ordinary PGA Tour +
+two majors; Viaplay keeps the other two majors + DP World Tour. Verified 2026-07-18.
+- Ordinary **PGA Tour** (incl. opposite-field events, e.g. Corales Puntacana) → **HBO Max (Sport) / Eurosport Norge** (WBD) [solid] — hbomax.com/no lists Corales/3M Open/Rocket Classic. Viaplay LOST PGA Tour for 2026.
+- **The Open Championship** + **US Open** → **Viaplay** [solid]
+- **DP World Tour** → **Viaplay** [verify] (golferen.no: Viaplay holds parts of DP World Tour)
+- **Ryder Cup** → **Viaplay** [verify]
+- **The Masters** → **Discovery+ / Max** (WBD) [solid] — WBD press release (presse.warnerbrosdiscovery.no)
+- **PGA Championship** → **Discovery+ / Max** (WBD) [verify]
 
 ## Motorsport
 - Formula 1 (all sessions) → **Viaplay** [solid]
@@ -61,8 +69,13 @@ known URL per broadcaster and won't clobber it with the generic landing.
 - Cross-country, ski jumping, nordic combined (FIS World Cup) → **NRK** [solid] through 2025/26; from season 2026/27 **TV 2 + Viaplay** share FIS World Cup rights [verify] (NTB press release Dec 2025, kommunikasjon.ntb.no/pressemelding/18377092; noted 2026-07-03)
 - Alpine (FIS World Cup) → **Viaplay** [verify]
 
+## Athletics (friidrett)
+- Wanda Diamond League (incl. Bislett Games) → **NRK** [solid] — NRK holds the rights 2025–2029 (14 meets/season + Bislett), acquired from Infront; NTB press release kommunikasjon.ntb.no/pressemelding/18535635 (announced 2025-05-22, verified 2026-07-18). NRK also has friidretts-EM 2026, VM t.o.m. 2029, and OL t.o.m. 2032.
+
 ## Cycling
 - Tour de France → **TV 2 Play** [solid] (TV 2 deal covers 2026–2030 per NTB press release; hjelp.tv2.no confirms TV 2 Direkte + TV 2 Play; Eurosport Norge reportedly shares 2026 rights per cyclingweekly.com [verify]; confirmed 2026-07-03). **Owner preference: show TV 2 Play only** for the Tour — don't re-add Max/Eurosport as a "+1" even though WBD carries the opening hour (they follow it on TV 2 Play).
+- Arctic Race of Norway → **TV 2 / TV 2 Play** [solid] (all stages live on TV 2 Direkte + Play — TV2 Sykkel's own announcement; also Eurosport Norge/Max internationally; verified 2026-07-18)
+- PostNord Tour of Denmark (Danmark Rundt) → **Norwegian broadcaster NOT confirmed for 2026** [verify] (historically Eurosport Norge/Max; DR/DRTV is the Danish holder). Leave `streaming` empty with an honest note until confirmed.
 - Other UCI races → [verify per event]
 
 ## Chess
