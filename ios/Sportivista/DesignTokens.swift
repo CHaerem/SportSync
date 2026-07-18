@@ -58,6 +58,11 @@ enum SportivistaTokens {
 	/// Meta / channel / muted text. `rgba(235,235,245,.6)` / `rgba(60,60,67,.6)`.
 	static let secondaryLabel = Color(uiColor: .secondaryLabel)
 
+	/// Fainter, one step below `secondaryLabel`. `rgba(235,235,245,.3)` / `rgba(60,60,67,.3)`.
+	/// Added WP-98 — previously used on both platforms (`AgendaView`/`DegView`) via a
+	/// direct `Color(uiColor: .tertiaryLabel)` call that bypassed the token layer.
+	static let tertiaryLabel = Color(uiColor: .tertiaryLabel)
+
 	/// Hairline / separator. `rgba(84,84,88,.6)` / `#C6C6C8`.
 	static let separator = Color(uiColor: .separator)
 
@@ -120,7 +125,7 @@ extension Font {
 	/// `weight` for semibold/bold roles.
 	///
 	/// Role → style map (DESIGN.md typography table):
-	///   • Stor tittel (nav) → `.largeTitle` bold
+	///   • Ordmerke (masthead) → `.title` bold
 	///   • Seksjonstittel    → `.headline`
 	///   • Radtittel / Tid   → `.body` (Tid also `sportivistaTabular`, semibold)
 	///   • Meta / kanal      → `.subheadline` (secondaryLabel)

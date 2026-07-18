@@ -99,6 +99,7 @@ describe("design/tokens.json ⇄ ios/Sportivista/DesignTokens.swift", () => {
 		{ token: "cell2", needle: "static let cell2 = Color(uiColor: .tertiarySystemBackground)" },
 		{ token: "label", needle: "static let label = Color(uiColor: .label)" },
 		{ token: "secondaryLabel", needle: "static let secondaryLabel = Color(uiColor: .secondaryLabel)" },
+		{ token: "tertiaryLabel", needle: "static let tertiaryLabel = Color(uiColor: .tertiaryLabel)" },
 		{ token: "separator", needle: "static let separator = Color(uiColor: .separator)" },
 	];
 
@@ -136,14 +137,26 @@ describe("design/tokens.json ⇄ ios/Sportivista/DesignTokens.swift", () => {
 		});
 	}
 
-	// tertiaryLabel is NOT in the SportivistaTokens enum (views call
-	// Color(uiColor: .tertiaryLabel) directly) — tokens.json documents this gap
-	// explicitly; assert the gap itself hasn't silently closed or widened, so a
-	// change either way is a deliberate edit to this test, not an accident.
-	it("tertiaryLabel: still bypasses the token enum today (documented gap, not a silent add)", () => {
-		expect(designTokensSwift.includes("static let tertiaryLabel")).toBe(false);
-		expect(designTokensSwift.includes(".tertiaryLabel")).toBe(false); // not even referenced in this file
+	// tertiaryLabel joined the token enum in WP-98 (previously views called
+	// Color(uiColor: .tertiaryLabel) directly, bypassing the token layer — see
+	// tokens.json's tertiaryLabel $description for the history). Assert the gap
+	// stays closed: the enum declares it, and both known call sites (found via
+	// the WP-97 audit) now route through SportivistaTokens.tertiaryLabel rather
+	// than the raw UIColor.
+	it("tertiaryLabel: DesignTokens.swift declares the token (WP-98 — no longer bypassed)", () => {
+		expect(designTokensSwift.includes("static let tertiaryLabel = Color(uiColor: .tertiaryLabel)")).toBe(true);
 	});
+
+	for (const file of [
+		path.join(ROOT, "ios", "Sportivista", "Agenda", "AgendaView.swift"),
+		path.join(ROOT, "ios", "Sportivista", "Profile", "DegView.swift"),
+	]) {
+		it(`tertiaryLabel: ${path.relative(ROOT, file)} uses the token, not the raw UIColor`, () => {
+			const src = fs.readFileSync(file, "utf-8");
+			expect(src.includes("Color(uiColor: .tertiaryLabel)"), "no direct UIColor call left").toBe(false);
+			expect(src.includes("SportivistaTokens.tertiaryLabel"), "migrated to the token").toBe(true);
+		});
+	}
 
 	// Spacing scale: verify SportivistaSpacing literals match tokens.json.spacing.
 	const spacingChecks = [
@@ -173,6 +186,7 @@ describe("design/tokens.json ⇄ DESIGN.md § Tokens (prose fasit)", () => {
 		{ token: "cell", md: "cell" },
 		{ token: "cell2", md: "cell2" },
 		{ token: "label", md: "label" },
+		{ token: "tertiaryLabel", md: "tertiaryLabel" },
 		{ token: "accent", md: "accent" },
 		{ token: "destructive", md: "destructive" },
 	];

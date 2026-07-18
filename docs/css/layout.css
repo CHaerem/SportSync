@@ -30,9 +30,9 @@
 .wordmark-lockup { display: inline-flex; align-items: baseline; white-space: nowrap; }
 .wordmark {
 	font-weight: 700;
-	font-size: 26px;
+	font-size: 28px;                /* ~1.75rem — WP-98: matches iOS's shipped .title bold */
 	letter-spacing: 0.02em;
-	color: var(--accent);          /* amber — the wordmark is one of the five amber uses */
+	color: var(--fg);                /* label — the brand lock: only the colon is amber (WP-98, matches iOS/widget) */
 	text-transform: uppercase;
 	line-height: 1;
 }
@@ -40,8 +40,8 @@
    the app icon (two amber dots stacked, like the colon in a 18:00 clock). */
 .wordmark-colon {
 	font-weight: 700;
-	font-size: 26px;
-	color: var(--accent);
+	font-size: 28px;
+	color: var(--accent);          /* amber — the wordmark colon is one of the five amber uses */
 	line-height: 1;
 }
 .mast-date {

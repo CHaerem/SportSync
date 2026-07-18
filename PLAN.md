@@ -104,6 +104,7 @@ mennesket, aldri av en agent.
 | WP-95 | Deltakelses-ferskhet (cut/trekning — eier-funn) | 0G | – | ✅ merget (#307) — ESPN core-API competitor-status (lett-scoreboardet skjuler cut mid-turnering; én billig henting per fulgt spiller, fail-soft); verify/editorial/grader-kontrakter tettet; web viser rolig status; iOS trengte null endring (LensRenderer var klar). 536 tester. LIVE-BEKREFTET: Hovland «røk cutten» på tavla 12:47 UTC — før kveldsbriefen 15:00. NY PORT: null feilaktige deltaker-statuser |
 | WP-96 | Flerbruker-splitten (interests → katalog) — GATE for eksterne testere | 0G | portmåling | ✅ merget (#308) — `catalog.json` (tier1 bredt + tier2 elite-langhale, nøkternt seedet; tennis via tier2-majors for å unngå ATP/WTA-flom); `isCovered(catalog)` server-side, personlig presisjon eies av linsen alene; vektorer IKKE re-frosset (semantisk riktig: linsen uendret — pinner nå klienten, DIVERGENCES §6); to-profil-aksepttest (eier uendret + Nakamura-sjakk + NAVI-CS2 → alle meningsfulle fra samme feed); interests.json avpublisert, web viser «Dette dekker vi»; agent-kompass → katalogen; ICS/mustWatch bevisst eier-artefakt; rediger = «be om dekning» (skrivevei → WP-23). 542 JS + 526 iOS + vektorer bit-like + 4 schemes |
 | WP-97 | Design-biblioteket (tokens.json + koherens + brand-assets + styleguide) | 0G | – | ✅ merget (#309) — tokens.json (W3C) + 48 koherens-tester m/ rød-bevis; kolonet.svg pikselskannet fra shipped ikon; generate-icons.swift piksel-identisk verifisert; BRAND.md fra faktisk kilde; styleguide.html fra ekte CSS begge temaer; 590 tester. TRE AVVIK DOKUMENTERT (ikke stille fikset): (1) tertiaryLabel brukt men udokumentert/utenom token-enum; (2) web-wordmark 26px vs DESIGN.md 34px; (3) web-wordmark helamber vs iOS' label+amber-kolon-merkelås — web avviker fra godkjent merkelås. Oppfølger: harmoniser de tre |
+| WP-98 | Brand-harmonisering + skjermkatalog | 0G | WP-97 | 🔬 PR åpen |
 
 ---
 
@@ -1089,6 +1090,51 @@ scratchpad. Repoets signaturgrep anvendes: verifisering fremfor kodegen.
   ordmerke er HELT amber (én av fem sanksjonerte amber-bruk i `base.css`),
   mens iOS/widget kun farger kolonet amber — dokumentert som bevisst
   flate-avvik i BRAND.md, ikke rettet.
+
+### WP-98 · Brand-harmonisering + skjermkatalog — 🔬 PR åpen
+Oppfølger til WP-97: løser de tre dokumenterte avvikene (fasit: det som
+shipper på iOS er den eier-godkjente merkelåsen) + bygger en innsjekket
+skjermkatalog-generator som Claude Design kan bruke (iOS-skjermer kan ikke
+web-captures).
+- **Innhold:** (1) `docs/css/layout.css` `.wordmark` fra hel-amber til
+  `var(--fg)` (label), kun `.wordmark-colon` amber — matcher iOS/widgets
+  merkelås (`ContentView.swift`/`OnboardingView.swift`/`SportivistaWidget.swift`);
+  (2) wordmark-størrelsen 26px → 28px (~1.75rem) — matcher iOS' faktisk
+  shippede `.title` bold (~28pt), IKKE den tabell-dokumenterte, aldri wired
+  opp `.largeTitle`/2.125rem (ingen skjerm i appen bruker native large-title
+  nav — `.navigationBarTitleDisplayMode(.inline)` overalt); DESIGN.md-tabellens
+  rad omdøpt «Stor tittel (nav)» → «Ordmerke (masthead)» + tokens.json + Swift-
+  kommentaren rettet til samme sannhet; (3) `tertiaryLabel` inn i systemet:
+  ny token i `design/tokens.json` (discrepancy fjernet, historikk-notat i
+  `$description` i stedet), ny rad i DESIGN.md § Farge, `SportivistaTokens.tertiaryLabel`
+  i `DesignTokens.swift`, migrerte `AgendaView.swift:423` + `DegView.swift:227`
+  fra rå `Color(uiColor: .tertiaryLabel)`; `tests/design-tokens.test.js` utvidet
+  (semantisk mapping + DESIGN.md-rad + migrerings-grep på begge kallsteder);
+  BRAND.md § Construction rule 5 omskrevet (harmonisert, ikke lenger «bevisst
+  avvik»); `docs/styleguide.html` + `base.css`/`layout.css`-kommentarer rettet
+  til «wordmark colon» i femer-listen over amber-bruk. (2) `design/screens/generate.sh`
+  (innsjekket, kjørbar) — bygger `Sportivista`-scheme (Debug, eksplisitt
+  `-derivedDataPath`), booter «iPhone 17», installerer FERSKT (avinstallerer
+  først), looper alle 17 `SPORTIVISTA_DEMO`-moduser × begge temaer
+  (`simctl ui appearance`) → 34 PNG-er i en OUTPUT-katalog (default
+  `/tmp/sportivista-screens/`, aldri innsjekket); `design/screens/README.md`
+  forklarer bruken mot Claude Design + moduskatalogen.
+- **Ikke-mål:** relevans-/feed-logikk (urørt — token-migreringen er ren
+  stil); web-reskin utover merkelås-fiksen (den generelle Tekst-TV → baseline
+  web-reskinen er en egen, senere WP); iOS-komponentgalleri.
+- **Aksept:** `npx vitest run --maxWorkers=1` grønn (594 tester, inkl. 52 i
+  det utvidede design-tokens-testsettet) — ingen gjenstående discrepancy-unntak
+  trengs for grønt (testene sjekker verdier, ikke feltet, men de tre feltene
+  er nå fjernet fra tokens.json siden avvikene er løst); `xcodegen generate` +
+  full unit-suite (526 tester) + alle 4 schemes (`Sportivista`,
+  `SportivistaDeviceDev`, `SportivistaUITests`, `SportivistaWidgetExtension`)
+  bygger grønt; skjermkatalog-scriptet kjørt og minst 4 skjermer på tvers av
+  moduser/temaer visuelt inspisert (riktig skjerm, riktig tema, ingen
+  home-screen-feilskudd).
+- **Levert i denne PR-en:** se commit-diff — CSS-fiksen er en synlig endring
+  på live-siten (meningen: retter drift mot godkjent design), øvrig er
+  dokumentasjons-/token-/test-harmonisering + det nye, innsjekkede
+  skjerm-scriptet.
 
 ## FLYTTEDAGEN · Zenji → Sportivista — ✅ UTFØRT 17.07.2026
 

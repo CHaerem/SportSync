@@ -114,7 +114,7 @@
 				<span class="sg-type-label">Stor tittel</span>
 				<div class="sg-type-sample">
 					<span class="wordmark-lockup"><span class="wordmark">Sportivista</span><span class="wordmark-colon" aria-hidden="true">:</span></span>
-					<span class="sg-type-meta">.wordmark — 26px/700 · iOS <code>.largeTitle</code> bold (dokumentert avvik i design/tokens.json — masthead er tunet ned fra DESIGN.md sin 2.125rem)</span>
+					<span class="sg-type-meta">.wordmark — 28px/700 · iOS <code>.title</code> bold (harmonisert i WP-98 — shippet iOS er fasit, se design/tokens.json)</span>
 				</div>
 			</div>
 			<div class="sg-type-row">
@@ -177,7 +177,7 @@
 				<img class="sg-icon-demo" src="icons/icon-512x512.png" alt="Sportivista-ikonet: to amber prikker vertikalt (kolonet) på sort bakgrunn" width="72" height="72">
 				<span class="wordmark-lockup sg-wordmark-demo"><span class="wordmark">Sportivista</span><span class="wordmark-colon" aria-hidden="true">:</span></span>
 			</div>
-			<p class="sg-note">Wordmark + kolon: null mellomrom (<code>.wordmark-lockup</code>), kolonet ett hakk tyngre enn ordmerket (iOS: bold ordmerke + heavy kolon), én tilgjengelighets-etikett («Sportivista»). På web er HELE ordmerket amber (én av de fem godkjente amber-bruken i <code>base.css</code>); på iOS/widget er kun kolonet amber — et dokumentert, bevisst avvik mellom flatene (se BRAND.md).</p>
+			<p class="sg-note">Wordmark + kolon: null mellomrom (<code>.wordmark-lockup</code>), kolonet ett hakk tyngre enn ordmerket (iOS: bold ordmerke + heavy kolon), én tilgjengelighets-etikett («Sportivista»). Merkelåsen er nå lik på begge flater (harmonisert i WP-98): ordmerket i tekstfarge (<code>--fg</code> / <code>label</code>), kun kolonet amber (én av de fem godkjente amber-bruken i <code>base.css</code>) — se BRAND.md.</p>
 		</section>
 
 		<!-- ── Knapper / "ingen pills" ─────────────────────────────────────── -->
@@ -264,7 +264,7 @@
 			{ cssVar: '--surface', name: 'cell', role: 'liste-/kort-flate' },
 			{ cssVar: '--fg', name: 'label', role: 'primærtekst' },
 			{ cssVar: '--fg-2', name: 'secondaryLabel', role: 'meta/kanal/dempet' },
-			{ cssVar: '--fg-3', name: 'tertiaryLabel', role: 'fainter (ikke i DESIGN.md-tabellen ennå — se tokens.json)' },
+			{ cssVar: '--fg-3', name: 'tertiaryLabel', role: 'fainter, ett hakk under dempet' },
 			{ cssVar: '--line', name: 'separator', role: 'hårlinje/skille' },
 			{ cssVar: '--accent', name: 'accent', role: 'ENESTE aksent (amber)' },
 			{ cssVar: '--accent-ink', name: 'accentInk', role: 'tekst på amber-flate (web-only)' },

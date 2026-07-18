@@ -1,5 +1,5 @@
 // Zenji v2 Service Worker — fresh data always, network-first shell
-const CACHE_NAME = 'sportivista-v1-4';
+const CACHE_NAME = 'sportivista-v1-5';
 const DATA_PATH_FRAGMENT = '/data/';
 
 const SHELL_FILES = [
