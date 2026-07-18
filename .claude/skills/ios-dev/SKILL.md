@@ -84,8 +84,10 @@ xcrun devicectl device process launch --device <CoreDevice-UUID> app.sportivista
 
 ## TestFlight-opplasting (WP-17, virket 18.07.2026)
 
-ASC API-nøkkel: `NHMW747CLA` i `~/.appstoreconnect/private_keys/`, issuer
-`5bd032fd-ad09-468e-b168-1accd8f70326`, rolle App Manager. App-id `6792373768`.
+ASC API-nøkkel: `PP6QH8NVSU` i `~/.appstoreconnect/private_keys/`, issuer
+`5bd032fd-ad09-468e-b168-1accd8f70326`, rolle **Admin** (kan cloud-signere;
+samme nøkkel ligger som repo-secrets for release-lanen). App-id `6792373768`.
+Den første nøkkelen (NHMW747CLA, App Manager) er REVOKERT 19.07.2026.
 
 ```bash
 xcodebuild -project Sportivista.xcodeproj -scheme SportivistaDeviceDev \
@@ -95,10 +97,11 @@ xcodebuild -exportArchive -archivePath <path>.xcarchive \
   -exportOptionsPlist <plist> -allowProvisioningUpdates   # method app-store-connect, destination upload
 ```
 
-- **App Manager-nøkkelen kan IKKE cloud-signere** («Cloud signing permission
-  error») — kjør exportArchive UTEN auth-flaggene så Xcode-kontosesjonen
-  signerer distribusjonen; nøkkelen brukes til API-kall (grupper/testere/
-  byggstatus — se JWT-mønsteret: ES256 + dsaEncoding ieee-p1363 i node).
+- **Cloud-signering krever Admin-rolle på nøkkelen** — en App Manager-nøkkel
+  gir «Cloud signing permission error» (bitt 18.07). Med Admin-nøkkelen kan
+  arkiv/eksport kjøre med `-authenticationKeyPath/-ID/-IssuerID` uten
+  GUI-sesjon; API-kall (grupper/testere/byggstatus) bruker samme nøkkel via
+  scripts/lib/asc-api.js (ES256-JWT, dsaEncoding ieee-p1363).
 - **TARGETED_DEVICE_FAMILY må stå per target** — XcodeGen setter "1,2" på
   target-nivå som overstyrer prosjekt-settings; "1,2" trigger iPad-
   multitasking-kravet om alle fire orienteringer i App Store-valideringen.
