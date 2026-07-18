@@ -60,16 +60,27 @@ skjermbilder og UI-tester: `lens`, `filter`, `uitest` (+ `SPORTIVISTA_UITEST_STA
 Bevis-policy: maks ~4 skjermbilder per flate, erstattede slettes i samme PR
 (PLAN.md regel 8).
 
-## Fysisk iPhone (gratis-team)
+## Fysisk iPhone (betalt team siden WP-17, 18.07.2026)
+
+Teamet `9LVCB72DT8` er BETALT (Individual-enrollment konverterte gratis-teamet
+in place — samme ID). Device-bygget signerer nå med fulle entitlements (App
+Group + CloudKit via `-D SPORTIVISTA_CLOUDKIT`) og embedder widgeten; signering
+ligger på target-nivå i project.yml, så CLI-overrides trengs ikke lenger:
 
 ```bash
 xcrun devicectl list devices                       # CoreDevice-UUID + state
 xcodebuild -project Sportivista.xcodeproj -scheme SportivistaDeviceDev \
-  -destination 'generic/platform=iOS' -allowProvisioningUpdates \
-  CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=<team> build
+  -destination 'generic/platform=iOS' -derivedDataPath <DD> \
+  -allowProvisioningUpdates build
 xcrun devicectl device install app --device <CoreDevice-UUID> <path/til/.app>
 xcrun devicectl device process launch --device <CoreDevice-UUID> app.sportivista.ios
 ```
+
+- **«No Accounts» fra xcodebuild** betyr at Xcode-GUI-sesjonen er utløpt (skjer
+  gjentatte ganger): be eieren logge inn i Xcode → Settings → Accounts. Merk at
+  innloggingen kan ta noen sekunder å flushe til disk — retry før du feilsøker
+  mer. Robust alternativ når ASC API-nøkkel finnes: `-authenticationKeyPath/-ID/
+  -IssuerID` på xcodebuild (trenger ingen GUI-sesjon).
 
 - **Kabel slår wifi:** `tunnelState: unavailable` i `devicectl device info
   details` betyr at trådløs-tunnelen ikke står — plugg kabel i stedet for å
