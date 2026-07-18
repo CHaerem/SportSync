@@ -1,14 +1,14 @@
 {
-  "auditedAt": "2026-07-17T06:15:00Z",
+  "auditedAt": "2026-07-18T06:05:00Z",
   "horizonDays": 28,
   "gaps": [
     {
       "interest": "F1 hele sesongen — kvalifisering + race",
       "whatsMissing": "Belgia GP-kvalifiseringen (lør. 18. juli 16.00 CEST / 14.00 UTC, Spa, Viaplay) står ikke som eget event — tavla har kun selve løpet søndag. Interessen nevner eksplisitt «kvalifisering + race», men board-mønsteret har konsekvent bare race-økten per GP.",
-      "why": "Ikke en kildefeil — et strukturelt board-valg (ett F1-event per helg = racet). Racet er korrekt på tavla (søn. 19. juli 13.00 UTC). Kvalik-tiden er web-bekreftet mot formula1.com + belgium.gp (normal helg, ingen sprint).",
+      "why": "Ikke en kildefeil — et strukturelt board-valg (ett F1-event per helg = racet). Racet er korrekt på tavla (søn. 19. juli 13.00 UTC). Kvalik-tiden er web-bekreftet mot formula1.com + Sky Sports (normal helg, ingen sprint). Samme lav-alvorlighets-observasjon som forrige audit — verdt at research/owner vurderer om kvalik bør legges til per GP-helg.",
       "corroboration": [
         "https://www.formula1.com/en/racing/2026/belgium",
-        "https://www.belgium.gp/en/time-schedule-3"
+        "https://www.skysports.com/f1/news/12433/13561703/belgian-gp-2026-dates-schedule-weather-uk-start-time-and-how-to-watch-or-stream-f1-race-at-spa-francorchamps-live-on-sky-sports"
       ],
       "suggestedSource": "https://www.formula1.com/en/racing/2026/belgium",
       "severity": "low"
@@ -16,24 +16,24 @@
   ],
   "sourceIssues": [],
   "coveredWell": [
-    "F1 — Belgia GP Spa søn. 19. juli 13.00 UTC (Viaplay): uavhengig web-verifisert som NORMAL helg (INGEN sprint), race 15.00 CEST = tavlas 13.00 UTC. INGEN ESPN-fredags-mis-datering denne runden (source-quirks-sjekk bestått). Ungarn GP søn. 26. juli 13.00 UTC også korrekt datert.",
-    "Sykkel — Tour de France: alle 21 etapper (4.–26. juli) på tavla; etappe 13 (Dole–Belfort) i dag 11.00 UTC, TV 2 Play. Uno-X + øvrige norske ryttere dekket via etappene.",
-    "Golf — The Open Championship (major) 16.–19. juli, Royal Birkdale: Hovland + Reitan begge i feltet, Viaplay (statisk event, korrekt). Corales Puntacana (Ventura) 16.–19. juli også på tavla.",
-    "Tennis — Casper Ruud Gstaad KVARTFINALE i dag fre. 17. juli vs Cerúndolo (11.30 UTC, TV 2 Play). SF/finale betinget — korrekt IKKE lagt til.",
-    "Friidrett — Warholm DL London lør. 18. juli (400m hekk ~14.03 BST / 13.03 UTC, NRK): dato web-bekreftet (én-dags stevne 18. juli). NM Trondheim 23.–25. juli + EM Birmingham 10.–16. aug også på tavla (NRK).",
-    "Fotball-VM — bronsefinale lør. 18. juli (NRK) + finalen søn. 19. juli 19.00 UTC (NRK) på tavla. Norge ute (tapte kvartfinalen mot England).",
-    "Fotball — Lyn OBOS-kamper (25. juli → 30. aug) alle på tavla, TV 2 Play; Barcelona treningskamp 31. juli + La Liga-åpning (utsatt) 27. aug dekket.",
-    "CS2 — BLAST Bounty S2 100 Thieves online-stadiet fra 21. juli på tavla (bracket/kamptider fortsatt TBD hos Liquipedia/HLTV, korrekt ventet ~18.–20. juli).",
-    "Sjakk — Esports World Cup 11.–15. aug (Carlsen) på tavla; ingen annen bekreftet Carlsen-turnering i vinduet (GCL er september)."
+    "F1 — Belgia GP Spa søn. 19. juli 13.00 UTC (Viaplay): uavhengig web-verifisert som NORMAL helg (INGEN sprint), race 15.00 CEST = tavlas 13.00 UTC; kvalik lør. 18. 16.00 CEST. INGEN ESPN-fredags-mis-datering denne runden (source-quirks-sjekk bestått). Ungarn GP søn. 26. juli 13.00 UTC også korrekt datert på tavla.",
+    "Sykkel — Tour de France: alle 21 etapper (4.–26. juli) på tavla; i dag etappe 14 (Mulhouse–Le Markstein) 11.10 UTC, TV 2 Play. Uno-X + øvrige norske ryttere dekket via etappene. Etter Touren: PostNord Danmark Rundt 29. juli–2. aug + Arctic Race of Norway 13.–16. aug (begge Uno-X) på tavla.",
+    "Fotball-VM — bronsefinale i dag lør. 18. juli 21.00 UTC (NRK) + finalen søn. 19. juli 19.00 UTC (NRK, Spania–Argentina) på tavla. Norge ute (tapte kvartfinalen mot England).",
+    "Friidrett — Warholm DL London i dag lør. 18. juli (400m hekk 13.03 UTC, NRK) på tavla; NM Trondheim 23.–25. juli (NRK) + EM Birmingham 10.–16. aug (NRK, Warholm bekreftet mixed 4x400m) på tavla.",
+    "Golf — The Open (major, Royal Birkdale) 16.–19. juli på tavla (Viaplay); Hovland MISSET CUTEN fre. 17. juli (ute helgen) — korrekt reflektert. Corales (Ventura) 16.–19. juli også på tavla (HBO Max/Eurosport).",
+    "Tennis — Casper Ruud UTE av Gstaad (tapte QF vs Cerúndolo fre. 17. juli) — korrekt ingen SF/finale. Neste: National Bank Open Montreal (trekning fre. 31. juli) — korrekt dato-gated.",
+    "Fotball — Lyn OBOS-kamper (Strømsgodset borte 25. juli → Kongsvinger borte 30. aug) alle på tavla, TV 2 Play; Barcelona treningskamp Birmingham 31. juli + La Liga-åpning (utsatt) mot Athletic 27. aug på tavla.",
+    "CS2 — BLAST Bounty S2 100 Thieves–Falcons (R32, Bo3) ons. 22. juli 17.30 UTC (rain på laget, BLAST.tv gratis) på tavla; tid nå bekreftet (to kilder).",
+    "Sjakk — Esports World Cup 11.–15. aug (Carlsen, Paris) på tavla; ingen annen bekreftet Carlsen-turnering i vinduet (GCL er september)."
   ],
   "escalated": false,
   "notes": [
-    "Kjøring 2026-07-17 ~06:15Z (daglig recall-audit). Imminent-pass (neste ~4 dager) kjørt først, som prompten krever. Alt som skjer denne helgen er på tavla med riktig tid og norsk kanal: F1 Belgia GP, Ruud Gstaad QF, The Open R3/R4, Warholm DL London (dato web-bekreftet), VM bronse+finale, TdF etappe 13, Corales (Ventura). 0 high-severity hull → INGEN eskalering.",
-    "F1 ESPN-BLINDSONE (source-quirks) SJEKKET OG REN: Belgia GP Spa er web-verifisert mot formula1.com + belgium.gp som normal helg uten sprint, race 15.00 CEST lokal = 13.00 UTC = tavlas verdi. Timezone-felle notert i forrige audit fortsatt relevant (formula1.com viser «13:00» som UTC) — brukte belgium.gp/RN365 som eksplisitt lokal-tid-kilde for å oppløse. Ingen mis-datering.",
-    "MEKANISKE SIGNALER (coverage-gaps.json): 2 entity-gaps, BEGGE false positives — «Uno-X» (TdF-velt-headline; Uno-X-ryttere allerede dekket via alle 21 etapper) og «British Open» (Hovland-åpning-headline; The Open er på tavla som statisk event). 0 anomalies. RSS ellers dominert av VM-etterspill + overganger + TdF/F1-oppkjøring — ingen imminent tracked-event i nyhetene som mangler på tavla.",
-    "Eneste registrerte gap er LOW: F1-kvalifiseringen mangler som eget event (kun racet vises per GP), til tross for at interessen nevner «kvalifisering + race». Konsekvent board-mønster, ikke kildefeil → low, ikke eskalert. Verdt at research/owner vurderer om kvalik bør legges til per GP-helg.",
-    "HORISONT (~4 uker) sjekket per tracked utøver/lag/turnering: alle har sin neste reelle konkurranse på tavla eller er korrekt dato-gated (Ruud Montreal — trekning 31. juli; Hovland FedExCup-sluttspill / FedEx St. Jude ~13.–16. aug — ranking-gated felt settes etter Wyndham 2. aug; Barça Joan Gamper 19. aug — venter offisiell avspark-tid). Alle tre står allerede som kjent oppfølging i tracked.json, ikke oversette hull.",
-    "Ruud Gstaad: ved seier i QF i dag følger SF lør. 18. + finale søn. 19. — betinget, korrekt IKKE lagt til; research (hver 4t) fanger opp ved avansement. Ikke et gap.",
-    "KORREKTE FRAVÆR (ikke hull): vinteridretter (av-sesong, juli); cricket/rugby/amr. fotball (neverTrack); Tari (trakk seg, ikke i Andorra-startlista). Ingen sourceIssues observert — ingen tom/stale fetcher-fil, ingen feil tid/kanal på det som ble krysssjekket."
+    "Kjøring 2026-07-18 ~06:05Z (daglig recall-audit). Imminent-pass (neste ~4 dager, 18.–22. juli) kjørt først som prompten krever. Alt som skjer denne helgen er på tavla med riktig tid og norsk kanal: F1 Belgia GP (race søn. 19. + kvalik lør. 18., web-bekreftet), VM bronse+finale (NRK), Warholm DL London (NRK), TdF etappe 14/15, The Open R3/R4, BLAST Bounty 100T–Falcons ons. 22. 0 high-severity hull → INGEN eskalering.",
+    "F1 ESPN-BLINDSONE (source-quirks) SJEKKET OG REN: Belgia GP Spa web-verifisert mot formula1.com + Sky Sports som normal helg uten sprint, race 15.00 CEST lokal = 13.00 UTC = tavlas verdi; kvalik lør. 18. 16.00 CEST. Ingen mis-datering til fredag. (RSS bekrefter helgen er i gang: autosport melder FP1/FP2 fredag, kvalik lørdag.)",
+    "HORISONT (~4 uker, til ~15. aug) sjekket per tracked utøver/lag/turnering: alle har sin neste reelle konkurranse på tavla eller er korrekt dato-gated. Hovland (misset cut The Open) — FedExCup-sluttspill / FedEx St. Jude 13.–16. aug er ranking-gated (felt låses etter Wyndham ~2. aug), korrekt ikke lagt til; Ruud — Montreal 1.–13. aug dato-gated (trekning 31. juli); Barça Joan Gamper 19. aug venter offisiell avspark-tid (uansett utenfor horisont). Alle tre står som kjent oppfølging i tracked.json, ikke oversette hull.",
+    "PREMIER LEAGUE / LA LIGA sesongstart web-sjekket: PL 2026/27 starter fre. 21. aug (Arsenal–Coventry); Liverpool åpner borte mot Newcastle søn. 23. aug — BEGGE utenfor 28-dagers-horisonten (→ 15. aug), korrekt fravær (ikke gap ennå, men research bør fange Liverpool-åpningen ~medio august). La Liga runde 1 er 15.–16. aug, men kun Barcelona er tracked og Barças åpning er utsatt til 27. aug (allerede på tavla) → intet hull.",
+    "MEKANISKE SIGNALER (coverage-gaps.json 2026-07-17T21:51Z): 3 entity-gaps, ALLE false positives — «Premier League» (overgangs-headline Aston Villa/Manzambi; sesongen ikke i gang, PL-åpning 21. aug utenfor horisont), «British Open» (Hovland-cut-headline; The Open er på tavla som event), «Fotball-VM» (VM-finale-headline; finalen er på tavla). 0 anomalies. RSS ellers dominert av overganger (Szoboszlai-kontrakt, Aston Villa, Leeds), VM-etterspill, TdF etappe 13 (Schmid), Ruud-tap og Hovland-cut — ingen imminent tracked-event i nyhetene som mangler på tavla.",
+    "Eneste registrerte gap er LOW: F1-kvalifiseringen mangler som eget event (kun racet vises per GP) til tross for at interessen nevner «kvalifisering + race». Konsekvent board-mønster, ikke kildefeil → low, ikke eskalert.",
+    "KORREKTE FRAVÆR (ikke hull): vinteridretter (av-sesong, juli); cricket/rugby/amr. fotball + cycling-klassikere utenom TdF (neverTrack); Aryan Tari (trakk seg fra Sjakk-NM, ikke i Andorra-startlista). Ingen sourceIssues observert — ingen tom/stale fetcher-fil, ingen feil tid/kanal på det som ble krysssjekket mot web."
   ]
 }
