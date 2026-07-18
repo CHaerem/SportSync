@@ -11,7 +11,7 @@
 	.wrap { padding: 0 16px; }
 }
 
-/* Masthead — ZENJI + date, a ticking amber
+/* Masthead — Sportivista + date, a ticking amber
    clock. Two quiet rows, one hairline under. */
 .masthead {
 	position: sticky;
@@ -25,20 +25,23 @@
 .masthead-inner { display: flex; flex-direction: column; gap: 5px; }
 .mast-row { display: flex; align-items: center; gap: 10px; }
 .mast-row-sub { justify-content: space-between; }
-.wordmark-enso {
-	width: 24px;
-	height: 24px;
-	flex: none;
-	background-color: var(--accent);
-	-webkit-mask: url(../icons/enso-mark.svg) center / contain no-repeat;
-	mask: url(../icons/enso-mark.svg) center / contain no-repeat;
-}
+/* Wraps wordmark + colon as one unit so a flex gap on the parent row/column
+   never opens a gap between "Sportivista" and its colon. */
+.wordmark-lockup { display: inline-flex; align-items: baseline; white-space: nowrap; }
 .wordmark {
 	font-weight: 700;
 	font-size: 26px;
 	letter-spacing: 0.02em;
 	color: var(--accent);          /* amber — the wordmark is one of the five amber uses */
 	text-transform: uppercase;
+	line-height: 1;
+}
+/* Kolonet — the brand mark: an amber colon right after the wordmark, echoing
+   the app icon (two amber dots stacked, like the colon in a 18:00 clock). */
+.wordmark-colon {
+	font-weight: 700;
+	font-size: 26px;
+	color: var(--accent);
 	line-height: 1;
 }
 .mast-date {
