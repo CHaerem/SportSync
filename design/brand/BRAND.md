@@ -55,18 +55,18 @@ vertically, on their own.
    (`.accessibilityElement(children: .ignore)` + `.accessibilityLabel("Sportivista")`
    on every surface that renders the lockup). Never let a screen reader
    announce the colon separately ("Sportivista, colon").
-5. **Colour — a documented cross-surface divergence, not a bug.** On iOS +
-   widget, only the colon is amber; the wordmark itself is `label` (system
-   text colour, white/black). On web, the **entire wordmark is amber**
-   (`.wordmark { color: var(--accent); }`) — this is one of web's five
+5. **Colour — one lock, both surfaces (harmonised WP-98).** The wordmark
+   itself is `label` (system text colour, white/black); only the colon is
+   amber. This is now identical on iOS, widget, AND web
+   (`.wordmark { color: var(--fg); }` / `.wordmark-colon { color: var(--accent);
+   }`, `docs/css/layout.css`) — the wordmark colon is one of web's five
    explicitly sanctioned amber uses (`docs/css/base.css`: "Amber is the ONLY
-   accent and is used only for: wordmark, day headers, the must-see dot, the
-   clock, selected state"). Do not "fix" either surface to match the other —
-   this file records both as intentional: the web masthead is a persistent,
-   single-purpose brand mark at the top of a otherwise text-only page and can
-   afford a bolder brand treatment; the iOS header sits inside more chrome
-   (nav bar, toolbar) where a fully-amber wordmark would compete with the
-   HIG rule of one accent per surface used sparingly.
+   accent and is used only for: the wordmark colon, day headers, the must-see
+   dot, the clock, selected state"). Before WP-98, web shipped the entire
+   wordmark in amber — a drift from the owner-approved lock the iOS/widget
+   surfaces always used, not an intentional platform variance. It was
+   corrected, not left as documented divergence: the shipped-iOS lock is the
+   fasit (see `design/tokens.json` and the WP-98 PR).
 6. **No separate image mark next to text.** When the mark appears as *text*
    (wordmark contexts), it is always the literal wordmark + `":"` glyph in
    the app's own font — never the `kolonet.svg` dots rendered inline next to

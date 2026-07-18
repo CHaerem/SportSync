@@ -420,7 +420,7 @@ private struct TrailingMarkers: View {
             }
             Image(systemName: "chevron.forward")
                 .font(.sportivista(.footnote, weight: .semibold))
-                .foregroundStyle(Color(uiColor: .tertiaryLabel))
+                .foregroundStyle(SportivistaTokens.tertiaryLabel)
                 .accessibilityHidden(true)
         }
         .padding(.top, 2)

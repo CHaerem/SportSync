@@ -62,6 +62,7 @@ Apple-system-farger + én amber-aksent. Ved rebrand endres KUN denne tabellen.
 | `cell2` | nøstet/hevet flate | `#2C2C2E` | `#FFFFFF` |
 | `label` | primærtekst | `#FFFFFF` | `#000000` |
 | `secondaryLabel` | meta/kanal/dempet | `rgba(235,235,245,.6)` | `rgba(60,60,67,.6)` |
+| `tertiaryLabel` | fainter, ett hakk under dempet | `rgba(235, 235, 245, 0.3)` | `rgba(60, 60, 67, 0.3)` |
 | `separator` | hårlinje/skille | `rgba(84,84,88,.6)` | `#C6C6C8` |
 | **`accent`** | **ENESTE aksent (amber)** | `#FFB000` | `#9A6800` |
 | `live` / `good` | direkte / positiv (systemGreen) | `#30D158` | `#34C759` |
@@ -84,7 +85,7 @@ Apple-system-farger + én amber-aksent. Ved rebrand endres KUN denne tabellen.
 
 | Rolle | Tekststil (iOS) | Web |
 |---|---|---|
-| Stor tittel (nav) | `.largeTitle` bold | `2.125rem` |
+| Ordmerke (masthead) | `.title` bold | `1.75rem` |
 | Seksjonstittel | `.headline` | `1.0rem` semibold |
 | Radtittel | `.body` | `1.0rem` |
 | Tid (rad) | `.body` semibold + `monospacedDigit` | tabular |
