@@ -1,9 +1,9 @@
 ---
 name: ios-dev
-description: Hvordan bygge, teste, evaluere og enhets-installere iOS-appen (Zenji) effektivt — kommandoer, harness-moduser og fallgruvene som faktisk har bitt. Bruk ved ALT arbeid under ios/ (bygg, test, FM-eval, skjermbilder, installering på fysisk iPhone).
+description: Hvordan bygge, teste, evaluere og enhets-installere iOS-appen (Sportivista) effektivt — kommandoer, harness-moduser og fallgruvene som faktisk har bitt. Bruk ved ALT arbeid under ios/ (bygg, test, FM-eval, skjermbilder, installering på fysisk iPhone).
 ---
 
-# Playbook: iOS-utvikling (Zenji)
+# Playbook: iOS-utvikling (Sportivista)
 
 `ios/README.md` er subsystem-kartet (les den for arkitektur); dette er den
 operasjonelle hurtigreferansen for å JOBBE i treet uten å gå i kjente feller.
@@ -13,12 +13,12 @@ operasjonelle hurtigreferansen for å JOBBE i treet uten å gå i kjente feller.
 ```bash
 cd ios
 xcodegen generate            # ALLTID etter endring i project.yml eller nye/slettede filer
-xcodebuild test -scheme Zenji -destination 'platform=iOS Simulator,name=iPhone 17'
+xcodebuild test -scheme Sportivista -destination 'platform=iOS Simulator,name=iPhone 17'
 ```
 
-- **Schemes:** `Zenji` (app + hele unit-suiten, hostless), `ZenjiUITests`
+- **Schemes:** `Sportivista` (app + hele unit-suiten, hostless), `SportivistaUITests`
   (UI-flytene, egen scheme så unit-kjøringen holder seg rask),
-  `ZenjiDeviceDev` (fysisk enhet, gratis-team), `ZenjiWidgetExtension`.
+  `SportivistaDeviceDev` (fysisk enhet, gratis-team), `SportivistaWidgetExtension`.
 - Full verifisering før PR: unit-suiten + alle fire schemes bygger + (ved
   UI-nære endringer) UI-suiten én gang.
 - De 13 gylne feed-vektorene (`FeedVectorTests`) skal ALLTID være bit-like —
@@ -31,12 +31,12 @@ verts-Macen). CI/mock ser aldri disse feilene — evalen er eneste fasit.
 
 ```bash
 # Full eval (~25 min, 55+ cases) — opt-in, aldri i vanlige suite-kjøringer:
-TEST_RUNNER_ZENJI_REALFM_EVAL=1 xcodebuild test -scheme Zenji \
+TEST_RUNNER_SPORTIVISTA_REALFM_EVAL=1 xcodebuild test -scheme Sportivista \
   -destination 'platform=iOS Simulator,name=iPhone 17' \
-  -only-testing:ZenjiTests/RealFMEvalTests
+  -only-testing:SportivistaTests/RealFMEvalTests
 # Billig iterasjon: filtrer på kategori eller enkelt-case:
-#   TEST_RUNNER_ZENJI_EVAL_CATEGORY=canon,command …
-#   TEST_RUNNER_ZENJI_EVAL_CASE=<case-id> …
+#   TEST_RUNNER_SPORTIVISTA_EVAL_CATEGORY=canon,command …
+#   TEST_RUNNER_SPORTIVISTA_EVAL_CASE=<case-id> …
 ```
 
 - Rapport-JSON printes mellom `REALFM-EVAL-REPORT-`markørene i loggen.
@@ -51,12 +51,12 @@ TEST_RUNNER_ZENJI_REALFM_EVAL=1 xcodebuild test -scheme Zenji \
   Arkitekturen er to-stegs (liten intent-klassifikator → fokusert per-arm-økt
   med kun armens skjema/verktøy) — bevar den formen.
 - Hver endring i assistent-atferd SKAL ha cases i eval-korpuset
-  (`ios/ZenjiTests/Fixtures/eval-corpus.json`) + mock-tester i samme PR.
+  (`ios/SportivistaTests/Fixtures/eval-corpus.json`) + mock-tester i samme PR.
 
 ## Skjermbilder / demo-harness
 
-`ZENJI_DEMO`-miljøvariabelen (DEBUG) gir deterministiske tilstander for
-skjermbilder og UI-tester: `lens`, `filter`, `uitest` (+ `ZENJI_UITEST_STATE`).
+`SPORTIVISTA_DEMO`-miljøvariabelen (DEBUG) gir deterministiske tilstander for
+skjermbilder og UI-tester: `lens`, `filter`, `uitest` (+ `SPORTIVISTA_UITEST_STATE`).
 Bevis-policy: maks ~4 skjermbilder per flate, erstattede slettes i samme PR
 (PLAN.md regel 8).
 
@@ -64,11 +64,11 @@ Bevis-policy: maks ~4 skjermbilder per flate, erstattede slettes i samme PR
 
 ```bash
 xcrun devicectl list devices                       # CoreDevice-UUID + state
-xcodebuild -project Zenji.xcodeproj -scheme ZenjiDeviceDev \
+xcodebuild -project Sportivista.xcodeproj -scheme SportivistaDeviceDev \
   -destination 'generic/platform=iOS' -allowProvisioningUpdates \
   CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=<team> build
 xcrun devicectl device install app --device <CoreDevice-UUID> <path/til/.app>
-xcrun devicectl device process launch --device <CoreDevice-UUID> app.zenji.ios
+xcrun devicectl device process launch --device <CoreDevice-UUID> app.sportivista.ios
 ```
 
 - **Kabel slår wifi:** `tunnelState: unavailable` i `devicectl device info
@@ -83,9 +83,9 @@ xcrun devicectl device process launch --device <CoreDevice-UUID> app.zenji.ios
 ## Fallgruver som faktisk har bitt
 
 - **Flere DerivedData-kataloger:** hver xcodegen-regenerering kan gi ny
-  prosjekt-hash → `ls DerivedData/Zenji-*/…` plukker gjerne et GAMMELT
+  prosjekt-hash → `ls DerivedData/Sportivista-*/…` plukker gjerne et GAMMELT
   produkt. Bruk `-derivedDataPath build/DerivedData` eller verifiser
-  mtime/innhold (f.eks. `ZenjiBuildStamp` i Info.plist) før installering.
+  mtime/innhold (f.eks. `SportivistaBuildStamp` i Info.plist) før installering.
 - **Target-medlemskap er eksplisitt:** widget-targetet lister Sync-filer
   enkeltvis, test-targetet lister mapper — en ny fil i Sync/ som DataStore
   refererer MÅ inn i widgetens liste, ellers brekker widget-bygget. project.yml
@@ -98,7 +98,7 @@ xcrun devicectl device process launch --device <CoreDevice-UUID> app.zenji.ios
 - **Parallell xcodebuild-last** (flere agenter på samme Mac) gir trege bygg og
   sporadiske simulator-feil («Busy»/timeouts) — re-kjør før du konkluderer
   med reell feil; maks ~4 samtidige xcodebuild-agenter.
-- Versjonsstempel: post-build-scriptet i project.yml skriver `ZenjiBuildStamp`
+- Versjonsstempel: post-build-scriptet i project.yml skriver `SportivistaBuildStamp`
   (siste ios/-commit, `-dirty` ved uskrevne endringer) — appen sammenligner
   mot publisert `docs/data/app-version.json` og viser «SISTE / NYERE FINNES»
   i assistent-foten. Endrer du appen: commit FØR du bygger til enhet, ellers

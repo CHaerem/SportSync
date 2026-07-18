@@ -1,8 +1,7 @@
-# Sportivista — iOS app (kodebase: Zenji)
+# Sportivista — iOS app
 
-SwiftUI app **Sportivista** (targets/schemes/types still carry the historical
-codebase name **Zenji** — a later mechanical rename) + WidgetKit extension
-**ZenjiWidget**, generated with
+SwiftUI app **Sportivista** + WidgetKit extension
+**SportivistaWidget**, generated with
 [XcodeGen](https://github.com/yonaskolb/XcodeGen) from `project.yml`. The app is a
 pure consumer of the same static JSON the web dashboard reads (published to GitHub
 Pages) — no separate backend, per the zero-infrastructure constraint in `CLAUDE.md`.
@@ -11,7 +10,7 @@ Tekst-TV agenda + home-screen widget, sends calm local reminders, and hosts an
 on-device (Foundation Models) assistant that edits *what you follow* and answers
 questions over your own local data.
 
-This README is a **subsystem map** — one section per directory in `Zenji/`, plus
+This README is a **subsystem map** — one section per directory in `Sportivista/`, plus
 targets/signing and testing. The per-work-package build narrative lives in git/PR
 history, not here.
 
@@ -20,16 +19,16 @@ history, not here.
 ```sh
 brew install xcodegen        # once, if not already installed
 cd ios
-xcodegen generate            # writes Zenji.xcodeproj (gitignored — never check it in)
-open Zenji.xcodeproj         # or build/test from the CLI:
+xcodegen generate            # writes Sportivista.xcodeproj (gitignored — never check it in)
+open Sportivista.xcodeproj         # or build/test from the CLI:
 
-xcodebuild -scheme Zenji -destination 'generic/platform=iOS Simulator' build
-xcodebuild -scheme ZenjiWidgetExtension -destination 'generic/platform=iOS Simulator' build
-xcodebuild test -project Zenji.xcodeproj -scheme Zenji \
+xcodebuild -scheme Sportivista -destination 'generic/platform=iOS Simulator' build
+xcodebuild -scheme SportivistaWidgetExtension -destination 'generic/platform=iOS Simulator' build
+xcodebuild test -project Sportivista.xcodeproj -scheme Sportivista \
   -destination 'platform=iOS Simulator,name=<a device from `xcrun simctl list devices available`>'
 ```
 
-`Zenji.xcodeproj` (and `xcuserdata/`, `DerivedData/`) are gitignored via a
+`Sportivista.xcodeproj` (and `xcuserdata/`, `DerivedData/`) are gitignored via a
 directory-scoped `ios/.gitignore` — **regenerate from `project.yml` after every
 pull**. `xcodegen generate` also rewrites the three `Info.plist` files from the
 `info.properties` blocks in `project.yml` (XcodeGen owns them — edit the
@@ -41,13 +40,13 @@ properties, never the generated plists).
 
 | Target | Type | Scheme | Notes |
 |---|---|---|---|
-| `Zenji` | application | `Zenji` | The Simulator app; embeds `ZenjiWidgetExtension`. Sources: the whole `Zenji/` tree. |
-| `ZenjiWidgetExtension` | app-extension | `ZenjiWidgetExtension` | The widget. Compiles a deliberate subset of `Zenji/` (see [Widget](#widget)). |
-| `ZenjiTests` | unit-test bundle | (runs under `Zenji`) | Hostless logic bundle — see [Testing](#testing). |
-| `ZenjiUITests` | ui-test bundle | `ZenjiUITests` | XCUITest that drives the app in the Simulator — see [UI-flyter](#ui-flyter-wp-70--xcuitest-i-simulator). |
-| `ZenjiDeviceDev` | application | `ZenjiDeviceDev` | Device build under a **free** Apple team — see below. |
+| `Sportivista` | application | `Sportivista` | The Simulator app; embeds `SportivistaWidgetExtension`. Sources: the whole `Sportivista/` tree. |
+| `SportivistaWidgetExtension` | app-extension | `SportivistaWidgetExtension` | The widget. Compiles a deliberate subset of `Sportivista/` (see [Widget](#widget)). |
+| `SportivistaTests` | unit-test bundle | (runs under `Sportivista`) | Hostless logic bundle — see [Testing](#testing). |
+| `SportivistaUITests` | ui-test bundle | `SportivistaUITests` | XCUITest that drives the app in the Simulator — see [UI-flyter](#ui-flyter-wp-70--xcuitest-i-simulator). |
+| `SportivistaDeviceDev` | application | `SportivistaDeviceDev` | Device build under a **free** Apple team — see below. |
 
-- **Bundle ids:** `app.sportivista.ios` (app + `ZenjiDeviceDev`), `.widget`, `.tests`, `.uitests`.
+- **Bundle ids:** `app.sportivista.ios` (app + `SportivistaDeviceDev`), `.widget`, `.tests`, `.uitests`.
   **Deployment target:** iOS 26.0 everywhere; Swift 6.0.
 - **Deep-link scheme:** `sportivista://` (`CFBundleURLTypes`) — the custom scheme the
   profile-share QR / link opens, so no Associated-Domains entitlement (and no paid
@@ -59,30 +58,30 @@ The base config uses `CODE_SIGN_STYLE: Automatic` with
 `CODE_SIGNING_ALLOWED/REQUIRED: NO` and no `DEVELOPMENT_TEAM` — the app builds and
 runs on the **Simulator with no Apple Developer account**. Each target still points
 `CODE_SIGN_ENTITLEMENTS` at its App Group entitlements file (`group.app.sportivista`, in
-`Zenji.entitlements` + `ZenjiWidget.entitlements` — the shared cache container the
+`Sportivista.entitlements` + `SportivistaWidget.entitlements` — the shared cache container the
 app writes and the widget reads, fallback under [Sync](#sync)), so enabling real
 signing for TestFlight (WP-17) is just flipping those two settings back on and
 filling in a team ID.
 
-### `ZenjiDeviceDev` — running on a physical iPhone with a free account
+### `SportivistaDeviceDev` — running on a physical iPhone with a free account
 
 A device-flavoured build of the same app sources (so it includes the on-device
 Foundation Models code, which only *runs* on real hardware), handling two
 free-team constraints without touching the Simulator setup: **no App Groups**
 (empty entitlements file → `CacheStore`/`ProfileStore` use Application Support) and
 **no embedded widget** (a prior attempt failed *"Embedded binary is not signed with
-the same certificate as the parent app"* — so no `ZenjiWidgetExtension` dependency;
+the same certificate as the parent app"* — so no `SportivistaWidgetExtension` dependency;
 the widget stays Simulator-only until WP-17). It reuses bundle id `app.sportivista.ios`
 (the free team's existing provisioning profile) with a distinct `PRODUCT_NAME` so
-its product never collides with `Zenji.app` (home-screen name stays "Sportivista").
+its product never collides with `Sportivista.app` (home-screen name stays "Sportivista").
 
 ```sh
 cd ios && xcodegen generate
-xcodebuild -project Zenji.xcodeproj -scheme ZenjiDeviceDev \
+xcodebuild -project Sportivista.xcodeproj -scheme SportivistaDeviceDev \
   -destination 'platform=iOS,id=<device-id from `xcrun devicectl list devices`>' \
   -allowProvisioningUpdates CODE_SIGNING_ALLOWED=YES CODE_SIGN_STYLE=Automatic \
   DEVELOPMENT_TEAM=<team> build
-APP=~/Library/Developer/Xcode/DerivedData/Zenji-*/Build/Products/Debug-iphoneos/ZenjiDeviceDev.app
+APP=~/Library/Developer/Xcode/DerivedData/Sportivista-*/Build/Products/Debug-iphoneos/SportivistaDeviceDev.app
 xcrun devicectl device install app --device <hardware-udid> "$APP"
 xcrun devicectl device process launch --device <hardware-udid> app.sportivista.ios
 ```
@@ -99,8 +98,8 @@ hand.
 ios/
 ├── project.yml                    XcodeGen spec — source of truth, checked in
 ├── .gitignore                     scoped to ios/: *.xcodeproj, xcuserdata, DerivedData
-├── Zenji/                         app target
-│   ├── ZenjiApp.swift             @main entry point
+├── Sportivista/                         app target
+│   ├── SportivistaApp.swift             @main entry point
 │   ├── ContentView.swift          NavigationStack host: header + gearshape→Deg + live line + AgendaView + command line + sync/notify hook
 │   ├── DesignTokens.swift         shared baseline tokens: semantic system colours + amber + Dynamic Type font API (also used by widget + tests)
 │   ├── ThemeOverride.swift        manual system/dark/light override enum (pure)
@@ -119,18 +118,18 @@ ios/
 │   ├── Eval/                      FM-eval harness: corpus/runner/scorer (shared CI+device) + DEBUG EvalView
 │   ├── Demo/                      DEBUG-only screenshot-harness seeds (app-only)
 │   ├── Info.plist                 generated by xcodegen
-│   ├── Zenji.entitlements         App Group (group.app.sportivista)
+│   ├── Sportivista.entitlements         App Group (group.app.sportivista)
 │   └── Assets.xcassets/
-├── ZenjiWidget/                   WidgetKit extension: ZenjiWidgetBundle + ZenjiWidget
+├── SportivistaWidget/                   WidgetKit extension: SportivistaWidgetBundle + SportivistaWidget
 │   │                              (TimelineProvider), Info.plist, entitlements (App Group)
-├── ZenjiDeviceDev/                free-account device build: Info.plist + empty entitlements
-└── ZenjiTests/                    hostless logic-test bundle (*Tests.swift + doubles +
+├── SportivistaDeviceDev/                free-account device build: Info.plist + empty entitlements
+└── SportivistaTests/                    hostless logic-test bundle (*Tests.swift + doubles +
                                    Fixtures/ frozen snapshots) — see Testing
 ```
 
 ## Design tokens
 
-`Zenji/DesignTokens.swift` — the Apple-native baseline token layer: semantic iOS
+`Sportivista/DesignTokens.swift` — the Apple-native baseline token layer: semantic iOS
 system colours + a single amber accent, kept in lock-step with the `DESIGN.md`
 token table. (The web dashboard keeps the Tekst-TV look until the rebrand — see
 `DESIGN.md` § Cross-surface.)
@@ -144,9 +143,9 @@ token table. (The web dashboard keeps the Tekst-TV look until the rebrand — se
 Plus the semantic tokens `cell` / `secondaryLabel` / `separator` / `live` /
 `destructive` (the neutrals map to iOS system colours; `accent` / `live` /
 `destructive` are dynamic `Color`s following the system colour scheme). Typography
-goes through the Dynamic Type API — `Font.zenji(_:weight:)` binds each text role to
+goes through the Dynamic Type API — `Font.sportivista(_:weight:)` binds each text role to
 a SwiftUI text style (San Francisco) so text scales with the user's setting, and
-`Font.zenjiTabular(...)` adds monospaced digits for the time column; a fixed
+`Font.sportivistaTabular(...)` adds monospaced digits for the time column; a fixed
 `.system(size:)` point is barred (HIG gate `tests/ios-dynamic-type-gate.test.js`).
 
 **`ThemeOverride.swift`** — a `String`-backed enum (`system`/`dark`/`light`) with a
@@ -155,16 +154,16 @@ quantized header glyph (`◐`/`●`/`○`) and an `@AppStorage` key. Applied onc
 `ContentView` window root, so it cascades to every `.sheet` and survives a fresh
 launch. The widget does **not** compile it (a WidgetKit extension follows the OS's
 own per-surface appearance). **`Interaction.swift`** gives every interactive glyph
-a HIG ≥44×44pt hit area (`.zenjiTapTarget()` / `ZenjiActionButtonStyle`; owner
+a HIG ≥44×44pt hit area (`.sportivistaTapTarget()` / `SportivistaActionButtonStyle`; owner
 finding: "veldig små knapper").
 Screenshots: `docs/design-v2/theme-toggle-*.png`, `docs/design-v2/tap-targets-*.png`.
 
 ## Models
 
-`Zenji/Models/` is the Swift mirror of the data contract — it turns raw JSON into
+`Sportivista/Models/` is the Swift mirror of the data contract — it turns raw JSON into
 typed values, nothing more (no networking, no feed logic).
 
-- `ZenjiJSON.swift` — the one shared `JSONDecoder`; its only job beyond the
+- `SportivistaJSON.swift` — the one shared `JSONDecoder`; its only job beyond the
   default is dates: real `events.json` carries ISO 8601 both with fractional
   seconds (JS `toISOString()`) and without (hand-written agent output), so the
   decoder tries the fractional formatter first and falls back to whole-second.
@@ -182,7 +181,7 @@ server value decodes gracefully on an older client rather than crashing the even
 
 ### Model fixtures
 
-`ZenjiTests/Fixtures/` holds **checked-in, deliberately-frozen snapshots** of the
+`SportivistaTests/Fixtures/` holds **checked-in, deliberately-frozen snapshots** of the
 real `events` / `entities` / `manifest` / `tracked` / `interests` JSON (each
 verified byte-identical to the live site via sha256 when added). They are the
 Swift side's fasit for the contract — update them by deliberately re-copying the
@@ -190,11 +189,11 @@ live files and committing the diff, **never** by an automated job.
 
 ## Sync
 
-`Zenji/Sync/` is the app's **only** networking code — everything else reads from the
+`Sportivista/Sync/` is the app's **only** networking code — everything else reads from the
 on-disk cache it maintains. **The manifest-diff flow** (`SyncClient.sync() async ->
 SyncResult`):
 
-1. **GET `manifest.json`** from `baseURL` (default `https://zenji.app/data/`,
+1. **GET `manifest.json`** from `baseURL` (default `https://sportivista.com/data/`,
    injectable) with `If-None-Match` set to the persisted ETag.
 2. **304 → `.upToDate`**, no further requests — the common case after the first sync.
 3. **200 → decode** with `Manifest`, diff its per-file `sha256` against
@@ -224,14 +223,14 @@ is an empty list or `nil`); `DataStore.lastSync` is the "have we ever synced" fl
 `BackgroundRefreshScheduling.earliestBeginDate(...)` is a *pure*, unit-tested
 function ("when should the next refresh run" — never sooner than the research
 agent's 4-hourly cadence); `BackgroundRefreshScheduler` is the thin
-`BGTaskScheduler` wrapper (`register(...)` from `ZenjiApp.init()`,
+`BGTaskScheduler` wrapper (`register(...)` from `SportivistaApp.init()`,
 `scheduleNextRefresh(...)`). Requires `app.sportivista.refresh` in
 `BGTaskSchedulerPermittedIdentifiers` and `UIBackgroundModes: [fetch]`
 (`project.yml`).
 
 ## Feed
 
-`Zenji/Feed/` is the Swift port of the personalisation semantics — which events
+`Sportivista/Feed/` is the Swift port of the personalisation semantics — which events
 reach the feed, which get the bell/accent, how the window behaves, how stage races
 collapse. Its one hard acceptance criterion: it reproduces **every** golden
 feed-vector (`tests/fixtures/feed-vectors/`, referenced directly from `project.yml`,
@@ -268,7 +267,7 @@ to the side that owns it (server and client intentionally differ):
 
 ## Agenda
 
-`Zenji/Agenda/` is the real, day-grouped Tekst-TV agenda — a pure consumer of Sync's
+`Sportivista/Agenda/` is the real, day-grouped Tekst-TV agenda — a pure consumer of Sync's
 cache and Feed's `FeedCompiler`. **`AgendaViewModel`** is `@MainActor @Observable`,
 but its logic is a `nonisolated static` pure function
 `buildSections(events:interests:now:) -> [AgendaSection]` (the codebase's usual
@@ -293,7 +292,7 @@ block only on `ai-research` rows, a quiet varsel read-out, the spoiler-masked
 summary, every stage as its own line).
 
 `ContentView` wraps `AgendaView` in a `NavigationStack` (WP-83): a header with the
-ensō mark + `ZENJI` wordmark + date and a `gearshape` toolbar button that pushes the
+ensō mark + `SPORTIVISTA` wordmark + date and a `gearshape` toolbar button that pushes the
 **Deg** settings screen (`Profile/DegView.swift`); a quiet `▌ LIVE …` line (invisible
 when nothing is on); and the always-present command line at the bottom. The
 assistant's result (a diff or an answer) presents as a native `.sheet`
@@ -303,11 +302,11 @@ now lives in Deg. Screenshots: `docs/wp-83/*.png`.
 
 ## Widget
 
-`Zenji/Widget/WidgetTimelineBuilder.swift` is a **pure function** (no
+`Sportivista/Widget/WidgetTimelineBuilder.swift` is a **pure function** (no
 `import WidgetKit` — deliberate): given `[Event]` + `Interests` + "now" it returns
 one `Entry` per full remaining Europe/Oslo hour, each "the next must-see event as of
 that moment, else the nearest relevant upcoming one, else an honest
-'Ingenting i dag'". `ZenjiWidget.swift` (the `TimelineProvider`) is the thin wrapper
+'Ingenting i dag'". `SportivistaWidget.swift` (the `TimelineProvider`) is the thin wrapper
 reading `DataStore` (`systemSmall` + `systemMedium`, same tokens as the app). By
 construction there is **no network code in the widget target**: `project.yml` gives
 it `Models`/`Feed`/`DesignTokens`/`WidgetTimelineBuilder` and only the **read** half
@@ -315,7 +314,7 @@ of `Sync` — never `SyncClient`/`Checksum` nor the app-only subsystems.
 
 ## Notifications
 
-`Zenji/Notifications/` schedules local push reminders for must-watch events —
+`Sportivista/Notifications/` schedules local push reminders for must-watch events —
 **a wrong time in a push is the most expensive trust violation the app can commit**,
 so reminders are few, correct, and calm. **`NotificationPlanner.plan(...)`** is the
 pure core: two event snapshots in, a diff of `[NotificationOperation]` out (no
@@ -345,7 +344,7 @@ the app-start `.task`, not on pull-to-refresh.
 
 ## Assistant
 
-`Zenji/Assistant/` is a conversational way to edit *what the app follows* and ask
+`Sportivista/Assistant/` is a conversational way to edit *what the app follows* and ask
 questions over your own local data. The principle is **"assistenten ER
 grensesnittet"** — a fixed, quiet command line pinned to the bottom of the agenda
 (`CommandLineView`: `»_` sigil · text field · blinking cursor), a helper that follows
@@ -395,11 +394,11 @@ add through the same grounded flow) and "Hvorfor vises denne?"
 (`FeedCompiler.whyShown`).
 
 Screenshots: `docs/design-v2/assistant-{idle,thinking,diff,answer}-{dark,light}.png`,
-driven by a DEBUG-only `ZENJI_DEMO=…` launch harness (never compiled into release).
+driven by a DEBUG-only `SPORTIVISTA_DEMO=…` launch harness (never compiled into release).
 
 ## Profile
 
-`Zenji/Profile/` is the on-device, human-owned interest profile the assistant edits,
+`Sportivista/Profile/` is the on-device, human-owned interest profile the assistant edits,
 plus its sync/share/reset/effective-merge machinery. **Our server never sees this**
 — it is device-local, syncing only through the user's own iCloud or a QR bridge (P360).
 
@@ -438,7 +437,7 @@ plus its sync/share/reset/effective-merge machinery. **Our server never sees thi
 
 ## Memory
 
-`Zenji/Memory/` makes the assistant an editor who **remembers you** between
+`Sportivista/Memory/` makes the assistant an editor who **remembers you** between
 sessions (Foundation Models is stateless, so "memory" = persisted data + smart
 insertion into the session). **Personal context** (how you relate to what you
 follow) is kept device-local, apart from server-produced world context — the server
@@ -467,7 +466,7 @@ Screenshots: `docs/design-v2/memory-{page,spoiler}-{dark,light}.png`.
 
 ## Onboarding
 
-`Zenji/Onboarding/` is the calm first-run experience (dossier P310: "onboarding er
+`Sportivista/Onboarding/` is the calm first-run experience (dossier P310: "onboarding er
 en samtale, ikke et skjema") — four quiet steps in the Tekst-TV language, no hero
 art, no carousel, no emoji. `OnboardingGate.swift` is the pure, FM-free, I/O-free
 decision layer ("should we show it / where does it start"); `StarterPacks.swift` is
@@ -479,24 +478,24 @@ Screenshots:
 
 ## Testing
 
-`ZenjiTests/` is a **hostless** unit-test bundle — no `TEST_HOST`, no
+`SportivistaTests/` is a **hostless** unit-test bundle — no `TEST_HOST`, no
 `@testable import`; it compiles the real sources it exercises directly into the
-bundle (every `Zenji/` subsystem, plus `DesignTokens`/`ThemeOverride`/`Interaction`),
-the same trick `ZenjiWidgetExtension` uses. All tests are **network-free**:
+bundle (every `Sportivista/` subsystem, plus `DesignTokens`/`ThemeOverride`/`Interaction`),
+the same trick `SportivistaWidgetExtension` uses. All tests are **network-free**:
 `MockURLProtocol` (via `URLSessionConfiguration.protocolClasses`) intercepts every
 request, the Foundation Models tests drive `MockInterestAssistant`/`MockAnswerer`
-only, and they reuse the frozen `ZenjiTests/Fixtures/*` snapshots as decode input
+only, and they reuse the frozen `SportivistaTests/Fixtures/*` snapshots as decode input
 and mock-server responses.
 
 There are **55 `*Tests.swift` files (~512 tests)**, at least one per subsystem —
 e.g. `SyncClientTests` (304 / changed-manifest / offline / corrupt-download),
 `CacheStoreTests` (App Group fallback), the `FeedCompilerUnit`/`FeedVector` pair,
 `AgendaViewModelTests`, `NotificationPlannerTests`, and the Assistant / Profile /
-Memory / Onboarding suites (see the `ZenjiTests/` listing for all). Run them with:
+Memory / Onboarding suites (see the `SportivistaTests/` listing for all). Run them with:
 
 ```sh
 cd ios && xcodegen generate
-xcodebuild test -project Zenji.xcodeproj -scheme Zenji \
+xcodebuild test -project Sportivista.xcodeproj -scheme Sportivista \
   -destination 'platform=iOS Simulator,name=<a device from `xcrun simctl list devices available`>'
 ```
 
@@ -504,15 +503,15 @@ xcodebuild test -project Zenji.xcodeproj -scheme Zenji \
 
 ### UI-flyter (WP-70) — XCUITest i simulator
 
-`ZenjiUITests/` er et **UI-test-bundle** (`bundle.ui-testing`, `TEST_TARGET_NAME:
-Zenji`) som DRIVER den kjørende appen via `XCUIApplication` — motsatt av det
-hostløse `ZenjiTests`. Det ligger i sin **egen scheme** (`ZenjiUITests`) så det
-raske unit-runet (`Zenji`-scheme, kommandoen over) er uendret; `Zenji`-scheme
-kjører fortsatt kun `ZenjiTests`.
+`SportivistaUITests/` er et **UI-test-bundle** (`bundle.ui-testing`, `TEST_TARGET_NAME:
+Sportivista`) som DRIVER den kjørende appen via `XCUIApplication` — motsatt av det
+hostløse `SportivistaTests`. Det ligger i sin **egen scheme** (`SportivistaUITests`) så det
+raske unit-runet (`Sportivista`-scheme, kommandoen over) er uendret; `Sportivista`-scheme
+kjører fortsatt kun `SportivistaTests`.
 
-Appen kjøres mot et deterministisk harness — miljøvariabelen `ZENJI_DEMO=uitest`
-(en verdi av det eksisterende demo-harnesset) + `ZENJI_UITEST_STATE`
-(`onboarding` | `agenda`). `UITestSeed` (i `Zenji/Demo/`, `#if DEBUG`) seeder en
+Appen kjøres mot et deterministisk harness — miljøvariabelen `SPORTIVISTA_DEMO=uitest`
+(en verdi av det eksisterende demo-harnesset) + `SPORTIVISTA_UITEST_STATE`
+(`onboarding` | `agenda`). `UITestSeed` (i `Sportivista/Demo/`, `#if DEBUG`) seeder en
 fast cache (events/entities/interests + synket klokke), nullstiller onboarding-/
 tema-flaggene, og backer assistenten med `MockInterestAssistant` — så ingen nett,
 ingen Apple Intelligence, ingen flakiness. Flytene slår opp via **additive
@@ -527,11 +526,11 @@ flyten) pluss en `XCTApplicationLaunchMetric` kaldstart-baseline
 
 ```sh
 cd ios && xcodegen generate
-xcodebuild test -project Zenji.xcodeproj -scheme ZenjiUITests \
+xcodebuild test -project Sportivista.xcodeproj -scheme SportivistaUITests \
   -destination 'platform=iOS Simulator,name=iPhone 17'
 ```
 
-CI-kravet er kun at targeten **bygger** (den bygges av `ZenjiUITests`-scheme);
+CI-kravet er kun at targeten **bygger** (den bygges av `SportivistaUITests`-scheme);
 flytene kjøres lokalt / på PR-agentens Mac. NB: launch-metrikk-**baselinen** lagres
 i `.xcodeproj` (xcbaselines), som genereres av xcodegen og bevisst IKKE sjekkes
 inn (`ios/.gitignore`) — det innsjekkede artefaktet er testen selv; det målte
@@ -542,7 +541,7 @@ died» ved oppstart — kjør på nytt før du konkluderer med reell feil.
 ### FM-eval harness (WP-69) — measuring real assistant quality
 
 Apple Intelligence can't run in CI, so assistant quality is measured two ways
-against **one versioned corpus** (`ZenjiTests/Fixtures/eval-corpus.json`, ≥20
+against **one versioned corpus** (`SportivistaTests/Fixtures/eval-corpus.json`, ≥20
 cases: WP-16 canon, the owner's multi-clause class, winter sport, feed
 questions). The corpus scores **structure, never prose**: an entity id-SET for
 mutations; a row/claim rubric for answers (must-reference-rows, referenced
@@ -553,17 +552,17 @@ capture), not failures.
 - **CI (mock).** `EvalCorpusTests` runs the SAME corpus through
   `MockInterestAssistant` and asserts every deterministic case; `knownGap` cases
   are skipped with a printed marker. The pure `EvalScorer`/`EvalRunner`/`EvalReport`
-  (in `Zenji/Eval/`) are shared with the device path, so the two can't drift.
-- **On device (real FM).** A **DEBUG-only** eval screen (`Zenji/Eval/EvalView.swift`)
+  (in `Sportivista/Eval/`) are shared with the device path, so the two can't drift.
+- **On device (real FM).** A **DEBUG-only** eval screen (`Sportivista/Eval/EvalView.swift`)
   is reached from the assistant ark's foot ("EVAL (DEBUG)", next to "Det jeg ikke
   forsto"). It runs the corpus through the real `FoundationModelsInterestAssistant`
-  on a physical iPhone (`ZenjiDeviceDev` scheme — the corpus is bundled as an app
+  on a physical iPhone (`SportivistaDeviceDev` scheme — the corpus is bundled as an app
   resource), shows a **pass-rate per category**, and exports an **anonymised JSON
   report** via the share sheet (same privacy posture as the MisunderstoodLog
   export — never any network, no device id). A second button exports the local
   "forsto ikke"-log as **corpus candidates** (utterance + note) for the human to
   curate — an export, never an auto-incorporation. There is **no new target** and
-  only a minimal `project.yml` change (the corpus as a resource + `Zenji/Eval` in
+  only a minimal `project.yml` change (the corpus as a resource + `Sportivista/Eval` in
   the test sources).
 
 **Report format** — the shared JSON (`EvalReport`): `corpusVersion`,
@@ -576,7 +575,7 @@ detail}`). `evaluated` excludes `knownGap` cases; `knownGapPassed` counts gaps
 that *unexpectedly* passed (a gap closed — promote it out of `knownGap`).
 
 **Running a real eval (the owner's one manual step):** build & run the
-`ZenjiDeviceDev` scheme on a physical iPhone with Apple Intelligence on → open
+`SportivistaDeviceDev` scheme on a physical iPhone with Apple Intelligence on → open
 the assistant (`»_`) → its foot → **EVAL (DEBUG)** → **KJØR EVAL** → **DEL
 RAPPORT** and share the JSON. Each assistant WP (WP-65/66/68) adds its cases to
 the corpus in the same PR, so the pass-rate is the regression signal that
@@ -587,16 +586,16 @@ through the real FM in the Simulator (which proxies the host Mac's Apple
 Intelligence) via `RealFMEvalTests`, opt-in and reporting+threshold-guarding:
 
 ```
-TEST_RUNNER_ZENJI_REALFM_EVAL=1 xcodebuild test -scheme Zenji \
+TEST_RUNNER_SPORTIVISTA_REALFM_EVAL=1 xcodebuild test -scheme Sportivista \
   -destination 'platform=iOS Simulator,name=iPhone 17' \
-  -only-testing:ZenjiTests/RealFMEvalTests
+  -only-testing:SportivistaTests/RealFMEvalTests
 ```
 
 The report prints between `REALFM-EVAL-REPORT-BEGIN/END`. A full run (55 cases)
 is ~25 min, so for **cheap single-category / single-case iteration** two DEBUG
 env filters narrow the corpus (a filtered run reports only — it never asserts a
-threshold): `TEST_RUNNER_ZENJI_EVAL_CATEGORY=canon,command` and/or
-`TEST_RUNNER_ZENJI_EVAL_CASE=canon-02-magnus-carlsen`.
+threshold): `TEST_RUNNER_SPORTIVISTA_EVAL_CATEGORY=canon,command` and/or
+`TEST_RUNNER_SPORTIVISTA_EVAL_CASE=canon-02-magnus-carlsen`.
 
 **Prompt budget (WP-71).** The on-device context is **4096 tokens** and must
 hold the prompt + the tool definitions + the `@Generable` schema + the whole
@@ -614,7 +613,7 @@ future prompt inflation in CI, not 25 minutes into a device eval.
 
 ## Ytelse: signposts + MetricKit (WP-63)
 
-`Zenji/Perf/` instruments the two hotpaths the WP-60 audit flagged — **local and
+`Sportivista/Perf/` instruments the two hotpaths the WP-60 audit flagged — **local and
 private, never any remote telemetry** (same contract as the MisunderstoodLog
 export).
 
@@ -646,10 +645,10 @@ half (I/O+decode vs. compile). Because the reload pipeline runs OFF the main act
 regression signal that the work leaked back onto main.
 
 **MetricKit log + export (`MetricLog.swift` / `MetricSubscriber.swift`).**
-`ZenjiApp` starts one `MetricSubscriber` for the app's lifetime; it persists
+`SportivistaApp` starts one `MetricSubscriber` for the app's lifetime; it persists
 compact, anonymised summaries of `MXAppLaunchMetric` (launch/resume time
 histograms) and `MXHangDiagnostic` (hang durations) to
-`Application Support/ZenjiProfile/metric-log.json` — capped at 50 per kind,
+`Application Support/SportivistaProfile/metric-log.json` — capped at 50 per kind,
 oldest dropped first, exactly like the misunderstood-log. Collection runs in
 Release too (the point is REAL on-device data). MetricKit **only delivers on a
 physical device** — the log stays empty in the Simulator, and the payload types
@@ -680,7 +679,7 @@ and is read via `DataStore`:
 - **`app-version.json`** (last ios/-touching commit, published by `build-events.js`)
   → `AppVersion.swift` (`Sync/`). «Har jeg siste versjon?»: a post-build script
   (project.yml, both app targets) stamps the built Info.plist with the tree's own
-  ios/-commit (`ZenjiBuildStamp`, `-dirty` when uncommitted); `AppVersionCheck`
+  ios/-commit (`SportivistaBuildStamp`, `-dirty` when uncommitted); `AppVersionCheck`
   compares stamp vs published and the assistant-ark foot shows a quiet
   «BYGG a1b2c3d · dato · SISTE / NYERE FINNES (…)» line. Pure judgement is
   unit-tested (`AppVersionCheckTests`); a preview/unstamped build shows the stamp

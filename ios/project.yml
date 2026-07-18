@@ -1,4 +1,4 @@
-name: Zenji
+name: Sportivista
 options:
   bundleIdPrefix: app.sportivista.ios
   deploymentTarget:
@@ -28,13 +28,13 @@ settings:
     DEVELOPMENT_TEAM: ""
 
 targets:
-  Zenji:
+  Sportivista:
     type: application
     postBuildScripts:
       # «Har jeg siste versjon?» — stamp the BUILT Info.plist with the short
       # hash of the last commit touching ios/ in the tree this build came from
       # («-dirty» appended when ios/ has uncommitted changes) + a build date.
-      # Build-time only: no source file is generated, so ZenjiTests' direct
+      # Build-time only: no source file is generated, so SportivistaTests' direct
       # source compilation is unaffected. The app compares the stamp against
       # the published app-version.json (BuildStamp/AppVersionCheck).
       - name: Stamp build version
@@ -42,24 +42,24 @@ targets:
           STAMP=$(git -C "$SRCROOT/.." log -1 --format=%h -- ios/ 2>/dev/null || echo ukjent)
           if ! git -C "$SRCROOT/.." diff --quiet -- ios/ 2>/dev/null; then STAMP="${STAMP}-dirty"; fi
           PLIST="$TARGET_BUILD_DIR/$INFOPLIST_PATH"
-          /usr/libexec/PlistBuddy -c "Delete :ZenjiBuildStamp" "$PLIST" 2>/dev/null || true
-          /usr/libexec/PlistBuddy -c "Add :ZenjiBuildStamp string $STAMP" "$PLIST"
-          /usr/libexec/PlistBuddy -c "Delete :ZenjiBuildDate" "$PLIST" 2>/dev/null || true
-          /usr/libexec/PlistBuddy -c "Add :ZenjiBuildDate string $(date '+%d.%m %H:%M')" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Delete :SportivistaBuildStamp" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :SportivistaBuildStamp string $STAMP" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Delete :SportivistaBuildDate" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :SportivistaBuildDate string $(date '+%d.%m %H:%M')" "$PLIST"
         basedOnDependencyAnalysis: false
     platform: iOS
     deploymentTarget: "26.0"
     sources:
-      - path: Zenji
+      - path: Sportivista
       # WP-69: the versioned eval corpus lives with the tests (one source of
       # truth — the CI XCTest loads it from the test bundle), but the DEBUG
-      # on-device eval screen (Zenji/Eval/EvalView) loads it from the app
+      # on-device eval screen (Sportivista/Eval/EvalView) loads it from the app
       # bundle, so bundle just this one JSON as an app resource. The widget
       # target deliberately does NOT list it (no eval code in the widget).
-      - path: ZenjiTests/Fixtures/eval-corpus.json
+      - path: SportivistaTests/Fixtures/eval-corpus.json
         buildPhase: resources
     info:
-      path: Zenji/Info.plist
+      path: Sportivista/Info.plist
       properties:
         CFBundleDevelopmentRegion: nb
         CFBundleDisplayName: Sportivista
@@ -86,20 +86,20 @@ targets:
               - sportivista
     settings:
       base:
-        PRODUCT_NAME: Zenji
+        PRODUCT_NAME: Sportivista
         PRODUCT_BUNDLE_IDENTIFIER: app.sportivista.ios
-        CODE_SIGN_ENTITLEMENTS: Zenji/Zenji.entitlements
+        CODE_SIGN_ENTITLEMENTS: Sportivista/Sportivista.entitlements
     dependencies:
-      - target: ZenjiWidgetExtension
+      - target: SportivistaWidgetExtension
         embed: true
 
-  ZenjiWidgetExtension:
+  SportivistaWidgetExtension:
     type: app-extension
     platform: iOS
     deploymentTarget: "26.0"
     sources:
-      - path: ZenjiWidget
-      - path: Zenji/DesignTokens.swift
+      - path: SportivistaWidget
+      - path: Sportivista/DesignTokens.swift
       # WP-14: the widget's own timeline logic (WidgetTimelineBuilder.swift,
       # no import WidgetKit — see that file's header) needs the Codable
       # models, the FeedCompiler predicates + AgendaFormat/EventBridge
@@ -107,17 +107,17 @@ targets:
       # the READ half of Sync — CacheStore + SyncState + DataStore, NOT
       # SyncClient.swift/Checksum.swift, so the widget target has no
       # network-capable code at all (INGEN nettverk i widgeten, per brief).
-      - path: Zenji/Models
-      - path: Zenji/Feed
-      - path: Zenji/Sync/CacheStore.swift
-      - path: Zenji/Sync/SyncState.swift
-      - path: Zenji/Sync/DataStore.swift
+      - path: Sportivista/Models
+      - path: Sportivista/Feed
+      - path: Sportivista/Sync/CacheStore.swift
+      - path: Sportivista/Sync/SyncState.swift
+      - path: Sportivista/Sync/DataStore.swift
       # AppVersion is part of DataStore's read surface (loadAppVersion) — a
       # tiny Codable + pure check, no networking, so it stays widget-safe.
-      - path: Zenji/Sync/AppVersion.swift
-      - path: Zenji/Widget/WidgetTimelineBuilder.swift
+      - path: Sportivista/Sync/AppVersion.swift
+      - path: Sportivista/Widget/WidgetTimelineBuilder.swift
     info:
-      path: ZenjiWidget/Info.plist
+      path: SportivistaWidget/Info.plist
       properties:
         CFBundleDevelopmentRegion: nb
         CFBundleDisplayName: Sportivista
@@ -125,51 +125,51 @@ targets:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
       base:
-        PRODUCT_NAME: ZenjiWidget
+        PRODUCT_NAME: SportivistaWidget
         PRODUCT_BUNDLE_IDENTIFIER: app.sportivista.ios.widget
-        CODE_SIGN_ENTITLEMENTS: ZenjiWidget/ZenjiWidget.entitlements
+        CODE_SIGN_ENTITLEMENTS: SportivistaWidget/SportivistaWidget.entitlements
         SKIP_INSTALL: YES
 
   # WP-11: standalone (hostless) logic-test bundle for the Codable models in
-  # Zenji/Models — no TEST_HOST/BUNDLE_LOADER, since these are pure decoding
+  # Sportivista/Models — no TEST_HOST/BUNDLE_LOADER, since these are pure decoding
   # tests with no dependency on the app's UI/runtime. Compiles the Models
   # sources directly into the test bundle (same pattern the widget extension
   # already uses for DesignTokens.swift above) rather than linking the app
-  # binary, so it needs no `@testable import`. WP-12 adds Zenji/Sync the same
+  # binary, so it needs no `@testable import`. WP-12 adds Sportivista/Sync the same
   # way, for SyncClient/CacheStore/DataStore's own hostless tests; WP-13 adds
-  # Zenji/Feed for the FeedCompiler predicate + golden-vector tests; WP-15
-  # adds Zenji/Notifications for NotificationPlanner's own hostless tests
+  # Sportivista/Feed for the FeedCompiler predicate + golden-vector tests; WP-15
+  # adds Sportivista/Notifications for NotificationPlanner's own hostless tests
   # (a recording NotificationScheduling double — no real UNUserNotificationCenter
   # call, no OS permission prompt, in this bundle).
-  ZenjiTests:
+  SportivistaTests:
     type: bundle.unit-test
     platform: iOS
     deploymentTarget: "26.0"
     sources:
-      - path: ZenjiTests
-      - path: Zenji/Models
-      - path: Zenji/Sync
-      - path: Zenji/Feed
-      - path: Zenji/Notifications
+      - path: SportivistaTests
+      - path: Sportivista/Models
+      - path: Sportivista/Sync
+      - path: Sportivista/Feed
+      - path: Sportivista/Notifications
       # WP-14: AgendaViewModel + its SwiftUI views (day-grouped agenda,
       # detail sheets) and the widget's pure timeline builder — compiled
       # directly into this hostless bundle, same "no @testable import"
       # pattern as Models/Sync/Feed above, so AgendaViewModelTests and
       # WidgetTimelineBuilderTests can drive them with no running app.
       # DesignTokens.swift is needed here too: Agenda's SwiftUI views
-      # reference ZenjiTokens / Font.zenji directly (same reason
-      # ZenjiWidgetExtension already lists it explicitly, above).
-      - path: Zenji/DesignTokens.swift
+      # reference SportivistaTokens / Font.sportivista directly (same reason
+      # SportivistaWidgetExtension already lists it explicitly, above).
+      - path: Sportivista/DesignTokens.swift
       # WP-14.2: the manual theme override enum (pure cycling/mapping logic,
       # unit-tested directly — no `@testable import`, same pattern as
       # DesignTokens.swift above).
-      - path: Zenji/ThemeOverride.swift
-      # WP-14.3: `.zenjiTapTarget()` / `ZenjiActionButtonStyle` — the shared
+      - path: Sportivista/ThemeOverride.swift
+      # WP-14.3: `.sportivistaTapTarget()` / `SportivistaActionButtonStyle` — the shared
       # tap-target helpers Agenda/Assistant's views call; same "no @testable
       # import" pattern as DesignTokens.swift/ThemeOverride.swift above.
-      - path: Zenji/Interaction.swift
-      - path: Zenji/Agenda
-      - path: Zenji/Widget
+      - path: Sportivista/Interaction.swift
+      - path: Sportivista/Agenda
+      - path: Sportivista/Widget
       # WP-16: the FM-lekegrind's sources — the pure pipeline (grounding, diff,
       # persistence, the mock parser) plus the FoundationModels-backed assistant
       # and its @Generable schema. Compiled directly into the hostless bundle
@@ -177,48 +177,48 @@ targets:
       # Simulator SDK so this compiles fine; the tests drive MockInterestAssistant
       # only (Apple Intelligence can't run in CI/Simulator — see AssistantView's
       # header and ios/README.md).
-      - path: Zenji/Assistant
+      - path: Sportivista/Assistant
       # WP-48: the profile domain (ProfileStore/InterestProfile/merge/sync-model/
       # backend/coordinator/CloudKit, the share codec + QR + panel, ResetService,
       # the EffectiveInterests bridge, and the view model's profil-sync extension)
-      # moved out of Assistant/ into its own Zenji/Profile — it had only landed in
+      # moved out of Assistant/ into its own Sportivista/Profile — it had only landed in
       # Assistant/ because that folder was already wired in here. Same hostless
-      # "no @testable import" pattern; app + ZenjiDeviceDev pick it up via
-      # `path: Zenji`, the widget deliberately does NOT (no profile/personal-
-      # context code in the widget). Zenji/Demo (LensDemoSeed/MemoryDemoSeed) is
+      # "no @testable import" pattern; app + SportivistaDeviceDev pick it up via
+      # `path: Sportivista`, the widget deliberately does NOT (no profile/personal-
+      # context code in the widget). Sportivista/Demo (LensDemoSeed/MemoryDemoSeed) is
       # just as deliberately NOT listed here nor in the widget target: the demo
       # seeds are app-only screenshot harnesses, and keeping them out of the
       # explicit source lists is what makes that quarantine structural.
-      - path: Zenji/Profile
+      - path: Sportivista/Profile
       # WP-30: personal-memory sources (facts/episodic/behaviour store over the
       # same ProfileSyncState, retrieval digest, distiller, spoiler shield, the
       # "Hva jeg vet om deg" page) — compiled directly into the hostless bundle,
-      # same "no @testable import" pattern. The app + ZenjiDeviceDev targets pick
-      # these up via `path: Zenji`; the widget deliberately does NOT (memory is
+      # same "no @testable import" pattern. The app + SportivistaDeviceDev targets pick
+      # these up via `path: Sportivista`; the widget deliberately does NOT (memory is
       # app-only — the widget has no network/personal-context code).
-      - path: Zenji/Memory
+      - path: Sportivista/Memory
       # WP-31: the first-run onboarding — pure gate/starter-pack logic + the
       # SwiftUI flow — compiled directly into the hostless bundle (same "no
-      # @testable import" pattern). App + ZenjiDeviceDev pick these up via
-      # `path: Zenji`; the widget deliberately does NOT (onboarding is app-only).
-      - path: Zenji/Onboarding
+      # @testable import" pattern). App + SportivistaDeviceDev pick these up via
+      # `path: Sportivista`; the widget deliberately does NOT (onboarding is app-only).
+      - path: Sportivista/Onboarding
       # WP-69: the FM-eval harness — the pure corpus/scorer/runner + the
       # DEBUG-only eval screen — compiled into the hostless bundle so
       # EvalCorpusTests can drive the SAME corpus through MockInterestAssistant
       # that the on-device screen drives through the real FoundationModels one
-      # (same "no @testable import" pattern). App + ZenjiDeviceDev pick these up
-      # via `path: Zenji`; the corpus JSON they bundle as a resource (above).
-      - path: Zenji/Eval
+      # (same "no @testable import" pattern). App + SportivistaDeviceDev pick these up
+      # via `path: Sportivista`; the corpus JSON they bundle as a resource (above).
+      - path: Sportivista/Eval
       # WP-63: the perf-instrumentation sources — the os_signpost helper
       # (PerfSignpost) plus the local MetricKit log + subscriber (MetricLog/
       # MetricSubscriber). Needed in the hostless bundle because AgendaViewModel
-      # (Zenji/Agenda) and AssistantViewModel (Zenji/Assistant) — already compiled
+      # (Sportivista/Agenda) and AssistantViewModel (Sportivista/Assistant) — already compiled
       # in above — now reference PerfSignpost, and MetricSubscriberTests /
       # MetricLogStoreTests drive the store + summarizer directly (same "no
-      # @testable import" pattern). App + ZenjiDeviceDev pick these up via
-      # `path: Zenji`; the widget deliberately does NOT (no perf/telemetry code in
+      # @testable import" pattern). App + SportivistaDeviceDev pick these up via
+      # `path: Sportivista`; the widget deliberately does NOT (no perf/telemetry code in
       # the widget — it has no reload/assistant hotpath and no app lifecycle).
-      - path: Zenji/Perf
+      - path: Sportivista/Perf
       # WP-13: the SAME golden feed-vector fixtures the JS reference test
       # (tests/feed-vectors.test.js) replays — referenced directly at the repo
       # root, never copied, so the two runners can never drift. XcodeGen
@@ -232,17 +232,17 @@ targets:
         buildPhase: resources
         type: folder
     resources:
-      - path: ZenjiTests/Fixtures
+      - path: SportivistaTests/Fixtures
     info:
-      path: ZenjiTests/Info.plist
+      path: SportivistaTests/Info.plist
       properties:
         CFBundleDevelopmentRegion: nb
     settings:
       base:
-        PRODUCT_NAME: ZenjiTests
+        PRODUCT_NAME: SportivistaTests
         PRODUCT_BUNDLE_IDENTIFIER: app.sportivista.ios.tests
 
-  # WP-16: a device-flavoured build of the SAME app sources (path: Zenji — so it
+  # WP-16: a device-flavoured build of the SAME app sources (path: Sportivista — so it
   # includes Assistant/ and its on-device FoundationModels code) for running on
   # a PHYSICAL iPhone under a FREE personal Apple Developer team. It handles two
   # free-account constraints WITHOUT touching the Simulator setup:
@@ -253,17 +253,17 @@ targets:
   #       Application Support unconditionally.
   #   (b) A previous device attempt failed with "Embedded binary is not signed
   #       with the same certificate as the parent app" — so this target does NOT
-  #       depend on / embed ZenjiWidgetExtension. The widget stays Simulator-only
+  #       depend on / embed SportivistaWidgetExtension. The widget stays Simulator-only
   #       until a paid account (WP-17).
-  # The Simulator `Zenji` target + scheme and every existing test are unchanged;
-  # this target is purely additive and lives in its own `ZenjiDeviceDev` scheme.
-  ZenjiDeviceDev:
+  # The Simulator `Sportivista` target + scheme and every existing test are unchanged;
+  # this target is purely additive and lives in its own `SportivistaDeviceDev` scheme.
+  SportivistaDeviceDev:
     type: application
     postBuildScripts:
       # «Har jeg siste versjon?» — stamp the BUILT Info.plist with the short
       # hash of the last commit touching ios/ in the tree this build came from
       # («-dirty» appended when ios/ has uncommitted changes) + a build date.
-      # Build-time only: no source file is generated, so ZenjiTests' direct
+      # Build-time only: no source file is generated, so SportivistaTests' direct
       # source compilation is unaffected. The app compares the stamp against
       # the published app-version.json (BuildStamp/AppVersionCheck).
       - name: Stamp build version
@@ -271,30 +271,30 @@ targets:
           STAMP=$(git -C "$SRCROOT/.." log -1 --format=%h -- ios/ 2>/dev/null || echo ukjent)
           if ! git -C "$SRCROOT/.." diff --quiet -- ios/ 2>/dev/null; then STAMP="${STAMP}-dirty"; fi
           PLIST="$TARGET_BUILD_DIR/$INFOPLIST_PATH"
-          /usr/libexec/PlistBuddy -c "Delete :ZenjiBuildStamp" "$PLIST" 2>/dev/null || true
-          /usr/libexec/PlistBuddy -c "Add :ZenjiBuildStamp string $STAMP" "$PLIST"
-          /usr/libexec/PlistBuddy -c "Delete :ZenjiBuildDate" "$PLIST" 2>/dev/null || true
-          /usr/libexec/PlistBuddy -c "Add :ZenjiBuildDate string $(date '+%d.%m %H:%M')" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Delete :SportivistaBuildStamp" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :SportivistaBuildStamp string $STAMP" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Delete :SportivistaBuildDate" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :SportivistaBuildDate string $(date '+%d.%m %H:%M')" "$PLIST"
         basedOnDependencyAnalysis: false
     platform: iOS
     deploymentTarget: "26.0"
     sources:
-      - path: Zenji
-        # This target's own Info.plist lives at ZenjiDeviceDev/Info.plist (below),
-        # so XcodeGen would otherwise treat the app's Zenji/Info.plist as an
+      - path: Sportivista
+        # This target's own Info.plist lives at SportivistaDeviceDev/Info.plist (below),
+        # so XcodeGen would otherwise treat the app's Sportivista/Info.plist as an
         # ordinary resource and copy it into the bundle — colliding with the
         # processed Info.plist ("Multiple commands produce …/Info.plist"). The
-        # Simulator `Zenji` target doesn't hit this because its info.path IS
-        # Zenji/Info.plist (auto-excluded). Exclude it explicitly here.
+        # Simulator `Sportivista` target doesn't hit this because its info.path IS
+        # Sportivista/Info.plist (auto-excluded). Exclude it explicitly here.
         excludes:
           - Info.plist
       # WP-69: the eval corpus as an app resource, so the DEBUG on-device eval
-      # screen (Zenji/Eval/EvalView) can load it from Bundle.main on the
+      # screen (Sportivista/Eval/EvalView) can load it from Bundle.main on the
       # physical iPhone — this is the build the owner actually runs the eval on.
-      - path: ZenjiTests/Fixtures/eval-corpus.json
+      - path: SportivistaTests/Fixtures/eval-corpus.json
         buildPhase: resources
     info:
-      path: ZenjiDeviceDev/Info.plist
+      path: SportivistaDeviceDev/Info.plist
       properties:
         CFBundleDevelopmentRegion: nb
         CFBundleDisplayName: Sportivista
@@ -317,22 +317,22 @@ targets:
               - sportivista
     settings:
       base:
-        # Distinct PRODUCT_NAME → distinct `ZenjiDeviceDev.app` output, so it
-        # never collides with the Simulator `Zenji` target's `Zenji.app` (the new
+        # Distinct PRODUCT_NAME → distinct `SportivistaDeviceDev.app` output, so it
+        # never collides with the Simulator `Sportivista` target's `Sportivista.app` (the new
         # build system flags a shared output path project-wide, even across
-        # schemes). The home-screen name stays "Zenji" via CFBundleDisplayName
+        # schemes). The home-screen name stays "Sportivista" via CFBundleDisplayName
         # above; only the on-disk product bundle name differs.
-        PRODUCT_NAME: ZenjiDeviceDev
+        PRODUCT_NAME: SportivistaDeviceDev
         # Reuses the app's own bundle id (NOT a distinct one): the free personal
         # team already has a valid "iOS Team Provisioning Profile: app.sportivista.ios"
         # covering this device, and a free account can't provision an unlimited
         # number of new App IDs — so the device build signs against the existing
-        # profile. The Simulator `Zenji` target shares this id but never signs
+        # profile. The Simulator `Sportivista` target shares this id but never signs
         # (CODE_SIGNING_ALLOWED=NO), so the two don't collide at install time
         # (only one is ever installed per destination). Xcode may warn about the
         # shared id; that's expected and harmless here.
         PRODUCT_BUNDLE_IDENTIFIER: app.sportivista.ios
-        CODE_SIGN_ENTITLEMENTS: ZenjiDeviceDev/ZenjiDeviceDev.entitlements
+        CODE_SIGN_ENTITLEMENTS: SportivistaDeviceDev/SportivistaDeviceDev.entitlements
         CODE_SIGN_STYLE: Automatic
         CODE_SIGNING_ALLOWED: YES
         CODE_SIGNING_REQUIRED: YES
@@ -342,89 +342,89 @@ targets:
   # WP-70: the XCUITest bundle — end-to-end regression of the main UX flows in
   # the Simulator (onboarding, follow-via-command-line, starter-pack toggles,
   # event detail + "hvorfor vises denne", theme toggle, reset) plus a cold-start
-  # `XCTApplicationLaunchMetric` baseline. Unlike ZenjiTests (a hostless LOGIC
+  # `XCTApplicationLaunchMetric` baseline. Unlike SportivistaTests (a hostless LOGIC
   # bundle) a UI-test bundle DRIVES the running app through XCUIApplication, so
-  # it needs `TEST_TARGET_NAME: Zenji` (the app under test) + a dependency on it
+  # it needs `TEST_TARGET_NAME: Sportivista` (the app under test) + a dependency on it
   # — the runner installs and launches that app in the Simulator. It compiles
-  # ONLY its own Swift (ZenjiUITests/); it never links the app's sources (the
-  # opposite of the hostless bundles), so there is no `path: Zenji` here. The app
-  # is driven against the deterministic `ZENJI_DEMO=uitest` harness (UITestSeed)
+  # ONLY its own Swift (SportivistaUITests/); it never links the app's sources (the
+  # opposite of the hostless bundles), so there is no `path: Sportivista` here. The app
+  # is driven against the deterministic `SPORTIVISTA_DEMO=uitest` harness (UITestSeed)
   # — mock assistant + seeded cache, no network, no Apple Intelligence — so the
   # flows are stable in CI/Simulator. CI requirement is only that this target
-  # BUILDS (it is in the Zenji scheme's build set below); the flows are run from
-  # the dedicated ZenjiUITests scheme locally / on the PR agent's Mac.
-  ZenjiUITests:
+  # BUILDS (it is in the Sportivista scheme's build set below); the flows are run from
+  # the dedicated SportivistaUITests scheme locally / on the PR agent's Mac.
+  SportivistaUITests:
     type: bundle.ui-testing
     platform: iOS
     deploymentTarget: "26.0"
     sources:
-      - path: ZenjiUITests
+      - path: SportivistaUITests
     dependencies:
-      - target: Zenji
+      - target: Sportivista
     info:
-      path: ZenjiUITests/Info.plist
+      path: SportivistaUITests/Info.plist
       properties:
         CFBundleDevelopmentRegion: nb
     settings:
       base:
-        PRODUCT_NAME: ZenjiUITests
+        PRODUCT_NAME: SportivistaUITests
         PRODUCT_BUNDLE_IDENTIFIER: app.sportivista.ios.uitests
         # The app the runner installs + launches + attaches to. XcodeGen turns
         # this into the TEST_TARGET_NAME / test-host wiring a UI-test bundle needs.
-        TEST_TARGET_NAME: Zenji
+        TEST_TARGET_NAME: Sportivista
 
 schemes:
   # Unchanged from before WP-70: the fast, hostless unit run. `xcodebuild test
-  # -scheme Zenji` stays unit-only (ZenjiTests) so the ios/README command and CI
+  # -scheme Sportivista` stays unit-only (SportivistaTests) so the ios/README command and CI
   # gate are exactly as documented — the UI suite lives in its own scheme below.
-  Zenji:
+  Sportivista:
     build:
       targets:
-        Zenji: all
-        ZenjiWidgetExtension: all
-        ZenjiTests: [test]
+        Sportivista: all
+        SportivistaWidgetExtension: all
+        SportivistaTests: [test]
     test:
       config: Debug
       targets:
-        - ZenjiTests
+        - SportivistaTests
     run:
       config: Debug
     archive:
       config: Release
-  ZenjiWidgetExtension:
+  SportivistaWidgetExtension:
     build:
       targets:
-        ZenjiWidgetExtension: all
+        SportivistaWidgetExtension: all
     run:
       config: Debug
     archive:
       config: Release
   # WP-16: builds only the widget-free, App-Group-free device app (see the
-  # ZenjiDeviceDev target above). Used for the physical-iPhone build/install.
-  ZenjiDeviceDev:
+  # SportivistaDeviceDev target above). Used for the physical-iPhone build/install.
+  SportivistaDeviceDev:
     build:
       targets:
-        ZenjiDeviceDev: all
+        SportivistaDeviceDev: all
     run:
       config: Debug
     archive:
       config: Release
   # WP-70: the UI-test scheme. Builds the app + the widget it embeds (the app
   # can't launch in the Simulator without its embedded extension) and runs the
-  # XCUITest bundle. Kept SEPARATE from the Zenji scheme so the everyday unit run
+  # XCUITest bundle. Kept SEPARATE from the Sportivista scheme so the everyday unit run
   # stays fast; this scheme is what proves the UI target builds ("alle schemes
   # bygger") and is the entry point for running the flows + the launch metric:
-  #   xcodebuild test -project Zenji.xcodeproj -scheme ZenjiUITests \
+  #   xcodebuild test -project Sportivista.xcodeproj -scheme SportivistaUITests \
   #     -destination 'platform=iOS Simulator,name=iPhone 17'
-  ZenjiUITests:
+  SportivistaUITests:
     build:
       targets:
-        Zenji: all
-        ZenjiWidgetExtension: all
-        ZenjiUITests: [test]
+        Sportivista: all
+        SportivistaWidgetExtension: all
+        SportivistaUITests: [test]
     test:
       config: Debug
       targets:
-        - ZenjiUITests
+        - SportivistaUITests
     run:
       config: Debug

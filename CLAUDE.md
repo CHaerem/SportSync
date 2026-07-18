@@ -204,7 +204,7 @@ by default) or the agents' `git add` silently skips them.
   queued/in-flight and update the relevant WP status row when you complete one.
 - **`ios/`** — the native iOS app (SwiftUI, a separate track from the web dashboard).
   It is documented on its own in **`ios/README.md`** (a subsystem map: one section per
-  `Zenji/` directory — Assistant, Profile, Memory, Onboarding, Widget — plus targets/
+  `Sportivista/` directory — Assistant, Profile, Memory, Onboarding, Widget — plus targets/
   signing and testing). This CLAUDE.md covers the web pipeline; for anything under
   `ios/`, start from `ios/README.md`.
 

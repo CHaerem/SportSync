@@ -1,13 +1,15 @@
 // HIG coherence gate (DESIGN.md § HIG-samsvar → "Dynamic Type" checkbox):
 //
 //   "all tekst via tekststiler; ingen isolert `.system(size:)`.
-//    CI-gate: en test feiler på nye faste størrelser i `Zenji/`."
+//    CI-gate: en test feiler på nye faste størrelser i `Sportivista/`."
 //
 // The iOS baseline binds every text role to a Dynamic Type text style via
-// `Font.zenji(_:weight:)` / `Font.zenjiTabular(...)`. A fixed point size
-// (`Font.system(size: 13)`) ignores the user's Dynamic Type setting and is
+// `Font.sportivista(_:weight:)` / `Font.sportivistaTabular(...)`. A fixed point
+// size (`Font.system(size: 13)`) ignores the user's Dynamic Type setting and is
 // barred. The WP-80→WP-85 migration also removed the `zenjiMono(size:)` shim,
-// which was the last fixed-size font; nothing may reintroduce it.
+// which was the last fixed-size font; nothing may reintroduce it — the tripwire
+// keeps the historical `zenjiMono` name AND guards the post-rename
+// `sportivistaMono` spelling.
 //
 // This gate greps the source (it cannot run on-device), so it catches future
 // bloat in CI rather than after ship. Legitimate exceptions live in an explicit,
@@ -18,10 +20,10 @@ import path from "path";
 
 // Scan the app AND the WidgetKit extension — DESIGN.md § Cross-surface binds
 // both to the baseline (the widget was migrated in WP-84), so the gate must
-// cover ios/ZenjiWidget too, not just the app tree.
+// cover ios/SportivistaWidget too, not just the app tree.
 const SCAN_DIRS = [
-	path.resolve(process.cwd(), "ios", "Zenji"),
-	path.resolve(process.cwd(), "ios", "ZenjiWidget"),
+	path.resolve(process.cwd(), "ios", "Sportivista"),
+	path.resolve(process.cwd(), "ios", "SportivistaWidget"),
 ];
 
 // Explicit whitelist of legitimate fixed-size call sites. Each entry is
@@ -31,7 +33,7 @@ const SCAN_DIRS = [
 // Empty today — the baseline has no fixed-size text.
 const SYSTEM_SIZE_WHITELIST = [
 	// Example shape (leave commented until a real exception is needed):
-	// { file: "ZenjiWidget/SomeGlyph.swift", needle: ".system(size: 8)", reason: "..." },
+	// { file: "SportivistaWidget/SomeGlyph.swift", needle: ".system(size: 8)", reason: "..." },
 ];
 
 /** Recursively collect every .swift file under a directory. */
@@ -51,7 +53,7 @@ function swiftFiles(dir) {
 // DesignTokens.swift) is NOT matched, since `[^)\s]` requires a real argument
 // char that is neither the closing paren nor whitespace.
 const FIXED_SIZE = /(?:\.system\(size:|systemFont\(ofSize:)\s*[^)\s]/;
-const SHIM = /zenjiMono\(size:/;
+const SHIM = /(?:zenji|sportivista)Mono\(size:/;
 
 describe("iOS Dynamic Type HIG gate", () => {
 	const files = SCAN_DIRS.flatMap(swiftFiles);
@@ -60,7 +62,7 @@ describe("iOS Dynamic Type HIG gate", () => {
 		expect(files.length).toBeGreaterThan(0);
 	});
 
-	it("no view reintroduces the removed zenjiMono(size:) shim", () => {
+	it("no view reintroduces the removed zenjiMono/sportivistaMono(size:) shim", () => {
 		const offenders = [];
 		for (const file of files) {
 			const lines = fs.readFileSync(file, "utf-8").split("\n");
@@ -70,7 +72,7 @@ describe("iOS Dynamic Type HIG gate", () => {
 				}
 			});
 		}
-		expect(offenders, `zenjiMono(size:) was removed in WP-85 — use Font.zenji / Font.zenjiTabular:\n${offenders.join("\n")}`).toEqual([]);
+		expect(offenders, `zenjiMono/sportivistaMono(size:) was removed in WP-85 — use Font.sportivista / Font.sportivistaTabular:\n${offenders.join("\n")}`).toEqual([]);
 	});
 
 	it("no view uses a fixed .system(size:) point that bypasses Dynamic Type", () => {
@@ -86,6 +88,6 @@ describe("iOS Dynamic Type HIG gate", () => {
 				if (!whitelisted) offenders.push(`${rel}:${i + 1}: ${line.trim()}`);
 			});
 		}
-		expect(offenders, `Fixed .system(size:) ignores Dynamic Type — bind to a text style via Font.zenji(_:weight:), or whitelist with a reason:\n${offenders.join("\n")}`).toEqual([]);
+		expect(offenders, `Fixed .system(size:) ignores Dynamic Type — bind to a text style via Font.sportivista(_:weight:), or whitelist with a reason:\n${offenders.join("\n")}`).toEqual([]);
 	});
 });
