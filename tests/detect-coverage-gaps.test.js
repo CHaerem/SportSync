@@ -7,6 +7,10 @@ import {
 	containsName,
 	headlineIsImminent,
 	detectSourceAnomalies,
+	detectTrackedClaims,
+	reasonClaimsCoverage,
+	entryClaimTerms,
+	parseNorwegianDates,
 } from "../scripts/detect-coverage-gaps.js";
 
 const NOW = Date.parse("2026-07-03T12:00:00Z");
@@ -225,5 +229,109 @@ describe("detectSourceAnomalies", () => {
 		const f1 = a.find((x) => x.sport === "f1");
 		expect(f1?.issue).toBe("dropped-in-build");
 		expect(f1?.severity).toBe("high");
+	});
+});
+
+describe("reasonClaimsCoverage", () => {
+	it("recognises the AI's board-coverage assertions", () => {
+		expect(reasonClaimsCoverage("Ekte ai-research-event (bekreftet ATP)")).toBe(true);
+		expect(reasonClaimsCoverage("nå lagt til på tavla som ai-research-event")).toBe(true);
+		expect(reasonClaimsCoverage("seks events ligger nå inne")).toBe(true);
+	});
+	it("does NOT treat a deliberate non-coverage as a claim (Tari/Andorra class)", () => {
+		// The real Aryan Tari entry: names a tournament but explicitly adds no event.
+		expect(reasonClaimsCoverage("Andorra Open 18.–26. juli — Ingen event lagt til (finner ikke bekreftet deltakelse).")).toBe(false);
+		expect(reasonClaimsCoverage("holdes av tavla til klubben bekrefter tid")).toBe(false);
+	});
+});
+
+describe("entryClaimTerms", () => {
+	it("keeps distinctive words incl. parenthetical entity, drops years/months", () => {
+		expect(entryClaimTerms({ name: "Swiss Open Gstaad 2026" })).toEqual(expect.arrayContaining(["Swiss", "Open", "Gstaad"]));
+		expect(entryClaimTerms({ name: "Swiss Open Gstaad 2026" })).not.toContain("2026");
+		expect(entryClaimTerms({ name: "OBOS-ligaen 2026 (Lyn Oslo)" })).toEqual(expect.arrayContaining(["Lyn", "Oslo"]));
+	});
+});
+
+describe("parseNorwegianDates", () => {
+	const now = Date.parse("2026-07-18T00:00:00Z");
+	it("parses day+month prose and resolves the implicit year near now", () => {
+		const [d] = parseNorwegianDates("finalen søndag 26. juli", now);
+		expect(new Date(d.ts).toISOString().slice(0, 10)).toBe("2026-07-26");
+	});
+	it("parses abbreviations and the last day of a range", () => {
+		const ds = parseNorwegianDates("kampen torsdag 27. aug kl. 21.00", now);
+		expect(new Date(ds[0].ts).toISOString().slice(0, 10)).toBe("2026-08-27");
+	});
+	it("returns nothing for prose without a day+month date", () => {
+		expect(parseNorwegianDates("kl. 21.00 på Camp Nou", now)).toEqual([]);
+	});
+});
+
+describe("detectTrackedClaims — the Gstaad class (RSS-independent)", () => {
+	const now = Date.parse("2026-07-18T00:00:00Z");
+	// tracked.json asserts the tournament is on the board ("ai-research-event"),
+	// naming a concrete date, while events.json carries no such event.
+	const gstaadTracked = {
+		tournaments: [
+			{
+				id: "swiss-open-gstaad-2026",
+				name: "Swiss Open Gstaad 2026",
+				sport: "tennis",
+				reason: "Casper Ruuds turnering (ATP 250) 13.–19. juli på Roy Emerson Arena. Ekte ai-research-event (bekreftet ATP + Wikipedia, TV 2 Play).",
+			},
+		],
+	};
+
+	it("flags a coverage claim with no matching event on the board", () => {
+		const gaps = detectTrackedClaims({ tracked: gstaadTracked, events: [], now });
+		expect(gaps).toHaveLength(1);
+		expect(gaps[0].kind).toBe("tracked-claim");
+		expect(gaps[0].entity).toBe("Swiss Open Gstaad 2026");
+		expect(gaps[0].sport).toBe("tennis");
+		expect(gaps[0].imminent).toBe(true); // 19 July is within 4 days of 18 July
+	});
+
+	it("does NOT flag when the board actually carries the event", () => {
+		const events = [
+			{ sport: "tennis", title: "EFG Swiss Open Gstaad", time: "2026-07-17T11:30:00Z", endTime: "2026-07-19T18:00:00Z" },
+		];
+		expect(detectTrackedClaims({ tracked: gstaadTracked, events, now })).toEqual([]);
+	});
+
+	it("recognises coverage via an ongoing multi-day event and the players field", () => {
+		// Athlete entry; the event is titled by tournament but lists the player.
+		const tracked = {
+			athletes: [{ name: "Viktor Hovland", sport: "golf", reason: "på tavla: The Open, tee-tid bekreftet" }],
+		};
+		const events = [
+			{ sport: "golf", title: "The Open", norwegianPlayers: [{ name: "Viktor Hovland" }], time: "2026-07-16T04:00:00Z", endTime: "2026-07-19T20:00:00Z" },
+		];
+		expect(detectTrackedClaims({ tracked, events, now })).toEqual([]);
+	});
+
+	it("does NOT flag an entry that never asserts coverage (deliberate non-coverage)", () => {
+		const tracked = {
+			athletes: [{ name: "Aryan Tari", sport: "chess", reason: "Andorra Open 18.–26. juli — Ingen event lagt til (finner ikke bekreftet Tari-deltakelse)." }],
+		};
+		expect(detectTrackedClaims({ tracked, events: [], now })).toEqual([]);
+	});
+
+	it("respects the sport scope — a wrong-sport event does not count as coverage", () => {
+		const events = [{ sport: "golf", title: "Swiss Open (golf, unrelated)", time: "2026-07-18T10:00:00Z" }];
+		const gaps = detectTrackedClaims({ tracked: gstaadTracked, events, now });
+		expect(gaps).toHaveLength(1);
+	});
+
+	it("skips entries whose expires is already past", () => {
+		const tracked = {
+			tournaments: [{ ...gstaadTracked.tournaments[0], expires: "2026-07-01T00:00:00Z" }],
+		};
+		expect(detectTrackedClaims({ tracked, events: [], now })).toEqual([]);
+	});
+
+	it("handles missing/empty tracked gracefully", () => {
+		expect(detectTrackedClaims({ tracked: null, events: [], now })).toEqual([]);
+		expect(detectTrackedClaims({ tracked: {}, events: [], now })).toEqual([]);
 	});
 });
