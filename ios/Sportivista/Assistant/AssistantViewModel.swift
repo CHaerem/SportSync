@@ -799,6 +799,22 @@ final class AssistantViewModel {
     /// them with a change.
     func fillSuggestion(_ text: String) { utterance = text }
 
+    /// WP-99 — the standing "Hva kan du gjøre?" help question, used both as the
+    /// first focus-suggestion pill's label and the utterance it submits. Phrased
+    /// so it routes through the EXISTING help arm (the mock's `AssistantHelp`
+    /// capability answerer matches «kan du», the FM path reads it via the
+    /// read-only `getHelp` tool) — no new intent logic.
+    static let helpPrompt = "Hva kan du gjøre?"
+
+    /// FOCUS state, first pill: ask the assistant what it can do. Unlike
+    /// `fillSuggestion`, this DOES submit (a read-only capability question, no
+    /// mutation to confirm) so the user gets the answer immediately instead of
+    /// having to send it themselves — closing the "what can I even do here?" gap.
+    func askForHelp() {
+        utterance = Self.helpPrompt
+        run()
+    }
+
     /// TYPING state: live grounding of the in-progress utterance against the
     /// SAME entity index the grounder uses — "velg, ikke stav". Reuses
     /// `EntityIndex.nearestMatches` (no new matching logic); empty until there's

@@ -130,6 +130,22 @@ struct CommandLineView: View {
     private var focusSuggestions: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: SportivistaSpacing.s) {
+                // WP-99: a STANDING first pill that answers "what can this line
+                // even do?" — the discoverability gap the owner hit. Unlike the
+                // example prompts (which FILL the line), it routes straight to the
+                // EXISTING help arm (WP-68 getHelp/AssistantHelp) and shows the
+                // answer — so tapping it teaches, it doesn't leave homework.
+                Button {
+                    focused = false
+                    viewModel.askForHelp()
+                } label: {
+                    Text(AssistantViewModel.helpPrompt)
+                        .font(.sportivista(.footnote))
+                        .foregroundStyle(SportivistaTokens.accent)
+                }
+                .buttonStyle(SportivistaActionButtonStyle(tint: SportivistaTokens.accent))
+                .accessibilityIdentifier("assistant.help")
+
                 ForEach(Array(viewModel.focusSuggestions.enumerated()), id: \.offset) { index, text in
                     Button {
                         viewModel.fillSuggestion(text)
@@ -218,8 +234,22 @@ struct CommandLineView: View {
                 .accessibilityIdentifier("command.send")
                 .sportivistaTapTarget()
             }
+        } else if focused {
+            // WP-99: focused but EMPTY — the send button lives in this trailing
+            // slot when there's text, so the empty-focused state was the one hole
+            // with no way to put the keyboard away (the owner-hit bug). Fill it
+            // with a quiet, HIG-native keyboard-dismiss glyph (never amber — send
+            // is the row's only amber). ≥44pt via the shared tap target.
+            Button { focused = false } label: {
+                Image(systemName: "keyboard.chevron.compact.down")
+                    .font(.sportivista(.subheadline))
+                    .foregroundStyle(SportivistaTokens.secondaryLabel)
+            }
+            .accessibilityLabel("Lukk tastaturet")
+            .accessibilityIdentifier("command.dismissKeyboard")
+            .sportivistaTapTarget()
         } else {
-            // Idle: the blinking prompt cursor IS the whole affordance.
+            // Idle (unfocused): the blinking prompt cursor IS the whole affordance.
             BlinkingCursor()
         }
     }
