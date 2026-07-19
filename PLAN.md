@@ -115,7 +115,7 @@ mennesket, aldri av en agent.
 | WP-108 | Visuell affordanse: kapsel-anker + ekte Capsule + sport-symbol per rad (eier-dogfooding bygg 6) | 0H+ | WP-106 | ✅ #324 merget 19.07 |
 
 | WP-110 | Pipeline-vakter: sjakk-falsk-positiv + kontrakter | 0I | — | ⬜ |
-| WP-111 | Web: deltaker-visning + ferskhetsvakt + «Om»-lesbarhet + Zenji-headere | 0I | — | ⬜ |
+| WP-111 | Web: deltaker-visning + ferskhetsvakt + «Om»-lesbarhet + Zenji-headere | 0I | — | 🔬 |
 | WP-112 | iOS: perf-port-robusthet + deltaker-visning i agendaraden | 0I | — | ⬜ |
 | WP-113 | Sikkerhet: preview-deploy-injeksjon + CI-skrivevakt (BESKYTTEDE STIER — eier merger) | 0I | — | ⬜ |
 | WP-114 | Dok-resynk etter 19.07-gjennomgangen | 0I | — | ⬜ |

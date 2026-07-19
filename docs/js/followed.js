@@ -1,4 +1,4 @@
-// Zenji — the entity-first "when's X next?" index: the compact "Dine neste" glance
+// Sportivista — the entity-first "when's X next?" index: the compact "Dine neste" glance
 // at the top and the "Hva vi følger" disclosure at the bottom.
 // Extends window.Dashboard.prototype (see js/dashboard.js). Loads AFTER dashboard.js.
 Object.assign(window.Dashboard.prototype, {

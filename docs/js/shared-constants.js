@@ -1,4 +1,4 @@
-// Zenji Shared Constants & Utilities
+// Sportivista Shared Constants & Utilities
 // Canonical source of truth for values shared between client (dashboard.js) and server (helpers.js).
 // Loaded as the first <script> tag — all symbols are globals.
 

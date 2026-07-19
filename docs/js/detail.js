@@ -1,4 +1,4 @@
-// Zenji — progressive disclosure: the extra context shown when a row is tapped
+// Sportivista — progressive disclosure: the extra context shown when a row is tapped
 // (calm — hidden by default). The agenda's row toggle (bindAgendaExpand) lives in
 // dashboard.js and calls eventDetail() from here.
 // Extends window.Dashboard.prototype (see js/dashboard.js). Loads AFTER dashboard.js.
@@ -73,6 +73,27 @@ Object.assign(window.Dashboard.prototype, {
 		);
 	},
 
+	/** Split a summary into calm, escaped paragraphs so the "Om" section isn't one
+	 *  wall of text. Explicit blank lines (\n\n) split first; otherwise a block of
+	 *  more than two sentences is grouped into runs of two. Sentence boundaries are
+	 *  only period/!/? followed by whitespace + a capital — so "kl. 21.00", "UCI
+	 *  2.Pro" and "29. juli" stay intact. */
+	aboutParagraphs(text) {
+		const raw = String(text || '').trim();
+		if (!raw) return [];
+		const blocks = raw.split(/\n\s*\n/).map((b) => b.replace(/\s+/g, ' ').trim()).filter(Boolean);
+		const out = [];
+		for (const block of blocks) {
+			const sentences = block
+				.split(/(?<=[.!?…][»")'”’]?)\s+(?=[A-ZÆØÅ])/)
+				.map((s) => s.trim())
+				.filter(Boolean);
+			if (sentences.length <= 2) { out.push(block); continue; }
+			for (let i = 0; i < sentences.length; i += 2) out.push(sentences.slice(i, i + 2).join(' '));
+		}
+		return out.map((p) => escapeHtml(p));
+	},
+
 	eventDetail(e) {
 		if (e.isSeries) return this.seriesDetail(e);
 		const rows = [];
@@ -85,12 +106,18 @@ Object.assign(window.Dashboard.prototype, {
 		add('Ledende', this.golfContext(e));
 		if (e.sport === 'f1') this.addF1Context(add);
 		if (e.venue && e.venue !== 'TBD') add('Arena', escapeHtml(e.venue));
+		// Key facts as their own quiet lines where the fields exist (never a wall).
+		if (e.round) add('Runde', escapeHtml(e.round));
+		if (e.surface) add('Underlag', escapeHtml(e.surface));
+		if (e.format) add('Format', escapeHtml(e.format));
 		if (e.sport === 'golf' && (e.norwegianPlayers?.length || e.featuredGroups?.length)) {
 			this.addGolfField(e, add);
 		} else if (e.norwegianPlayers?.length) {
 			add('Norske', escapeHtml(e.norwegianPlayers.map((p) => p.name || p).join(', ')));
 		}
-		if (e.summary) add('Om', escapeHtml(e.summary));
+		// "Om" — the summary, structured into calm paragraphs instead of one wall.
+		// First paragraph carries the "Om" label; the rest continue under a blank key.
+		this.aboutParagraphs(e.summary).forEach((p, i) => add(i === 0 ? 'Om' : '', p));
 
 		const streams = Array.isArray(e.streaming) ? e.streaming : [];
 		if (streams.length) {
