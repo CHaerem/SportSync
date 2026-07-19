@@ -67,13 +67,38 @@ enum AgendaFormat {
     // MARK: - "Hva" — the title column
 
     /// Team-vs-team events read as "Home – Away" (en dash, matching
-    /// dashboard.js's eventTitle); anything else (golf, chess, a stage race
-    /// stage, …) falls back to the event's own title.
-    static func title(homeTeam: String?, awayTeam: String?, fallback: String) -> String {
-        guard let home = homeTeam, !home.isEmpty, let away = awayTeam, !away.isEmpty else {
-            return fallback
+    /// dashboard.js's eventTitle). An event that instead carries a two-sided
+    /// `participants` matchup but no home/away teams (the AI-research
+    /// head-to-head shape — "VM-finalen 2026" with participants Spania/Argentina)
+    /// reads as the matchup itself, but ONLY when the title is GENERIC (does not
+    /// already name both sides). Anything else — golf and other many-sided fields,
+    /// a single-entry stage-race participant, chess — falls back to the event's
+    /// own title (a field of names must never become a list). Pure display: the
+    /// five feed predicates and the golden vectors never see this.
+    static func title(homeTeam: String?, awayTeam: String?, participants: [Participant] = [], fallback: String) -> String {
+        if let home = homeTeam, !home.isEmpty, let away = awayTeam, !away.isEmpty {
+            return "\(home) – \(away)"
         }
-        return "\(home) – \(away)"
+        if let matchup = matchupTitle(participants: participants, title: fallback) {
+            return matchup
+        }
+        return fallback
+    }
+
+    /// "A – B" when `participants` is EXACTLY a two-sided matchup of non-empty
+    /// names that the generic `title` does not already carry — else nil (not a
+    /// head-to-head, or the title already names both sides). Head-to-head only:
+    /// one participant, or three-plus (a golf field, a CS2 group stage), is never
+    /// a matchup, so the many-participant case keeps the event's own title.
+    static func matchupTitle(participants: [Participant], title: String) -> String? {
+        guard participants.count == 2 else { return nil }
+        let names = participants.map { $0.name.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
+        guard names.count == 2 else { return nil }
+        // Title already names both sides → it isn't generic; keep the richer title.
+        if names.allSatisfy({ title.range(of: $0, options: .caseInsensitive) != nil }) {
+            return nil
+        }
+        return "\(names[0]) – \(names[1])"
     }
 
     /// The quiet meta line under the title (DESIGN.md "Radens anatomi":

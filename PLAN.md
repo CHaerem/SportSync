@@ -116,7 +116,7 @@ mennesket, aldri av en agent.
 
 | WP-110 | Pipeline-vakter: sjakk-falsk-positiv + kontrakter | 0I | — | 🔬 PR åpnet 20.07 — dropped-in-build katalog-gatet (delt `makeCoverageGate` i helpers, build-events + gap-detektor deler én gate; Sant Martí-anomali borte, øvrige gaps uendret); usage-gate-kommentar oppdatert (token wiret); cyclingstage-tidssemantikk-quirk lagt til; scout/self-repair logg-kontrakt strammet (logg+commit på HVER kjøring) |
 | WP-111 | Web: deltaker-visning + ferskhetsvakt + «Om»-lesbarhet + Zenji-headere | 0I | — | 🔬 |
-| WP-112 | iOS: perf-port-robusthet + deltaker-visning i agendaraden | 0I | — | ⬜ |
+| WP-112 | iOS: perf-port-robusthet + deltaker-visning i agendaraden | 0I | — | 🔬 |
 | WP-113 | Sikkerhet: preview-deploy-injeksjon + CI-skrivevakt (BESKYTTEDE STIER — eier merger) | 0I | — | ⬜ |
 | WP-114 | Dok-resynk etter 19.07-gjennomgangen | 0I | — | ⬜ |
 | WP-115 | iOS: in-app nyhetsbrowser (SFSafariViewController) | 0I | WP-106 | ⬜ bølge 2 |
@@ -191,6 +191,20 @@ forsøk der ALLE må feile (ekte O(n²) feiler deterministisk; runner-støy gjø
 visning, de fem predikatene og vektorene urørt). **Ikke-mål:** ingen endring i
 matching/kompilering. **Aksept:** full unit-suite grønn, 4 schemes bygger,
 13/14 vektorer bit-like, perf-suiten kjørt 3× lokalt uten flake.
+🔬 **Implementert (branch wp-112-ios-perfport-deltakere):** (1) perf-porten:
+`interleavedMinTimes` måler small+large BACK-TO-BACK per iterasjon (deler
+øyeblikkslast → forholdstallet er lastuavhengig), og ratio-sjekken kjører opptil
+3 forsøk der bare ALLE-over-tak feiler (ekte O(n²) er deterministisk hvert forsøk,
+ett runner-hikk absorberes av neste rene forsøk) — begrunnelsen står i
+testkommentaren. (2) `AgendaFormat.title(...)` tar nå `participants` og fikk
+`matchupTitle`: nøyaktig 2 ikke-tomme deltakere + generisk tittel (som ikke
+allerede navngir begge) ⇒ «Spania – Argentina», 1 eller 3+ (golffelt/CS2-
+gruppespill) beholder tittelen. `makeItem` løfter matchup-en til tittelen og
+demoter den generiske tittelen til dempet meta-linje (VM-finalen 2026 bevares);
+live-linja, widgeten og detaljarket sender også `participants` (én delt ren
+visnings-funksjon). De fem predikatene + gylne vektorene urørt. Nye tester:
+AgendaFormatTests (7 title-caser) + AgendaViewModelTests (matchup-rad + team-
+regresjonsvakt); `EventBuilder` fikk `participants`/`round`.
 
 ### WP-113 · Sikkerhet: preview-deploy-injeksjon + CI-skrivevakt (BESKYTTEDE STIER)
 **Mål:** lukk RCE-vektoren og håndhevingsgapet fra sikkerhetsgjennomgangen.

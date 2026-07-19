@@ -95,7 +95,7 @@ enum WidgetTimelineBuilder {
                 date: tick,
                 hasHighlight: true,
                 timeLabel: AgendaFormat.timeLabel(time: hit.feed.time, endTime: hit.feed.endTime),
-                title: AgendaFormat.title(homeTeam: hit.feed.homeTeam, awayTeam: hit.feed.awayTeam, fallback: hit.feed.title),
+                title: AgendaFormat.title(homeTeam: hit.feed.homeTeam, awayTeam: hit.feed.awayTeam, participants: hit.feed.participants, fallback: hit.feed.title),
                 channelLabel: AgendaFormat.channelLabel(hit.event.streaming),
                 isMustSee: FeedCompiler.isMustSee(hit.feed, interests: interests)
             )

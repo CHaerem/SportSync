@@ -75,21 +75,42 @@ final class AgendaMatchingPerfTests: XCTestCase {
         return events
     }
 
-    /// Best-of-`iterations` wall time for one `buildSections` (min discards
-    /// scheduler noise — the standard way to read a micro-benchmark).
-    private func minBuildSectionsTime(events: [Event], index: EntityIndex, iterations: Int = 5) -> TimeInterval {
+    /// Wall time for ONE `buildSections`, asserting the fixture compiled.
+    private func oneBuildSectionsTime(events: [Event], index: EntityIndex, interests: Interests) -> TimeInterval {
+        let start = DispatchTime.now().uptimeNanoseconds
+        let sections = AgendaViewModel.buildSections(
+            events: events, interests: interests, now: Self.now, index: index, followedIds: []
+        )
+        let elapsed = Double(DispatchTime.now().uptimeNanoseconds - start) / 1_000_000_000
+        XCTAssertFalse(sections.isEmpty, "the synthetic fixture must compile into a non-empty board")
+        return elapsed
+    }
+
+    /// One scale to benchmark — its events + the matching index.
+    private struct Scale { let events: [Event]; let index: EntityIndex }
+
+    /// Best-of-`iterations` wall times for the small and large scales, measured
+    /// **INTERLEAVED**: within each iteration the small compile is timed and then
+    /// IMMEDIATELY the large one, and `min` is taken per scale across iterations
+    /// (min discards scheduler noise — the standard way to read a micro-benchmark).
+    ///
+    /// Why interleave instead of two separate 5-iteration blocks (the WP-61
+    /// original): on a SHARED CI runner a burst of neighbour load can land during
+    /// one measurement block and not the other, inflating only that block's `min`
+    /// and skewing the ratio. Timing both scales back-to-back each iteration makes
+    /// them share the same instantaneous machine state, so transient load lifts
+    /// BOTH and the ratio stays honest — while a genuine O(n²) regression makes
+    /// the large scale ~4× the small in EVERY iteration regardless of load. (See
+    /// the 19.07 incident documented in the ratio test below.)
+    private func interleavedMinTimes(small: Scale, large: Scale, iterations: Int = 5) -> (small: TimeInterval, large: TimeInterval) {
         let interests = Interests(followBroadly: ["football"])
-        var best = Double.infinity
+        var bestSmall = Double.infinity
+        var bestLarge = Double.infinity
         for _ in 0..<iterations {
-            let start = DispatchTime.now().uptimeNanoseconds
-            let sections = AgendaViewModel.buildSections(
-                events: events, interests: interests, now: Self.now, index: index, followedIds: []
-            )
-            let elapsed = Double(DispatchTime.now().uptimeNanoseconds - start) / 1_000_000_000
-            XCTAssertFalse(sections.isEmpty, "the synthetic fixture must compile into a non-empty board")
-            best = min(best, elapsed)
+            bestSmall = min(bestSmall, oneBuildSectionsTime(events: small.events, index: small.index, interests: interests))
+            bestLarge = min(bestLarge, oneBuildSectionsTime(events: large.events, index: large.index, interests: interests))
         }
-        return best
+        return (bestSmall, bestLarge)
     }
 
     // MARK: - The O(n²) guard (machine-independent)
@@ -99,28 +120,50 @@ final class AgendaMatchingPerfTests: XCTestCase {
         // roughly doubles the time. A regression to the per-name scan makes it
         // O(events × entities): the 2× scale would ~QUADRUPLE. The 3.0 ceiling
         // sits above linear-plus-noise and well below the ~4× of a quadratic.
-        let smallEvents = makeEvents(eventCount: 250, entityCount: 1_000)
-        let smallIndex = makeIndex(entityCount: 1_000)
-        let largeEvents = makeEvents(eventCount: 500, entityCount: 2_000)
-        let largeIndex = makeIndex(entityCount: 2_000)
+        let small = Scale(events: makeEvents(eventCount: 250, entityCount: 1_000), index: makeIndex(entityCount: 1_000))
+        let large = Scale(events: makeEvents(eventCount: 500, entityCount: 2_000), index: makeIndex(entityCount: 2_000))
 
         // Warm caches / JIT-equivalent first pass, then measure.
-        _ = minBuildSectionsTime(events: smallEvents, index: smallIndex, iterations: 1)
-        _ = minBuildSectionsTime(events: largeEvents, index: largeIndex, iterations: 1)
+        _ = interleavedMinTimes(small: small, large: large, iterations: 1)
 
-        let small = minBuildSectionsTime(events: smallEvents, index: smallIndex)
-        let large = minBuildSectionsTime(events: largeEvents, index: largeIndex)
-        let ratio = large / max(small, 1e-9)
-
-        print("WP-61 buildSections: small(250ev/1000ent)=\(String(format: "%.2f", small * 1000)) ms, large(500ev/2000ent)=\(String(format: "%.2f", large * 1000)) ms, ratio=\(String(format: "%.2f", ratio))")
-
-        XCTAssertLessThan(ratio, 3.0, "doubling scale must stay ~linear (got \(String(format: "%.2f", ratio))×) — a quadratic regression in matching would be ~4×")
-        // Generous absolute sanity cap so a catastrophic regression fails even if
-        // the ratio test somehow doesn't. The tight < 50 ms acceptance target is
-        // read from the printed figure above and documented in the PR (a hard
-        // 50 ms CI assertion would flake under concurrent xcodebuild load).
-        XCTAssertLessThan(large, 0.15, "scaled compile ran in \(String(format: "%.1f", large * 1000)) ms — far above the < 50 ms target, likely a matching regression")
+        // Robustness on a SHARED runner (19.07 incident): CI read a spurious
+        // 6.03× ratio on byte-identical code that measured 2.26× locally — the
+        // runner was 2.3× slower AND a load burst fell between the two separate
+        // sequential measurement blocks the WP-61 original used. Two changes make
+        // the guard immune WITHOUT weakening the O(n²) catch: (a) each measurement
+        // is now INTERLEAVED (see `interleavedMinTimes`), so both scales share the
+        // same instantaneous load and the ratio is load-independent; and (b) the
+        // ratio check runs up to `maxAttempts` times and only FAILS when EVERY
+        // attempt breaches the ceiling. A real quadratic regression is
+        // deterministic — it breaches on every attempt — whereas a one-off runner
+        // hiccup that skews a single attempt is absorbed by the next clean one.
+        let maxAttempts = 3
+        let ceiling = 3.0
+        var attempts: [(small: TimeInterval, large: TimeInterval, ratio: Double)] = []
+        for attempt in 1...maxAttempts {
+            let (s, l) = interleavedMinTimes(small: small, large: large)
+            let ratio = l / max(s, 1e-9)
+            attempts.append((s, l, ratio))
+            print("WP-61 buildSections attempt \(attempt)/\(maxAttempts): small(250ev/1000ent)=\(ms(s)) ms, large(500ev/2000ent)=\(ms(l)) ms, ratio=\(fmt(ratio))")
+            if ratio < ceiling {
+                // A clean attempt clears the guard — stop retrying. Also read the
+                // generous absolute sanity cap off this clean attempt so a
+                // catastrophic regression fails even if the ratio somehow doesn't.
+                // The tight < 50 ms acceptance target is read from the printed
+                // figure and documented in the PR (a hard 50 ms CI assertion would
+                // flake under concurrent xcodebuild load).
+                XCTAssertLessThan(l, 0.15, "scaled compile ran in \(ms(l)) ms — far above the < 50 ms target, likely a matching regression")
+                return
+            }
+        }
+        // Every attempt breached the ceiling → a real, deterministic regression,
+        // not runner noise (which would have produced at least one clean attempt).
+        let last = attempts[maxAttempts - 1]
+        XCTFail("doubling scale stayed above the ~linear ceiling on all \(maxAttempts) attempts (last \(fmt(last.ratio))×, small=\(ms(last.small)) ms large=\(ms(last.large)) ms) — a quadratic regression in matching would be ~4×")
     }
+
+    private func ms(_ seconds: TimeInterval) -> String { String(format: "%.2f", seconds * 1000) }
+    private func fmt(_ ratio: Double) -> String { String(format: "%.2f", ratio) }
 
     // MARK: - Recorded baselines (measure {})
 
