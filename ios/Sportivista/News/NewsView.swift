@@ -216,6 +216,13 @@ private struct NewsPointerRow: View {
 				.truncationMode(.tail)
 				.frame(maxWidth: .infinity, alignment: .leading)
 			HStack(spacing: 6) {
+				// WP-108: the same canonical sport→symbol mark the agenda rows
+				// use (DESIGN § Radens anatomi) — quiet tertiaryLabel, decorative
+				// (the sport word beside it carries it for VoiceOver). Minimal: the
+				// symbol only, the existing sport · source · time line is unchanged.
+				Image(systemName: SportSymbol.name(for: NewsLens.canonicalSport(item.sport)))
+					.foregroundStyle(SportivistaTokens.tertiaryLabel)
+					.accessibilityHidden(true)
 				Text(sportLabel)
 					.foregroundStyle(SportivistaTokens.secondaryLabel)
 				dot
