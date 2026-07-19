@@ -41,6 +41,11 @@ struct ContentView: View {
     let syncClient: SyncClient
     let dataStore: DataStore
     let notificationPlanner: NotificationPlanner
+    /// WP-121 — the WidgetKit reload seam. `reloadAllTimelines()` had zero call
+    /// sites before WP-121 (audit 🔴), leaving the widget up to ~24h stale; the
+    /// sync hook now nudges it whenever events/entities change. Injectable
+    /// (defaults to the real WidgetCenter) so the seam is uniform across paths.
+    let widgetReloader: WidgetReloading
     /// WP-16.4 — the one profile store the agenda AND the assistant share.
     let profileStore: ProfileStore
     /// WP-19 — offline-first profile sync. LocalOnly by default (a no-op on the
@@ -101,6 +106,12 @@ struct ContentView: View {
     /// WP-66 — an event id the assistant's «vis <hendelse>» command resolved;
     /// handed to AgendaView to raise its detail sheet, then cleared by it.
     @State private var requestedEventID: String?
+    /// WP-121 — guards the foreground-refresh path against re-entrancy: a rapid
+    /// background→foreground toggle before the first refresh has updated
+    /// `lastSync` could otherwise fire two overlapping `refresh()` (and two
+    /// `syncClient.sync()`). Set on the main actor before the task, cleared when
+    /// it finishes; the WP-60 coalescing already collapses the agenda-reload half.
+    @State private var foregroundRefreshInFlight = false
 
     @AppStorage(ThemeOverride.storageKey) private var themeOverrideRaw = ThemeOverride.system.rawValue
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -114,12 +125,14 @@ struct ContentView: View {
         syncClient: SyncClient = SyncClient(),
         dataStore: DataStore = DataStore(),
         notificationPlanner: NotificationPlanner = NotificationPlanner(),
+        widgetReloader: WidgetReloading = WidgetCenterReloader(),
         profileStore: ProfileStore = ProfileStore(),
         profileSync: ProfileSyncCoordinator = ProfileSyncCoordinator(backend: ProfileSyncBackendFactory.make())
     ) {
         self.syncClient = syncClient
         self.dataStore = dataStore
         self.notificationPlanner = notificationPlanner
+        self.widgetReloader = widgetReloader
         self.profileStore = profileStore
         self.profileSync = profileSync
         #if DEBUG
@@ -131,7 +144,11 @@ struct ContentView: View {
         UITestSeed.seedIfRequested(profileStore: profileStore)
         #endif
         let _t0 = CFAbsoluteTimeGetCurrent()
-        self._agenda = State(initialValue: AgendaViewModel(dataStore: dataStore, syncClient: syncClient, profileStore: profileStore))
+        // WP-121: the agenda's pull-to-refresh shares THIS view's planner +
+        // widget reloader (one SyncFreshness), so every sync path — cold start,
+        // background, pull — reconciles reminders + reloads the widget the same way.
+        let freshness = SyncFreshness(notificationPlanner: notificationPlanner, widgetReloader: widgetReloader)
+        self._agenda = State(initialValue: AgendaViewModel(dataStore: dataStore, syncClient: syncClient, profileStore: profileStore, freshness: freshness))
         LaunchTrace.mark("agendaVM init", since: _t0)
         #if DEBUG
         // Screenshot harness: back the assistant with the deterministic mock
@@ -481,9 +498,31 @@ struct ContentView: View {
         }
         // WP-19 — offline-first pull → merge → push on foreground (a no-op on the
         // LocalOnly backend; the real round-trip only happens on a CloudKit build).
-        .onChange(of: scenePhase) { _, phase in
+        // Runs on EVERY becoming-active, unchanged.
+        // WP-121 — data-freshness on foreground: a genuine return FROM background
+        // to a STALE cache (≥15 min since the last data sync) runs a FULL refresh
+        // (sync + agenda reload + widget reload + notification reconcile). Before
+        // WP-121 foreground ran ONLY the profile CloudKit round (audit 🟡), so an
+        // app left open for hours showed a stale board until the next background
+        // task. Gating on `oldPhase == .background` keeps the launch inactive→active
+        // (the cold-start `.task` owns that) and a transient control-center peek
+        // (active→inactive→active) from re-syncing; the staleness gate skips a quick
+        // return (< 15 min); the in-flight flag + WP-60 coalescing keep a rapid
+        // toggle from double-syncing.
+        .onChange(of: scenePhase) { oldPhase, phase in
             guard phase == .active else { return }
             Task { await assistant.runBackgroundSync(using: profileSync) }
+            guard oldPhase == .background else { return }
+            if !foregroundRefreshInFlight,
+               ForegroundSyncGate.shouldRefresh(lastSync: dataStore.lastSync, now: Date()) {
+                foregroundRefreshInFlight = true
+                // @MainActor so the post-await flag reset stays on the main actor
+                // (refresh() is itself @MainActor; the flag is @State on this View).
+                Task { @MainActor in
+                    await refresh()
+                    foregroundRefreshInFlight = false
+                }
+            }
         }
     }
 
@@ -628,6 +667,14 @@ struct ContentView: View {
         if changedFiles.contains("entities.json") { agenda.invalidateEntityCache() }
         if !changedFiles.isDisjoint(with: agendaInputs) {
             agenda.reloadFromCache(now: Date())
+        }
+        // WP-121: the home-screen widget reads events (+ entities via the feed);
+        // nudge WidgetKit to rebuild its timeline whenever either changed, so it
+        // never sits behind the app's own board (its own reload policy only fires
+        // at the Oslo day boundary — the audit's ~24h-stale 🔴). A 304/no-op sync
+        // changes neither, so a quiet launch skips it.
+        if !changedFiles.isDisjoint(with: SyncFreshness.widgetInputs) {
+            widgetReloader.reloadAllTimelines()
         }
         #if DEBUG
         // The screenshot harness must not trip the first-launch notification
