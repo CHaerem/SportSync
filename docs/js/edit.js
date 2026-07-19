@@ -1,15 +1,26 @@
-// Edit page: load the current interests and make EXISTING entries editable with
-// one click — no typing, no JSON. Each action deep-links to the follow-request
-// Issue Form with fields PRE-FILLED via query params (GitHub renders the form,
-// the user just submits). The existing workflow turns it into a PR they merge.
-// Nothing is written directly — same review-gated flow, just zero manual input.
-// Repo slug (SS_REPO), escapeHtml and ssShortReason come from shared-constants.js
-// (loaded before this script); theme lives in js/theme.js.
+// Edit page: load what Sportivista COVERS and make each entry editable with one
+// click — no typing, no JSON. Each action deep-links to the follow-request Issue
+// Form with fields PRE-FILLED via query params (GitHub renders the form, the user
+// just submits). The existing workflow turns it into a PR they merge. Nothing is
+// written directly — same review-gated flow, just zero manual input.
+// Repo slug (SS_REPO), escapeHtml, ssShortReason, ssCoreName, trackedTerms,
+// ssContainsTerm and ssNextEventForEntity come from shared-constants.js (loaded
+// before this script); theme lives in js/theme.js.
+//
+// WP-120 web-parity: every row answers «what does following this GIVE me?» — the
+// entity's next event as a subtitle (or an honest «ikke satt opp ennå») + type
+// grouping. Amber-overload fixed: the name is plain --fg, the row carries no amber
+// (no 🔔 emoji), and the two actions moved off the row into a tap-to-expand detail
+// (rad → detalj), so a row has at most one accent.
 const KINDS = [
 	['athletes', 'Utøver', 'Utøvere'],
 	['teams', 'Lag', 'Lag'],
 	['tournaments', 'Turnering', 'Turneringer'],
 ];
+
+// The board of events behind the "next event" line on each row — set by the
+// bootstrap before render(); row() reads it (defaulted so it stays testable).
+let allEvents = [];
 
 // GitHub Issue Forms DON'T prefill dropdowns from the URL — only text fields — so
 // prefilling the template left Handling/Type unset. Instead compose the whole
@@ -33,75 +44,155 @@ function issueUrl(f) {
 	return `https://github.com/${SS_REPO}/issues/new?${p.toString()}`;
 }
 
+// ── The "already followed?" test, extracted once (WP-120 dedup) ───────────────
+// Two near-identical closures used to live in render() and buildLocalCandidates();
+// they only differed in whether the candidate name was core-stripped before the
+// reverse containment check. One builder + one factory now, parametrised by that.
+/** The flat list of follow terms (name + aliases) across teams/athletes/tournaments. */
+function buildFollowedSet(at) {
+	return ['teams', 'athletes', 'tournaments'].flatMap((k) => trackedTerms((at || {})[k] || []));
+}
+/** A predicate: is `name` already one of `followed`? `core` strips a trailing
+ *  year/parenthetical off `name` before the reverse check (for AI discoveries like
+ *  "Tour de France 2026"); off for candidate names that are already clean. */
+function makeIsFollowed(followed, { core = false } = {}) {
+	return (name) => followed.some((t) => ssContainsTerm(name, t) || ssContainsTerm(t, core ? ssCoreName(name) : name));
+}
+
 /** Does this entry notify? Teams/athletes default on; tournaments default off. */
 function notifies(entry, kindKey) {
 	const def = kindKey !== 'tournaments';
 	return entry && typeof entry === 'object' && entry.notify != null ? entry.notify : def;
 }
 
-function row(entry, kindKey, kindLabel) {
+/** The next-event subtitle for a row: «Neste: lør 25. jul · Strømsgodset – Lyn ·
+ *  TV 2» or an honest «ikke satt opp ennå». */
+function editNextLine(next) {
+	if (!next) return 'ikke satt opp ennå';
+	const d = new Date(next.time);
+	const day = d.toLocaleDateString('nb-NO', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Oslo' });
+	const what = (next.homeTeam && next.awayTeam) ? `${ssShortName(next.homeTeam)} – ${ssShortName(next.awayTeam)}` : (next.title || '');
+	const chan = (Array.isArray(next.streaming) && next.streaming[0] && (next.streaming[0].platform || next.streaming[0])) || '';
+	return `Neste: ${[day, what, chan].filter(Boolean).join(' · ')}`;
+}
+
+/** The fuller when·what·where line shown in the expanded detail. */
+function editDetailLine(next) {
+	const d = new Date(next.time);
+	const when = d.toLocaleDateString('nb-NO', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Oslo' });
+	const what = (next.homeTeam && next.awayTeam) ? `${ssShortName(next.homeTeam)} – ${ssShortName(next.awayTeam)}` : (next.title || '');
+	const chans = (Array.isArray(next.streaming) ? next.streaming : []).map((s) => s.platform || s).filter(Boolean).join(' · ') || '–';
+	return [when, what, chans].filter(Boolean).join(' · ');
+}
+
+/** One coverage row: name + next-event subtitle, tap to reveal the detail (aliases,
+ *  the fuller next-event line, and the two actions). No amber in the resting row. */
+function row(entry, kindKey, kindLabel, events = allEvents) {
 	const name = typeof entry === 'string' ? entry : entry.name;
 	const on = notifies(entry, kindKey);
 	const sport = typeof entry === 'object' && entry.sport ? entry.sport : '';
 	const aliases = typeof entry === 'object' && Array.isArray(entry.aliases) ? entry.aliases.join(', ') : '';
+	const next = ssNextEventForEntity(events, entry);
 	const toggleUrl = issueUrl({ action: 'Endre varsel', kind: kindLabel, name, notify: on ? 'Nei' : 'Ja' });
 	const removeUrl = issueUrl({ action: 'Fjern', kind: kindLabel, name });
-	return `<div class="edit-row">
-		<div class="edit-name">
-			<span class="edit-title">${escapeHtml(name)}</span>${on ? '<span class="bell" title="Varsler deg">🔔</span>' : ''}
-			${sport ? `<span class="tag">${escapeHtml(sport)}</span>` : ''}
-			${aliases ? `<div class="edit-alias">også: ${escapeHtml(aliases)}</div>` : ''}
+	const detailWhen = next
+		? `<div class="ed-detail-when">${escapeHtml(editDetailLine(next))}</div>`
+		: '<div class="ed-detail-when muted">Ingen kommende hendelse akkurat nå.</div>';
+	return `<li class="ed-item">
+		<div class="ed-row" role="button" tabindex="0" aria-expanded="false">
+			<span class="ed-main">
+				<span class="ed-name">${escapeHtml(name)}</span>
+				<span class="ed-next${next ? '' : ' no-event'}">${escapeHtml(editNextLine(next))}</span>
+			</span>
+			${sport ? `<span class="ed-meta">${escapeHtml(sport)}</span>` : ''}
 		</div>
-		<div class="edit-actions">
-			<a class="btn" href="${toggleUrl}" target="_blank" rel="noopener">${on ? 'Skru av 🔔' : 'Skru på 🔔'}</a>
-			<a class="btn btn-danger" href="${removeUrl}" target="_blank" rel="noopener">Fjern</a>
+		<div class="ed-detail" hidden>
+			${aliases ? `<div class="ed-alias">også: ${escapeHtml(aliases)}</div>` : ''}
+			${detailWhen}
+			<div class="ed-actions">
+				<a class="btn" href="${toggleUrl}" target="_blank" rel="noopener">${on ? 'Slå av varsel' : 'Slå på varsel'}</a>
+				<a class="btn btn-danger" href="${removeUrl}" target="_blank" rel="noopener">Fjern</a>
+			</div>
 		</div>
-	</div>`;
+	</li>`;
 }
 
-/** A free-text interest line (e.g. an added sport) with a remove button. */
+/** A free-text interest line (e.g. an added sport) — tap to reveal a remove action. */
 function briefRow(s) {
 	const removeUrl = issueUrl({ action: 'Fjern', kind: 'Sport', name: s });
-	return `<div class="edit-row"><div class="edit-name"><span class="edit-brief">${escapeHtml(s)}</span></div><div class="edit-actions"><a class="btn btn-danger" href="${removeUrl}" target="_blank" rel="noopener">Fjern</a></div></div>`;
+	return `<li class="ed-item">
+		<div class="ed-row" role="button" tabindex="0" aria-expanded="false">
+			<span class="ed-main"><span class="ed-name">${escapeHtml(s)}</span></span>
+		</div>
+		<div class="ed-detail" hidden><div class="ed-actions"><a class="btn btn-danger" href="${removeUrl}" target="_blank" rel="noopener">Fjern</a></div></div>
+	</li>`;
 }
 
-/** Strip trailing year / parenthetical from a tracked name for a clean follow. */
-function coreName(name) {
-	return String(name).replace(/\s*\d{4}(?:\/\d{2})?/g, '').replace(/\s*\(.*?\)/g, '').trim();
-}
-
-/** "AI har funnet" row: a discovery, name + why + expiry, with a "Følg 🔔" action. */
+/** "AI har funnet" row: a discovery, name + why + expiry, with a "Følg" action. */
 function aiRow(x, kind) {
-	const until = x.expires ? `<span class="tag">ut ${escapeHtml(x.expires.slice(0, 10))}</span>` : '';
-	const why = x.reason ? `<div class="edit-alias" title="${escapeHtml(x.reason)}">${escapeHtml(ssShortReason(x.reason))}</div>` : '';
-	const followUrl = issueUrl({ action: 'Legg til', kind, name: coreName(x.name), sport: x.sport || '', notify: 'Ja' });
-	return `<div class="edit-row"><div class="edit-name"><span class="edit-title">${escapeHtml(x.name)}</span>${until}${why}</div><div class="edit-actions"><a class="btn" href="${followUrl}" target="_blank" rel="noopener">Følg 🔔</a></div></div>`;
+	const until = x.expires ? `<span class="ed-meta">ut ${escapeHtml(x.expires.slice(0, 10))}</span>` : '';
+	const why = x.reason ? `<div class="ed-alias" title="${escapeHtml(x.reason)}">${escapeHtml(ssShortReason(x.reason))}</div>` : '';
+	const followUrl = issueUrl({ action: 'Legg til', kind, name: ssCoreName(x.name), sport: x.sport || '', notify: 'Ja' });
+	return `<li class="ed-item">
+		<div class="ed-row" role="button" tabindex="0" aria-expanded="false">
+			<span class="ed-main"><span class="ed-name">${escapeHtml(x.name)}</span></span>${until}
+		</div>
+		<div class="ed-detail" hidden>${why}<div class="ed-actions"><a class="btn" href="${followUrl}" target="_blank" rel="noopener">Følg</a></div></div>
+	</li>`;
 }
 
 function render(interests, tracked) {
 	const at = interests.alwaysTrack || {};
 	const root = document.getElementById('edit-root');
+	if (!root) return;
 	let html = KINDS.map(([key, kindLabel, groupLabel]) => {
 		const items = at[key] || [];
 		const rows = items.length
-			? items.map((e) => row(e, key, kindLabel)).join('')
+			? `<ul class="ed-list">${items.map((e) => row(e, key, kindLabel)).join('')}</ul>`
 			: '<p class="muted">Ingenting her ennå.</p>';
 		return `<section class="edit-group"><h2>${groupLabel}</h2>${rows}</section>`;
 	}).join('');
 	const briefs = interests.interests || [];
 	if (briefs.length) {
-		html += `<section class="edit-group"><h2>Brede interesser</h2><p class="muted brief-note">Fritekst AI-en leter events fra. Legg til en sport via søket under.</p>${briefs.map(briefRow).join('')}</section>`;
+		html += `<section class="edit-group"><h2>Brede interesser</h2><p class="muted brief-note">Fritekst AI-en leter events fra. Legg til en sport via søket under.</p><ul class="ed-list">${briefs.map(briefRow).join('')}</ul></section>`;
 	}
 	// AI har funnet — the research agent's discoveries; promote any to a real follow.
-	const followed = ['teams', 'athletes', 'tournaments'].flatMap((k) => trackedTerms(at[k] || []));
-	const isFollowed = (name) => followed.some((t) => ssContainsTerm(name, t) || ssContainsTerm(t, coreName(name)));
+	const isFollowed = makeIsFollowed(buildFollowedSet(at), { core: true });
 	const trk = (label, items, kind) => {
 		const disc = (items || []).filter((x) => x?.name && !isFollowed(x.name)); // only genuine discoveries
-		return disc.length ? `<div class="edit-subhead">${label}</div>` + disc.map((x) => aiRow(x, kind)).join('') : '';
+		return disc.length ? `<div class="edit-subhead">${label}</div><ul class="ed-list">` + disc.map((x) => aiRow(x, kind)).join('') + '</ul>' : '';
 	};
 	const aiHtml = trk('Turneringer', tracked?.tournaments, 'Turnering') + trk('Ligaer', tracked?.leagues, 'Turnering') + trk('Utøvere', tracked?.athletes, 'Utøver');
 	if (aiHtml) html += `<section class="edit-group"><h2>AI har funnet for deg</h2><p class="muted brief-note">Ting AI-en fant utover lista di. Trykk «Følg» for å få det som fast følge med varsel.</p>${aiHtml}</section>`;
 	root.innerHTML = html;
+	bindEditRows();
+}
+
+/** Tap/keyboard expand for the coverage rows — one detail open per tap, action
+ *  links still work (delegated on #edit-root, survives re-render). */
+let editRowsBound = false;
+function bindEditRows() {
+	if (editRowsBound) return;
+	const root = document.getElementById('edit-root');
+	if (!root) return;
+	editRowsBound = true;
+	const toggle = (rowEl) => {
+		const detail = rowEl.parentElement.querySelector('.ed-detail');
+		if (!detail) return;
+		const open = rowEl.getAttribute('aria-expanded') === 'true';
+		rowEl.setAttribute('aria-expanded', String(!open));
+		detail.hidden = open;
+	};
+	root.addEventListener('click', (evt) => {
+		if (evt.target.closest('a')) return; // let the action links work
+		const rowEl = evt.target.closest('.ed-item .ed-row');
+		if (rowEl) toggle(rowEl);
+	});
+	root.addEventListener('keydown', (evt) => {
+		if (evt.key !== 'Enter' && evt.key !== ' ') return;
+		const rowEl = evt.target.closest('.ed-item .ed-row');
+		if (rowEl) { evt.preventDefault(); toggle(rowEl); }
+	});
 }
 
 // ── Add: search local data + TheSportsDB (teams) → prefilled "Legg til" issue ──
@@ -115,8 +206,7 @@ let localCandidates = [];
 
 function buildLocalCandidates(events, standings, interests) {
 	const at = interests?.alwaysTrack || {};
-	const followed = ['teams', 'athletes', 'tournaments'].flatMap((k) => trackedTerms(at[k] || []));
-	const isFollowed = (name) => followed.some((t) => ssContainsTerm(name, t) || ssContainsTerm(t, name));
+	const isFollowed = makeIsFollowed(buildFollowedSet(at));
 	const seen = new Set();
 	const out = [];
 	const add = (name, kind, sport) => {
@@ -194,16 +284,24 @@ function onSearch(q) {
 // follow-up): the follow-request Issue Form + apply-follow-request.js still write
 // the owner's interests.json (the OWNER-gated seed path); rewiring the public
 // "request coverage" flow to feed catalog tier2 / demand-aggregation is WP-23.
-Promise.all([
-	fetch('data/catalog.json', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({})),
-	fetch('data/events.json', { cache: 'no-store' }).then((r) => r.json()).catch(() => []),
-	fetch('data/standings.json', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({})),
-	fetch('data/tracked.json', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({})),
-]).then(([catalog, events, standings, tracked]) => {
-	const covered = { alwaysTrack: (catalog && catalog.tier2) || {}, interests: [] };
-	render(covered, tracked);
-	localCandidates = buildLocalCandidates(events, standings, covered);
-	document.getElementById('add-search')?.addEventListener('input', (e) => onSearch(e.target.value));
-}).catch(() => {
-	document.getElementById('edit-root').innerHTML = '<p class="muted">Kunne ikke laste lista. Prøv å laste siden på nytt.</p>';
-});
+// Guarded so loading this file in a test sandbox (no #edit-root) doesn't fire the
+// async fetch chain (WP-120 — makes the pure helpers unit-testable).
+function initEditPage() {
+	Promise.all([
+		fetch('data/catalog.json', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({})),
+		fetch('data/events.json', { cache: 'no-store' }).then((r) => r.json()).catch(() => []),
+		fetch('data/standings.json', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({})),
+		fetch('data/tracked.json', { cache: 'no-store' }).then((r) => r.json()).catch(() => ({})),
+	]).then(([catalog, events, standings, tracked]) => {
+		const covered = { alwaysTrack: (catalog && catalog.tier2) || {}, interests: [] };
+		allEvents = Array.isArray(events) ? events : [];
+		render(covered, tracked);
+		localCandidates = buildLocalCandidates(events, standings, covered);
+		document.getElementById('add-search')?.addEventListener('input', (e) => onSearch(e.target.value));
+	}).catch(() => {
+		const root = document.getElementById('edit-root');
+		if (root) root.innerHTML = '<p class="muted">Kunne ikke laste lista. Prøv å laste siden på nytt.</p>';
+	});
+}
+
+if (typeof document !== 'undefined' && document.getElementById('edit-root')) initEditPage();

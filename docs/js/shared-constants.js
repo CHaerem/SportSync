@@ -92,6 +92,39 @@ function ssContainsTerm(haystack, term) {
 	return new RegExp(`(?:^|[^\\p{L}\\p{N}])${esc}(?:[^\\p{L}\\p{N}]|$)`, 'iu').test(ssNormalize(haystack));
 }
 
+/** Strip a trailing year / season / parenthetical from a tracked name for a clean
+ *  follow ("Tour de France 2026" → "Tour de France"). Mirrors the iOS resolver's
+ *  edition-stripping; shared so edit.js and detail.js don't each carry the regex. */
+function ssCoreName(name) {
+	return String(name).replace(/\s*\d{4}(?:\/\d{2})?/g, '').replace(/\s*\(.*?\)/g, '').trim();
+}
+
+/** The next upcoming event for a followed entity, searched across ALL events
+ *  (not the agenda window). Sport-scoped so "Barcelona" (football) never matches
+ *  a Tour stage through the city; a >3h-old event is treated as over. Returns the
+ *  event or null. The ONE next-event matcher shared by the dashboard's «Dette
+ *  dekker vi» rows (followed.js) and the rediger page (edit.js) — same word-
+ *  boundary term match as the server, so both surfaces answer identically. */
+function ssNextEventForEntity(events, entry, now = Date.now()) {
+	const terms = trackedTerms([entry]).map((t) => t.toLowerCase()).filter(Boolean);
+	if (!terms.length) return null;
+	const sport = (entry && typeof entry === 'object') ? entry.sport : null;
+	const floor = now - 3 * MS_PER_HOUR;
+	let best = null, bestStart = Infinity;
+	for (const e of events || []) {
+		if (sport && e.sport && e.sport !== sport) continue;
+		const start = new Date(e.time).getTime();
+		const end = e.endTime ? new Date(e.endTime).getTime() : start;
+		if (!(end >= floor)) continue; // already over
+		const hay = [e.title, e.tournament, e.homeTeam, e.awayTeam,
+			...(e.norwegianPlayers || []).map((p) => p.name || p),
+			...(e.participants || []).map((p) => p.name || p)].filter(Boolean).join(' ');
+		if (!terms.some((t) => ssContainsTerm(hay, t))) continue;
+		if (start < bestStart) { best = e; bestStart = start; }
+	}
+	return best;
+}
+
 /** Trim an agent reason to a one-line gist (drops the provenance prefix). */
 function ssShortReason(r, max = 130) {
 	if (!r) return '';
@@ -118,3 +151,5 @@ window.ssEntityName = ssEntityName;
 window.trackedTerms = trackedTerms;
 window.ssContainsTerm = ssContainsTerm;
 window.ssNormalize = ssNormalize;
+window.ssCoreName = ssCoreName;
+window.ssNextEventForEntity = ssNextEventForEntity;

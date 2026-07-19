@@ -129,11 +129,32 @@ struct FeedQuery: Equatable, Sendable {
     /// first, else by the entity's name/aliases word-boundary-matching the
     /// haystack (so "Tour de France 2026" answers "neste TdF-etappe").
     func next(matching entity: Entity) -> FeedQueryEvent? {
+        upcoming(matching: entity, limit: 1).first
+    }
+
+    /// The next `limit` upcoming events matching a resolved entity, in agenda
+    /// order — the SAME lens semantics as `next(matching:)` (carried id first,
+    /// else name/alias word-boundary against the haystack), just widened for the
+    /// KOMMENDE section of «Det du følger» (WP-120). No new matching is invented.
+    func upcoming(matching entity: Entity, limit: Int = 3) -> [FeedQueryEvent] {
         let terms = ([entity.name] + entity.aliases).filter { !$0.isEmpty }
-        return upcoming().first { e in
+        let hits = upcoming().filter { e in
             if e.entityIds.contains(entity.id) { return true }
             return terms.contains { TextMatch.containsName(e.haystack, $0) }
         }
+        return Array(hits.prefix(limit))
+    }
+
+    /// The next `limit` upcoming events in any of `sports`, in agenda order — the
+    /// next events of a whole-sport follow (WP-120), for a rule whose entity is a
+    /// `sport`/`category` type. Sport tags are normalised through the SAME
+    /// SportVocabulary bridge NewsLens uses ("formula1" ≡ "f1"), so nothing new
+    /// is invented.
+    func upcoming(inSports sports: Set<String>, limit: Int = 3) -> [FeedQueryEvent] {
+        guard !sports.isEmpty else { return [] }
+        let canon = Set(sports.map { NewsLens.canonicalSport($0) })
+        let hits = upcoming().filter { canon.contains(NewsLens.canonicalSport($0.sport)) }
+        return Array(hits.prefix(limit))
     }
 
     /// Free-text search over upcoming events — word-boundary name match, plus
