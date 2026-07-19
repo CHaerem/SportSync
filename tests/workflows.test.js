@@ -78,4 +78,34 @@ describe("v2 workflows", () => {
 		// self-repair additionally gates on the events contract, as before the extraction
 		expect(wf("self-repair-agent.yml")).toContain("--validate-events");
 	});
+
+	it("the CI, iOS-test, release and Pages-deploy workflows exist and reference only files that exist", () => {
+		const files = ["ci.yml", "ios-tests.yml", "ios-release.yml", "preview-deploy.yml"];
+		const dir = fs.readdirSync(path.resolve(".github", "workflows"));
+		for (const f of files) {
+			expect(dir, f).toContain(f);
+		}
+		// every `node scripts/*.js` invoked across the four must exist on disk
+		for (const f of files) {
+			const scripts = [...wf(f).matchAll(/node (scripts\/[\w\-/]+\.js)/g)].map((m) => m[1]);
+			for (const s of scripts) {
+				expect(fs.existsSync(path.resolve(s)), `${f} → ${s}`).toBe(true);
+			}
+		}
+		// the release lane records builds via the two TestFlight scripts and kicks the pipeline
+		const release = wf("ios-release.yml");
+		for (const s of ["scripts/next-testflight-build.js", "scripts/record-testflight.js"]) {
+			expect(release, `ios-release.yml must run ${s}`).toContain(`node ${s}`);
+			expect(fs.existsSync(path.resolve(s)), s).toBe(true);
+		}
+		expect(release, "release lane kicks the static pipeline").toContain("static-pipeline.yml");
+		expect(dir, "the kicked workflow exists").toContain("static-pipeline.yml");
+		// the two PR gates run the suites branch protection requires
+		expect(wf("ci.yml"), "ci runs the web test suite").toMatch(/npm (ci|test)/);
+		expect(wf("ios-tests.yml"), "ios-tests builds the Sportivista scheme").toContain("Sportivista");
+		// preview-deploy serialises Pages deploys and is invocable by the pipeline
+		const preview = wf("preview-deploy.yml");
+		expect(preview, "preview-deploy serialises on the pages group").toContain("pages-deploy");
+		expect(preview, "preview-deploy is callable by the static pipeline").toContain("workflow_call");
+	});
 });
