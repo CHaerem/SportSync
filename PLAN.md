@@ -134,6 +134,7 @@ mennesket, aldri av en agent.
 | WP-127 | Detalj & widget: «Om»-avsnitt iOS + deltaker-titler + RESULTAT sist + prosa-bredde web | 0I | WP-112 | ⬜ bølge 3 |
 | WP-128 | Web-agenda: fortids-dag-fiks + ekspandert-tilstand over live-poll + klokke-avstemming | 0I | WP-117 | 🔬 bølge 3 |
 | WP-129 | Onboarding-copy (kapsel-modellen) + stale kommentarer + regenerert skjermkatalog | 0I | WP-117 | ⬜ bølge 4 |
+| WP-130 | Pipeline-kvalitet: refaktor-auditens quick-wins | 0I | — | 🔬 PR åpen — containsName-memo, haystack-dedup ×3, én fillesing, configDirPath (+2 env-bugfiks), 2 døde eksporter, flattenStats, golf mergeEvents |
 
 ---
 

@@ -23,7 +23,7 @@
 import fs from "fs";
 import path from "path";
 import { pathToFileURL } from "url";
-import { readJsonIfExists, rootDataPath, writeJsonPretty, iso, MS_PER_DAY, containsName, normalizeText, normalizeEntity, entityTerms, isEventInWindow, makeCoverageGate } from "./lib/helpers.js";
+import { readJsonIfExists, rootDataPath, configDirPath, writeJsonPretty, iso, MS_PER_DAY, containsName, coverageHaystack, normalizeText, normalizeEntity, entityTerms, isEventInWindow, makeCoverageGate } from "./lib/helpers.js";
 
 // Re-export so existing importers (tests) keep resolving containsName from here.
 export { containsName };
@@ -85,15 +85,9 @@ export function headlineIsImminent(headline) {
 
 /** Does this event mention the given name (title, teams, tournament, players)? */
 function eventMentionsName(event, name) {
-	const haystack = [
-		event.title,
-		event.tournament,
-		event.homeTeam,
-		event.awayTeam,
-		...(event.norwegianPlayers || []).map((p) => p?.name || p),
-		...(event.participants || []).map((p) => p?.name || p),
-	].join(" ");
-	return containsName(haystack, name);
+	// Shares the canonical coverage haystack (helpers.coverageHaystack) so this
+	// recall net scans the exact same fields the build's coverage gate does (WP-130).
+	return containsName(coverageHaystack(event), name);
 }
 
 /**
@@ -393,7 +387,7 @@ function readSources(dataDir) {
 
 function main() {
 	const dataDir = rootDataPath();
-	const configDir = process.env.SPORTSYNC_CONFIG_DIR || path.resolve(process.cwd(), "scripts", "config");
+	const configDir = configDirPath();
 	const rss = readJsonIfExists(path.join(dataDir, "rss-digest.json"));
 	const events = readJsonIfExists(path.join(dataDir, "events.json")) || [];
 	// WP-96: the recall net watches what the catalog COVERS, not one person's

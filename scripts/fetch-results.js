@@ -14,7 +14,7 @@
 
 import path from "path";
 import { pathToFileURL } from "url";
-import { fetchJson, iso, readJsonIfExists, rootDataPath, writeJsonPretty, MS_PER_DAY, matchInterest, yyyymmdd, containsName } from "./lib/helpers.js";
+import { fetchJson, iso, readJsonIfExists, rootDataPath, configDirPath, writeJsonPretty, MS_PER_DAY, matchInterest, yyyymmdd, containsName } from "./lib/helpers.js";
 import { validateESPNScoreboard } from "./lib/response-validator.js";
 import { golfCompetitorFields } from "./lib/golf.js";
 
@@ -67,7 +67,11 @@ export function mergeResults(existing, fresh, keyOf, retainDays) {
 }
 
 const ESPN_SITE = "https://site.api.espn.com/apis/site/v2/sports";
-const CONFIG_DIR = path.resolve(process.cwd(), "scripts", "config");
+// WP-130: honor SPORTSYNC_CONFIG_DIR like every other script (was hard-pinned to
+// scripts/config, silently ignoring the override) so a sandboxed run reads the
+// same config dir as the rest of the pipeline. readJsonIfExists degrades to {}
+// when the file is absent, so an empty temp config just yields empty favorites.
+const CONFIG_DIR = configDirPath();
 const CATALOG_PATH = path.join(CONFIG_DIR, "catalog.json");
 const INTERESTS_PATH = path.join(CONFIG_DIR, "interests.json");
 

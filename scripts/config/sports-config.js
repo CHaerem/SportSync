@@ -227,27 +227,3 @@ export const sportsConfig = {
 		]
 	}
 };
-
-export const globalConfig = {
-	cache: {
-		enabled: true,
-		ttl: 60000,
-		staleWhileRevalidate: true
-	},
-	api: {
-		userAgent: "SportSync/2.0",
-		timeout: 10000,
-		retries: 2,
-		retryDelay: 500,
-		rateLimit: 150
-	},
-	output: {
-		maxEventsPerSport: 50,
-		includeMetadata: true,
-		prettyPrint: true
-	},
-	fallback: {
-		useLastGood: true,
-		retainDays: 7
-	}
-};

@@ -8,11 +8,11 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
-import { rootDataPath, readJsonIfExists, mustWatchEntity } from "./lib/helpers.js";
+import { rootDataPath, configDirPath, readJsonIfExists, mustWatchEntity } from "./lib/helpers.js";
 import { writeManifest } from "./build-manifest.js";
 
 const dataDir = rootDataPath();
-const configDir = process.env.SPORTSYNC_CONFIG_DIR || path.resolve(process.cwd(), "scripts", "config");
+const configDir = configDirPath();
 const eventsFile = path.join(dataDir, "events.json");
 if (!fs.existsSync(eventsFile)) {
 	console.error("events.json not found. Run build-events.js first.");
