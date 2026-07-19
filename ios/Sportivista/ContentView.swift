@@ -130,7 +130,9 @@ struct ContentView: View {
         // (value "uitest"); a no-op unless that value is set.
         UITestSeed.seedIfRequested(profileStore: profileStore)
         #endif
+        let _t0 = CFAbsoluteTimeGetCurrent()
         self._agenda = State(initialValue: AgendaViewModel(dataStore: dataStore, syncClient: syncClient, profileStore: profileStore))
+        LaunchTrace.mark("agendaVM init", since: _t0)
         #if DEBUG
         // Screenshot harness: back the assistant with the deterministic mock
         // (so no "Apple Intelligence off" banner) when a demo mode is requested.
@@ -140,13 +142,17 @@ struct ContentView: View {
                 index: EntityIndex(dataStore.loadEntities())
             ))
         } else {
+            let _t1 = CFAbsoluteTimeGetCurrent()
             self._assistant = State(initialValue: AssistantViewModel(dataStore: dataStore, profileStore: profileStore))
+            LaunchTrace.mark("assistantVM init", since: _t1)
         }
         #else
         self._assistant = State(initialValue: AssistantViewModel(dataStore: dataStore, profileStore: profileStore))
         #endif
         // WP-107 — the shared Nyheter model reads the SAME cache + profile store.
+        let _t2 = CFAbsoluteTimeGetCurrent()
         self._news = State(initialValue: NewsModel(dataStore: dataStore, profileStore: profileStore))
+        LaunchTrace.mark("newsModel init", since: _t2)
 
         // WP-31 — first-run decision, made before the first frame so there's no
         // flash of the agenda before the overlay. A SPORTIVISTA_DEMO launch never auto-
@@ -586,6 +592,7 @@ struct ContentView: View {
     }
 
     private func refresh() async {
+        LaunchTrace.point("refresh start")
         agenda.reloadFromCache(now: Date())
         #if DEBUG
         // WP-18/WP-70: the lens screenshot demo and the XCUITest harness both run
@@ -601,13 +608,27 @@ struct ContentView: View {
         // exactly when the off-main agenda reload wanted to hop back and apply,
         // so "Henter data …" lingered longer than it needed to at every launch.
         let dataStore = self.dataStore
+        let _tp = CFAbsoluteTimeGetCurrent()
         let previousEvents = await Task.detached { dataStore.loadEvents() }.value
-        _ = await syncClient.sync()
-        // WP-60: this view drives its own sync (it also reconciles notifications
-        // below), so it must invalidate the agenda's cached entity index too —
-        // the sync may have rewritten entities.json.
-        agenda.invalidateEntityCache()
-        agenda.reloadFromCache(now: Date())
+        LaunchTrace.mark("pre-sync events decode", since: _tp)
+        let _ts = CFAbsoluteTimeGetCurrent()
+        let syncResult = await syncClient.sync()
+        LaunchTrace.mark("network sync", since: _ts)
+        // Eier-funn 19.07: the old path unconditionally invalidated the entity
+        // index and forced a SECOND full reload+compile on every launch — even
+        // when the sync came back 304/upToDate (the common case within the
+        // hour). SyncResult already knows exactly which files changed; only do
+        // the work those files actually invalidate.
+        let changedFiles: Set<String>
+        switch syncResult {
+        case .changedFiles(let files): changedFiles = Set(files)
+        case .upToDate, .failure: changedFiles = []
+        }
+        let agendaInputs: Set<String> = ["events.json", "entities.json", "tracked.json"]
+        if changedFiles.contains("entities.json") { agenda.invalidateEntityCache() }
+        if !changedFiles.isDisjoint(with: agendaInputs) {
+            agenda.reloadFromCache(now: Date())
+        }
         #if DEBUG
         // The screenshot harness must not trip the first-launch notification
         // permission alert over the design it's capturing (and must keep the
@@ -616,8 +637,15 @@ struct ContentView: View {
         #endif
         // WP-107: the sync may have rewritten news/featured/results/events — rebuild
         // the Nyheter board (off-main) so it is fresh and ready before the user ever
-        // switches to it.
-        news.rebuild()
+        // switches to it. Skipped when none of its inputs changed.
+        let newsInputs: Set<String> = ["news.json", "featured.json", "recent-results.json", "events.json", "entities.json"]
+        if !changedFiles.isDisjoint(with: newsInputs) {
+            news.rebuild()
+        }
+        // Notification reconcile needs the post-sync board only when events
+        // actually changed (or we have never reconciled after a first-ever sync);
+        // on an unchanged launch previous==new and there is nothing to re-plan.
+        guard changedFiles.contains("events.json") else { return }
         // WP-107: decode the post-sync events off the main actor too (was a second
         // synchronous full-decode on main).
         let newEvents = await Task.detached { dataStore.loadEvents() }.value

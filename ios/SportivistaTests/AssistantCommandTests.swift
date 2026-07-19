@@ -167,7 +167,7 @@ final class AssistantCommandViewModelTests: XCTestCase {
         AssistantViewModel(
             assistant: MockInterestAssistant(),
             profileStore: AssistantTestSupport.tempProfileStore(),
-            index: index,
+            index: self.index,
             misunderstoodLog: AssistantTestSupport.tempMisunderstoodLog(),
             memoryStore: memoryStore,
             feedProvider: feed
@@ -251,7 +251,7 @@ final class AssistantCommandViewModelTests: XCTestCase {
         let memoryStore = MemoryStore(profileStore: store)
         memoryStore.save(SaveMemoryCommand(sport: "chess", kind: .knowledgeLevel, value: "nybegynner", reason: "test"))
         let vm = AssistantViewModel(
-            assistant: MockInterestAssistant(), profileStore: store, index: index,
+            assistant: MockInterestAssistant(), profileStore: store, index: self.index,
             misunderstoodLog: AssistantTestSupport.tempMisunderstoodLog(), memoryStore: memoryStore
         )
         vm.refreshMemory()
@@ -267,7 +267,7 @@ final class AssistantCommandViewModelTests: XCTestCase {
         let memoryStore = MemoryStore(profileStore: store)
         memoryStore.save(SaveMemoryCommand(sport: "f1", kind: .spoilerPolicy, value: "opptak", reason: "test"))
         let vm = AssistantViewModel(
-            assistant: MockInterestAssistant(), profileStore: store, index: index,
+            assistant: MockInterestAssistant(), profileStore: store, index: self.index,
             misunderstoodLog: AssistantTestSupport.tempMisunderstoodLog(), memoryStore: memoryStore
         )
         XCTAssertFalse(vm.memory.isEmpty)

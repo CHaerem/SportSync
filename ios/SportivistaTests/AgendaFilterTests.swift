@@ -191,7 +191,7 @@ final class AssistantPresentViewModelTests: XCTestCase {
         AssistantViewModel(
             assistant: MockInterestAssistant(),
             profileStore: AssistantTestSupport.tempProfileStore(),
-            index: index,
+            index: self.index,
             misunderstoodLog: AssistantTestSupport.tempMisunderstoodLog()
         )
     }

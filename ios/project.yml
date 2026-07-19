@@ -176,6 +176,9 @@ targets:
     deploymentTarget: "26.0"
     sources:
       - path: SportivistaTests
+      # LaunchTrace: AgendaViewModel (compiled below) calls it — DEBUG-only
+      # prints, no-op otherwise; the hostless bundle needs the symbol.
+      - path: Sportivista/LaunchTrace.swift
       - path: Sportivista/Models
       - path: Sportivista/Sync
       - path: Sportivista/Feed

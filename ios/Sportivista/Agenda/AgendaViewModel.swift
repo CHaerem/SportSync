@@ -167,14 +167,17 @@ final class AgendaViewModel {
                     now: current, dataStore: self.dataStore,
                     profileStore: self.profileStore, cachedIndex: cached
                 )
+                // Paint EVERY finished round (eier-funn 19.07: the old
+                // discard-and-recompute left «Henter data …» up until the LAST
+                // queued round finished — on device that was the whole first
+                // compile thrown away). "Siste vinner" still holds: a queued
+                // newer round recomputes and re-applies right after.
+                self.apply(result)
                 if let next = self.pendingReloadNow {
-                    // A newer request landed while we were computing — throw this
-                    // stale result away and recompile against the latest state.
                     self.pendingReloadNow = nil
                     current = next
                     continue
                 }
-                self.apply(result)
                 break
             }
             self.reloadTask = nil
@@ -184,6 +187,7 @@ final class AgendaViewModel {
     /// Assigns a finished reload's results — the ONLY place the published state
     /// is written, always on the main actor.
     private func apply(_ result: Reload) {
+        LaunchTrace.point("agenda apply (rows=\(result.sections.reduce(0) { $0 + $1.items.count }), lastSync=\(result.lastSync != nil))")
         sections = result.sections
         liveNow = result.liveNow
         lastSync = result.lastSync
@@ -242,7 +246,8 @@ final class AgendaViewModel {
         let syncState: ProfileSyncState
         do {
             let loadState = signposter.beginInterval("load")
-            defer { signposter.endInterval("load", loadState) }
+            let _tl = CFAbsoluteTimeGetCurrent()
+            defer { signposter.endInterval("load", loadState); LaunchTrace.mark("reload/load", since: _tl) }
             events = dataStore.loadEvents()
             baseInterests = dataStore.loadInterests() ?? Interests()
             syncState = profileStore.loadSyncState()
@@ -257,7 +262,8 @@ final class AgendaViewModel {
         let index: EntityIndex
         do {
             let indexState = signposter.beginInterval("index")
-            defer { signposter.endInterval("index", indexState) }
+            let _ti = CFAbsoluteTimeGetCurrent()
+            defer { signposter.endInterval("index", indexState); LaunchTrace.mark("reload/index (cached=\(cachedIndex != nil))", since: _ti) }
             index = cachedIndex ?? EntityIndex(dataStore.loadEntities())
         }
 
@@ -282,6 +288,8 @@ final class AgendaViewModel {
         let liveNow: [AgendaLiveRow]
         do {
             let compileState = signposter.beginInterval("compile")
+            let _tc = CFAbsoluteTimeGetCurrent()
+            defer { LaunchTrace.mark("reload/compile", since: _tc) }
             defer { signposter.endInterval("compile", compileState) }
             sections = buildSections(events: events, interests: interests, now: now, index: index, followedIds: followedIds, profile: profile, shield: shield)
             liveNow = liveRows(events: events, interests: interests, now: now)
@@ -313,8 +321,12 @@ final class AgendaViewModel {
     /// profile, or a profile with only default (`.sportAsSuch`) lenses, leaves
     /// the output byte-for-byte identical to WP-16.4 — graceful degradation.
     nonisolated static func buildSections(events: [Event], interests: Interests, now: Date, index: EntityIndex = EntityIndex([]), followedIds: Set<String> = [], profile: InterestProfile = InterestProfile(), shield: SpoilerShield = SpoilerShield()) -> [AgendaSection] {
+        let _tb = CFAbsoluteTimeGetCurrent()
         let (feedEvents, lookup) = EventBridge.bridge(events)
+        LaunchTrace.mark("compile/bridge", since: _tb)
+        let _tf = CFAbsoluteTimeGetCurrent()
         let feed = FeedCompiler.compile(events: feedEvents, interests: interests, now: now)
+        LaunchTrace.mark("compile/feedcompiler", since: _tf)
         // WP-61: one memo per compile, shared by every row's `followableEntities`
         // so a recurring team/tournament name resolves once, not once per row.
         let nameCache = NameResolveCache()
@@ -328,6 +340,7 @@ final class AgendaViewModel {
         // rather than mapping FeedCompiler's day buckets in place.
         struct Placed { let dayKey: String; let sortTime: Date?; let item: AgendaItem }
         var placed: [Placed] = []
+        let _tr = CFAbsoluteTimeGetCurrent()
 
         for day in feed.days {
             for compiled in day.items {
@@ -356,6 +369,7 @@ final class AgendaViewModel {
             }
         }
 
+        LaunchTrace.mark("compile/rows (n=\(placed.count))", since: _tr)
         // Re-group by day, drop passed days (DESIGN.md "Agendaens semantikk" §1:
         // I DAG first, never a passed day — FeedCompiler already re-homed a
         // still-running multi-day event onto today), order days ascending, and

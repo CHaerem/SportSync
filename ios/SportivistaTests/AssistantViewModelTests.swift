@@ -23,7 +23,7 @@ final class AssistantViewModelTests: XCTestCase {
         AssistantViewModel(
             assistant: MockInterestAssistant(behavior: behavior),
             profileStore: store ?? AssistantTestSupport.tempProfileStore(),
-            index: index,
+            index: self.index,
             // WP-16.3: a throwaway temp directory, never this process's real
             // Application Support — same guarantee as `tempProfileStore()`.
             misunderstoodLog: AssistantTestSupport.tempMisunderstoodLog()
@@ -119,7 +119,7 @@ final class AssistantViewModelTests: XCTestCase {
         let vm = AssistantViewModel(
             assistant: MockInterestAssistant(),
             profileStore: AssistantTestSupport.tempProfileStore(),
-            index: index,
+            index: self.index,
             misunderstoodLog: AssistantTestSupport.tempMisunderstoodLog(),
             feedProvider: { AssistantTestSupport.liveFeed(now: clock) }
         )

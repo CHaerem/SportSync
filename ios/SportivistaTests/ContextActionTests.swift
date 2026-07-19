@@ -44,7 +44,7 @@ final class ContextActionTests: XCTestCase {
         let vm = AssistantViewModel(
             assistant: MockInterestAssistant(),
             profileStore: AssistantTestSupport.tempProfileStore(),
-            index: index,
+            index: self.index,
             misunderstoodLog: AssistantTestSupport.tempMisunderstoodLog()
         )
         vm.onProfileChanged = { recompiled += 1 }

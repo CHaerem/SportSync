@@ -30,7 +30,7 @@ final class OnboardingTests: XCTestCase {
         AssistantViewModel(
             assistant: MockInterestAssistant(behavior: behavior),
             profileStore: store ?? AssistantTestSupport.tempProfileStore(),
-            index: index,
+            index: self.index,
             misunderstoodLog: AssistantTestSupport.tempMisunderstoodLog()
         )
     }

@@ -133,7 +133,21 @@ final class AssistantViewModel {
     /// Profile/AssistantViewModel+ProfileSync.swift (WP-48) reads it — share
     /// link/QR export, import-merge, reload, background sync all go through it.
     let profileStore: ProfileStore
-    private let index: EntityIndex
+    /// Eier-funn 19.07 (launch-trace): EntityIndex-byggingen (entities-dekoding
+    /// + resolver-substrat + prekompilerte term-regexer) kostet 60–290 ms
+    /// SYNKRONT på hovedtråden i ContentView.init. Autoclosure-injisert og
+    /// memoisert — bygges første gang assistenten faktisk trenger den
+    /// (grounding/søk/svar), aldri på launch-stien. (@Observable støtter ikke
+    /// `lazy`, derav manuell memoisering; @ObservationIgnored fordi indeksen
+    /// er intern infrastruktur, ikke UI-tilstand.)
+    @ObservationIgnored private var _index: EntityIndex?
+    @ObservationIgnored private let indexProvider: () -> EntityIndex
+    private var index: EntityIndex {
+        if let i = _index { return i }
+        let i = indexProvider()
+        _index = i
+        return i
+    }
     private let misunderstoodLog: MisunderstoodLogStore
     /// WP-30 — personal memory (facts/episodic/behaviour) over the SAME profile
     /// file (`ProfileSyncState`), and the episodic distiller that turns a
@@ -158,15 +172,16 @@ final class AssistantViewModel {
     init(
         assistant: any InterestAssistant,
         profileStore: ProfileStore,
-        index: EntityIndex,
+        index: @autoclosure @escaping () -> EntityIndex,
         misunderstoodLog: MisunderstoodLogStore = MisunderstoodLogStore(),
         memoryStore: MemoryStore? = nil,
         distiller: any MemoryDistiller = FoundationModelsMemoryDistiller(),
-        feedProvider: @escaping () -> FeedQuery = { FeedQuery(now: Date()) }
+        feedProvider: @escaping () -> FeedQuery = { FeedQuery(now: Date()) },
+        deferAvailabilityCheck: Bool = false
     ) {
         self.assistant = assistant
         self.profileStore = profileStore
-        self.index = index
+        self.indexProvider = index
         self.misunderstoodLog = misunderstoodLog
         // Default the memory store over the SAME profile file, so memory and the
         // profile share one on-disk `ProfileSyncState`.
@@ -174,7 +189,17 @@ final class AssistantViewModel {
         self.distiller = distiller
         self.feedProvider = feedProvider
         self.profile = profileStore.load()
-        self.availability = assistant.availability()
+        // Eier-funn 19.07: SystemLanguageModel.default.availability koster
+        // hundrevis av ms ved FØRSTE kall etter prosess-start — utsatt til en
+        // bakgrunns-Task for den ekte FM-stien (app-launch). Testene (mock,
+        // billig) beholder den synkrone sjekken så banner-assertions er
+        // deterministiske. Optimistisk .available i mellomtiden: er FM av,
+        // retter banneret seg <1s senere — ærlighet bevart i praksis.
+        if deferAvailabilityCheck {
+            self.availability = .available
+        } else {
+            self.availability = assistant.availability()
+        }
         self.misunderstoodEntries = misunderstoodLog.load()
         self.memory = (memoryStore ?? MemoryStore(profileStore: profileStore)).load()
     }
@@ -200,20 +225,30 @@ final class AssistantViewModel {
         // resolver substrate); reuse this one. Only events/interests/profile are
         // re-read per submit — so a just-confirmed follow is still reflected —
         // while the (unchanged) entity index is no longer rebuilt each time.
-        let index = EntityIndex(dataStore.loadEntities())
+        // Eier-funn 19.07: bygget LAT (én delt memoisert boks for grounding +
+        // feed-provider) i stedet for synkront her — dette kjørte på
+        // hovedtråden i ContentView.init på hver app-start.
+        let indexBox = LazyEntityIndexBox { EntityIndex(dataStore.loadEntities()) }
         self.init(
             assistant: assistant,
             profileStore: profileStore,
-            index: index,
+            index: indexBox.value,
             misunderstoodLog: misunderstoodLog,
             feedProvider: {
                 let events = dataStore.loadEvents()
                 let base = dataStore.loadInterests() ?? Interests()
                 let profile = profileStore.load()
-                let effective = EffectiveInterests.merge(profile: profile, into: base, index: index)
+                let effective = EffectiveInterests.merge(profile: profile, into: base, index: indexBox.value)
                 return FeedQuery.build(events: events, interests: effective, now: Date())
-            }
+            },
+            deferAvailabilityCheck: true
         )
+        // Den utsatte FM-tilgjengelighetssjekken (se init) — av hovedtråden.
+        let deferredAssistant = assistant
+        Task.detached(priority: .utility) { [weak self] in
+            let a = deferredAssistant.availability()
+            await MainActor.run { self?.availability = a }
+        }
     }
 
     /// The entity index arrived (has been synced)? Used to warn honestly when
@@ -918,4 +953,21 @@ final class AssistantViewModel {
         }
     }
     #endif
+}
+
+
+/// WP-launch-perf (19.07.2026): en-gangs, memoisert EntityIndex-bygging delt
+/// mellom AssistantViewModels grounding-sti og feed-provideren. Kun brukt fra
+/// MainActor (VM-en er @MainActor; feedProvider kalles i submit-stien).
+@MainActor
+final class LazyEntityIndexBox {
+    private let make: () -> EntityIndex
+    private var built: EntityIndex?
+    init(_ make: @escaping () -> EntityIndex) { self.make = make }
+    var value: EntityIndex {
+        if let built { return built }
+        let v = make()
+        built = v
+        return v
+    }
 }

@@ -21,7 +21,7 @@ final class FollowActionTests: XCTestCase {
         AssistantViewModel(
             assistant: MockInterestAssistant(),
             profileStore: store,
-            index: index,
+            index: self.index,
             misunderstoodLog: AssistantTestSupport.tempMisunderstoodLog()
         )
     }
