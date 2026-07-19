@@ -27,6 +27,15 @@ struct AssistantCapsule: View {
         HStack(spacing: 10) {
             Button(action: onOpen) {
                 HStack(spacing: 10) {
+                    // Rev. 19.07 eier-funn: without a leading anchor the grey
+                    // placeholder reads as a dead text field. The assistant symbol
+                    // (secondaryLabel, matching the prompt — never amber; the mic
+                    // keeps the one accent) is the Maps-pattern anchor DESIGN
+                    // § Hjelperen now requires.
+                    Image(systemName: SportSymbol.assistant)
+                        .font(.sportivista(.subheadline))
+                        .foregroundStyle(SportivistaTokens.secondaryLabel)
+                        .accessibilityHidden(true)
                     Text(AssistantViewModel.capsulePrompt)
                         .font(.sportivista(.subheadline))
                         .foregroundStyle(SportivistaTokens.secondaryLabel)
@@ -53,9 +62,10 @@ struct AssistantCapsule: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 8)
-        // Liquid Glass (iOS 26): the platform's own control material — a rounded
-        // rect (calm, matches the old command-line shape) over the agenda.
-        .glassEffect(.regular, in: .rect(cornerRadius: 26))
+        // Liquid Glass (iOS 26): the platform's own control material — a TRUE
+        // capsule (DESIGN § Hjelperen, rev. 19.07 eier-funn: "i EKTE Capsule-form",
+        // not the old rect-26 that only approximated one) over the agenda.
+        .glassEffect(.regular, in: .capsule)
         .padding(.horizontal, 10)
         .padding(.bottom, 4)
     }

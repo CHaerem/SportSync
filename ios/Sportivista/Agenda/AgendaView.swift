@@ -256,6 +256,7 @@ struct EventRowView: View {
             // HStack reserve the column's full width first, RowBody takes the rest.
             TimeColumn(text: row.timeLabel)
                 .layoutPriority(1)
+            SportSymbolView(sport: row.event.sport)
             RowBody(title: row.title, meta: row.metaLabel, channel: row.channelLabel)
             TrailingMarkers(reminder: row.mustWatch, aiResearch: row.isAIResearch)
         }
@@ -273,6 +274,7 @@ struct SeriesRowView: View {
             MustSeeDot(on: false) // series rows are never visually accented (FeedCompiler.isMustSee)
             TimeColumn(text: row.timeLabel) // WP-99: see EventRowView — priority so a wide window never draws over the title
                 .layoutPriority(1)
+            SportSymbolView(sport: row.nextStage.sport)
             RowBody(title: row.summaryLabel, meta: nil, channel: row.channelLabel)
             TrailingMarkers(reminder: row.mustWatch, aiResearch: row.isAIResearch)
         }
@@ -356,6 +358,28 @@ private struct MustSeeDot: View {
             .fill(on ? SportivistaTokens.accent : Color.clear)
             .frame(width: 6, height: 6)
             .padding(.top, 7)
+            .accessibilityHidden(true)
+    }
+}
+
+/// The quiet per-sport SF Symbol (DESIGN § Radens anatomi, rev. 19.07 eier-funn):
+/// sits between the time column and the title so "what kind of event" (cycling vs
+/// football) reads at a glance without parsing the meta text. `tertiaryLabel`,
+/// NEVER coloured (the amber budget is untouched — the must-see dot is the row's
+/// only accent), never emoji/logo. A fixed width keeps every title aligned
+/// regardless of glyph width; scales with Dynamic Type. Hidden from VoiceOver —
+/// the sport is already carried by the title/meta line, so this is a purely
+/// visual at-a-glance aid (same policy as `MustSeeDot`). One canonical table
+/// (`SportSymbol`) shared with the detail sheet and the Nyheter rows.
+private struct SportSymbolView: View {
+    let sport: String
+
+    var body: some View {
+        Image(systemName: SportSymbol.name(for: sport))
+            .font(.sportivista(.subheadline))
+            .foregroundStyle(SportivistaTokens.tertiaryLabel)
+            .frame(width: 20, alignment: .center)
+            .padding(.top, 2)
             .accessibilityHidden(true)
     }
 }
