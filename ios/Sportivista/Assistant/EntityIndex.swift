@@ -39,6 +39,36 @@ struct EntityIndex: Sendable {
     /// Levenshtein against each. Ids are de-duplicated so `.count` is a distinct
     /// entity count.
     private let exactTermIds: [String: [String]]
+
+    /// Perf (19.07.2026): everything `matchScore` needs about one stored term,
+    /// computed ONCE at init. Before this, every `resolve()` call re-normalized
+    /// every term of every entity AND `containsName` compiled a fresh
+    /// NSRegularExpression per call — tens of millions of compiles across the
+    /// parity suite (48s of its 87s total), and the same waste per real user
+    /// query. Semantics are byte-identical: the parity tests + golden vectors
+    /// are the judges.
+    private struct PreppedTerm {
+        /// `TextMatch.normalize(raw)` — also `containsName`'s haystack form.
+        let norm: String
+        /// Deduped `[norm, editionStripped(norm)]`, order-independent under
+        /// `consider` (max-taking) exactly like the old `Set` iteration.
+        let variants: [String]
+        /// Tokenizations aligned with `variants`.
+        let variantTokens: [[String]]
+        /// `TextMatch.boundaryRegex` with THIS TERM as the name — the
+        /// precompiled half of `containsName(q, raw)`.
+        let nameRegex: NSRegularExpression?
+    }
+    private struct PreppedEntity {
+        let entity: Entity
+        let terms: [PreppedTerm]
+        let initialsNorm: [String]
+        let onFlyInitials: String?
+    }
+    /// NSRegularExpression is immutable and documented thread-safe; the class
+    /// just isn't marked Sendable. Confined to this file.
+    private struct Prepped: @unchecked Sendable { let entries: [PreppedEntity] }
+    private let prepped: Prepped
     /// WP-61 — the stored-initials lookup, likewise built once: a normalized
     /// `initials` value → the ids scoring 96 for it. `servedEntity`'s fast path
     /// needs this because 96 is the ONLY score strictly between the exact 100
@@ -63,21 +93,43 @@ struct EntityIndex: Sendable {
             if map[key]?.contains(id) == true { return }
             map[key, default: []].append(id)
         }
+        var preppedEntries: [PreppedEntity] = []
+        preppedEntries.reserveCapacity(entities.count)
         for e in entities {
             var terms = [e.name] + e.aliases
             terms.append(e.id.replacingOccurrences(of: "-", with: " "))
+            var preppedTerms: [PreppedTerm] = []
+            preppedTerms.reserveCapacity(terms.count)
             for raw in terms {
                 let tn = TextMatch.normalize(raw)
+                var variants: [String] = []
                 for termNorm in Set([tn, Self.editionStripped(tn)]) {
                     append(e.id, forKey: termNorm, into: &exact)
+                    if !termNorm.isEmpty { variants.append(termNorm) }
                 }
+                preppedTerms.append(PreppedTerm(
+                    norm: tn,
+                    variants: variants,
+                    variantTokens: variants.map { $0.split(separator: " ").map(String.init) },
+                    nameRegex: TextMatch.boundaryRegex(forNormalizedName: tn)
+                ))
             }
+            var initialsNorm: [String] = []
             for ini in e.initials {
-                append(e.id, forKey: TextMatch.normalize(ini), into: &inits)
+                let n = TextMatch.normalize(ini)
+                append(e.id, forKey: n, into: &inits)
+                initialsNorm.append(n)
             }
+            preppedEntries.append(PreppedEntity(
+                entity: e,
+                terms: preppedTerms,
+                initialsNorm: initialsNorm,
+                onFlyInitials: Self.onTheFlyInitials(e)
+            ))
         }
         self.exactTermIds = exact
         self.initialsIds = inits
+        self.prepped = Prepped(entries: preppedEntries)
     }
 
     // MARK: - Exact lookup (the grounding gate)
@@ -124,10 +176,15 @@ struct EntityIndex: Sendable {
         guard !q.isEmpty else { return Resolution(candidates: [], served: nil) }
         let qTokens = q.split(separator: " ").map(String.init)
 
+        // One boundary regex for the QUERY (containsName(raw, q)'s name-half),
+        // compiled once and reused across every entity/term below.
+        let queryRegex = TextMatch.boundaryRegex(forNormalizedName: q)
+
         var scored: [(entity: Entity, score: Int, auto: Bool)] = []
-        for e in entities {
-            if let m = Self.matchScore(for: e, queryNorm: q, queryTokens: qTokens), m.score >= Self.candidateFloor {
-                scored.append((e, m.score, m.auto))
+        for p in prepped.entries {
+            if let m = Self.matchScore(for: p, queryNorm: q, queryTokens: qTokens, queryRegex: queryRegex),
+               m.score >= Self.candidateFloor {
+                scored.append((p.entity, m.score, m.auto))
             }
         }
         let ranked = scored.sorted { lhs, rhs in
@@ -225,7 +282,10 @@ struct EntityIndex: Sendable {
     /// or a same-shape typo) that may be served without the user tapping; a
     /// partial match (prefix/substring/single-word fuzz) scores well but stays
     /// suggestion-only.
-    static func matchScore(for e: Entity, queryNorm q: String, queryTokens qTokens: [String]) -> (score: Int, auto: Bool)? {
+    private static func matchScore(
+        for p: PreppedEntity, queryNorm q: String, queryTokens qTokens: [String],
+        queryRegex: NSRegularExpression?
+    ) -> (score: Int, auto: Bool)? {
         var best = 0
         var bestAuto = false
         func consider(_ score: Int, _ auto: Bool) {
@@ -233,19 +293,30 @@ struct EntityIndex: Sendable {
             else if score == best, auto, !bestAuto { bestAuto = true }
         }
 
-        var terms = [e.name] + e.aliases
-        terms.append(e.id.replacingOccurrences(of: "-", with: " "))
-        for raw in terms {
-            let tn = TextMatch.normalize(raw)
-            let stripped = editionStripped(tn)
-            for termNorm in Set([tn, stripped]) where !termNorm.isEmpty {
+        for term in p.terms {
+            // The two containsName checks depend only on (raw term, query) —
+            // never on the variant — so the old code evaluated them to the same
+            // result for every non-exact variant. Once is byte-identical.
+            var ranContains = false
+            for (i, termNorm) in term.variants.enumerated() {
                 if termNorm == q { consider(100, true); continue }
                 if q.count >= 3, termNorm.count >= 3, (termNorm.hasPrefix(q) || q.hasPrefix(termNorm)) {
                     consider(88, false)
                 }
-                if TextMatch.containsName(raw, q) { consider(82, false) }
-                if TextMatch.containsName(q, raw) { consider(78, false) }
-                let tTokens = termNorm.split(separator: " ").map(String.init)
+                if !ranContains {
+                    ranContains = true
+                    // containsName(raw, q): name = q (precompiled queryRegex),
+                    // haystack = normalize(raw) = term.norm.
+                    if let re = queryRegex, TextMatch.matches(re, normalizedHaystack: term.norm) {
+                        consider(82, false)
+                    }
+                    // containsName(q, raw): name = raw (precompiled at init),
+                    // haystack = q (already normalized).
+                    if let re = term.nameRegex, TextMatch.matches(re, normalizedHaystack: q) {
+                        consider(78, false)
+                    }
+                }
+                let tTokens = term.variantTokens[i]
                 if tTokens.count >= 2, qTokens.count == tTokens.count,
                    let d = tokenwiseDistance(qTokens, tTokens), d >= 1, d <= 2 {
                     consider(d == 1 ? 84 : 80, true)   // same-shape typo — auto
@@ -255,8 +326,8 @@ struct EntityIndex: Sendable {
                 if sim >= 60 { consider(min(sim, 79), false) }
             }
         }
-        for ini in e.initials where TextMatch.normalize(ini) == q { consider(96, true) }
-        if let onFly = onTheFlyInitials(e), onFly == q { consider(72, false) }
+        for ini in p.initialsNorm where ini == q { consider(96, true) }
+        if let onFly = p.onFlyInitials, onFly == q { consider(72, false) }
 
         return best > 0 ? (best, bestAuto) : nil
     }

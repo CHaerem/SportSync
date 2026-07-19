@@ -70,15 +70,26 @@ enum TextMatch {
     /// "Lyn" matches "Lyn Oslo" and "Vålerenga – Lyn" but NOT "Brooklyn" —
     /// boundaries kill the substring false-positive class.
     static func containsName(_ haystack: String, _ name: String) -> Bool {
-        let n = normalize(name).trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !n.isEmpty else { return false }
-        let h = normalize(haystack)
+        guard let re = boundaryRegex(forNormalizedName: normalize(name)) else { return false }
+        return matches(re, normalizedHaystack: normalize(haystack))
+    }
+
+    /// The boundary regex for one (already `normalize`d) name — split out of
+    /// `containsName` so hot paths can compile it ONCE and reuse it across many
+    /// haystacks (EntityIndex precompiles one per stored term at init, and one
+    /// per query in `resolve` — compiling per call dominated matching cost).
+    /// nil ⟺ `containsName` would have returned false for every haystack.
+    static func boundaryRegex(forNormalizedName n0: String) -> NSRegularExpression? {
+        let n = n0.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !n.isEmpty else { return nil }
         let pattern = "(?:^|[^\\p{L}\\p{N}])\(escapeRegex(n))(?:[^\\p{L}\\p{N}]|$)"
         // ICU (NSRegularExpression) supports \p{L}/\p{N}; case-insensitive is
         // redundant after normalize() but matches the JS "iu" flags exactly.
-        guard let re = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) else {
-            return false
-        }
+        return try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive])
+    }
+
+    /// The match half of `containsName`, against an already-normalized haystack.
+    static func matches(_ re: NSRegularExpression, normalizedHaystack h: String) -> Bool {
         let range = NSRange(h.startIndex..., in: h)
         return re.firstMatch(in: h, options: [], range: range) != nil
     }
