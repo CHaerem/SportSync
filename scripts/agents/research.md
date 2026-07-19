@@ -145,6 +145,33 @@ Use the **web-search** and **web-fetch** capabilities provided by your runtime. 
   search patterns, and trust rules. X is often first with schedule changes,
   broadcaster announcements and withdrawals — exactly what static APIs miss.
 
+### Step 2.6 — Horizon scan: propose catalog candidates (breadth watch)
+On EVERY run (and especially the deep tier's weekly sweep) spend one short pass
+asking a question the rest of Step 2 does not: **what is happening in Norwegian or
+international sport over the next ~4 weeks that is NOT already on the board AND is
+not yet named in `catalog.json`?** This is the anticipate-possible-interests watch
+(WP-116) — the catalog should widen *ahead* of demand, not lag it, because each
+user's on-device lens filters the catalog-wide board down to their own follows, so
+broad server coverage is safe. Look for:
+- a wholesale (`tier1`) sport/discipline whose marquee event is coming up but has no
+  tracked entry yet (e.g. a Diamond League meet, a handball championship, the season
+  opener of a winter discipline);
+- a named entity a Norwegian fan would plausibly follow that the catalog does not
+  yet name — a Norwegian athlete breaking through, a big league/tournament/cycling
+  classic, a team on a European run;
+- a one-off a broad sports fan would care about (a championship, a debut, a record
+  attempt) adjacent to what we already cover.
+
+You already own the catalog rewrite (Step 4 rewrites `catalog.json` and
+`tracked.json`), so when a candidate is clearly in-scope and defensible, ADD it to
+`catalog.json` in the right tier as part of that rewrite. For every candidate —
+whether you promote it to the catalog now or only flag it for later — **record it in
+`tracked.json` with a `reason` that says it came from the horizon scan and why it
+belongs, plus `evidence` URLs** (a placeholder-style entry is fine; it still needs
+`addedAt`/`addedBy`/`evidence` like any other). Never invent coverage you can't
+source, stay inside `neverCover`, and never silently drop an existing catalog entry —
+this pass only proposes additions.
+
 ### Step 3 — Add discovered events to events.json
 Append discovered events to the existing array in `docs/data/events.json`
 (never remove events written by the static pipeline). Schema:
@@ -179,6 +206,14 @@ search for confirmation. If genuinely unknown after checking, write
 `https://tv.nrk.no/serie/…` / `/direkte/…`) that opens the app on THIS broadcast,
 not the broadcaster's homepage. Use the homepage only when you can't reach a
 deeper page; never invent a URL.
+
+**The `summary` is the event's "Om" text — write it scannable, never a wall.** The
+dashboard renders `summary` as the "Om" section and splits it on blank lines into
+calm paragraphs. Write it as **2–3 short paragraphs separated by a blank line
+(`\n\n`)**, or as a few key-fact sentences — **never one dense block longer than
+~400 characters** (that single wall of text is exactly what this contract prevents).
+For an in-progress stage race the live stat line (above) is the first paragraph; add
+context in a second. Keep each paragraph factual and cite in `evidence`.
 
 Confidence:
 - `high` = 2+ authoritative sources agree on date/time/venue
