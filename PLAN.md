@@ -114,17 +114,26 @@ mennesket, aldri av en agent.
 | WP-107 | Ytelse: Nyheter-bytte-jank + oppstarts-«Henter data» (eier-dogfooding bygg 6) | 0H+ | WP-106 | ✅ #323 merget 19.07 |
 | WP-108 | Visuell affordanse: kapsel-anker + ekte Capsule + sport-symbol per rad (eier-dogfooding bygg 6) | 0H+ | WP-106 | ✅ #324 merget 19.07 |
 
-| WP-110 | Pipeline-vakter: sjakk-falsk-positiv + kontrakter | 0I | — | 🔬 PR åpnet 20.07 — dropped-in-build katalog-gatet (delt `makeCoverageGate` i helpers, build-events + gap-detektor deler én gate; Sant Martí-anomali borte, øvrige gaps uendret); usage-gate-kommentar oppdatert (token wiret); cyclingstage-tidssemantikk-quirk lagt til; scout/self-repair logg-kontrakt strammet (logg+commit på HVER kjøring) |
-| WP-111 | Web: deltaker-visning + ferskhetsvakt + «Om»-lesbarhet + Zenji-headere | 0I | — | 🔬 |
-| WP-112 | iOS: perf-port-robusthet + deltaker-visning i agendaraden | 0I | — | 🔬 |
-| WP-113 | Sikkerhet: preview-deploy-injeksjon + CI-skrivevakt (BESKYTTEDE STIER — eier merger) | 0I | — | ⬜ |
-| WP-114 | Dok-resynk etter 19.07-gjennomgangen | 0I | — | 🔬 |
+| WP-110 | Pipeline-vakter: sjakk-falsk-positiv + kontrakter | 0I | — | ✅ #329 merget 20.07 — dropped-in-build katalog-gatet (delt `makeCoverageGate` i helpers, build-events + gap-detektor deler én gate; Sant Martí-anomali borte, øvrige gaps uendret); usage-gate-kommentar oppdatert (token wiret); cyclingstage-tidssemantikk-quirk lagt til; scout/self-repair logg-kontrakt strammet (logg+commit på HVER kjøring) |
+| WP-111 | Web: deltaker-visning + ferskhetsvakt + «Om»-lesbarhet + Zenji-headere | 0I | — | ✅ #328 merget 20.07 — matchup-tittel ved nøyaktig 2 participants («Spania – Argentina»), featured-ferskhetsvakt ~20 t → heroFallback, «Om» i avsnitt + nøkkelfakta (aboutParagraphs, forkortelses-trygg setningssplitt), Zenji→Sportivista i 10 headere, sw v1-6; 15 nye tester |
+| WP-112 | iOS: perf-port-robusthet + deltaker-visning i agendaraden | 0I | — | ✅ #330 merget 20.07 — interleavede small/large-målinger + 3-forsøks ratio-port (2,13–2,15× lokalt ×3, O(n²)-vakt bevart); AgendaFormat.matchupTitle i rad/live/detalj/widget-kallsteder; 582 iOS-tester, vektorer bit-like, 4 schemes |
+| WP-113 | Sikkerhet: preview-deploy-injeksjon + CI-skrivevakt (BESKYTTEDE STIER — eier merger) | 0I | — | 🔬 PR #327 ÅPEN (needs-review) — execFileSync + refs/pull/N/head + SAFE_REF-regex + fork-PR-skip; ny protect-automation.js-hook (CI-only) + wiring + tester; 651 tester grønne. VENTER PÅ EIER-MERGE. Review-punkter: fork-PR-er mister preview (bevisst); hooken gjelder også PR-løkkene (workflow-fikser må forfattes av menneske) |
+| WP-114 | Dok-resynk etter 19.07-gjennomgangen | 0I | — | ✅ #331 merget 20.07 — CLAUDE.md (web-identitet Apple-native, testtall 44/648, +9 testfiler, build-alert, 4 workflows dokumentert), workflows-test ×4, ios/README (News/-seksjon, LaunchTrace, 61 testfiler/573), PLAN-metadata restaurert mot git-historikk |
 | WP-115 | iOS: in-app nyhetsbrowser (SFSafariViewController) | 0I | WP-106 | ⬜ bølge 2 |
 | WP-116 | Dekningsbredde: katalog-utvidelse + deltaker-/«Om»-kontrakter i research/verify | 0I | WP-110 | ⬜ bølge 2 |
-| WP-117 | Design-review av alle flater (read-only rapport) | 0I | — | ⬜ |
-| WP-118 | Kjernefunksjonalitet-audit (read-only rapport) | 0I | — | ⬜ |
+| WP-117 | Design-review av alle flater (read-only rapport) | 0I | — | ✅ rapport levert 20.07 — bekreftet alle tre eier-svakheter + W1 fortids-daggruppe over «I DAG», W2 live-poll kollapser åpne rader, rediger-amber-overload, onboarding-copy «kommandolinjen», RESULTAT-seksjon feilplassert, DESIGN.md selvmotsigelse om web-klokka, stale skjermkatalog → WP-120/126–129 |
+| WP-118 | Kjernefunksjonalitet-audit (read-only rapport) | 0I | — | ✅ rapport levert 20.07 — 🔴 varsel-reconcile kun ved kald oppstart; 🔴 widget-timeline aldri invalidert ved sync; 🟡 ingen foregrunn-sync, horisont-divergens (web 14d-cap/iOS ingen/data 42d), ICS uten DTEND, 100T-entitetsdublett + intet lens-miss-signal → WP-121–125 |
 | WP-119 | Portmåling-artefakt (port-report fra verify/coverage/build-alert) | 0I | — | ⬜ bølge 2 |
-| WP-120 | «Det du følger»: visning + håndtering (fra WP-117-funn) | 0I | WP-117 | ⬜ bølge 2 |
+| WP-120 | «Det du følger»: visning + håndtering (fra WP-117-funn) | 0I | WP-117 | ⬜ bølge 3 |
+| WP-121 | iOS leverings-ferskhet: varsel-reconcile + widget-reload + foregrunn-sync | 0I | WP-118 | ⬜ bølge 2 |
+| WP-122 | ~~Deltaker widget/detalj~~ → slått inn i WP-127 | 0I | — | — |
+| WP-123 | ICS: DTEND fra endTime (flerdagsevents) | 0I | — | ⬜ bølge 3 |
+| WP-124 | Horisont-konsistens: web «Fremover» (14–42 d) + iOS Uka-cap (EIERBESLUTNING) | 0I | WP-118 | ⬜ bølge 4 |
+| WP-125 | Entitets-konsolidering (100T-alias) + lens-miss-signal | 0I | WP-118 | ⬜ bølge 4 |
+| WP-126 | Live-koherens: ett delt live-begrep på alle flater (eierbestilling 20.07) | 0I | WP-121 | ⬜ bølge 3 |
+| WP-127 | Detalj & widget: «Om»-avsnitt iOS + deltaker-titler + RESULTAT sist + prosa-bredde web | 0I | WP-112 | ⬜ bølge 3 |
+| WP-128 | Web-agenda: fortids-dag-fiks + ekspandert-tilstand over live-poll + klokke-avstemming | 0I | WP-117 | ⬜ bølge 3 |
+| WP-129 | Onboarding-copy (kapsel-modellen) + stale kommentarer + regenerert skjermkatalog | 0I | WP-117 | ⬜ bølge 4 |
 
 ---
 
@@ -144,11 +153,19 @@ dekningsporten står fortsatt åpne: F1-kvalifisering inn/ut og Sjakk-NM-elitekl
 (håndball, vintersport-detaljering, friidrett, mer fotball/sykkel/tennis-langhale)
 — serverbredde er trygt for calm design siden linsen filtrerer per bruker.
 
-Bølge 1 (parallelle, disjunkte filer): WP-110 (server-scripts + agent-prompter),
-WP-111 (docs/), WP-112 (ios/ tester + Feed-rendering), WP-113 (beskyttede stier),
-WP-114 (CLAUDE.md/ios-README/PLAN-metadata/workflows-test) + WP-117/118 (read-only
-rapporter, ingen worktree). Bølge 2 etter merge + rapporter: WP-115, WP-116,
-WP-119, WP-120.
+Bølge 1 (✅ komplett 20.07, ~2,5 t): WP-110 #329, WP-111 #328, WP-112 #330,
+WP-114 #331 merget; WP-113 #327 ÅPEN (venter eier); WP-117/118-rapportene levert
+og omsatt til WP-120–129. Samlet verifisering: 648 JS-tester + build/validate +
+screenshot grønt; iOS-gaten grønn på main.
+Bølge 2 (disjunkte filer): WP-115 (News/), WP-116 (server: katalog + prompter),
+WP-119 (server: port-report), WP-121 (iOS: Sync/ContentView/AgendaViewModel).
+Bølge 3 (etter bølge 2): WP-120 (Profile/ + web followed/edit), WP-123 (ICS),
+WP-126 (live: live.js/shared-constants + iOS live-linja), WP-127 (detalj/widget),
+WP-128 (web-agenda) — WP-126/127/128 deler IKKE filer: 126 eier live.js +
+liveNow-stien, 127 eier detail.js/EventDetailSheet/widget, 128 eier
+renderAgenda/dag-gruppering; ved tvil eier lavest WP-nummer fila.
+Bølge 4: WP-124 (horisont — eierbeslutning først), WP-125 (entiteter),
+WP-129 (onboarding-copy/katalog).
 
 ### WP-110 · Pipeline-vakter: sjakk-falsk-positiv + kontrakter
 **Mål:** fjern den kroniske HIGH-falsk-positiven og tett tre småkontrakter.
@@ -288,11 +305,122 @@ gaps mot catalog), stille stopp (build-alert + run-metadata der tilgjengelig),
 deltaker-status-feil (verify-log) → `docs/data/port-report.json` (+ .gitignore-
 whitelist + manifest). **Aksept:** vitest + integrasjonstest mot fixtures.
 
-### WP-120 · «Det du følger»: visning + håndtering (bølge 2, etter WP-117)
-**Mål:** eieropplevd svakhet — flaten skal vise HVA følgingen faktisk gir
-(kommende events + siste nytt per fulgt entitet, ikke bare en navneliste),
-tydelig skille regel-typer (utøver/lag/sport/kategori), og gjøre
-slutt-å-følge/juster trygt og forståelig. Scope defineres av WP-117-funnene.
+### WP-120 · «Det du følger»: visning + håndtering (bølge 3)
+**Mål:** flaten skal svare på «hva GIR følgingen», skille regel-typer, og gjøre
+slutt-å-følge trygt (WP-117 A(a): i dag navneliste med identisk undertittel per
+rad). **Innhold:** (1) `ios/Sportivista/Profile/FollowedListView.swift`:
+seksjoner per regel-type (UTØVERE/LAG/TURNERINGER/SPORTER/KATEGORIER); rad =
+navn + kanonisk sport-symbol + **per-entitet neste event** («Neste: lør 25. ·
+Strømsgodset – Lyn · TV 2») eller ærlig «ikke satt opp ennå» — erstatt den
+enhets-globale «varsler på/av»-undertittelen; (2) `FollowDetailView`: nye
+seksjoner KOMMENDE (1–3 neste events, tappbare) og SISTE NYTT (linse-matchede
+news-pekere) over OM/HVORFOR; (3) `.swipeActions` «Slutt å følge» med samme
+bekreftelse + kort angre; (4) web-paritet: `docs/js/followed.js` + `edit.js` —
+neste-event-per-rad + type-gruppering; rediger-amber-overload fikses (navn i
+`--fg`, ett amber-element per rad, rad→detalj i stedet for to inline-knapper).
+**Gjenbruk:** FeedQuery/NewsLens/AssistantViewModel.follow/removeRule — ingen ny
+skrivevei. **Ikke-mål:** ingen ny per-entitet-varselmodell; ingen serverendring.
+**Aksept:** type-gruppert liste med neste-event per rad; detalj med KOMMENDE +
+SISTE NYTT; swipe + bekreftelse + angre; full unit-suite + nye tester; skjermbilder
+begge temaer begge flater.
+
+### WP-121 · iOS leverings-ferskhet: varsel-reconcile + widget-reload + foregrunn-sync (bølge 2)
+**Mål:** lukk de to 🔴-hullene + foregrunn-hullet fra WP-118-auditen — tavla og
+varslene skal aldri være eldre enn siste sync. **Innhold:** (1)
+`NotificationPlanner.reconcile` har i dag ETT kallsted (`ContentView.swift:652`,
+kun kald oppstart): kall den også fra bakgrunnssyncen
+(`BackgroundRefreshScheduler.handle` — snapshot events før/etter, reconcile ved
+endring) og pull-to-refresh-veien (`AgendaViewModel.refresh`/ContentView); (2)
+`WidgetCenter.shared.reloadAllTimelines()` etter enhver sync som endret
+events/entities (i dag: 0 kallsteder i hele ios/ — widgeten er opptil ~24 t bak);
+(3) foregrunn-sync: `scenePhase == .active` og > ~15 min siden `lastSync` →
+`refresh()` (i dag kjøres kun profil-CloudKit ved foregrunn,
+`ContentView.swift:484–487`). **Ikke-mål:** ingen endring i planleggings-/
+diff-semantikken (den er bevist solid); ingen News/-filer (WP-115 eier dem).
+**Aksept:** unit-test med RecordingNotificationScheduler beviser `.reschedule`
+når en ikke-launch-sync endrer et events tid; widget-reload-kall verifisert i
+begge sync-veier; full suite + 4 schemes + vektorer bit-like.
+
+### WP-123 · ICS: DTEND fra endTime (bølge 3)
+**Mål:** flerdagsevents (9 i dagens data, flere mustWatch) skal bli blokker i
+abonnert kalender, ikke enkeltpunkt. **Innhold:** `scripts/build-ics.js`
+`vevent()` emitter `DTEND` fra `endTime` når satt (ellers som i dag); VALARM
+uendret. **Aksept:** `tests/build-ics.test.js` asserterer DTEND for events med
+endTime + uendret output for events uten; vitest grønn.
+
+### WP-124 · Horisont-konsistens (bølge 4)
+**Mål:** web og iOS skal være enige om hvor langt frem tavla ser (i dag: web
+hard-capper 14 d (`dashboard.js:223`), iOS Uka capper aldri, data går ~42 d).
+**Innhold:** (1) web: «Fremover»-affordanse som avslører 14–42-dagers-events
+(rolig, bak dagens «Vis mer»-mønster); (2) iOS: Uka cappes på 14 d og
+Nyheter-FREMOVER eier resten — **EIERBESLUTNING** bekreftes før implementering
+(calm vs. fullstendighet). **Aksept:** vitest + iOS-suite; samme event-sett
+synlig på begge flater for samme vindu.
+
+### WP-125 · Entitets-konsolidering + lens-miss-signal (bølge 4)
+**Mål:** lukk 100T-klassen (to lag-entiteter `100-thieves` og `100t` uten
+alias-kobling → linse-miss) og gjør stille-døde følginger synlige. **Innhold:**
+(1) `scripts/build-entities.js`: kallenavn/initial-dubletter konsolideres til
+alias på hovedentiteten; entities-test som vokter mot lag-dubletter; fixtures
+re-fryses bevisst; (2) lens-miss-signal: fulgt regel som har matchet 0
+events/nyheter siste N dager flagges stille i «Det du følger» («ikke satt opp
+ennå» vs. «ingen treff på 14 dager — sjekk navnet») — klientberegning, ingen
+telemetri. **Aksept:** vitest + iOS-suite; 100T-eventet treffer
+100 Thieves-følging i vektor/test.
+
+### WP-126 · Live-koherens: ett delt live-begrep (bølge 3; eierbestilling 20.07)
+**Mål:** «pågår live» skal være konsistent og sann på alle flater (i dag tre
+usammenhengende begreper: web «Direkte nå» viser KUN ESPN-pollede sports
+(fotball/golf/F1 — TdF-etappen vises aldri), tidsvindu-«pågår nå» er sann kl. 03
+for flerdagsevents, iOS liveNow beregnes kun ved reload og tikker aldri).
+**Innhold:** (1) delt definisjon i `shared-constants.js` (+ speiling i
+FeedCompiler/AgendaViewModel): DIREKTE = nå ∈ [time, effectiveEnd] der
+effectiveEnd = endTime ELLER sport-typet default-varighet (fotball ~2t15,
+F1-økt ~2t, etappe ~5t, sjakkrunde ~5t, CS2 ~2t); flerdagsturneringer utenfor
+plausible spillevinduer er «pågår» (stille tilstand), ALDRI live-dot; (2) web
+«Direkte nå»-linja (live.js) viser alle DIREKTE tavle-events, ESPN-score beriker
+der den finnes (score = bonus, ikke inngangsbillett); (3) iOS: samme definisjon
++ lett minutt-tikk (Reduce Motion-vennlig) så linja er sann mellom reloads;
+widget markerer DIREKTE. **Ikke-mål:** ingen ny polling av nye kilder.
+**Aksept:** tester begge flater (DIREKTE-grensetilfeller: uten endTime,
+flerdags, ferdigspilt); TdF-etappe synlig i «Direkte nå» i testfixture.
+
+### WP-127 · Detalj & widget: «Om»-avsnitt iOS + deltaker-titler + RESULTAT sist (bølge 3)
+**Mål:** lukk detalj-/widget-delene av Om- og deltaker-funnene. **Innhold:**
+(1) `ios/Sportivista/Agenda/EventDetailSheet.swift`: `summary` rendres som
+avsnitt + nøkkelfakta-linjer (speil WP-111s aboutParagraphs-semantikk), mykt
+lengdetak + «mer»; RESULTAT-seksjonen flyttes sist (DESIGN § Event-detalj);
+(2) deltaker-titler i detaljarkene (web `detail.js` + iOS `titleText`) og
+widget-highlight (`WidgetTimelineBuilder.swift:98`) via samme delte
+formateringshjelper som raden (WP-111/112); (3) `docs/css/cards.css`: lang
+prosa i detalj får full radbredde (`.d-prose`), nøkkel/verdi-oppsettet beholdes
+kun for korte felt (i dag klemmes 700+-tegns tekster inn i ~130 px kolonne).
+**Aksept:** WidgetTimelineBuilderTests + detalj-tester begge flater; skjermbilde
+av 700+-tegns event viser avsnitt i full bredde begge temaer.
+
+### WP-128 · Web-agenda: fortids-dag + ekspandert-tilstand + klokke-avstemming (bølge 3)
+**Mål:** de to høy/middels-funnene fra WP-117 + DESIGN-avstemming. **Innhold:**
+(1) `dashboard.js renderAgenda`: ferdigspilte flerdagsevents skal aldri gi en
+fortids-dagoverskrift over «I DAG» (19.–20.07 tronet «TORSDAG 16. JULI»/Corales
+øverst — flytt under «I dag» eller filtrer når endTime < now); (2) live-pollens
+`renderAgenda()`-rebuild hvert 60. s skal bevare ekspanderte rader
+(aria-expanded-tilstand over re-render); (3) klokke/tema-glyf: DESIGN.md
+motsier seg selv om web-klokka (§ Bevegelse sier fjernet, § Cross-surface sier
+beholdt) — **EIERBESLUTNING**: fjern web-klokka for paritet ELLER dokumentér
+unntaket; tema-glyf-unntaket noteres samme sted; (4) valgfritt småplukk: «NESTE
+OPP»-rader som dupliserer synlige agendarader dedupes; sport-symbol på web-raden
+vurderes for paritet. **Aksept:** nye dashboard-cards-tester (ingen fortids-dag
+øverst; ekspandert overlever poll); DESIGN.md internt konsistent.
+
+### WP-129 · Onboarding-copy + stale kommentarer + skjermkatalog (bølge 4)
+**Mål:** appen skal ikke lære bort en kontroll som ikke finnes. **Innhold:**
+(1) `OnboardingView.swift` (~435/440) + `AgendaView.emptyRow` (~216–219):
+«skriv i kommandolinjen nederst»/«»_»-idiomet erstattes med kapsel-modellens
+språk («trykk assistenten nederst»); (2) stale «Tekst-TV»/«mono»/TekstTVClock-
+kommentarer i ~15 Swift-filer ryddes; (3) `ios/docs/design-v2/`-katalogen er
+pre-baseline (14.07, viser gammelt ZENJI-utseende) — regenerer via
+design/screens/generate.sh eller merk mappa utdatert. **Aksept:** grep 0 treff
+på «kommandolinjen»/TekstTVClock i ios/Sportivista; UI-røyk grønn.
 
 Første designer-runde gjennom Claude Design ga en godkjent retning («Intuitivt
 for alle», turn 3) som eier har bestilt FULL implementering av — inkludert å
