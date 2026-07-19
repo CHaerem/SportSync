@@ -210,7 +210,7 @@ struct ContentView: View {
                     AgendaView(viewModel: agenda, onFollow: follow, onOpen: { assistant.recordOpened($0) },
                                openEventID: $requestedEventID)
                 case .nyheter:
-                    NewsView()
+                    NewsView(dataStore: dataStore, profileStore: profileStore, assistant: assistant)
                 }
             }
             // Liquid Glass (iOS 26): the assistant capsule is the app's ONE custom
@@ -420,6 +420,16 @@ struct ContentView: View {
                     assistant.reloadProfile()
                     agenda.reloadFromCache(now: Date())
                     demoSheet = .assistantResult
+                }
+                // WP-106: the Nyheter board (four sections) — seed a deterministic
+                // news/featured/results/events cache + a matching follow-profile,
+                // then switch the root to the Nyheter side so the screenshot
+                // captures the board (not the agenda).
+                if mode == "news" {
+                    NewsDemoSeed.seed(profileStore: profileStore)
+                    assistant.reloadProfile()
+                    agenda.reloadFromCache(now: Date())
+                    rootTab = .nyheter
                 }
                 assistant.demoSeed(mode)
                 // WP-83: a diff/answer screenshot renders the (slimmed) result

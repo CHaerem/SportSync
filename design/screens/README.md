@@ -23,7 +23,7 @@ capturing.
 
 ## What gets captured
 
-One PNG per `(mode, theme)` pair — 18 modes × 2 themes = 36 screenshots,
+One PNG per `(mode, theme)` pair — 19 modes × 2 themes = 38 screenshots,
 named `<mode>-<theme>.png`:
 
 | Mode | Screen |
@@ -31,6 +31,7 @@ named `<mode>-<theme>.png`:
 | `uitest` | The XCUITest harness's deterministic seeded agenda (real board content, no network) |
 | `lens` | Agenda through a seeded interest lens (athlete-centred rows) |
 | `filter` | Agenda with an active presentation filter ("VISER: GOLF") |
+| `news` | The Nyheter board (WP-106): the four sections — I DIN VERDEN I DAG · NYTT · RESULTAT · FREMOVER — over a seeded follow-profile |
 | `share` | Profile share sheet (QR + link) with a seeded non-empty profile |
 | `deg` | The Deg (Profile/Settings) screen with a seeded profile + memory |
 | `memory` | "Hva jeg vet om deg" (What I know about you) page |

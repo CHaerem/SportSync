@@ -226,6 +226,16 @@ targets:
       # these up via `path: Sportivista`; the widget deliberately does NOT (memory is
       # app-only — the widget has no network/personal-context code).
       - path: Sportivista/Memory
+      # WP-106: the Nyheter board — the pure lens/board builders (NewsLens/
+      # NewsBoard) + the SwiftUI view — compiled directly into the hostless
+      # bundle so NewsLensTests/NewsBoardTests drive the matching + section
+      # assembly with no running app (same "no @testable import" pattern). App +
+      # SportivistaDeviceDev pick these up via `path: Sportivista`; the widget
+      # deliberately does NOT (the board is app-only — profile lens + UI + the
+      # FollowedListView link, none of which the widget compiles). The Nyheter
+      # models (NewsItem/FeaturedBrief/RecentResults) live in Sportivista/Models
+      # instead, so the widget-shared DataStore that loads them still compiles.
+      - path: Sportivista/News
       # WP-31: the first-run onboarding — pure gate/starter-pack logic + the
       # SwiftUI flow — compiled directly into the hostless bundle (same "no
       # @testable import" pattern). App + SportivistaDeviceDev pick these up via

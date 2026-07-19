@@ -2,35 +2,365 @@
 //  NewsView.swift
 //  Sportivista
 //
-//  WP-104 — the SHELL for the Nyheter side of the root segmented control
-//  («Uka | Nyheter»). This ships the navigation first; the four-section board
-//  (I DIN VERDEN I DAG · NYTT · RESULTAT · FREMOVER) is WP-106's job and fills
-//  this file in bølge 2. For now it is a calm empty state with one dempet
-//  setning — nothing more (DESIGN § Nyheter: én hjelpesetning maks; ingen
-//  uleste-tellere, ingen engasjements-mekanikk).
+//  WP-106 — the Nyheter side of the root segmented control («Uka | Nyheter»):
+//  the four-section board from the Claude Design handoff (spec § Nyheter-v0,
+//  DESIGN § Nyheter). It is ENDELIG — exactly four sections, no unread counters,
+//  no engagement mechanics, no own refresh beyond the system's:
+//
+//    • «Det du følger ›» — a quiet link atop the board to WP-105's FollowedListView.
+//    1. I DIN VERDEN I DAG — the editorial brief's headline (featured.json), one
+//       quiet line, with a provenance ⓘ ("bygget på dine events og resultater").
+//    2. NYTT — lens-matched RSS pointers (news.json); each row taps OUT to the
+//       source (Link), never inlining article text (DSM art. 15).
+//    3. RESULTAT — followed teams' results, the score ALWAYS behind «Vis
+//       resultat» when the spoiler shield applies (the same reveal the event
+//       detail sheet uses).
+//    4. FREMOVER — followed events beyond the near horizon (forvarsler).
+//
+//  Pure data (NewsBoard.build) is computed off the cache on appear and whenever
+//  the follow-profile changes (a just-added follow re-lenses the board). No
+//  spinner ever (DESIGN § Bevegelse); amber is the one accent.
 //
 
 import SwiftUI
 
 struct NewsView: View {
-    var body: some View {
-        VStack {
-            Spacer()
-            Text("Nyheter om det du følger kommer snart.")
-                .font(.sportivista(.subheadline))
-                .foregroundStyle(SportivistaTokens.secondaryLabel)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.horizontal, 40)
-            Spacer()
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(SportivistaTokens.background)
-        .accessibilityElement(children: .combine)
-        .accessibilityIdentifier("news.placeholder")
-    }
+	let dataStore: DataStore
+	let profileStore: ProfileStore
+	/// WP-105 — the shared assistant view model, only so the «Det du følger»
+	/// link can push FollowedListView (the same list Deg homes). The board reads
+	/// its lens from the profile, never drives the assistant.
+	var assistant: AssistantViewModel
+
+	@State private var board: NewsBoard = .empty
+	@State private var provenanceShown = false
+
+	var body: some View {
+		List {
+			followedLink
+			briefSection
+			nyttSection
+			resultatSection
+			fremoverSection
+		}
+		.listStyle(.insetGrouped)
+		.scrollContentBackground(.hidden)
+		.background(SportivistaTokens.background)
+		.accessibilityIdentifier("news.board")
+		.task { rebuild() }
+		// A just-confirmed follow (from the assistant, the agenda swipe, or Deg)
+		// re-lenses the board immediately — the same shared profile the agenda
+		// recompiles against.
+		.onChange(of: assistant.profile) { _, _ in rebuild() }
+	}
+
+	private func rebuild() {
+		let syncState = profileStore.loadSyncState()
+		board = NewsBoard.build(
+			news: dataStore.loadNews(),
+			featured: dataStore.loadFeatured(),
+			results: dataStore.loadRecentResults(),
+			events: dataStore.loadEvents(),
+			entities: dataStore.loadEntities(),
+			profile: syncState.profile,
+			shield: SpoilerShield(memory: MemoryState(from: syncState)),
+			now: Date()
+		)
+	}
+
+	// MARK: - «Det du følger» link (quiet, atop the board)
+
+	private var followedLink: some View {
+		Section {
+			NavigationLink {
+				FollowedListView(viewModel: assistant)
+			} label: {
+				HStack {
+					Text("Det du følger")
+						.font(.sportivista(.subheadline))
+						.foregroundStyle(SportivistaTokens.label)
+					Spacer()
+				}
+				.frame(minHeight: 44, alignment: .leading)
+				.contentShape(Rectangle())
+			}
+			.accessibilityIdentifier("news.followedLink")
+			.listRowBackground(SportivistaTokens.cell)
+		}
+	}
+
+	// MARK: - 1 · I DIN VERDEN I DAG
+
+	@ViewBuilder
+	private var briefSection: some View {
+		if let headline = board.headline {
+			Section {
+				VStack(alignment: .leading, spacing: 6) {
+					HStack(alignment: .top, spacing: 8) {
+						Text(headline)
+							.font(.sportivista(.subheadline))
+							.foregroundStyle(SportivistaTokens.label)
+							.fixedSize(horizontal: false, vertical: true)
+							.frame(maxWidth: .infinity, alignment: .leading)
+						Button {
+							provenanceShown.toggle()
+						} label: {
+							Image(systemName: "info.circle")
+								.font(.sportivista(.footnote))
+								.foregroundStyle(SportivistaTokens.secondaryLabel)
+						}
+						.buttonStyle(.plain)
+						.accessibilityLabel("Hvorfor ser jeg dette?")
+						.accessibilityIdentifier("news.brief.provenance")
+					}
+					if provenanceShown {
+						Text("Bygget på dine events og resultater.")
+							.font(.sportivista(.caption))
+							.foregroundStyle(SportivistaTokens.secondaryLabel)
+							.fixedSize(horizontal: false, vertical: true)
+					}
+				}
+				.padding(.vertical, 2)
+				.listRowBackground(SportivistaTokens.cell)
+			} header: {
+				sectionHeader("I DIN VERDEN I DAG", id: "news.section.brief")
+			}
+		}
+	}
+
+	// MARK: - 2 · NYTT
+
+	private var nyttSection: some View {
+		Section {
+			if board.news.isEmpty {
+				Text("Ingen nyheter om det du følger akkurat nå.")
+					.font(.sportivista(.subheadline))
+					.foregroundStyle(SportivistaTokens.secondaryLabel)
+					.fixedSize(horizontal: false, vertical: true)
+					.listRowBackground(SportivistaTokens.cell)
+			} else {
+				ForEach(board.news) { item in
+					NewsPointerRow(item: item)
+						.listRowBackground(SportivistaTokens.cell)
+				}
+			}
+		} header: {
+			sectionHeader("NYTT", id: "news.section.nytt")
+		}
+	}
+
+	// MARK: - 3 · RESULTAT
+
+	@ViewBuilder
+	private var resultatSection: some View {
+		if !board.results.isEmpty {
+			Section {
+				ForEach(board.results) { row in
+					NewsResultRowView(row: row)
+						.listRowBackground(SportivistaTokens.cell)
+				}
+			} header: {
+				sectionHeader("RESULTAT", id: "news.section.resultat")
+			}
+		}
+	}
+
+	// MARK: - 4 · FREMOVER
+
+	@ViewBuilder
+	private var fremoverSection: some View {
+		if !board.forward.isEmpty {
+			Section {
+				ForEach(board.forward) { row in
+					NewsForwardRowView(row: row)
+						.listRowBackground(SportivistaTokens.cell)
+				}
+			} header: {
+				sectionHeader("FREMOVER", id: "news.section.fremover")
+			}
+		}
+	}
+
+	// MARK: - Shared header
+
+	private func sectionHeader(_ text: String, id: String) -> some View {
+		Text(text)
+			.font(.sportivista(.footnote, weight: .semibold))
+			.foregroundStyle(SportivistaTokens.secondaryLabel)
+			.accessibilityIdentifier(id)
+	}
 }
 
-#Preview {
-    NewsView()
+// MARK: - NYTT row (taps OUT to the source)
+
+/// One news pointer. Whole row is a `Link` to the source (opens externally —
+/// DSM art. 15: pointers send traffic out, never inline the article). Rad-DNA
+/// = agendaens: the type-tag slot is DELIBERATELY omitted in v0 (classification
+/// missing) but the layout is ready for it; title on one line, then a quiet
+/// line of sport · source ↗ · relative time.
+private struct NewsPointerRow: View {
+	let item: NewsItem
+
+	var body: some View {
+		Group {
+			if let url = URL(string: item.link) {
+				Link(destination: url) { content }
+			} else {
+				content
+			}
+		}
+		.accessibilityIdentifier("news.item")
+	}
+
+	private var content: some View {
+		VStack(alignment: .leading, spacing: 3) {
+			Text(item.title)
+				.font(.sportivista(.body))
+				.foregroundStyle(SportivistaTokens.label)
+				.lineLimit(1)
+				.truncationMode(.tail)
+				.frame(maxWidth: .infinity, alignment: .leading)
+			HStack(spacing: 6) {
+				Text(sportLabel)
+					.foregroundStyle(SportivistaTokens.secondaryLabel)
+				dot
+				Text("\(item.source) ↗")
+					.foregroundStyle(SportivistaTokens.accent)
+					.lineLimit(1)
+				if let rel = relativeTime {
+					dot
+					Text(rel)
+						.foregroundStyle(SportivistaTokens.secondaryLabel)
+						.lineLimit(1)
+				}
+				Spacer(minLength: 0)
+			}
+			.font(.sportivista(.caption))
+		}
+		.frame(minHeight: 44, alignment: .leading)
+		.contentShape(Rectangle())
+	}
+
+	private var dot: some View {
+		Text("·")
+			.font(.sportivista(.caption))
+			.foregroundStyle(SportivistaTokens.secondaryLabel.opacity(0.6))
+	}
+
+	private var sportLabel: String {
+		SportVocabulary.display(for: NewsLens.canonicalSport(item.sport))
+	}
+
+	private var relativeTime: String? {
+		guard let published = item.publishedAt else { return nil }
+		return Self.relativeFormatter.localizedString(for: published, relativeTo: Date())
+	}
+
+	private static let relativeFormatter: RelativeDateTimeFormatter = {
+		let f = RelativeDateTimeFormatter()
+		f.locale = Locale(identifier: "nb_NO")
+		f.unitsStyle = .abbreviated
+		return f
+	}()
+}
+
+// MARK: - RESULTAT row (spoiler-masked)
+
+/// A followed team's result. When the spoiler shield applies, the score stays
+/// behind a calm «Vis resultat» (eye.slash) until tapped — the exact same
+/// reveal mechanism the event detail sheet uses (WP-30), so a glance never
+/// spoils a game watched on delay.
+private struct NewsResultRowView: View {
+	let row: NewsResultRow
+	@State private var revealed = false
+
+	var body: some View {
+		VStack(alignment: .leading, spacing: 3) {
+			Text(row.title.isEmpty ? "Kamp" : row.title)
+				.font(.sportivista(.body))
+				.foregroundStyle(SportivistaTokens.label)
+				.fixedSize(horizontal: false, vertical: true)
+				.frame(maxWidth: .infinity, alignment: .leading)
+			scoreLine
+			if let meta = row.meta, !meta.isEmpty {
+				Text(meta)
+					.font(.sportivista(.caption))
+					.foregroundStyle(SportivistaTokens.secondaryLabel)
+					.lineLimit(1)
+			}
+		}
+		.padding(.vertical, 2)
+	}
+
+	@ViewBuilder
+	private var scoreLine: some View {
+		if let score = row.score {
+			if !row.spoilerSensitive || revealed {
+				Text(score)
+					.font(.sportivistaTabular(.subheadline, weight: .semibold))
+					.foregroundStyle(SportivistaTokens.label)
+			} else {
+				Button {
+					revealed = true
+				} label: {
+					HStack(spacing: 6) {
+						Image(systemName: "eye.slash")
+							.font(.sportivista(.caption))
+						Text("Vis resultat")
+							.font(.sportivista(.subheadline, weight: .semibold))
+					}
+					.foregroundStyle(SportivistaTokens.accent)
+					.frame(minHeight: 44, alignment: .leading)
+					.contentShape(Rectangle())
+				}
+				.buttonStyle(.plain)
+				.accessibilityIdentifier("news.result.reveal")
+			}
+		}
+	}
+}
+
+// MARK: - FREMOVER row
+
+/// One forvarsel: a calm date · what · where line. Non-interactive (the board's
+/// outgoing traffic is NYTT's job); an `info.circle` marks an AI-research find.
+private struct NewsForwardRowView: View {
+	let row: NewsForwardRow
+
+	var body: some View {
+		HStack(alignment: .top, spacing: 10) {
+			Text(row.dateLabel)
+				.font(.sportivistaTabular(.footnote, weight: .medium))
+				.foregroundStyle(SportivistaTokens.label)
+				.lineLimit(1)
+				.fixedSize(horizontal: true, vertical: false)
+				.frame(minWidth: 72, alignment: .leading)
+			VStack(alignment: .leading, spacing: 3) {
+				Text(row.title)
+					.font(.sportivista(.body))
+					.foregroundStyle(SportivistaTokens.label)
+					.fixedSize(horizontal: false, vertical: true)
+					.frame(maxWidth: .infinity, alignment: .leading)
+				HStack(spacing: 6) {
+					if let meta = row.meta, !meta.isEmpty {
+						Text(meta)
+							.font(.sportivista(.caption))
+							.foregroundStyle(SportivistaTokens.secondaryLabel)
+							.lineLimit(1)
+					}
+					Text(row.channel)
+						.font(.sportivista(.caption))
+						.foregroundStyle(row.channel == "–" ? SportivistaTokens.secondaryLabel.opacity(0.5) : SportivistaTokens.secondaryLabel)
+						.lineLimit(1)
+				}
+			}
+			if row.isAIResearch {
+				Image(systemName: "info.circle")
+					.font(.sportivista(.footnote))
+					.foregroundStyle(SportivistaTokens.secondaryLabel)
+					.accessibilityLabel("Funnet av AI")
+			}
+		}
+		.padding(.vertical, 2)
+	}
 }

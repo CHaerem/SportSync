@@ -48,6 +48,7 @@ MODES=(
 	uitest
 	lens
 	filter
+	news
 	share
 	deg
 	memory
