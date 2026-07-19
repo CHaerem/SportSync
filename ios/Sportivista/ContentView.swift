@@ -793,7 +793,7 @@ struct ContentView: View {
     }
 
     /// WP-67 — the quiet filter line over the agenda when a presentation filter
-    /// is active («VISER: GOLF · DENNE UKA ✕»). Tekst-TV to the core: mono,
+    /// is active («VISER: GOLF · DENNE UKA ✕»). Calm to the core:
     /// dempet «VISER:», the amber subject, and a one-tap ✕ that resets. Hidden
     /// when no filter is set — the calm default is an unfiltered board.
     @ViewBuilder

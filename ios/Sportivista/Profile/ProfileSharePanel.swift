@@ -8,7 +8,7 @@
 //  No emoji, one amber accent, hairline boxes, ≥44pt hit areas — DESIGN.md to the
 //  letter. All logic lives in AssistantViewModel + ProfileShareCodec; this only
 //  lays it out (the QR bitmap comes from ProfileQRCode, tinted to the ink token
-//  so it reads as part of the teletext surface, never a glossy sticker).
+//  so it reads as part of the page surface, never a glossy sticker).
 //
 
 import SwiftUI

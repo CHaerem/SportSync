@@ -4,12 +4,12 @@
 //
 //  WP-19 — the QR image for the "Del profil" flow. A thin CoreImage wrapper: the
 //  actual payload/merge logic lives in ProfileShareCodec (pure, Foundation-only);
-//  this only turns a string into a crisp, Tekst-TV-monochrome QR bitmap.
+//  this only turns a string into a crisp, monochrome QR bitmap.
 //
 //  Kept deliberately small and side-effect-free (a string in, an image out) so
 //  it is testable in the Simulator/CI without a camera or an iCloud account.
 //  Rendered as pure black modules on a clear background; the SwiftUI view tints
-//  it to the page's ink token so it reads as part of the teletext surface rather
+//  it to the page's ink token so it reads as part of the page surface rather
 //  than a glossy sticker.
 //
 

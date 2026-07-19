@@ -7,8 +7,8 @@
 //  structured facts, episodic notes, behaviour stats — each readable, the
 //  structured facts editable, everything deletable, plus a "Glem alt" that wipes
 //  all personal memory. Reached from the assistant flow, the same place as "Hva
-//  jeg følger". Tekst-TV throughout: mono, one amber accent, near-black/warm
-//  paper, no emoji, tap targets ≥44pt.
+//  jeg følger". Apple-native baseline throughout: system type, one amber accent,
+//  no emoji, tap targets ≥44pt.
 //
 //  Honest about the privacy contract, in the intro line: this lives ONLY on your
 //  device (and your own iCloud / QR bridge) — never our server.

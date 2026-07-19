@@ -137,7 +137,7 @@ final class EvalScreenModel {
     func clearMetricLog() { metricStore.deleteAll() }
 }
 
-/// The DEBUG eval screen — calm Tekst-TV: monospace, amber accent, no charts.
+/// The DEBUG eval screen — calm: amber accent, no charts.
 struct EvalView: View {
     @State private var model: EvalScreenModel
     @Environment(\.dismiss) private var dismiss

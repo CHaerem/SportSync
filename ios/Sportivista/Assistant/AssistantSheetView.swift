@@ -289,7 +289,7 @@ struct AssistantSheetView: View {
     }
 }
 
-/// The Tekst-TV block cursor. Blinks (the assistant's only motion) unless Reduce
+/// The block cursor. Blinks (the assistant's only motion) unless Reduce
 /// Motion is on, in which case it holds steady (DESIGN "Bevegelse & haptikk").
 /// Re-homed here from CommandLineView (WP-104) — shared by the sheet's thinking
 /// state and the onboarding conversation step.

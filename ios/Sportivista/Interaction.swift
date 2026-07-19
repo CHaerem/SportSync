@@ -6,13 +6,13 @@
 //  package): every interactive element gets an Apple HIG-compliant ≥44×44pt
 //  hit area, however small its glyph reads visually. The owner's finding on a
 //  physical iPhone was "veldig små knapper" (very small buttons) — the fix is
-//  ALWAYS the hit area, never the Tekst-TV glyph scale (DESIGN.md's small,
-//  quiet mono glyphs are the visual language and are kept as-is).
+//  ALWAYS the hit area, never the glyph scale: the small, quiet marks are the
+//  Apple-native visual language (DESIGN.md) and are kept exactly as-is.
 //
 //  Two shapes cover every case in the audit (see PR body for the full table):
 //
 //   • `.sportivistaTapTarget()` — for glyph/icon-only or small-text chrome (header
-//     glyphs, the command line's sigil/send/Avbryt, toolbar "Lukk", "OK",
+//     glyphs, the samtaleark's send/Avbryt, toolbar "Lukk", "OK",
 //     "Fjern", "Slett", note-edit controls …). The glyph/text stays exactly
 //     the size DESIGN.md specifies; only the invisible hit area grows to
 //     ≥44×44pt via padding + `contentShape`, never by enlarging the mark.
@@ -29,7 +29,7 @@ import SwiftUI
 extension View {
     /// Grows the tappable area to ≥44×44pt around a small glyph or text
     /// label without changing how it looks — the padding is invisible, the
-    /// mark stays Tekst-TV-quiet (DESIGN.md "Interaksjon").
+    /// mark stays visually quiet (DESIGN.md "Interaksjon").
     func sportivistaTapTarget() -> some View {
         self
             .frame(minWidth: 44, minHeight: 44)

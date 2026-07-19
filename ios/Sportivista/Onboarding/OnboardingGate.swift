@@ -16,10 +16,10 @@
 import Foundation
 
 /// The steps of the calm first-run flow. `welcome` is always first; the build
-/// step is `converse` when Apple Intelligence is available (the primary,
-/// say-what-you-follow path) else `quickPicks` (the fallback that must give
-/// full value on its own); `landing` is the quiet finish that points at the
-/// always-present command line.
+/// step is `converse` (the say-what-you-follow conversation) when Apple
+/// Intelligence is available, else `quickPicks` (the tap-to-follow path that
+/// works for everyone, no assistant understanding needed); `landing` is the
+/// quiet finish that points at the always-present assistant capsule.
 enum OnboardingStep: Equatable, Sendable {
     case welcome
     case converse

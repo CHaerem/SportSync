@@ -7,8 +7,8 @@
 //  carries `source == "ai-research"` — the AI provenance block (confidence +
 //  evidence links). "Åpenhet er en funksjon" (CLAUDE.md): the ⓘ isn't
 //  decoration, it's how the app earns trust for events a human didn't
-//  curate. Still Tekst-TV throughout (mono, amber, near-black), not the
-//  system's default List chrome.
+//  curate. Still the Apple-native baseline throughout (system type, amber), not
+//  the system's default List chrome.
 //
 
 import SwiftUI
