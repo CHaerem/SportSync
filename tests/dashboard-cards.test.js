@@ -79,6 +79,141 @@ describe("agenda event row", () => {
 	});
 });
 
+// WP-111: an event that carries `participants` but no homeTeam/awayTeam (e.g. the
+// VM final: participants Spania/Argentina, generic title "VM-finalen 2026") must
+// show the matchup — the participants are the "hva", the generic title mere context.
+describe("head-to-head participants render as the row matchup", () => {
+	const base = { id: "vm", sport: "football", time: soon(), tournament: "FIFA World Cup", round: "Finale", title: "VM-finalen 2026", importance: 5, streaming: [{ platform: "NRK 1", url: "https://tv.nrk.no/direkte" }] };
+
+	it("shows the two participants as the title instead of the generic name", () => {
+		const html = dash.eventTitle({ ...base, participants: [{ name: "Spania" }, { name: "Argentina" }] });
+		expect(html).toContain("Spania");
+		expect(html).toContain("Argentina");
+		expect(html).toContain("–");            // the two sides, joined
+		expect(html).not.toContain("VM-finalen"); // generic title no longer leads
+	});
+
+	it("keeps the generic title's context (tournament + round + channel) in the meta", () => {
+		const html = dash.eventRow({ ...base, participants: [{ name: "Spania" }, { name: "Argentina" }] });
+		expect(html).toContain("Spania");
+		expect(html).toContain("Argentina");
+		expect(html).toContain("FIFA World Cup"); // tournament survives as context
+		expect(html).toContain("Finale");          // round survives
+		expect(html).toContain("NRK 1");           // where to watch
+		expect(html).not.toContain("VM-finalen");
+	});
+
+	it("keeps the generic title as context when nothing else (tournament/round) carries it", () => {
+		const html = dash.eventRow({ id: "p2", sport: "football", time: soon(), title: "Treningskamp", participants: [{ name: "Norge" }, { name: "Brasil" }] });
+		expect(html).toContain("Norge");
+		expect(html).toContain("Brasil");
+		expect(html).toContain("Treningskamp"); // preserved in meta — no tournament/round to carry it
+	});
+
+	it("does NOT turn a 4-team field (a tournament, not a match) into a name list", () => {
+		const e = { id: "ewc", sport: "esports", time: soon(), title: "Esports World Cup 2026 – CS2 (gruppespill)", tournament: "Esports World Cup 2026", participants: [{ name: "Team Vitality" }, { name: "Natus Vincere" }, { name: "FaZe Clan" }, { name: "Team Falcons" }] };
+		const html = dash.eventTitle(e);
+		expect(html).toContain("Esports World Cup 2026");
+		expect(html).not.toContain("Team Vitality");
+		expect(html).not.toContain("Natus Vincere");
+	});
+
+	it("leaves a single-participant event on its own title (not a lone name)", () => {
+		const html = dash.eventTitle({ id: "arn", sport: "cycling", time: soon(), title: "Arctic Race of Norway 2026", participants: [{ name: "Uno-X Mobility" }] });
+		expect(html).toContain("Arctic Race of Norway 2026");
+		expect(html).not.toContain("Uno-X Mobility");
+	});
+
+	it("prefers homeTeam/awayTeam over participants when both exist", () => {
+		const html = dash.eventTitle({ homeTeam: "Liverpool FC", awayTeam: "Arsenal FC", participants: [{ name: "Spania" }, { name: "Argentina" }] });
+		expect(html).toContain("Liverpool");
+		expect(html).toContain("Arsenal");
+		expect(html).not.toContain("Spania");
+	});
+
+	it("escapes HTML in participant names", () => {
+		const html = dash.eventTitle({ sport: "football", title: "x", participants: [{ name: "<script>alert(1)</script>" }, { name: "B" }] });
+		expect(html).not.toContain("<script>alert");
+	});
+});
+
+// WP-111: editorial (featured.json) is a "nice extra" that can be quota-skipped for
+// a day. A stale brief is a factual error on the hero (19.07: yesterday's "finalen
+// venter i morgen" stayed up all through finale day). Discard anything > ~20h old.
+describe("editorial freshness guard on the hero headline", () => {
+	const HOUR = 3600000;
+	const brief = (ageHours) => ({
+		generatedAt: new Date(Date.now() - ageHours * HOUR).toISOString(),
+		blocks: [{ type: "headline", text: "Finalen venter i kveld." }],
+	});
+
+	it("uses a fresh editorial headline (generatedAt within ~20h)", () => {
+		dash.featured = brief(3);
+		expect(dash.featuredIsFresh()).toBe(true);
+		expect(dash.heroHeadline()).toContain("Finalen venter");
+	});
+
+	it("discards a stale headline (> 20h) and falls back to the calm default", () => {
+		dash.featured = brief(30);
+		expect(dash.featuredIsFresh()).toBe(false);
+		expect(dash.heroHeadline()).toBe(dash.heroFallback());
+		expect(dash.heroHeadline()).not.toContain("Finalen venter");
+	});
+
+	it("treats a featured brief with no generatedAt as untrustworthy (fall back)", () => {
+		dash.featured = { blocks: [{ type: "headline", text: "Udatert." }] };
+		expect(dash.featuredIsFresh()).toBe(false);
+		expect(dash.heroHeadline()).toBe(dash.heroFallback());
+	});
+
+	it("falls back when there is no featured brief at all", () => {
+		dash.featured = null;
+		expect(dash.featuredIsFresh()).toBe(false);
+		expect(dash.heroHeadline()).toBe(dash.heroFallback());
+	});
+});
+
+// WP-111: the "Om" section was one wall of text. Structure it into calm paragraphs
+// and surface key facts as their own quiet lines — without splitting abbreviations.
+describe("«Om» readability — paragraphs, not a wall", () => {
+	it("splits a multi-sentence summary into separate paragraph rows", () => {
+		const summary = "Første setning her. Andre setning her. Tredje setning kommer. Fjerde runder av.";
+		const paras = dash.aboutParagraphs(summary);
+		expect(paras.length).toBeGreaterThan(1); // not one wall
+		const detail = dash.eventDetail({ sport: "football", title: "x", summary });
+		expect(detail).toContain('<span class="d-k">Om</span>');
+		expect((detail.match(/class="d-v"/g) || []).length).toBeGreaterThan(2); // Hvorfor + ≥2 paragraphs
+	});
+
+	it("does not split inside abbreviations/numbers like «kl. 21.00» or «29. juli»", () => {
+		const summary = "Kampen vises på NRK1 (kl. 21.00 norsk tid). Løpet går 29. juli i Aalborg.";
+		const paras = dash.aboutParagraphs(summary);
+		expect(paras.length).toBe(1); // two real sentences (≤2) → one calm block
+		expect(paras[0]).toContain("kl. 21.00");
+		expect(paras[0]).toContain("29. juli");
+	});
+
+	it("renders key-fact lines (Runde/Underlag/Format) where the fields exist", () => {
+		const detail = dash.eventDetail({ sport: "tennis", title: "x", round: "Semifinale", surface: "Grus", format: "Best av 5", summary: "Kort." });
+		expect(detail).toContain("Runde");
+		expect(detail).toContain("Semifinale");
+		expect(detail).toContain("Underlag");
+		expect(detail).toContain("Grus");
+		expect(detail).toContain("Format");
+		expect(detail).toContain("Best av 5");
+	});
+
+	it("returns nothing for an empty or missing summary", () => {
+		expect(dash.aboutParagraphs("")).toEqual([]);
+		expect(dash.aboutParagraphs(null)).toEqual([]);
+	});
+
+	it("escapes HTML inside summary paragraphs", () => {
+		const detail = dash.eventDetail({ sport: "football", title: "x", summary: "<script>alert(1)</script> Andre setning." });
+		expect(detail).not.toContain("<script>alert");
+	});
+});
+
 describe("cancelled / postponed matches stay on the board, labelled", () => {
 	it("shows a cancelled match faded with an 'Avlyst' label instead of a channel", () => {
 		const html = dash.eventRow({ id: "c", sport: "football", title: "Barcelona vs X", time: soon(), status: "cancelled", streaming: [{ platform: "TV3" }] });

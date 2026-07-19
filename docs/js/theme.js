@@ -1,4 +1,4 @@
-// Zenji Theme — the ONE theme implementation, shared by all pages (WP-46).
+// Sportivista Theme — the ONE theme implementation, shared by all pages (WP-46).
 // A single quantized glyph cycles system → dark → light → system (DESIGN.md,
 // BINDING). 'system' clears data-theme so prefers-color-scheme decides; the
 // glyph shows the current quantized state: ◐ system · ● dark · ○ light.

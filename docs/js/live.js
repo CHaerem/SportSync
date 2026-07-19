@@ -1,4 +1,4 @@
-// Zenji — live now: the quiet "Direkte nå" line + client-side ESPN live polling.
+// Sportivista — live now: the quiet "Direkte nå" line + client-side ESPN live polling.
 // Extends window.Dashboard.prototype (see js/dashboard.js). Loads AFTER dashboard.js.
 Object.assign(window.Dashboard.prototype, {
 

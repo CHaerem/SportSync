@@ -1,4 +1,4 @@
-// Zenji — shell chrome: the ticking clock, the date stamp, the footer (freshness
+// Sportivista — shell chrome: the ticking clock, the date stamp, the footer (freshness
 // + staleness), the quiet AI-budget line, and the iOS install hint.
 // Extends window.Dashboard.prototype (see js/dashboard.js). Loads AFTER dashboard.js.
 Object.assign(window.Dashboard.prototype, {

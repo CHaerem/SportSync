@@ -1,4 +1,4 @@
-// Zenji — a calm overview of the sport you follow.
+// Sportivista — a calm overview of the sport you follow.
 // One question, answered quietly: what's on, when (Oslo), and where to watch.
 // One list, grouped by day. No dashboard, no noise.
 //
@@ -108,8 +108,26 @@ class Dashboard {
 	renderTodayLine() {
 		const el = document.getElementById('hero-headline');
 		if (!el) return;
-		const headline = this.featured?.blocks?.find((b) => b.type === 'headline')?.text || this.heroFallback();
-		el.innerHTML = this.emphasize(escapeHtml(headline));
+		el.innerHTML = this.emphasize(escapeHtml(this.heroHeadline()));
+	}
+
+	/** The editorial headline when it's fresh, else the calm fallback. */
+	heroHeadline() {
+		const headline = this.featuredIsFresh()
+			? this.featured?.blocks?.find((b) => b.type === 'headline')?.text
+			: null;
+		return headline || this.heroFallback();
+	}
+
+	/** featured.json is trustworthy only while it's recent (~20h). A quota-skipped
+	 *  editorial run leaves yesterday's brief in place; showing it on, say, finale
+	 *  day ("finalen venter i morgen") is a factual error. No/undateable generatedAt
+	 *  ⇒ not fresh (fall back) — we won't stand behind a brief we can't date. */
+	featuredIsFresh() {
+		const ts = this.featured?.generatedAt;
+		if (!ts) return false;
+		const age = Date.now() - new Date(ts).getTime();
+		return Number.isFinite(age) && age < 20 * SS_CONSTANTS.MS_PER_HOUR;
 	}
 
 	/** Calm fallback when the editorial agent hasn't written a headline yet. */
@@ -173,10 +191,25 @@ class Dashboard {
 		return this.osloTime(start);
 	}
 
+	/** A head-to-head read off `participants` (exactly two named sides, no home/away
+	 *  pair): the escaped "Spania – Argentina" string, else null. Deliberately fires
+	 *  only for two — a golf/CS2 field of four is a tournament, not a matchup, and
+	 *  must keep its own title rather than becoming a name list. */
+	participantMatchup(e) {
+		if (e.homeTeam && e.awayTeam) return null;
+		const names = (Array.isArray(e.participants) ? e.participants : [])
+			.map((p) => (p && p.name) || (typeof p === 'string' ? p : ''))
+			.filter(Boolean);
+		if (names.length !== 2) return null;
+		return `${escapeHtml(ssShortName(names[0]))} – ${escapeHtml(ssShortName(names[1]))}`;
+	}
+
 	eventTitle(e) {
 		if (e.homeTeam && e.awayTeam) {
 			return `${escapeHtml(ssShortName(e.homeTeam))} – ${escapeHtml(ssShortName(e.awayTeam))}`;
 		}
+		const matchup = this.participantMatchup(e);
+		if (matchup) return matchup;
 		return escapeHtml(e.title);
 	}
 
@@ -185,7 +218,14 @@ class Dashboard {
 	 *  channel). Parts are joined by a quiet middot. */
 	eventMeta(e, trailing) {
 		const parts = [];
-		const title = (e.homeTeam && e.awayTeam) ? '' : (e.title || '');
+		const hasHomeAway = !!(e.homeTeam && e.awayTeam);
+		const participantLed = !hasHomeAway && !!this.participantMatchup(e);
+		// When a matchup (home/away OR a 2-participant head-to-head) leads the row, the
+		// event's generic title (e.g. "VM-finalen 2026") is no longer the heading — it
+		// drops to a quiet context part, but only when nothing else (tournament/round)
+		// would otherwise carry it, so we never lose it yet never repeat it.
+		const title = (hasHomeAway || participantLed) ? '' : (e.title || '');
+		if (participantLed && e.title && !e.tournament && !e.round) parts.push(escapeHtml(e.title));
 		if (e.tournament && e.tournament !== title) parts.push(escapeHtml(e.tournament));
 		if (e.round) parts.push(`<span class="ev-round">${escapeHtml(e.round)}</span>`);
 		if (trailing) parts.push(trailing);
