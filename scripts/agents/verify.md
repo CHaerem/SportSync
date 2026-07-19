@@ -34,6 +34,20 @@ has no upcoming tee time). For golf the ground truth is the live leaderboard
 out. Set the label even if the static fetcher already set it (confirm it) — and
 log the check to the calibration ledger with `"field": "existence"`.
 
+**Fill knockout participants once they are decided (WP-116).** For a knockout /
+bracket event within the next 7 days whose `participants` (and `homeTeam`/`awayTeam`)
+are still empty — a semifinal, final, playoff, bronze match — check whether the
+matches that DECIDE who plays it have already been played. If they have, the line-up
+is now known, so **fill `participants` with the confirmed teams/players** (canonical
+`{ "name": … }` form) and set `homeTeam`/`awayTeam` for a two-sided tie so the row
+resolves to a real matchup title (e.g. «Spania – Argentina»). This is the
+VM-semifinal class the owner hit: the World Cup semifinals sat with empty
+`participants` all week even though the quarterfinals were already played — only the
+final ever got filled. Treat an empty-but-decided knockout with the **same severity
+as a wrong time** (mark it `verificationStatus: "amended"`, cite the result source in
+`verificationSources`). If the deciding matches have NOT yet been played, leave it
+empty — an honest TBD beats a guessed line-up.
+
 **Verify streaming, not just time.** "Hvor kan jeg se det" must be right: check
 the `streaming` field against the `norwegian-rights` skill
 (`.claude/skills/norwegian-rights/SKILL.md`) and `docs/data/tv-listings.json`
@@ -90,6 +104,15 @@ their `summary` prose (and the source you just fetched) names the real venue —
 and the summary/source states the venue, **write it into the `venue` field** (drop the
 "TBD"). Same rule as time/streaming: the structured field must not lag the prose the user
 can already read. Only leave `venue` as "TBD" when the venue is genuinely still unset.
+
+**Normalize the `summary` "Om" text on events you amend (WP-116).** The dashboard
+renders `summary` as the "Om" section and splits it on blank lines into calm
+paragraphs. When you amend an event whose `summary` is one dense block longer than
+~400 characters, **reshape it into 2–3 short paragraphs separated by a blank line
+(`\n\n`)** (or a few key-fact sentences) as part of that same amendment — never leave
+a wall of text standing on an event you already rewrote. Keep the facts identical;
+this is formatting, not new claims. Don't churn events you otherwise leave
+untouched — this applies only to the ones you're already amending.
 
 **Compensate for known source quirks, and capture new ones.** Read the
 `source-quirks` skill (`.claude/skills/source-quirks/SKILL.md`) first — it lists
