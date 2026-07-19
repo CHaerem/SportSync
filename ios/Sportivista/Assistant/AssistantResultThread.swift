@@ -1,75 +1,42 @@
 //
-//  AssistantPanel.swift
+//  AssistantResultThread.swift
 //  Sportivista
 //
-//  WP-16.4 → WP-82 → WP-83 — the assistant's RESULT surface. WP-83 slimmed it to
-//  conversation/result ONLY: the answer block, the proposal DIFF (Bekreft/Avvis
-//  per mutation, «mente du …?» suggestions), the per-clause REGNSKAP, the
-//  command confirm/receipt, the «ikke funnet» rejections and the always-explain
-//  «ingen endring» account. The permanent sections it used to carry — Hva jeg
-//  følger, Hva jeg vet om deg, Det jeg ikke forsto, Del profil, the tema/varsel
-//  quick-chips, Nullstill, Sett opp på nytt, the version line and the DEBUG eval
-//  entry — were RE-HOMED to the "Deg" screen (DegView, reached from the agenda's
-//  gearshape). This panel is now presented as a native `.sheet` (detents) that
-//  ContentView raises over the agenda; the command line stays put beneath it.
+//  WP-104 — the assistant's RESULT sections, extracted from the old
+//  AssistantPanel so they can be reused verbatim inside the conversation sheet
+//  (AssistantSheetView) — "svaret lander i SAMME ark … gjenbruk diff-/answer-
+//  armene" (spec § Samtalearket, tilstand 4). Nothing about the blocks changed
+//  from WP-83: the answer, the proposal DIFF (Bekreft/Avvis per mutation, «mente
+//  du …?» suggestions), the per-clause REGNSKAP, the command confirm/receipt, the
+//  «ikke funnet» rejections and the always-explain «ingen endring» account.
 //
 //  Presentation only. All logic is AssistantViewModel + the pure pipeline it
-//  calls; this file lays the state out.
+//  calls; this file lays the state out. `dismissIfDone` is the "Bekreft ⇒ arket
+//  lukkes ⇒ agendaen re-kompileres" moment — the host closes the sheet once
+//  there's nothing left worth showing.
 //
 
 import SwiftUI
 
-struct AssistantPanel: View {
+struct AssistantResultThread: View {
     var viewModel: AssistantViewModel
-    /// Dismisses the sheet (ContentView flips the presentation binding).
-    var dismiss: () -> Void
+    /// Called after a confirm/reject/dismiss so the host can close the sheet
+    /// once the thread is empty (the "arket lukkes" moment).
+    var dismissIfDone: () -> Void
 
     var body: some View {
-        VStack(spacing: 0) {
-            headerBar
-            Rectangle().fill(SportivistaTokens.separator).frame(height: 1)
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    if let message = viewModel.availability.message { unavailableBanner(message) }
-                    if let error = viewModel.errorMessage { errorRow(error) }
-                    if let answer = viewModel.answer { answerSection(answer) }
-                    if let tally = viewModel.mutationTally { tallySection(tally) }
-                    if let pendingCommand = viewModel.pendingCommand { commandConfirmSection(pendingCommand) }
-                    if let receipt = viewModel.commandReceipt { commandReceiptSection(receipt) }
-                    if !viewModel.pending.isEmpty { proposalsSection }
-                    if !viewModel.rejected.isEmpty { rejectionsSection }
-                    if let explanation = viewModel.explanation { explanationSection(explanation) }
-                }
-                .padding(20)
-                .frame(maxWidth: 640, alignment: .leading)
-                .frame(maxWidth: .infinity, alignment: .center)
-            }
+        VStack(alignment: .leading, spacing: 20) {
+            if let message = viewModel.availability.message { unavailableBanner(message) }
+            if let error = viewModel.errorMessage { errorRow(error) }
+            if let answer = viewModel.answer { answerSection(answer) }
+            if let tally = viewModel.mutationTally { tallySection(tally) }
+            if let pendingCommand = viewModel.pendingCommand { commandConfirmSection(pendingCommand) }
+            if let receipt = viewModel.commandReceipt { commandReceiptSection(receipt) }
+            if !viewModel.pending.isEmpty { proposalsSection }
+            if !viewModel.rejected.isEmpty { rejectionsSection }
+            if let explanation = viewModel.explanation { explanationSection(explanation) }
         }
-        .background(SportivistaTokens.cell)
-        .foregroundStyle(SportivistaTokens.label)
-        .task { viewModel.refreshAvailability() }
-        // WP-82 — one light success haptic on Bekreft (a mutation/command
-        // confirmed), DESIGN § Bevegelse & haptikk. The trigger only
-        // bumps on an explicit confirm, never on scroll or every tap.
-        .sensoryFeedback(.success, trigger: viewModel.confirmHaptic)
-    }
-
-    // MARK: - Header
-
-    private var headerBar: some View {
-        HStack(alignment: .firstTextBaseline) {
-            Text("ASSISTENT")
-                .font(.sportivista(.subheadline, weight: .bold))
-                .foregroundStyle(SportivistaTokens.accent)
-                .tracking(2)
-            Spacer()
-            Button("Lukk") { dismiss() }
-                .font(.sportivista(.subheadline))
-                .foregroundStyle(SportivistaTokens.secondaryLabel)
-                .sportivistaTapTarget()
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 14)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     // MARK: - Availability / error
@@ -341,12 +308,6 @@ struct AssistantPanel: View {
 
     // MARK: - Small helpers
 
-    /// Dismisses the sheet once the user has cleared everything worth showing —
-    /// the "Bekreft → arket lukkes → agendaen re-kompileres" moment.
-    private func dismissIfDone() {
-        if !viewModel.hasPresentableResult { dismiss() }
-    }
-
     private func sectionTitle(_ text: String) -> some View {
         Text(text)
             .font(.sportivista(.caption, weight: .bold))
@@ -377,7 +338,8 @@ struct AssistantPanel: View {
 
 /// One row in "Det jeg ikke forsto" (WP-16.3): the utterance, what went wrong,
 /// an optional note ("hva jeg egentlig mente"), and delete. A resolved entry
-/// (a later "mente du" pick got confirmed) shows a quiet "LØST" tag.
+/// (a later "mente du" pick got confirmed) shows a quiet "LØST" tag. Re-homed
+/// here from AssistantPanel (WP-104) — it is used by the "Deg" screen (DegView).
 struct MisunderstoodEntryRow: View {
     let entry: MisunderstoodEntry
     let onSaveNote: (String?) -> Void

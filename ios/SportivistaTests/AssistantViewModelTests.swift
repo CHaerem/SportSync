@@ -101,6 +101,72 @@ final class AssistantViewModelTests: XCTestCase {
         XCTAssertNil(vm.errorMessage, "a capability question is never an error")
     }
 
+    // MARK: - WP-104 — the conversation sheet's example rows
+
+    func test_exampleRows_areTheThreeSpeccedRows() {
+        let rows = AssistantViewModel.exampleRows
+        XCTAssertEqual(rows.map(\.id), ["follow", "tonight", "settings"],
+                       "the opened sheet shows exactly the three specced rows, in order")
+        XCTAssertEqual(rows.first { $0.id == "follow" }?.kind, .prefillFollow,
+                       "the follow row pre-fills the field (WP-105 wires the search later)")
+        XCTAssertEqual(rows.first { $0.id == "tonight" }?.kind, .run)
+        XCTAssertEqual(rows.first { $0.id == "settings" }?.kind, .run)
+    }
+
+    func test_exampleRow_tonight_runsThroughAnswerArm() async {
+        // «Hva går i kveld? ›» runs its label VERBATIM through the answer arm.
+        let clock = AssistantTestSupport.iso("2026-07-13T05:00:00Z")
+        let vm = AssistantViewModel(
+            assistant: MockInterestAssistant(),
+            profileStore: AssistantTestSupport.tempProfileStore(),
+            index: index,
+            misunderstoodLog: AssistantTestSupport.tempMisunderstoodLog(),
+            feedProvider: { AssistantTestSupport.liveFeed(now: clock) }
+        )
+        vm.utterance = AssistantViewModel.exampleRows.first { $0.id == "tonight" }!.utterance
+        await vm.submit()
+
+        // Routed to the answer arm (an answer, or an honest empty-evening
+        // explanation) — never a mutation diff or a command.
+        XCTAssertTrue(vm.answer != nil || vm.explanation != nil,
+                      "the tonight example routes to the answer arm")
+        XCTAssertTrue(vm.pending.isEmpty, "a question proposes no profile change")
+        XCTAssertNil(vm.commandReceipt, "a question is not a command")
+        XCTAssertNil(vm.pendingCommand)
+    }
+
+    func test_exampleRow_settings_runsThroughCommandArm() async {
+        // «Endre varsler eller tema ›» runs its label VERBATIM; the varsel anchor
+        // (no negative word) resolves to turning notification lead-time on — a
+        // harmless command that executes with a calm receipt.
+        let vm = makeVM()
+        vm.utterance = AssistantViewModel.exampleRows.first { $0.id == "settings" }!.utterance
+        await vm.submit()
+
+        XCTAssertNotNil(vm.commandReceipt, "the settings example routes to the command arm")
+        XCTAssertTrue(vm.pending.isEmpty, "a command proposes no profile change")
+        XCTAssertNil(vm.answer)
+    }
+
+    func test_runExample_prefillFollow_doesNotSubmit() {
+        // The follow row only PRE-FILLS the field (the view does that + focuses);
+        // runExample is a deliberate no-op for it, so a tap never applies anything.
+        let vm = makeVM()
+        vm.runExample(AssistantViewModel.exampleRows.first { $0.id == "follow" }!)
+        XCTAssertTrue(vm.pending.isEmpty)
+        XCTAssertNil(vm.answer)
+        XCTAssertNil(vm.commandReceipt)
+    }
+
+    func test_submit_setsLastSubmittedUtterance_forTheThreadBubble() async {
+        // WP-104 — the user's message shows as a bubble in the thread, so submit
+        // records the utterance behind the current result.
+        let vm = makeVM()
+        vm.utterance = "Følg Casper Ruud"
+        await vm.submit()
+        XCTAssertEqual(vm.lastSubmittedUtterance, "Følg Casper Ruud")
+    }
+
     func test_submit_groundsIntoPending_withoutApplying() async {
         let vm = makeVM()
         vm.utterance = "Følg Casper Ruud bare i Grand Slams"

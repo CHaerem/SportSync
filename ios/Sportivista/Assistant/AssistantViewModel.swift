@@ -64,6 +64,11 @@ final class AssistantViewModel {
 
     /// Bound to the command-line text field.
     var utterance: String = ""
+    /// WP-104 — the utterance behind the CURRENT thread result, shown as the
+    /// user's message bubble in the conversation sheet (§ Hjelperen: "din
+    /// melding som boble"). Set on submit / proposeFollow, cleared whenever the
+    /// results are reset — so a stale bubble can never show without its result.
+    private(set) var lastSubmittedUtterance: String?
     /// WP-82 — bumped every time a mutation or command is CONFIRMED (Bekreft),
     /// so the command surface can play ONE light `.sensoryFeedback(.success)` on
     /// confirm (DESIGN § Bevegelse & haptikk). A pure signal — no
@@ -241,6 +246,7 @@ final class AssistantViewModel {
         guard !text.isEmpty else { return }
 
         resetResults()
+        lastSubmittedUtterance = text
         isThinking = true
         defer { isThinking = false }
         resetBatch()
@@ -498,6 +504,7 @@ final class AssistantViewModel {
     /// confirms it with Bekreft; nothing is applied by the tap. Raises the panel.
     func proposeFollow(_ entity: Entity) {
         resetResults()
+        lastSubmittedUtterance = "Følg \(entity.name)"
         resetBatch()
         let proposal = ProposedMutation(
             kind: .add, entityId: entity.id, entityQuery: entity.name,
@@ -778,26 +785,50 @@ final class AssistantViewModel {
         misunderstoodEntries = misunderstoodLog.load()
     }
 
-    // MARK: - WP-82 — command-line discoverability (rest · focus · typing)
+    // MARK: - WP-104 — the conversation sheet's opened state (tilstand 1)
 
-    /// REST state: a CONCRETE example placeholder (not an abstract instruction),
-    /// so an empty line still teaches what the assistant can do
-    /// (DESIGN § Hjelperen: "hvile = konkret eksempel-placeholder").
-    let restPlaceholder = "Prøv «følg Bodø/Glimt» eller «når spiller Ruud?»"
+    /// The capsule button's resting label (§ Hjelperen: "Spør, eller be om noe …").
+    static let capsulePrompt = "Spør, eller be om noe …"
+    /// The one hjelpesetning shown at the top of the freshly-opened sheet.
+    static let sheetIntro = "Skriv eller snakk — helt vanlig norsk."
+    /// The field placeholder in the opened/typing states.
+    static let fieldPlaceholder = "Skriv her …"
+    /// The field placeholder once a result is in the thread (state 4).
+    static let followUpPlaceholder = "Følg opp …"
 
-    /// FOCUS state: a small, calm row of context suggestions that rises over the
-    /// line while it has focus. Tapping one FILLS the line (the user still edits
-    /// or sends it) — discovery, never an applied action. These are example
-    /// prompts spanning the assistant's arms (følg · spør · vis), scoped to the
-    /// agenda context the command line lives in.
-    var focusSuggestions: [String] {
-        ["følg et lag", "hva skjer i kveld?", "vis bare fotball"]
+    /// What a tapped example row does. `.prefillFollow` drops «følg » into the
+    /// field and focuses it (WP-105's Legg til-search is wired in later — see the
+    /// TODO anchor in AssistantSheetView); `.run` submits `utterance` through the
+    /// existing arms (answer / command), exactly as a typed prompt would.
+    enum ExampleRowKind { case prefillFollow, run }
+
+    /// One tappable example row (ikke chips) in the opened sheet.
+    struct ExampleRow: Identifiable {
+        let id: String
+        let label: String
+        let kind: ExampleRowKind
+        /// The utterance a `.run` row submits (unused for `.prefillFollow`).
+        let utterance: String
     }
 
-    /// Fill the command line with a tapped focus suggestion. Deliberately does
-    /// NOT submit — the user reviews/edits/sends it, so a tap never surprises
-    /// them with a change.
-    func fillSuggestion(_ text: String) { utterance = text }
+    /// The three trykkbare eksempelrader (spec § Samtalearket, tilstand 1). The
+    /// `.run` rows submit `utterance` — kept punctuation-light (no trailing «?»)
+    /// so the deterministic MockAnswerer's word-boundary calendar match («i
+    /// kveld») fires in CI; the real FM is punctuation-robust either way.
+    static let exampleRows: [ExampleRow] = [
+        ExampleRow(id: "follow", label: "Følg et lag eller en utøver", kind: .prefillFollow, utterance: ""),
+        ExampleRow(id: "tonight", label: "Hva går i kveld?", kind: .run, utterance: "Hva går i kveld"),
+        ExampleRow(id: "settings", label: "Endre varsler eller tema", kind: .run, utterance: "Endre varsler eller tema"),
+    ]
+
+    /// Run an example row's prompt through the existing arms (the `.run` kind).
+    /// A `.prefillFollow` row is handled in the view (it only pre-fills + focuses
+    /// the field — no submit), so this is a no-op for that kind.
+    func runExample(_ row: ExampleRow) {
+        guard row.kind == .run else { return }
+        utterance = row.utterance
+        run()
+    }
 
     /// WP-99 — the standing "Hva kan du gjøre?" help question, used both as the
     /// first focus-suggestion pill's label and the utterance it submits. Phrased
@@ -842,6 +873,7 @@ final class AssistantViewModel {
         presentedFilter = nil
         lastImportSummary = nil
         shareImportMessage = nil
+        lastSubmittedUtterance = nil
     }
 
     private func resetBatch() {

@@ -2,15 +2,14 @@
 //  ContentView.swift
 //  Sportivista
 //
-//  WP-10 scaffold → WP-12 sync → WP-14 agenda → WP-14.2 theme override →
-//  WP-16.4 the seamless assistant. The screen is now: a Tekst-TV header
-//  (SPORTIVISTA · dato · ticking clock, plus the theme + assistant glyphs), the
-//  quiet live-now line, the day-grouped agenda, and — pinned to the bottom
-//  above the safe-area — the always-present KOMMANDOLINJE. The assistant's
-//  results (a proposal DIFF, an answer, an explanation) fade in as a flat
-//  "ark" (AssistantPanel) over the agenda; the command line stays put beneath
-//  it, so the line is unmistakably the primary way in. The header `»_` glyph
-//  is now a focus shortcut to that line rather than a button that opens a room.
+//  WP-10 scaffold → WP-12 sync → WP-14 agenda → WP-16.4 assistant → WP-104 the
+//  Claude Design-handoff root. The screen is now: the brand header, a segmented
+//  ROOT control with ORDS («Uka | Nyheter»), and — per tab — either the
+//  day-grouped agenda (Uka) or the news board shell (Nyheter). Pinned to the
+//  bottom above the safe-area is the always-present assistant CAPSULE BUTTON
+//  (AssistantCapsule); tapping it opens the conversation sheet (AssistantSheetView),
+//  where writing, the example rows and the result thread all live. The inline
+//  command line (WP-16.4→WP-99) is retired: the capsule + sheet replace it.
 //
 //  ContentView owns BOTH view models and hands them ONE shared ProfileStore, so
 //  a follow the assistant applies is the same profile the agenda recompiles
@@ -22,6 +21,21 @@
 //
 
 import SwiftUI
+
+/// WP-104 — the root's two sides, shown as ORDS in the header segmented control
+/// (spec § 3a / DESIGN § Navigasjon): «Uka» (the agenda — what's happening) and
+/// «Nyheter» (the news board — what's new). Both cover the whole week.
+enum RootTab: String, CaseIterable, Identifiable {
+    case uka
+    case nyheter
+    var id: String { rawValue }
+    var label: String {
+        switch self {
+        case .uka: return "Uka"
+        case .nyheter: return "Nyheter"
+        }
+    }
+}
 
 struct ContentView: View {
     let syncClient: SyncClient
@@ -35,10 +49,17 @@ struct ContentView: View {
 
     @State private var agenda: AgendaViewModel
     @State private var assistant: AssistantViewModel
-    /// WP-16.4 → WP-83 — the assistant RESULT sheet is up (a diff/answer/receipt).
-    /// Presented as a native `.sheet` (detents) over the agenda; the command line
-    /// stays put beneath it.
-    @State private var panelShown = false
+    /// WP-104 — the root's two sides (Claude Design-handoff): a segmented with
+    /// ORDS under the header — «Uka» (the agenda) vs «Nyheter» (the news board).
+    @State private var rootTab: RootTab = .uka
+    /// WP-16.4 → WP-83 → WP-104 — the assistant CONVERSATION sheet is up. Opened
+    /// from the bottom capsule button (or raised when a follow is proposed from
+    /// an event detail). Presented as a native `.sheet` (detents + grabber) over
+    /// the root; the capsule stays put beneath it.
+    @State private var sheetShown = false
+    /// WP-104 — the capsule's mic opens the sheet straight into diktering: the
+    /// field is focused on appear so the keyboard's native dictation mic is up.
+    @State private var sheetStartFocused = false
     /// WP-83 — the "Deg" screen is pushed (from the gearshape toolbar button).
     @State private var showDeg = false
     /// WP-83 — the memory page / share sheet, raised when the assistant's
@@ -46,7 +67,6 @@ struct ContentView: View {
     /// Their permanent home is now the Deg screen; these are the command shortcuts.
     @State private var memorySheetShown = false
     @State private var shareSheetShown = false
-    @FocusState private var commandFocused: Bool
     /// WP-31 — the first-run onboarding overlay. Decided once in init (profile
     /// empty AND not yet completed); also re-raised on demand from "Hva jeg
     /// følger" (see `rerunOnboarding`).
@@ -180,28 +200,27 @@ struct ContentView: View {
                 Rectangle()
                     .fill(SportivistaTokens.separator)
                     .frame(height: 1)
-                liveNowLine
-                filterLine
-                AgendaView(viewModel: agenda, onFollow: follow, onOpen: { assistant.recordOpened($0) },
-                           openEventID: $requestedEventID)
-                    // WP-99: a tap anywhere on the agenda resigns the command
-                    // line's focus (DESIGN § Hjelperen: "tapp utenfor … lukker
-                    // tastaturet"). A SIMULTANEOUS gesture, so it rides ALONGSIDE
-                    // a row's own tap — the row still opens its detail; the
-                    // keyboard just also goes away. (A drag/scroll never triggers
-                    // a TapGesture, so scrolling is untouched.)
-                    .simultaneousGesture(
-                        TapGesture().onEnded { if commandFocused { commandFocused = false } }
-                    )
+                rootTabPicker
+                // WP-104: the root's two sides. «Uka» is the agenda (unchanged);
+                // «Nyheter» is the (WP-106) news board, shipped here as a shell.
+                switch rootTab {
+                case .uka:
+                    liveNowLine
+                    filterLine
+                    AgendaView(viewModel: agenda, onFollow: follow, onOpen: { assistant.recordOpened($0) },
+                               openEventID: $requestedEventID)
+                case .nyheter:
+                    NewsView()
+                }
             }
-            // Liquid Glass (iOS 26): the command line is the app's ONE custom
-            // control surface — it floats over the agenda as a glass capsule
-            // (the Safari bottom-bar pattern) instead of sitting as an opaque
-            // bar in the VStack. `safeAreaInset` keeps the List scrollable
-            // beneath it with the correct automatic bottom inset, and the bar
-            // still rides above the keyboard natively.
+            // Liquid Glass (iOS 26): the assistant capsule is the app's ONE custom
+            // control surface — it floats over the content as a glass capsule (the
+            // Safari bottom-bar pattern) instead of sitting as an opaque bar in the
+            // VStack. `safeAreaInset` keeps the List scrollable beneath it with the
+            // correct automatic bottom inset. It stays put on BOTH tabs (DESIGN
+            // § Navigasjon: "Bunnen tilhører hjelperen alene").
             .safeAreaInset(edge: .bottom) {
-                CommandLineView(viewModel: assistant, focused: $commandFocused, onOpenBrowse: openBrowse)
+                AssistantCapsule(onOpen: openAssistant, onDictate: dictateToAssistant)
             }
             .background(SportivistaTokens.background.ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
@@ -224,10 +243,12 @@ struct ContentView: View {
                     publishedAppVersion: dataStore.loadAppVersion()
                 )
             }
-            // WP-83 — the assistant's result as a native sheet (detents), raised
-            // over the agenda; the command line stays put beneath it.
-            .sheet(isPresented: $panelShown) {
-                AssistantPanel(viewModel: assistant, dismiss: closePanel)
+            // WP-104 — the assistant conversation sheet (detents + grabber),
+            // raised over the root; the capsule stays put beneath it. Reset the
+            // dictation flag when the sheet closes, so a plain tap next time
+            // opens it un-focused.
+            .sheet(isPresented: $sheetShown, onDismiss: { sheetStartFocused = false }) {
+                AssistantSheetView(viewModel: assistant, dismiss: closeSheet, startFocused: sheetStartFocused)
                     .presentationDetents([.medium, .large])
                     .presentationDragIndicator(.visible)
             }
@@ -388,16 +409,17 @@ struct ContentView: View {
                         break
                     }
                 }
-                // WP-99: the FOCUSED command line — the discovery row (standing
-                // «Hva kan du gjøre?» help pill + example pills) and, since the
-                // line is empty, the keyboard-dismiss glyph in the trailing slot.
-                // A screenshot mode so the focused affordances are capturable
-                // deterministically (focus can't be driven by a still image).
-                if mode == "command-focused" {
+                // WP-104: the OPENED conversation sheet (tilstand 1) — the one
+                // hjelpesetning + the three tappable example rows. Renders the
+                // real AssistantSheetView full-screen via demoOverlay with an
+                // EMPTY view model (no seeded result), so its opened state shows.
+                // (Replaces the WP-99 "command-focused" mode — the inline command
+                // line is gone.)
+                if mode == "assistant-sheet" {
                     GolfBoardDemoSeed.seed(profileStore: profileStore)
                     assistant.reloadProfile()
                     agenda.reloadFromCache(now: Date())
-                    commandFocused = true
+                    demoSheet = .assistantResult
                 }
                 assistant.demoSeed(mode)
                 // WP-83: a diff/answer screenshot renders the (slimmed) result
@@ -415,8 +437,7 @@ struct ContentView: View {
         // don't also raise the sheet behind the overlay.
         .onChange(of: assistant.presentToken) { _, _ in
             guard !showOnboarding else { return }
-            commandFocused = false
-            panelShown = true
+            sheetShown = true
         }
         // WP-83 — the «hva vet du om meg» / «del profil» commands reach the
         // memory / share surfaces (their permanent home is Deg; these are the
@@ -449,7 +470,7 @@ struct ContentView: View {
             switch demoSheet {
             case .memory: WhatIKnowView(viewModel: assistant)
             case .spoiler(let row): EventDetailSheet(row: row)
-            case .assistantResult: AssistantPanel(viewModel: assistant, dismiss: closePanel)
+            case .assistantResult: AssistantSheetView(viewModel: assistant, dismiss: closeSheet)
             case .share: ProfileShareSheet(viewModel: assistant)
             }
         }
@@ -458,10 +479,12 @@ struct ContentView: View {
 
     // MARK: - Actions
 
-    /// A "Følg <entitet>" tapped in the event detail sheet — hand it to the
-    /// assistant's diff/confirm flow (the panel rises via presentToken).
+    /// A "Følg <entitet>" tapped in the event detail sheet — apply it directly
+    /// via the WP-105 assistant-free follow path (a tap IS the confirmation; §3b
+    /// "snarvei, aldri eneste vei"). It persists + recompiles the agenda via
+    /// `onProfileChanged`; no assistant diff sheet.
     private func follow(_ entity: Entity) {
-        assistant.proposeFollow(entity)
+        assistant.follow(entity)
     }
 
     /// WP-66 — the HOST-owned side of an assistant command. Theme, re-onboarding,
@@ -500,7 +523,7 @@ struct ContentView: View {
     /// screen / closes any assistant sheet and raises the overlay fresh (it
     /// re-enters at `.welcome`).
     private func rerunOnboarding() {
-        panelShown = false
+        sheetShown = false
         showDeg = false
         withAnimation(.easeOut(duration: 0.15)) { showOnboarding = true }
     }
@@ -514,7 +537,7 @@ struct ContentView: View {
         assistant.resetProfile(level)
         onboardingCompleted = false
         agenda.reloadFromCache(now: Date())
-        panelShown = false
+        sheetShown = false
         showDeg = false
         if reduceMotion {
             showOnboarding = true
@@ -523,14 +546,21 @@ struct ContentView: View {
         }
     }
 
-    /// The command line's `»_` — open the assistant result sheet.
-    private func openBrowse() {
-        commandFocused = false
-        withAnimation(.easeOut(duration: 0.15)) { panelShown = true }
+    /// The capsule's plain tap — open the conversation sheet (un-focused).
+    private func openAssistant() {
+        sheetStartFocused = false
+        sheetShown = true
     }
 
-    private func closePanel() {
-        withAnimation(.easeOut(duration: 0.15)) { panelShown = false }
+    /// The capsule's mic — open the sheet straight into diktering (field focused,
+    /// so the keyboard's native dictation mic is one tap away).
+    private func dictateToAssistant() {
+        sheetStartFocused = true
+        sheetShown = true
+    }
+
+    private func closeSheet() {
+        withAnimation(.easeOut(duration: 0.15)) { sheetShown = false }
     }
 
     private func refresh() async {
@@ -599,6 +629,23 @@ struct ContentView: View {
         .padding(.top, 4)
         .padding(.bottom, 16)
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    // MARK: - Root segmented (WP-104 — «Uka | Nyheter»)
+
+    /// The root's two sides as ORDS in a native segmented Picker (spec § 3a:
+    /// "Ord foran ikoner"). Both sides cover the whole week; the split is what's
+    /// HAPPENING (Uka) vs what's NEW (Nyheter).
+    private var rootTabPicker: some View {
+        Picker("Visning", selection: $rootTab) {
+            ForEach(RootTab.allCases) { tab in
+                Text(tab.label).tag(tab)
+            }
+        }
+        .pickerStyle(.segmented)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 10)
+        .accessibilityIdentifier("root.tabs")
     }
 
     @ViewBuilder
