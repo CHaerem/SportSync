@@ -1,4 +1,4 @@
-# Zenji designsystem — Apple-native baseline
+# Sportivista designsystem — Apple-native baseline
 
 Dette er den **levende designkontrakten**. iOS-appen og widgeten følger denne
 Apple-native baselinen: systemfont, semantiske system-farger, SF Symbols, native
@@ -145,10 +145,16 @@ Apple-system-farger + én amber-aksent. Ved rebrand endres KUN denne tabellen.
 
 - **`NavigationStack` med agendaen som rot.** Ingen tab bar (én permanent
   fane-rad for en sjelden-brukt «Deg» er for tungt krom).
+- **Rotens to sider (Claude Design-handoff 19.07.2026):** en segmented med ORD
+  under headeren — **«Uka | Nyheter»**. Begge dekker hele uka; skillet er hva
+  som *skjer* (agendaen) vs. hva som er *nytt* (§ Nyheter). Ord, aldri ikoner.
 - **`gearshape` i nav-baren (trailing)** pusher **Deg**-skjermen (§ Deg).
 - **Detaljer** vises som native `.sheet` (detents) eller push i agendaens stakk.
-- **Hjelperen** er en fast linje nederst på agenda (og Deg), ikke en fane
-  (§ Hjelperen). Bunnen tilhører hjelperen alene.
+- **Ett navigasjonsmønster:** rad → detalj (push/sheet med ‹ tilbake); aldri
+  gester som eneste vei.
+- **Hjelperen** er en kapsel-KNAPP nederst på agenda/Nyheter som åpner
+  samtalearket (§ Hjelperen) — ikke en fane, ikke et inline-felt. Bunnen
+  tilhører hjelperen alene.
 
 ## Agendaen (rot-skjermen)
 
@@ -187,28 +193,56 @@ Seksjoner: Arena · Om · **Hvor ser jeg det** (lenker) · **Funnet av AI**
 
 Visjonens kjerne, bygd som native mønstre — ikke en bespoke kontroll.
 
-- **Bunn-linje** på agenda + Deg: et native tekstfelt i søke-/skrivelinje-form
-  (`mic` for diktering, send/retur), som en **flytende Liquid Glass-flate**
-  (`glassEffect` + `safeAreaInset` — Safari-bunnfeltet-mønsteret; agendaen
-  scroller under). Forstår BÅDE profil-endringer OG spørsmål.
-- **Resultat i native sheet** (detents): diff (`+` grønn / `±` amber / `−` rød,
-  semantiske signalfarger) med Bekreft/Avvis, eller et rolig svar over LOKAL data.
+Rev. 19.07.2026 (Claude Design-handoff «Intuitivt for alle»): inline-linja er
+erstattet av kapsel-knapp + samtaleark. Full tilstandsspec i
+`design/specs/assistent-nyheter-v0.md`.
+
+- **Kapsel-knappen** nederst (flytende Liquid Glass-flate, `glassEffect` +
+  `safeAreaInset`; agendaen scroller under): «Spør, eller be om noe …» + `mic`.
+  Hele flaten er én knapp (button-rolle, ≥44 pt) som åpner samtalearket;
+  mic hopper rett i diktering. Ingen inline-skriving i roten.
+- **Samtalearket** (native sheet, grabber/dra-ned/tapp-utenfor): én setning
+  («Skriv eller snakk — helt vanlig norsk.») + tre TRYKKBARE eksempelrader
+  (følg-et-lag → Legg til-søket · spørsmål · kommando) + felt nederst.
+  Feltet vokser til ~4 linjer (Meldinger-mønsteret); send = amber primærknapp;
+  retur gir linjeskift. Diktering: bølge erstatter feltet, transkripsjonen
+  lander i feltet — du sender selv.
+- **Svar i tråden:** svaret lander i SAMME ark — din melding som boble,
+  diff (`+` grønn / `±` amber / `−` rød) med Bekreft/Avvis eller rolig svar
+  som kort under; «Følg opp …» er ett felt unna. Forstår BÅDE profil-endringer
+  OG spørsmål.
+- **Snarvei, aldri eneste vei:** alt arket kan (følg, endre, varsler) finnes
+  også som vanlige lister/knapper (§ Deg: Det du følger + Legg til; Følg-knapp
+  i event-detaljen).
 - **Kontekstbevisst:** agenda → følg/spør om tavla; detaljark → forhåndsscopet
   til eventet («Følg <lag>», «Påminn meg», «Hvorfor vises denne?»); Deg →
   innstillinger i naturlig språk.
-- **Oppdagbarhet (tre tilstander):** hvile = konkret eksempel-placeholder ·
-  fokus = en rad kontekst-forslag stiger opp · skriving = live grunning mot
-  entitets-indeksen (velg, ikke stav). Ingen permanent krom.
 - **Tenke-tilstand:** dempet «tenker …» + Avbryt, aldri en spinner.
-- **Umiddelbar konsekvens:** Bekreft ⇒ sheet lukkes ⇒ agendaen re-kompileres.
+- **Umiddelbar konsekvens:** Bekreft ⇒ arket lukkes ⇒ agendaen re-kompileres.
 - **Ærlighet:** Apple Intelligence av ⇒ si det rett ut, aldri falsk degradering.
+
+## Nyheter (rotens andre side)
+
+Tavla fra Claude Design-handoffen (2b «For deg») — bygget mot VISJON v3/WP-100.
+**Radens DNA = agendaens:** type-tag (når kjent) · én faktalinje · entitet ·
+kilder ut (↗) · relativ tid. ALDRI innbakt artikkeltekst, aldri AI-sammendrag
+av én enkelt kilde (DSM art. 15) — pekerne sender trafikken ut.
+
+- **Fire seksjoner, ferdig — tavla er endelig:** I DIN VERDEN I DAG
+  (editorial-tverrsnitt over egne data, proveniens-ⓘ) · NYTT (linse-matchede
+  pekere) · RESULTAT (alltid bak «Vis resultat» når spoilervern gjelder,
+  `eye.slash`) · FREMOVER (forvarsler utover dagens horisont).
+- Ingen uleste-tellere, ingen engasjements-mekanikk. Stille «Det du følger»-
+  lenke øverst.
 
 ## Deg-skjermen
 
 Pushet fra `gearshape`. Native inset-gruppert `List` (SF Symbols leading,
 verdi + chevron trailing). Grupper:
 
-- **PROFIL:** Hva jeg følger (n) · Sett opp på nytt.
+- **PROFIL:** Det du følger (n — vanlig liste, rad → detalj med endringer og
+  «Slutt å følge», + **Legg til**-søk mot entitets-indeksen med Følg-knapper)
+  · Sett opp på nytt.
 - **DATA OM MEG:** Hva jeg vet om deg (n) · Det jeg ikke forsto (n) · Del profil (QR).
 - **APP:** Varsel før start (leadMinutes) · Utseende (tema) · Nullstill.
 - **FOT:** «BYGG <sha> · dato · SISTE / NYERE FINNES» (dempet).

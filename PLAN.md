@@ -107,6 +107,68 @@ mennesket, aldri av en agent.
 | WP-98 | Brand-harmonisering + skjermkatalog | 0G | WP-97 | ✅ merget (#310) — web-merkelås rettet til godkjent (label+amber-kolon, 28px; DESIGN.md-rad korrigert: ingen skjerm bruker largeTitle); tertiaryLabel inn i token-systemet (enum+migrering+test 48→52); skjermkatalog: 17 demo-moduser × 2 temaer = 34 PNG on-demand (design/screens/generate.sh). TO NYE FUNN fra kjøringen: reset-entry/-confirm rendrer samme skjerm (harness-begrensning) + EKTE AgendaView-layoutbug (overlappende tekst i flerdags-golfrader, onboarding-landing/landed, begge temaer) — logget som oppfølger. 594 JS + 526 iOS grønne |
 | WP-99 | Tastatur-lukking + assistent-klarhet + agenda-layoutbug (eier-dogfooding) | 0G | WP-98 | ✅ #311 merget 18.07, installert på eierens iPhone (stempel 95b1fbe71) — TRE eier-funn fra fysisk-iPhone-dogfooding: (1) tastaturet i kommandolinja kunne ikke lukkes — HIG-native fiks: `.scrollDismissesKeyboard(.interactively)` på agenda+Deg, tapp-utenfor (simultaneous gesture, stjeler ikke rad-tap), lukke-glyf (`keyboard.chevron.compact.down`) i tom-fokusert-hullet; (2) uklart hva chatten kan → stående FØRSTE «Hva kan du gjøre?»-pill som ruter til eksisterende hjelp-arm (WP-68), verifisert at fokus-forslag ikke er mock-only; (3) rotårsak flerdags-golf-overlapp: `TimeColumn` (fixedSize+minWidth 58) tapte bredde-forhandlingen mot grådig `RowBody` (maxWidth .infinity) → bred dato-vindu-tekst tegnet OVER tittelen — fikset med `.layoutPriority(1)` på tidskolonnen; deterministisk offline-repro (GolfBoardDemoSeed) for onboarding-landed/-landing. Vektorer urørt (ren layout). 4 nye UI-tester + 1 unit; før/etter-skjermbilder |
 
+| WP-103 | Nyhets-server: `news.json` (entity-stampede pekere fra rss-digest) | 0H | — | ⬜ |
+| WP-104 | Assistent-inngang: segmented rot «Uka | Nyheter» + kapsel-knapp + samtaleark | 0H | WP-99 | ⬜ |
+| WP-105 | «Det du følger» + Legg til-søk (interesser uten assistent, 3b) | 0H | — | ⬜ |
+| WP-106 | Nyheter-v0-klienten (fire-seksjons-tavla) | 0H | WP-103, WP-104, WP-105 | ⬜ |
+
+---
+
+## FASE 0H · Claude Design-handoff: assistent-inngang + Nyheter-v0 (19.07.2026)
+
+Første designer-runde gjennom Claude Design ga en godkjent retning («Intuitivt
+for alle», turn 3) som eier har bestilt FULL implementering av — inkludert å
+fremskynde WP-100s klientdel forbi G1-gaten (eierbeslutning i hovedsesjonen
+19.07; serverdataene forblir uherdet til portmålingen er grønn, og eksterne
+testere er fortsatt gatet). **Bindende spec:** `design/specs/assistent-nyheter-v0.md`
+(destillert fra design-dokumentet i Claude Design-prosjektet). DESIGN.md
+§ Navigasjon/§ Hjelperen/§ Nyheter/§ Deg er oppdatert som kontrakt FØR
+implementering.
+
+Bølge 1 (parallelle, disjunkte filer): WP-103 (server), WP-104 (rot +
+assistent — eier ContentView.swift + Assistant/), WP-105 (3b — eier Profile/ +
+event-detaljen). Bølge 2: WP-106 (Nyheter-klienten, avhenger av alle tre).
+Menneskebeslutninger: ingen beskyttede stier i noen av pakkene.
+
+### WP-103 · Nyhets-server — ⬜
+`scripts/lib/news.js` + kall fra `build-events.js` (IKKE nytt pipeline-steg —
+workflows er beskyttet): bygg `docs/data/news.json` fra `rss-digest.json`-items
+× `entities.json`-navnematching (gjenbruk helpers-matchingen build-events
+bruker på events). Kontrakt i spec-en: id=hash(link), dedupe på link, cap ~100
+items/7 dager, byte-idempotent, whitelist i .gitignore, med i manifest.
+**Aksept:** vitest-suite for matching/dedupe/idempotens; `node
+scripts/build-events.js && node scripts/validate-events.js` grønn; news.json
+i manifest.json.
+
+### WP-104 · Assistent-inngang (3a + samtaleark) — ⬜
+Eier `ios/Sportivista/ContentView.swift` + `ios/Sportivista/Assistant/`.
+Segmented «Uka | Nyheter» (ord) under headeren — Nyheter-siden viser en
+minimal plassholder-view (fil `News/NewsView.swift` OPPRETTES her som skall,
+WP-106 fyller den); kapsel-KNAPP nederst erstatter inline-feltet; samtaleark
+med de fem tilstandene fra spec-en (gjenbruk diff-/answer-armene i tråd-form);
+WP-99-lukkeveiene overlever i ark-form. Demo-modus `command-focused` omdøpes/
+erstattes med ark-tilstander for skjermkatalogen. **Aksept:** unit + UI-suite
+grønn (eksisterende tastatur-tester omskrives mot arket), 4 schemes bygger,
+vektorer bit-like, mock-tester for eksempelradene + eval-corpus-cases for de
+to kjørbare eksemplene (0E-regelen).
+
+### WP-105 · Det du følger + Legg til (3b) — ⬜
+Eier `ios/Sportivista/Profile/` + event-detaljfila. «Det du følger» som vanlig
+liste (fra Deg, rad → detalj, Slutt å følge), «Legg til»-søk mot entities.json
+med Følg-knapper, Følg-knapp i event-detaljen. RØRER IKKE ContentView.swift
+(WP-104 eier den — navigasjon nås fra DegView). **Aksept:** unit-suite +
+mock-tester; profil-endringer går gjennom samme ProfileStore-vei som
+assistenten (én kilde til sannhet).
+
+### WP-106 · Nyheter-v0-klienten — ⬜ (bølge 2)
+Fyller `News/` med fire-seksjons-tavla per spec: brief (featured.json),
+NYTT (news.json linse-matchet på entityIds/sport), RESULTAT (recent-results
+bak spoiler-skjoldet), FREMOVER (events utover horisonten). Sync: news.json +
+featured.json + recent-results.json inn i filesOfInterest (og fjern død
+`interests.json`-referanse — avpublisert i WP-96); kilder åpnes UT (Link/
+SFSafariVC). «Det du følger»-lenke øverst (WP-105s view). **Aksept:** unit +
+UI-røyk på tavla, 4 schemes, skjermkatalog-modus `news` legges til.
+
 ---
 
 ## FASE 0A · Kontrakt-herding i repoet (dossier P300/P310/P320/P340) — ✅ KOMPLETT 13.07.2026
