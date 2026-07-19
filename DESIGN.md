@@ -169,11 +169,16 @@ Native `List`, inset-gruppert per dag. Bindende semantikk (uendret fra v2):
 ### Radens anatomi (native List-rad)
 
 ```
-[• amber]  [tid]  [tittel                    ] [🔔] [›]
-                  [turnering · runde · kanal   ]
+[• amber]  [tid]  [⛳︎] [tittel               ] [🔔] [›]
+                       [turnering · runde · kanal]
 ```
 
 - **Must-see:** liten amber-prikk (leading). Prikken er signalet — ingen emoji.
+- **Sport-symbol (rev. 19.07, eier-funn):** ett stille SF-symbol per sport
+  mellom tid og tittel (`tertiaryLabel`, aldri farget) — «hva slags event»
+  lesbart på et blunk uten å lese metateksten. Én kanonisk sport→symbol-tabell
+  (`soccerball`, `figure.outdoor.cycle`, `figure.golf`, `tennisball`, …,
+  fallback `calendar`) delt av rad, detalj og Nyheter. Symbol, aldri emoji/logo.
 - **Tid:** tabular, semibold, fast venstrekolonne. Flerdagsvindu i samme kolonne.
 - **Tittel:** `.body`, inntil to linjer, ALDRI trunkert til «…».
 - **Kanal:** `secondaryLabel` i meta-linjen; ukjent = «–». Krymper aldri tittelen.
@@ -198,9 +203,12 @@ erstattet av kapsel-knapp + samtaleark. Full tilstandsspec i
 `design/specs/assistent-nyheter-v0.md`.
 
 - **Kapsel-knappen** nederst (flytende Liquid Glass-flate, `glassEffect` +
-  `safeAreaInset`; agendaen scroller under): «Spør, eller be om noe …» + `mic`.
-  Hele flaten er én knapp (button-rolle, ≥44 pt) som åpner samtalearket;
-  mic hopper rett i diktering. Ingen inline-skriving i roten.
+  `safeAreaInset`; agendaen scroller under): ledende assistent-symbol +
+  «Spør, eller be om noe …» + `mic`, i EKTE `Capsule`-form. Hele flaten er én
+  knapp (button-rolle, ≥44 pt) som åpner samtalearket; mic hopper rett i
+  diktering. Ingen inline-skriving i roten. (Rev. 19.07 eier-funn: uten
+  ledende symbol leses den grå teksten som et dødt tekstfelt — Maps-mønsteret
+  krever ankersymbolet.)
 - **Samtalearket** (native sheet, grabber/dra-ned/tapp-utenfor): én setning
   («Skriv eller snakk — helt vanlig norsk.») + tre TRYKKBARE eksempelrader
   (følg-et-lag → Legg til-søket · spørsmål · kommando) + felt nederst.

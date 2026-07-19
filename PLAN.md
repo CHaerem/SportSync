@@ -111,6 +111,8 @@ mennesket, aldri av en agent.
 | WP-104 | Assistent-inngang: segmented rot «Uka/Nyheter» + kapsel-knapp + samtaleark | 0H | WP-99 | ✅ bølge 1 merget 19.07 (#318/#319/#320) |
 | WP-105 | «Det du følger» + Legg til-søk (interesser uten assistent, 3b) | 0H | — | ✅ bølge 1 merget 19.07 (#318/#319/#320) |
 | WP-106 | Nyheter-v0-klienten (fire-seksjons-tavla) | 0H | WP-103, WP-104, WP-105 | ✅ #321 merget 19.07 — FASE 0H KOMPLETT |
+| WP-107 | Ytelse: Nyheter-bytte-jank + oppstarts-«Henter data» (eier-dogfooding bygg 6) | 0H+ | WP-106 | ⬜ |
+| WP-108 | Visuell affordanse: kapsel-anker + ekte Capsule + sport-symbol per rad (eier-dogfooding bygg 6) | 0H+ | WP-106 | ⬜ |
 
 ---
 
