@@ -114,9 +114,171 @@ mennesket, aldri av en agent.
 | WP-107 | Ytelse: Nyheter-bytte-jank + oppstarts-«Henter data» (eier-dogfooding bygg 6) | 0H+ | WP-106 | ✅ #323 merget 19.07 |
 | WP-108 | Visuell affordanse: kapsel-anker + ekte Capsule + sport-symbol per rad (eier-dogfooding bygg 6) | 0H+ | WP-106 | ✅ #324 merget 19.07 |
 
+| WP-110 | Pipeline-vakter: sjakk-falsk-positiv + kontrakter | 0I | — | ⬜ |
+| WP-111 | Web: deltaker-visning + ferskhetsvakt + «Om»-lesbarhet + Zenji-headere | 0I | — | ⬜ |
+| WP-112 | iOS: perf-port-robusthet + deltaker-visning i agendaraden | 0I | — | ⬜ |
+| WP-113 | Sikkerhet: preview-deploy-injeksjon + CI-skrivevakt (BESKYTTEDE STIER — eier merger) | 0I | — | ⬜ |
+| WP-114 | Dok-resynk etter 19.07-gjennomgangen | 0I | — | ⬜ |
+| WP-115 | iOS: in-app nyhetsbrowser (SFSafariViewController) | 0I | WP-106 | ⬜ bølge 2 |
+| WP-116 | Dekningsbredde: katalog-utvidelse + deltaker-/«Om»-kontrakter i research/verify | 0I | WP-110 | ⬜ bølge 2 |
+| WP-117 | Design-review av alle flater (read-only rapport) | 0I | — | ⬜ |
+| WP-118 | Kjernefunksjonalitet-audit (read-only rapport) | 0I | — | ⬜ |
+| WP-119 | Portmåling-artefakt (port-report fra verify/coverage/build-alert) | 0I | — | ⬜ bølge 2 |
+| WP-120 | «Det du følger»: visning + håndtering (fra WP-117-funn) | 0I | WP-117 | ⬜ bølge 2 |
+
 ---
 
-## FASE 0H · Claude Design-handoff: assistent-inngang + Nyheter-v0 — ✅ KOMPLETT 19.07.2026
+## FASE 0I · 19.07-gjennomgangen: fikser + dekning/design-løft — 🔬 påbegynt 19.07.2026
+
+Bakgrunn: full 8-agents prosjektgjennomgang 19.07 kveld (rapport i økt-scratchpad;
+funn-sammendrag i PR-ene) + eierbestilling samme kveld: fiks funnene, in-browser
+nyhetsvisning, langt bredere sportsdekning («forutse mulige interesser»), full
+design-review inkl. «Det du følger»-flaten og «Om»-seksjonen (wall of text),
+kjernefunksjonalitet-audit, og VM-finale-hullet (deltakere vises ikke).
+
+**Menneskebeslutninger i fasen:** (a) WP-113 rører BESKYTTEDE STIER
+(.github/workflows/preview-deploy.yml + scripts/hooks/** + .claude/settings.json)
+— PR-en blir stående til eier merger; (b) de to 0G-eierbeslutningene som støyer i
+dekningsporten står fortsatt åpne: F1-kvalifisering inn/ut og Sjakk-NM-eliteklassen;
+(c) WP-116s bredde-ambisjon: defensibel default = utvid tier1/tier2 vesentlig
+(håndball, vintersport-detaljering, friidrett, mer fotball/sykkel/tennis-langhale)
+— serverbredde er trygt for calm design siden linsen filtrerer per bruker.
+
+Bølge 1 (parallelle, disjunkte filer): WP-110 (server-scripts + agent-prompter),
+WP-111 (docs/), WP-112 (ios/ tester + Feed-rendering), WP-113 (beskyttede stier),
+WP-114 (CLAUDE.md/ios-README/PLAN-metadata/workflows-test) + WP-117/118 (read-only
+rapporter, ingen worktree). Bølge 2 etter merge + rapporter: WP-115, WP-116,
+WP-119, WP-120.
+
+### WP-110 · Pipeline-vakter: sjakk-falsk-positiv + kontrakter
+**Mål:** fjern den kroniske HIGH-falsk-positiven og tett tre småkontrakter.
+**Innhold:** (1) `scripts/detect-coverage-gaps.js` (~192–209): «dropped-in-build»-
+anomalien skal kjøre samme katalog-/entitetsgate som `build-events.js` `isCovered`
+på kildefil-eventene før flagging (sjakk/esports er entitetsgatet — Sant Martí-
+klassen skal aldri flagges) + regresjonstest i `tests/detect-coverage-gaps.test.js`;
+(2) `scripts/usage-gate.js:24–28`: utdatert kommentar (tokenet ER nå wiret i alle
+gate-steg); (3) `.claude/skills/source-quirks/SKILL.md`: ny entry cyclingstage.com
+tidssemantikk (3/11 enige på tid = etappestart vs. sendetid — foretrekk
+letour.fr/TV 2 Play for sendetider); (4) `scripts/agents/scout.md` +
+`self-repair.md`: logg SKAL skrives også på quiet/none-kjøringer (i dag hopper
+scout over ~50 %). **Ikke-mål:** ingen workflow-filer (beskyttet), ingen endring
+av gap-detektorens øvrige semantikk. **Aksept:** `npx vitest run --maxWorkers=1`
+grønn; sandbox-kjøring av detect-coverage-gaps mot dagens data viser 0
+sjakk-anomali og uendrede øvrige gaps.
+
+### WP-111 · Web: deltaker-visning + ferskhetsvakt + «Om»-lesbarhet + Zenji-headere
+**Mål:** VM-finale-klassen (deltakere finnes i data, vises ikke) + tre småløft.
+**Innhold:** (1) agenda-raden (docs/js/dashboard.js) viser `participants` når
+satt og tittelen er generisk (→ «Spania – Argentina» under/i stedet for
+«VM-finalen 2026»; escapeHtml); (2) `renderTodayLine` (~108–113): forkast
+featured.json med `generatedAt` eldre enn ~20 t → heroFallback (hindrer
+faktafeil-headline når editorial kvote-hoppes); (3) detail.js «Om»-seksjonen:
+strukturert lesbarhet — splitt beskrivelsen i avsnitt (\n\n og setningsgrupper),
+nøkkelfakta-linjer (runde/underlag/format) der de finnes, aldri én vegg;
+(4) «Zenji»→«Sportivista» i de 10 kommentar-headerne i docs/, sw-cache-bump.
+**Ikke-mål:** ingen design-omlegging (WP-117/120 eier det), ingen CSS-token-
+endringer. **Aksept:** vitest grønn (+ nye dashboard-cards-tester for deltaker-
+rendering og ferskhetsvakt), `npm run screenshot` begge temaer.
+
+### WP-112 · iOS: perf-port-robusthet + deltaker-visning i agendaraden
+**Mål:** WP-61-porten skal tåle delt runner; VM-finale-klassen fikses også i appen.
+**Innhold:** (1) `ios/SportivistaTests/AgendaMatchingPerfTests.swift` (~80–122):
+interleave small/large-målingene per iterasjon OG kjør ratio-sjekken opptil 3
+forsøk der ALLE må feile (ekte O(n²) feiler deterministisk; runner-støy gjør ikke)
+— dokumentér begrunnelsen (19.07: CI målte 6,03× på byte-identisk kode som målte
+2,26 lokalt; rød runner var 2,3× tregere); (2) agendarad-visning av
+`participants` for events med generisk tittel (LensRenderer/RowBody — ren
+visning, de fem predikatene og vektorene urørt). **Ikke-mål:** ingen endring i
+matching/kompilering. **Aksept:** full unit-suite grønn, 4 schemes bygger,
+13/14 vektorer bit-like, perf-suiten kjørt 3× lokalt uten flake.
+
+### WP-113 · Sikkerhet: preview-deploy-injeksjon + CI-skrivevakt (BESKYTTEDE STIER)
+**Mål:** lukk RCE-vektoren og håndhevingsgapet fra sikkerhetsgjennomgangen.
+**Innhold:** (1) `.github/workflows/preview-deploy.yml` (~62–71): fork-PR-grennavn
+går uvasket inn i `execSync`-shell — bytt til argument-array (`execFileSync('git',
+['fetch','origin',branch,'--depth=1'])` osv.) OG valider `branch` mot
+`^[A-Za-z0-9._/-]+$` (defense in depth; vurder `refs/pull/N/head`); (2) ny/utvidet
+PreToolUse-hook (scripts/hooks/, samme CI-only-mønster som protect-interests):
+blokker CI-agent-mutasjoner av `.github/workflows/**`, `.github/actions/**`,
+`scripts/hooks/**`, `.claude/settings.json` — tetter at direkte-pushende agenter
+omgår merge-gaten (main har ingen branch protection; verifisert 19.07);
+wiring i `.claude/settings.json`; tester i `tests/hooks.test.js`.
+**Ikke-mål:** ingen endring i merge-gate.js (den er korrekt), ingen ruleset-
+endringer på GitHub (eier vurderer separat). **Aksept:** vitest grønn inkl. nye
+hook-tester (blokk i CI, tillatt lokalt); PR-en MERGES IKKE av agent/hovedsesjon
+— eier reviewer og merger (beskyttede stier).
+
+### WP-114 · Dok-resynk etter 19.07-gjennomgangen
+**Mål:** dokumentene skal igjen være verifiserbare mot koden (koherens-løftet).
+**Innhold:** CLAUDE.md — web-identitet (Tekst-TV-unntaket LUKKET 18.07, Apple-
+native baseline: #000000/#F2F2F7/systemfont/#FFB000-#9A6800; «Hva vi følger»→
+«Dette dekker vi»), testtall 36/~470→44/628 + de 9 manglende testfilene i lista,
+`build-alert.json` inn i datafil-lista, dokumentér ci.yml/ios-tests.yml/
+ios-release.yml/preview-deploy.yml, usage-monitor «hourly 05–22 UTC»,
+dashboard.js ~456; `tests/workflows.test.js` — dekk de 4 udekkede workflowene
+(eksistens + refererte filer finnes); `ios/README.md` — News/-delsystemseksjon
+(NewsBoard/NewsLens/NewsModel/NewsView), LaunchTrace i kartet, testtall 69
+filer/573 tester, whyShown-notatet i WP-82-historikk krysshenvist til #292;
+PLAN.md-metadata — tittel («Sportivista»), søk-erstatt-artefaktene (~394/396/441),
+WP-106-headingen ⬜→✅, WP-17-glyfen, FLYTTEDAGEN-listens utførte rename-punkt.
+**Ikke-mål:** ingen kodeendringer utover tests/workflows.test.js.
+**Aksept:** vitest grønn; stikkprøve: hver CLAUDE.md-påstand om base.css/testtall
+er verifiserbar mot koden.
+
+### WP-115 · iOS: in-app nyhetsbrowser (bølge 2)
+**Mål:** NYTT-rader (og kilde-lenker i event-detaljen) åpner i in-app-browser
+(SFSafariViewController) i stedet for å kaste brukeren ut i Safari.
+**Innhold:** `ios/Sportivista/News/NewsView.swift`: bytt `Link`-ut-navigering mot
+`SFSafariViewController`-wrapper (UIViewControllerRepresentable, .pageSheet/full),
+Reader-modus-hint på artikler, behold «åpne i Safari»-utvei i menyen; samme
+komponent gjenbrukes for evidens-/kildelenker i event-detaljens AI-provenance.
+**Aksept:** unit + UI-røyk (tapp NYTT-rad → in-app-browser vises), 4 schemes.
+
+### WP-116 · Dekningsbredde: katalog + deltaker-/«Om»-kontrakter (bølge 2)
+**Mål:** langt bredere/dypere dekning så mulige interesser kan forutses — og
+innholdskontrakter som fikser VM-semifinale-klassen (deltakere aldri stemplet)
+og «Om»-veggen ved kilden. **Innhold:** (1) `scripts/config/catalog.json`:
+utvid tier1 (håndball, vintersport-grenene eksplisitt, friidrett) og tier2-
+langhalen (flere ligaer/turneringer/utøvere per sport) — nøkternt men vesentlig;
+(2) `scripts/agents/research.md`: horisont-scanning-pass («hva skjer i norsk/
+internasjonal sport neste 4 uker som IKKE er på tavla/i katalogen — foreslå
+katalog-kandidater med begrunnelse i tracked.json»); (3) `scripts/agents/verify.md`:
+deltaker-ferskhet — når et knockout-event innen 7 dager har tomme `participants`
+og kampene som avgjør dem er spilt, SKAL deltakerne fylles (VM-semifinalene sto
+tomme hele uka); (4) research/verify «Om»-kontrakt: `description` skrives som
+2–3 korte avsnitt / nøkkelfakta, aldri én blokk >~400 tegn. **Aksept:** vitest +
+`node scripts/build-events.js && node scripts/validate-events.js` grønn;
+agent-prompts-koherens grønn.
+
+### WP-117 · Design-review av alle flater (read-only)
+**Mål:** full gjennomgang mot DESIGN.md: web (agenda/detalj/«Dette dekker vi»/
+rediger/activity/styleguide) + iOS (agenda/Nyheter/Deg/«Det du følger»/detalj/
+onboarding/widget) — med særlig vekt på «Det du følger»-flyten (eieropplevd
+mangelfull) og «Om»-seksjonen (wall of text). **Leveranse:** prioritert
+funnrapport + konkrete WP-forslag (mater WP-120). Ingen kodeendringer.
+
+### WP-118 · Kjernefunksjonalitet-audit (read-only)
+**Mål:** eiers mistanke — «en del av kjernefunksjonaliteten er ikke helt på
+plass» — avkreftes/bekreftes systematisk: varsler (planlegges de OG leveres på
+enhet?), sync-ferskhet (hvor gammel kan tavla være?), live-status, deltaker-/
+resultat-ferskhet, horisonten (7 dager nok?), lens-treffsikkerhet, ICS,
+widget-innhold, spoiler-skjold. **Leveranse:** prioritert gap-liste med evidens
++ WP-forslag. Ingen kodeendringer.
+
+### WP-119 · Portmåling-artefakt (bølge 2)
+**Mål:** portene som gater eksterne testere måles mekanisk, ikke på magefølelse.
+**Innhold:** nytt `scripts/build-port-report.js` (kjøres fra build-events eller
+eget pipeline-kall UTEN workflow-endring): aggregerer per dag — amend-rate
+nær-term (verify-log + calibration-ledger), tapte fulgte events (coverage-audit
+gaps mot catalog), stille stopp (build-alert + run-metadata der tilgjengelig),
+deltaker-status-feil (verify-log) → `docs/data/port-report.json` (+ .gitignore-
+whitelist + manifest). **Aksept:** vitest + integrasjonstest mot fixtures.
+
+### WP-120 · «Det du følger»: visning + håndtering (bølge 2, etter WP-117)
+**Mål:** eieropplevd svakhet — flaten skal vise HVA følgingen faktisk gir
+(kommende events + siste nytt per fulgt entitet, ikke bare en navneliste),
+tydelig skille regel-typer (utøver/lag/sport/kategori), og gjøre
+slutt-å-følge/juster trygt og forståelig. Scope defineres av WP-117-funnene.
 
 Første designer-runde gjennom Claude Design ga en godkjent retning («Intuitivt
 for alle», turn 3) som eier har bestilt FULL implementering av — inkludert å
