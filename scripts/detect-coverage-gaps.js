@@ -23,7 +23,7 @@
 import fs from "fs";
 import path from "path";
 import { pathToFileURL } from "url";
-import { readJsonIfExists, rootDataPath, writeJsonPretty, iso, MS_PER_DAY, containsName, normalizeText, normalizeEntity, entityTerms, isEventInWindow } from "./lib/helpers.js";
+import { readJsonIfExists, rootDataPath, writeJsonPretty, iso, MS_PER_DAY, containsName, normalizeText, normalizeEntity, entityTerms, isEventInWindow, makeCoverageGate } from "./lib/helpers.js";
 
 // Re-export so existing importers (tests) keep resolving containsName from here.
 export { containsName };
@@ -186,8 +186,19 @@ export function detectGaps({ rss, events, interests, tracked, now = Date.now() }
  * we only look closer at a sport when the board has NOTHING upcoming for it, then
  * name why (fetcher missing / empty / dropping events). `sources` maps sport key →
  * parsed data file (or null if absent).
+ *
+ * WP-110: the "dropped-in-build" (high) signal is CATALOG-GATED with the SAME
+ * `isCovered` build-events.js uses. Entity-gated sports (chess/esports) are covered
+ * only through the named catalog long-tail, so a minor open with a lone club player
+ * (the "Sant Martí" class) legitimately never reaches the board — that is a correct
+ * build drop, NOT the build dropping something it should keep. Counting it as
+ * dropped-in-build fired a chronic HIGH false positive every hour. So a source-file
+ * event only counts toward this signal if the catalog actually covers it. `isCovered`
+ * defaults to a permissive gate (cover everything) so callers that don't pass one keep
+ * the pre-WP-110 behaviour; main() passes the real catalog gate. File events carry no
+ * `sport` field (build-events stamps it from the filename), so we force it here too.
  */
-export function detectSourceAnomalies({ sources, events, now = Date.now() }) {
+export function detectSourceAnomalies({ sources, events, now = Date.now(), isCovered = () => true }) {
 	const anomalies = [];
 	for (const sport of EXPECTED_SPORT_FILES) {
 		const onBoard = countSportEventsWithin(events, sport, now, UPCOMING_DAYS);
@@ -199,11 +210,14 @@ export function detectSourceAnomalies({ sources, events, now = Date.now() }) {
 			continue;
 		}
 		const fileEvents = (data.tournaments || []).flatMap((t) => t.events || []);
-		const upcomingInFile = fileEvents.filter((e) =>
-			isEventInWindow(e, now - MS_PER_DAY, now + UPCOMING_DAYS * MS_PER_DAY)
+		// Only events the BUILD would actually KEEP count as "dropped" — an uncovered
+		// event (Sant Martí chess/esports) is a legitimate drop, not a build bug.
+		const droppableUpcoming = fileEvents.filter((e) =>
+			isEventInWindow(e, now - MS_PER_DAY, now + UPCOMING_DAYS * MS_PER_DAY) &&
+			isCovered({ ...e, sport })
 		).length;
-		if (upcomingInFile > 0) {
-			anomalies.push({ sport, issue: "dropped-in-build", detail: `${upcomingInFile} upcoming ${sport} event(s) in the source file but 0 on the board — build/normalisation may be dropping them`, severity: "high", detectedAt: iso(now) });
+		if (droppableUpcoming > 0) {
+			anomalies.push({ sport, issue: "dropped-in-build", detail: `${droppableUpcoming} upcoming ${sport} event(s) in the source file but 0 on the board — build/normalisation may be dropping them`, severity: "high", detectedAt: iso(now) });
 		} else if (fileEvents.length === 0) {
 			anomalies.push({ sport, issue: "file-empty", detail: `docs/data/${sport}.json has no events and none on the board — source may be down or changed`, severity: "low", detectedAt: iso(now) });
 		}
@@ -393,11 +407,15 @@ function main() {
 		: interestsSeed;
 	const tracked = readJsonIfExists(path.join(configDir, "tracked.json"));
 	const sources = readSources(dataDir);
+	// WP-110: gate the dropped-in-build anomaly with the SAME coverage gate the
+	// build uses, so an event the catalog never covers (the Sant Martí chess class)
+	// is not mis-read as "the build dropped it".
+	const isCovered = makeCoverageGate(catalog);
 
 	const gaps = detectGaps({ rss, events, interests, tracked });
 	const trackedClaims = detectTrackedClaims({ tracked, events });
 	const allGaps = [...gaps, ...trackedClaims];
-	const anomalies = detectSourceAnomalies({ sources, events });
+	const anomalies = detectSourceAnomalies({ sources, events, isCovered });
 	writeJsonPretty(path.join(dataDir, "coverage-gaps.json"), {
 		generatedAt: iso(),
 		gapCount: allGaps.length,

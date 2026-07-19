@@ -151,6 +151,69 @@ export function mustWatchEntity(event, interests) {
 	return matchInterest(hay, notifyEntities(interests), { sport: event.sport });
 }
 
+// --- Server coverage gate (WP-96 / WP-110) ---
+// "Does Sportivista COVER this event?" — the server-scope filter keyed off
+// catalog.json ("hva vi DEKKER", never one person's follows). Extracted here
+// (WP-110) so build-events.js (the board filter) and detect-coverage-gaps.js (its
+// dropped-in-build anomaly) ask the EXACT same question and cannot drift: an event
+// the catalog never covers is a legitimate build drop, not a "source dropped it"
+// anomaly — that drift is exactly what produced the chronic "Sant Martí" chess
+// HIGH false positive. See build-events.js + tests/build-events.test.js.
+
+/** Sports covered WHOLESALE by default when catalog.tier1 is absent (tests, first build). */
+export const DEFAULT_TIER1_SPORTS = ["football", "golf", "f1", "cycling", "biathlon", "cross-country", "alpine", "nordic", "ski jumping"];
+
+/**
+ * Sports covered ONLY through the named catalog long-tail, never wholesale: a
+ * SPORT-SCOPED catalog-entity match is required — the norwegian / favorite /
+ * importance / ai-research shortcuts do NOT apply. Without this a minor open with a
+ * lone Norwegian club player (the "Sant Martí" case) or a CS2 match between two
+ * uncovered teams slips through, because such events are often norwegian:true or
+ * arrive as source:"ai-research".
+ */
+export const ENTITY_GATED_SPORTS = new Set(["chess", "esports"]);
+
+/**
+ * The haystack the coverage matcher scans: title + tournament + home/away +
+ * Norwegian players + participants. Deliberately excludes venue (mirrors
+ * mustWatchEntity, so a chess event in the CITY of Barcelona doesn't match the
+ * football club).
+ */
+export function coverageHaystack(e) {
+	return [e.title, e.tournament, e.homeTeam, e.awayTeam,
+		...((e.norwegianPlayers || []).map((p) => p?.name || p)),
+		...((e.participants || []).map((p) => p?.name || p))].join(" ");
+}
+
+/**
+ * Build the server coverage gate from catalog.json: returns `isCovered(event)`.
+ *   (1) wholesale-covered sport (tier1) → in, checked first so it wins over the gate;
+ *   (2) entity-gated sport (chess/esports) → only a SPORT-SCOPED catalog-entity match
+ *       admits it (sport-scoping stops a cross-sport entity — a chess event in the
+ *       city of Barcelona must not match the football club "Barcelona");
+ *   (3) any other non-broad sport (e.g. tennis) → a Norwegian / favorite /
+ *       high-importance (≥4) event stays; ai-research is NOT a blanket pass on its own;
+ *   (4) else an UNSCOPED catalog-entity match.
+ */
+export function makeCoverageGate(catalog = {}) {
+	const coveredBroadly = new Set((catalog?.tier1 || DEFAULT_TIER1_SPORTS).map((s) => s.toLowerCase()));
+	const catalogEntities = [
+		...(catalog?.tier2?.teams || []),
+		...(catalog?.tier2?.athletes || []),
+		...(catalog?.tier2?.tournaments || []),
+	];
+	return function isCovered(e) {
+		const sport = (e.sport || "").toLowerCase();
+		if (coveredBroadly.has(sport)) return true;
+		const hay = coverageHaystack(e);
+		if (ENTITY_GATED_SPORTS.has(sport)) {
+			return matchInterest(hay, catalogEntities, { sport: e.sport }) != null;
+		}
+		if (e.norwegian || e.isFavorite || (e.importance || 0) >= 4) return true;
+		return matchInterest(hay, catalogEntities) != null;
+	};
+}
+
 // --- Participation normalization (WP-04) ---
 // Canonical form, enforced everywhere in the pipeline: `norwegianPlayers` and
 // `participants` are always an array of { name, ... } objects — never bare

@@ -62,3 +62,23 @@ rather than deleting it — the history is useful.
 - **Observed:** 2026-07-05 (British Grand Prix, Silverstone, race Sun 5 Jul — absent
   from the board; only Belgian 17 Jul + Hungarian 24 Jul present).
   **Evidence:** https://www.formula1.com/en/racing/2026
+
+### cyclingstage.com — Grand Tour / stage-race times (medium)
+- **Quirk:** the times cyclingstage.com lists are the **on-road stage schedule**
+  (roll-out / départ réel / expected finish), NOT the **Norwegian broadcast start**.
+  For a Tour de France stage that is often 1–3 h apart: the racing starts around
+  midday while TV 2 Play joins later. The two time semantics look identical (both a
+  "start time"), so a naive lift puts the wrong clock on the board.
+- **Symptom on the board:** the event's `time` disagrees with what verify sees from
+  the broadcaster — `calibration.json` shows cyclingstage.com's `time` field agreeing
+  on only **3 of 11 checks** (reliability ~0.38) while its `existence` field agrees
+  2/2. The source is right about WHAT is happening and roughly WHEN it races, but
+  wrong about when a Norwegian viewer should tune in.
+- **Compensate:** the board's contract is **broadcast times** (when can I watch on
+  TV 2 Play). Take the start time + streaming from **letour.fr / the TV 2 Play guide**
+  (or the official race site), and use cyclingstage.com only for **stage facts** —
+  stage number, route, distance, start/finish towns, flat/mountain/ITT profile. Never
+  copy its clock onto `time` for a Norwegian audience without a broadcaster cross-check.
+- **Observed:** 2026-07 Tour de France window, 11 time checks (3 agreed) in
+  `calibration.json`; corrections logged with no field disagreement on existence.
+  **Evidence:** https://www.letour.fr/en/ · https://play.tv2.no/

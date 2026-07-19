@@ -20,12 +20,14 @@
  * also fails/is unavailable. The decision always reports which source it used:
  * fresh | cached-fresh | cached-stale-fetch-unavailable | none.
  *
- * NB: the live read here needs CLAUDE_CODE_OAUTH_TOKEN in this step's env. Today
- * only usage-monitor.yml's step exports it; the agent workflows (research/verify/
- * scout) do not pass it to the usage-gate step, so `fetchFresh` is a no-op there
- * until a workflow change adds it — `.github/workflows/**` is a protected path,
- * out of scope for this change (see PR notes). Until then this degrades exactly
- * to the previous cached/fail-open behaviour, which is safe.
+ * NB: the live read here needs CLAUDE_CODE_OAUTH_TOKEN in this step's env. This is
+ * now wired: EVERY agent workflow's `id: usage` step exports it (same read-only
+ * secret usage-monitor.yml uses), so `fetchFresh` performs a real fresh reading
+ * when the cached snapshot is older than FRESH_MS — the >10-min live path is live,
+ * not a no-op. Absent the token (a local run, or any future caller that omits it)
+ * `fetchFresh` is null and the gate degrades to the cached/fail-open behaviour,
+ * which is safe. (WP-110 fixed this stale comment; the token wiring itself landed
+ * with the WP-94 follow-up.)
  */
 import fs from "fs";
 import path from "path";
