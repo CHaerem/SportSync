@@ -110,11 +110,11 @@ mennesket, aldri av en agent.
 | WP-103 | Nyhets-server: `news.json` (entity-stampede pekere fra rss-digest) | 0H | — | ✅ bølge 1 merget 19.07 (#318/#319/#320) |
 | WP-104 | Assistent-inngang: segmented rot «Uka/Nyheter» + kapsel-knapp + samtaleark | 0H | WP-99 | ✅ bølge 1 merget 19.07 (#318/#319/#320) |
 | WP-105 | «Det du følger» + Legg til-søk (interesser uten assistent, 3b) | 0H | — | ✅ bølge 1 merget 19.07 (#318/#319/#320) |
-| WP-106 | Nyheter-v0-klienten (fire-seksjons-tavla) | 0H | WP-103, WP-104, WP-105 | 🔬 |
+| WP-106 | Nyheter-v0-klienten (fire-seksjons-tavla) | 0H | WP-103, WP-104, WP-105 | ✅ #321 merget 19.07 — FASE 0H KOMPLETT |
 
 ---
 
-## FASE 0H · Claude Design-handoff: assistent-inngang + Nyheter-v0 (19.07.2026)
+## FASE 0H · Claude Design-handoff: assistent-inngang + Nyheter-v0 — ✅ KOMPLETT 19.07.2026
 
 Første designer-runde gjennom Claude Design ga en godkjent retning («Intuitivt
 for alle», turn 3) som eier har bestilt FULL implementering av — inkludert å
