@@ -18,7 +18,7 @@
 //      for the time column and other places digits must line up.
 //
 //  The WP-80 migration shims (the legacy fixed-size `sportivistaMono` font and the
-//  Tekst-TV colour aliases) were removed in WP-85 once every surface had
+//  pre-baseline colour aliases) were removed in WP-85 once every surface had
 //  migrated to the API above. Fixed `.system(size:)` points are barred by the
 //  HIG CI gate (tests/ios-dynamic-type-gate.test.js).
 //
@@ -66,7 +66,7 @@ enum SportivistaTokens {
 	/// Hairline / separator. `rgba(84,84,88,.6)` / `#C6C6C8`.
 	static let separator = Color(uiColor: .separator)
 
-	/// The ONE accent — teletext amber. `#FFB000` dark / `#9A6800` light. Used
+	/// The ONE accent — amber. `#FFB000` dark / `#9A6800` light. Used
 	/// only for accent (selected state, bar-button tint, must-see dot, alert-on,
 	/// primary action) — never body text, never two amber elements in one row.
 	static let accent = Color.sportivista(dark: Color(hex: 0xFFB000), light: Color(hex: 0x9A6800))

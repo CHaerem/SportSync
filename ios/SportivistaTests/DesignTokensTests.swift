@@ -10,7 +10,7 @@
 //    • the 8pt spacing scale exists.
 //
 //  The WP-80 migration shims (the fixed-size `sportivistaMono` font and the legacy
-//  Tekst-TV colour aliases) were removed in WP-85; their tests went with them.
+//  pre-baseline colour aliases) were removed in WP-85; their tests went with them.
 //
 
 import XCTest

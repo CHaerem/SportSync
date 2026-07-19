@@ -11,7 +11,7 @@
 //  helpers here means the widget target picks them up for free, no separate
 //  project.yml entry needed.
 //
-//  Every function here answers exactly one Tekst-TV row question — "når",
+//  Every function here answers exactly one agenda-row question — "når",
 //  "hva", "hvor" — plus the day-section label and the collapsed-series
 //  summary line. Kept pure (no Date() calls, no I/O) so every rule is
 //  unit-testable in isolation (AgendaFormatTests) with fixed inputs.

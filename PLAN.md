@@ -133,7 +133,7 @@ mennesket, aldri av en agent.
 | WP-126 | Live-koherens: ett delt live-begrep på alle flater (eierbestilling 20.07) | 0I | WP-121 | 🔬 bølge 3 — ssLiveState (web) + AgendaViewModel.liveState (iOS-speil): 'direkte'/'pågår'/null; «Direkte nå» viser TdF/sjakk/CS2 (ESPN beriker); iOS minutt-tikk (TimelineView.everyMinute); followed.js relDay bruker delt def. Widget: WP-127 eier fila (urørt) |
 | WP-127 | Detalj & widget: «Om»-avsnitt iOS + deltaker-titler + RESULTAT sist + prosa-bredde web | 0I | WP-112 | 🔬 bølge 3 |
 | WP-128 | Web-agenda: fortids-dag-fiks + ekspandert-tilstand over live-poll + klokke-avstemming | 0I | WP-117 | 🔬 bølge 3 |
-| WP-129 | Onboarding-copy (kapsel-modellen) + stale kommentarer + regenerert skjermkatalog | 0I | WP-117 | ⬜ bølge 4 |
+| WP-129 | Onboarding-klarhet: formål i klarspråk + kapsel-copy + stale kommentarer | 0I | WP-117 | 🔬 bølge 4 |
 | WP-130 | Pipeline-kvalitet: refaktor-auditens quick-wins | 0I | — | 🔬 PR åpen — containsName-memo, haystack-dedup ×3, én fillesing, configDirPath (+2 env-bugfiks), 2 døde eksporter, flattenStats, golf mergeEvents |
 
 ---
@@ -413,15 +413,21 @@ OPP»-rader som dupliserer synlige agendarader dedupes; sport-symbol på web-rad
 vurderes for paritet. **Aksept:** nye dashboard-cards-tester (ingen fortids-dag
 øverst; ekspandert overlever poll); DESIGN.md internt konsistent.
 
-### WP-129 · Onboarding-copy + stale kommentarer + skjermkatalog (bølge 4)
-**Mål:** appen skal ikke lære bort en kontroll som ikke finnes. **Innhold:**
-(1) `OnboardingView.swift` (~435/440) + `AgendaView.emptyRow` (~216–219):
+### WP-129 · Onboarding-klarhet: formål i klarspråk + kapsel-copy + stale kommentarer (bølge 4)
+**Mål:** appen skal ikke lære bort en kontroll som ikke finnes, OG (eierbestilling
+20.07) forklare formålet i klarspråk for ikke-tekniske brukere før den ber om noe.
+**Innhold:** (1) `OnboardingView.swift` (landing) + `AgendaView.emptyRow`:
 «skriv i kommandolinjen nederst»/«»_»-idiomet erstattes med kapsel-modellens
-språk («trykk assistenten nederst»); (2) stale «Tekst-TV»/«mono»/TekstTVClock-
-kommentarer i ~15 Swift-filer ryddes; (3) `ios/docs/design-v2/`-katalogen er
-pre-baseline (14.07, viser gammelt ZENJI-utseende) — regenerer via
-design/screens/generate.sh eller merk mappa utdatert. **Aksept:** grep 0 treff
-på «kommandolinjen»/TekstTVClock i ios/Sportivista; UI-røyk grønn.
+språk («trykk assistenten nederst») + en rolig kapsel-preview (assistent-symbol ·
+prompt · amber mic); (2) formåls-klarhet: velkomst-steget sier HVA appen gjør i én
+klarspråks-setning før quick-picks/samtale, den tomme agendaen forklarer formål +
+neste steg vennlig — quick-picks beholdes som den universelle vei-uten-AI,
+samtalen er entusiast-veien (routing uendret); (3) stale «Tekst-TV»/«teletext»-
+kommentarer i 14 Swift-filer omformuleres (constraint-bærende linjer i
+DesignTokens/Interaction beholder rasjonalet, forankret i «Apple-native baseline»).
+Skjermkatalog-punktet utgår — design-v2-galleriet er slettet (regel 8), ingen
+gjenoppretting. **Aksept:** grep 0 treff på «kommandolinjen»/«Tekst-TV»/«teletext»
+i ios/Sportivista; enhets-suite + UI-røyk onboarding grønn.
 
 Første designer-runde gjennom Claude Design ga en godkjent retning («Intuitivt
 for alle», turn 3) som eier har bestilt FULL implementering av — inkludert å

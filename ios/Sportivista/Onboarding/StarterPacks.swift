@@ -52,7 +52,7 @@ struct StarterRule: Equatable, Sendable {
 /// A tappable curated bundle of follow-rules.
 struct StarterPack: Identifiable, Equatable, Sendable {
     var id: String
-    /// Short Tekst-TV title ("Norske golfere").
+    /// Short title ("Norske golfere").
     var title: String
     /// One dempet line under it — what the pack covers.
     var subtitle: String

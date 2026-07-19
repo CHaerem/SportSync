@@ -4,24 +4,28 @@
 //
 //  WP-31 — the calm first-run experience (dossier P310's «definere»-løkke:
 //  "onboarding er en samtale, ikke et skjema — ingen konkurrent lar deg SI hva
-//  du bryr deg om"). Four quiet steps, all in the Tekst-TV language (mono,
-//  amber, near-black, the ensō mark), no hero art, no carousel, no emoji, no
-//  exclamation marks:
+//  du bryr deg om"). Four quiet steps on the Apple-native baseline (system
+//  type, one amber accent, the ensō mark), no hero art, no carousel, no emoji,
+//  no exclamation marks. WP-129 — the copy speaks plainly to a non-technical
+//  first-time user (say WHAT the app does before asking for anything) and points
+//  at the assistant CAPSULE, never the retired inline command line:
 //
-//    1. welcome    — one honest sentence about what Sportivista is (når · hva · hvor)
+//    1. welcome    — one plain-language sentence about what Sportivista does
+//                    (samler når · hvor du kan se sporten du bryr deg om)
 //                    + the on-device privacy moment (P350/P360).
-//    2. converse   — the PRIMARY path when Apple Intelligence is available: the
-//                    same »_ command-line idiom, free Norwegian text → the
-//                    EXISTING assistant (InterestAssistant.interpret) → a calm
-//                    diff the user confirms, saying several things in a row while
-//                    the "Følger nå" list grows. This reuses AssistantViewModel
-//                    wholesale — NOT a parallel input.
-//    3. quickPicks — the fallback (and available to everyone): curated Norwegian
-//                    starter packs as ≥44pt tap targets. This alone gives full
-//                    value on a cold start with no Apple Intelligence.
-//    4. landing    — the quiet finish: it points at the always-present command
-//                    line ("du kan alltid si mer til Sportivista") and drops the user
-//                    into an agenda that ALREADY reflects the choices, because
+//    2. converse   — the say-what-you-follow path (Apple Intelligence only):
+//                    free Norwegian text in an inline field → the EXISTING
+//                    assistant (InterestAssistant.interpret) → a calm diff the
+//                    user confirms, saying several things in a row while the
+//                    "Følger nå" list grows. Reuses AssistantViewModel wholesale
+//                    — NOT a parallel input.
+//    3. quickPicks — the tap-to-follow path that works for EVERYONE: curated
+//                    Norwegian starter packs as ≥44pt tap targets. This alone
+//                    gives full value on a cold start with no Apple Intelligence,
+//                    and needs no understanding of the assistant.
+//    4. landing    — the quiet finish: it points at the always-present assistant
+//                    capsule ("du kan alltid si mer til Sportivista") and drops the
+//                    user into an agenda that ALREADY reflects the choices, because
 //                    every confirm/tap recompiled it live via onProfileChanged.
 //
 //  Presentation only. Every mutation goes through AssistantViewModel + the pure
@@ -103,7 +107,7 @@ struct OnboardingView: View {
     private var welcomeStep: some View {
         VStack(alignment: .leading, spacing: 20) {
             stepHeading("Velkommen")
-            Text("Sportivista er én rolig oversikt over idretten du følger — når det skjer, hva det er, og hvor du kan se det.")
+            Text("Sportivista samler når og hvor du kan se sporten du bryr deg om — alt i én rolig liste.")
                 .font(.sportivistaTabular(.subheadline, weight: .regular))
                 .foregroundStyle(SportivistaTokens.label.opacity(0.9))
                 .fixedSize(horizontal: false, vertical: true)
@@ -169,9 +173,10 @@ struct OnboardingView: View {
         }
     }
 
-    /// The command line, reused as the onboarding input — the SAME idiom as the
-    /// always-present line (mono `»_`, plain field, blinking amber cursor /
-    /// "tenker …" / send), so onboarding feels like the app, not a wizard.
+    /// The onboarding's inline conversation field — the enthusiast, say-what-you-
+    /// follow input. A plain field with a `»_` prompt sigil and a blinking amber
+    /// cursor / "tenker …" / send, feeding the SAME assistant the capsule opens,
+    /// so onboarding feels like the app, not a wizard.
     private var promptLine: some View {
         HStack(alignment: .center, spacing: 10) {
             Text("»_")
@@ -419,7 +424,7 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 20) {
             stepHeading("Klart")
             if assistant.profile.isEmpty {
-                Text("Du følger ingenting ennå — det er helt greit. Skriv til Sportivista når som helst nederst på skjermen.")
+                Text("Du følger ingenting ennå — det er helt greit. Trykk assistenten nederst når du vil legge til noe.")
                     .font(.sportivistaTabular(.subheadline, weight: .regular))
                     .foregroundStyle(SportivistaTokens.label.opacity(0.85))
                     .fixedSize(horizontal: false, vertical: true)
@@ -431,17 +436,29 @@ struct OnboardingView: View {
                 followingNow
             }
 
-            VStack(alignment: .leading, spacing: 6) {
-                Text("Du kan alltid si mer til Sportivista — skriv i kommandolinjen nederst.")
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Du kan alltid si mer til Sportivista — trykk assistenten nederst.")
                     .font(.sportivistaTabular(.footnote, weight: .regular))
                     .foregroundStyle(SportivistaTokens.label.opacity(0.75))
                     .fixedSize(horizontal: false, vertical: true)
-                HStack(spacing: 8) {
-                    Text("»_")
+                // A quiet preview of the always-present assistant capsule
+                // (§ Hjelperen): leading assistant symbol · the same prompt ·
+                // the amber mic — so the finish points at the REAL control, not
+                // the retired command line.
+                HStack(spacing: 10) {
+                    Image(systemName: SportSymbol.assistant)
                         .font(.sportivistaTabular(.subheadline, weight: .semibold))
                         .foregroundStyle(SportivistaTokens.secondaryLabel)
-                    BlinkingCursor()
+                    Text(AssistantViewModel.capsulePrompt)
+                        .font(.sportivistaTabular(.subheadline, weight: .regular))
+                        .foregroundStyle(SportivistaTokens.secondaryLabel)
+                        .lineLimit(1)
+                    Spacer(minLength: 0)
+                    Image(systemName: "mic")
+                        .font(.sportivistaTabular(.subheadline, weight: .semibold))
+                        .foregroundStyle(SportivistaTokens.accent)
                 }
+                .accessibilityHidden(true)
             }
             .padding(14)
             .frame(maxWidth: .infinity, alignment: .leading)

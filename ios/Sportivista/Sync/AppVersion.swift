@@ -74,7 +74,7 @@ enum AppVersionCheck {
         return false
     }
 
-    /// The quiet Tekst-TV foot line: «BYGG a1b2c3d · 16.07 21:40 · SISTE»,
+    /// The quiet foot line: «BYGG a1b2c3d · 16.07 21:40 · SISTE»,
     /// «… · NYERE FINNES (d4e5f6a)» or just the stamp when there is no verdict.
     static func line(stamp: String, date: String, published: AppVersion?) -> String {
         let head = date.isEmpty ? "BYGG \(stamp)" : "BYGG \(stamp) · \(date)"

@@ -113,7 +113,7 @@ struct AgendaFilter: Equatable, Sendable {
     /// window-only filter ("vis alt i dag") keeps every subject, just this day.
     var hasSubjectConstraint: Bool { !sports.isEmpty || !entities.isEmpty }
 
-    /// The calm Tekst-TV subject for the filter line ("GOLF · DENNE UKA"). A
+    /// The calm subject for the filter line ("GOLF · DENNE UKA"). A
     /// sports set that exactly matches a known umbrella category collapses to the
     /// category name ("VINTERSPORT") so the line stays short.
     var subjectLabel: String {
