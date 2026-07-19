@@ -17,23 +17,31 @@
 //       detail sheet uses).
 //    4. FREMOVER — followed events beyond the near horizon (forvarsler).
 //
-//  Pure data (NewsBoard.build) is computed off the cache on appear and whenever
-//  the follow-profile changes (a just-added follow re-lenses the board). No
-//  spinner ever (DESIGN § Bevegelse); amber is the one accent.
+//  Pure data (NewsBoard.build) is computed OFF the main actor by NewsModel and
+//  cached there (WP-107) — this view is a thin renderer over `news.board`. The
+//  model outlives the view (ContentView owns it), so a segment switch shows the
+//  last board instantly and only rebuilds when the board is actually stale (a
+//  profile change or a completed sync). No spinner ever (DESIGN § Bevegelse);
+//  amber is the one accent.
 //
 
 import SwiftUI
 
 struct NewsView: View {
-	let dataStore: DataStore
-	let profileStore: ProfileStore
+	/// WP-107 — the shared, ContentView-owned board model. It survives root-segment
+	/// switches, so `news.board` is already built when the user comes back to
+	/// Nyheter (no per-switch disk-read/decode/compile on the main actor).
+	var news: NewsModel
 	/// WP-105 — the shared assistant view model, only so the «Det du følger»
 	/// link can push FollowedListView (the same list Deg homes). The board reads
 	/// its lens from the profile, never drives the assistant.
 	var assistant: AssistantViewModel
 
-	@State private var board: NewsBoard = .empty
 	@State private var provenanceShown = false
+
+	/// The board the model currently holds — a plain accessor so the section
+	/// builders below read exactly as before.
+	private var board: NewsBoard { news.board }
 
 	var body: some View {
 		List {
@@ -47,25 +55,12 @@ struct NewsView: View {
 		.scrollContentBackground(.hidden)
 		.background(SportivistaTokens.background)
 		.accessibilityIdentifier("news.board")
-		.task { rebuild() }
-		// A just-confirmed follow (from the assistant, the agenda swipe, or Deg)
-		// re-lenses the board immediately — the same shared profile the agenda
-		// recompiles against.
-		.onChange(of: assistant.profile) { _, _ in rebuild() }
-	}
-
-	private func rebuild() {
-		let syncState = profileStore.loadSyncState()
-		board = NewsBoard.build(
-			news: dataStore.loadNews(),
-			featured: dataStore.loadFeatured(),
-			results: dataStore.loadRecentResults(),
-			events: dataStore.loadEvents(),
-			entities: dataStore.loadEntities(),
-			profile: syncState.profile,
-			shield: SpoilerShield(memory: MemoryState(from: syncState)),
-			now: Date()
-		)
+		// Only rebuilds when the board is stale (first appearance / after a
+		// profile change or sync marked it). A plain switch onto an already-current
+		// board is a no-op — the fix for the per-switch lag. Profile changes and
+		// completed syncs are driven from ContentView (which owns the model), so
+		// the board re-lenses even while Nyheter is off-screen.
+		.task { news.rebuildIfStale() }
 	}
 
 	// MARK: - «Det du følger» link (quiet, atop the board)

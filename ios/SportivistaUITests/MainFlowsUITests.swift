@@ -374,9 +374,13 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		// Uka is the default: the seeded football row is on the board.
 		assertExists(agendaRow(UITestFixture.footballTitle, in: app), "Uka shows the agenda by default")
 
-		// Switch to Nyheter — the shell placeholder shows; the agenda row is gone.
+		// Switch to Nyheter — the WP-106 four-section board shows (its always-present
+		// NYTT header + the «Det du følger» link); the agenda row is gone. (WP-107:
+		// updated from the retired WP-104 «news.placeholder» shell to the real board
+		// identifiers WP-106 shipped.)
 		app.buttons["Nyheter"].tap()
-		assertExists(app.staticTexts["news.placeholder"], "the Nyheter side shows the WP-106 shell placeholder")
+		assertExists(app.staticTexts["news.section.nytt"], "the Nyheter side shows the WP-106 board (NYTT header)")
+		assertExists(app.buttons["news.followedLink"], "the Nyheter board offers the «Det du følger» link")
 		XCTAssertFalse(agendaRow(UITestFixture.footballTitle, in: app).exists, "the agenda is not shown on the Nyheter side")
 
 		// The capsule stays pinned on both sides (bunnen tilhører hjelperen alene).
