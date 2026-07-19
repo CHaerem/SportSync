@@ -69,6 +69,20 @@ jobs:
         working-directory: ios
         run: xcodegen generate
 
+      # ~250 av gatens ~340s er ren kompilering på den 3-kjerners gratis-
+      # runneren (målt 19.07: testene selv tar 87s). Varm DerivedData-cache
+      # lar xcodebuild bygge inkrementelt. Nøkkelen roterer med Swift-kildene
+      # + project.yml (xcodegen-hash påvirker prosjektfilen), med fallback til
+      # siste cache på samme Xcode-versjon — en delvis varm cache er fortsatt
+      # mye bedre enn kald.
+      - name: Cache DerivedData
+        uses: actions/cache@v4
+        with:
+          path: ios/build/ci-derived-data
+          key: deriveddata-${{ runner.os }}-xcode26-${{ hashFiles('ios/**/*.swift', 'ios/project.yml') }}
+          restore-keys: |
+            deriveddata-${{ runner.os }}-xcode26-
+
       - name: Finn simulator
         id: sim
         run: |
@@ -83,6 +97,7 @@ jobs:
           set -o pipefail
           xcodebuild -project Sportivista.xcodeproj -scheme Sportivista \
             -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.device }}" \
+            -derivedDataPath build/ci-derived-data \
             -resultBundlePath TestResults.xcresult \
             test | grep -E "Test Suite|Executed|error:|BUILD|TEST" || true
           # Fasit hentes fra resultatbunten — greppet over er kun logg-støy-kutt.
