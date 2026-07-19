@@ -11,10 +11,16 @@
 //  `filesOfInterest` narrows the manifest's ~30 published files down to the
 //  ones the iOS app consumes (events.json for the agenda, entities.json for
 //  WP-05 entity ids, tracked.json for "what we track" transparency,
-//  interests.json (WP-15) so NotificationPlanner has the real notify-config/
-//  mustWatch entities to plan against) — the rest of the manifest (agent
-//  logs, calibration, per-sport source files, …) is irrelevant to this
-//  client and never fetched, changed or not.
+//  app-version.json for the "har jeg siste?" check, and — WP-106 — the three
+//  Nyheter-board files: news.json (entity-stamped RSS pointers), featured.json
+//  (the editorial brief headline) and recent-results.json). The rest of the
+//  manifest (agent logs, calibration, per-sport source files, …) is irrelevant
+//  to this client and never fetched, changed or not.
+//
+//  WP-106 dropped `interests.json`: WP-96 stopped publishing it (it is now the
+//  owner's private profile, no longer the server compass), so it is no longer a
+//  manifest key — fetching it was dead. The on-device follow-profile
+//  (ProfileStore), not a synced interests.json, is the personalisation source.
 //
 //  A file whose downloaded bytes don't hash to what the manifest declared is
 //  discarded outright: the old cached copy (if any) is kept, and — because
@@ -34,7 +40,7 @@ struct SyncClient: Sendable {
 
     /// The published files this iOS client actually consumes. See the
     /// type-level doc above for why the rest of the manifest is ignored.
-    static let defaultFilesOfInterest: Set<String> = ["events.json", "entities.json", "tracked.json", "interests.json", "app-version.json"]
+    static let defaultFilesOfInterest: Set<String> = ["events.json", "entities.json", "tracked.json", "app-version.json", "news.json", "featured.json", "recent-results.json"]
 
     private static let manifestFilename = "manifest.json"
 

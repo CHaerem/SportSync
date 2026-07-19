@@ -110,7 +110,7 @@ mennesket, aldri av en agent.
 | WP-103 | Nyhets-server: `news.json` (entity-stampede pekere fra rss-digest) | 0H | — | ✅ bølge 1 merget 19.07 (#318/#319/#320) |
 | WP-104 | Assistent-inngang: segmented rot «Uka/Nyheter» + kapsel-knapp + samtaleark | 0H | WP-99 | ✅ bølge 1 merget 19.07 (#318/#319/#320) |
 | WP-105 | «Det du følger» + Legg til-søk (interesser uten assistent, 3b) | 0H | — | ✅ bølge 1 merget 19.07 (#318/#319/#320) |
-| WP-106 | Nyheter-v0-klienten (fire-seksjons-tavla) | 0H | WP-103, WP-104, WP-105 | ⬜ |
+| WP-106 | Nyheter-v0-klienten (fire-seksjons-tavla) | 0H | WP-103, WP-104, WP-105 | 🔬 |
 
 ---
 
@@ -181,6 +181,23 @@ featured.json + recent-results.json inn i filesOfInterest (og fjern død
 `interests.json`-referanse — avpublisert i WP-96); kilder åpnes UT (Link/
 SFSafariVC). «Det du følger»-lenke øverst (WP-105s view). **Aksept:** unit +
 UI-røyk på tavla, 4 schemes, skjermkatalog-modus `news` legges til.
+🔬 **Implementert (branch wp-106-nyheter-klient):** Nyheter-modeller i
+`Models/` (`NewsItem`/`NewsFeed`, `FeaturedBrief`, `RecentResults`/`FootballResult`
+— widget-trygge Codable som den delte `DataStore` leser via nye `loadNews/
+loadFeatured/loadRecentResults`); `SyncClient.defaultFilesOfInterest` fikk
+`news.json`/`featured.json`/`recent-results.json` og MISTET død `interests.json`
+(WP-96-avpublisert). Ny `News/`: `NewsLens` (linse-matching — entityId ∩ fulgte,
+ELLER fulgt hel-sport/kategori-regel via profilens rule-semantikk + SportVocabulary,
+ingen ny fuzzy), `NewsBoard` (ren fire-seksjons-bygger: brief-headline, linse-
+matchet NYTT nyest-først/capped, RESULTAT for fulgte lag med spoiler-flagg fra
+`SpoilerShield`, FREMOVER via `FeedCompiler.isEventInWindow` utover 7-dagers
+horisont), og `NewsView` (fire seksjoner + stille «Det du følger»-lenke til
+`FollowedListView`, NYTT-rader åpner kilden UT via `Link`, RESULTAT bak «Vis
+resultat» med `eye.slash`-reveal). Demo-modus `news` (`Demo/NewsDemoSeed`) + i
+`design/screens/generate.sh`/README. `Sportivista/News` lagt i test-targetet.
+Tester: `NewsLensTests` (linse/decode/tom+korrupt fil) + `NewsBoardTests`
+(seksjons-montering) + `NewsBoardUITests` (bytt til Nyheter, se seksjon);
+`SyncClientTests`/`SyncTestSupport` + nye fixtures oppdatert for fil-settet.
 
 ---
 

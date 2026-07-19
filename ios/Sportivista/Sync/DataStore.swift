@@ -52,6 +52,30 @@ struct DataStore: Sendable {
         return try? SportivistaJSON.decoder.decode(AppVersion.self, from: data)
     }
 
+    /// WP-106: the entity-stamped RSS pointers (docs/data/news.json) the Nyheter
+    /// board lens-filters client-side. Empty list when never synced / corrupt /
+    /// the `items` key is missing — an empty NYTT section, never a crash.
+    func loadNews() -> [NewsItem] {
+        guard let data = cache.read("news.json") else { return [] }
+        return (try? SportivistaJSON.decoder.decode(NewsFeed.self, from: data))?.items ?? []
+    }
+
+    /// WP-106: the editorial brief (docs/data/featured.json) — the Nyheter
+    /// board's «I DIN VERDEN I DAG» headline. `nil` when never synced or corrupt
+    /// (the section is then hidden).
+    func loadFeatured() -> FeaturedBrief? {
+        guard let data = cache.read("featured.json") else { return nil }
+        return try? SportivistaJSON.decoder.decode(FeaturedBrief.self, from: data)
+    }
+
+    /// WP-106: recent results (docs/data/recent-results.json) for the Nyheter
+    /// board's «RESULTAT» section. An empty `RecentResults` when never synced or
+    /// corrupt — an empty section, never a crash.
+    func loadRecentResults() -> RecentResults {
+        guard let data = cache.read("recent-results.json") else { return RecentResults() }
+        return (try? SportivistaJSON.decoder.decode(RecentResults.self, from: data)) ?? RecentResults()
+    }
+
     /// `nil` means "never synced" — see the type-level doc above for why
     /// this is the flag callers should check, not an empty `loadEvents()`.
     var lastSync: Date? {
