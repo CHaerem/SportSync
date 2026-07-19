@@ -54,6 +54,13 @@ final class AgendaViewModel {
     /// up on the board immediately ("umiddelbar konsekvens"). Shared instance
     /// with AssistantViewModel via ContentView.
     private let profileStore: ProfileStore
+    /// WP-121 — the post-sync freshness step (widget reload + notification
+    /// reconcile). Pull-to-refresh re-synced + recompiled the board but NEVER
+    /// reconciled reminders nor nudged the widget (audit 🔴/🟡); `refresh()` now
+    /// runs it, so a moved event refreshes the push and the widget on a manual
+    /// pull too — not only at cold start. Shared with ContentView (same planner +
+    /// widget reloader instances) so every sync path behaves identically.
+    private let freshness: SyncFreshness
 
     // MARK: - WP-60 — off-main reload plumbing
 
@@ -78,10 +85,11 @@ final class AgendaViewModel {
     /// once per compute the running reload performs.
     private(set) var recompileCount = 0
 
-    init(dataStore: DataStore = DataStore(), syncClient: SyncClient = SyncClient(), profileStore: ProfileStore = ProfileStore()) {
+    init(dataStore: DataStore = DataStore(), syncClient: SyncClient = SyncClient(), profileStore: ProfileStore = ProfileStore(), freshness: SyncFreshness = SyncFreshness()) {
         self.dataStore = dataStore
         self.syncClient = syncClient
         self.profileStore = profileStore
+        self.freshness = freshness
     }
 
     /// Shows whatever is already cached immediately, then syncs and
@@ -90,11 +98,28 @@ final class AgendaViewModel {
     /// agenda instead of a placeholder row + event count.
     func refresh(now: Date = Date()) async {
         reloadFromCache(now: now)
-        _ = await syncClient.sync()
+        // WP-121: snapshot events BEFORE the sync so a moved/added/removed event
+        // can be diffed after it — pull-to-refresh must keep reminders + the
+        // widget as fresh as the cold-start path does.
+        let previousEvents = dataStore.loadEvents()
+        let result = await syncClient.sync()
         // WP-60: a sync may have rewritten entities.json — drop the cached index
         // so the post-sync reload rebuilds it from fresh data.
         invalidateEntityCache()
         reloadFromCache(now: now)
+        // WP-121: reload the widget (events/entities changed) + reconcile
+        // reminders (events changed), the SAME gates the cold-start path uses.
+        // A 304/no-op sync decides to do neither, so a pull that finds nothing
+        // new is free of both. Planning/diff semantics are unchanged.
+        await freshness.run(
+            result: result,
+            previousEvents: previousEvents,
+            newEvents: dataStore.loadEvents(),
+            interests: dataStore.loadInterests() ?? Interests(),
+            lastSync: dataStore.lastSync,
+            now: now,
+            leadTimeEnabled: NotificationLeadPreference.isLeadTimeEnabled()
+        )
         // Pull-to-refresh awaits this method — end the spinner only once the
         // recompiled board is actually applied (not merely scheduled).
         await awaitReloadsQuiescent()

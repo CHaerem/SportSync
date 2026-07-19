@@ -39,13 +39,24 @@ protocol NotificationScheduling: Sendable {
 /// (one `let` reference, no locally-mutated state), the same shape the
 /// strict-concurrency checker can't verify on its own for a framework type.
 final class UNUserNotificationScheduler: NotificationScheduling, @unchecked Sendable {
-    private let center: UNUserNotificationCenter
+    /// Resolves the notification center lazily, on first actual use — merely
+    /// CONSTRUCTING this scheduler must never touch
+    /// `UNUserNotificationCenter.current()`. `.current()` throws in a hostless
+    /// process (no app bundle → `bundleProxyForCurrentProcess is nil`), so an
+    /// eager call in `init` would crash any code that builds a *default*
+    /// NotificationPlanner/SyncFreshness inside the hostless SportivistaTests bundle
+    /// — WP-121 made that reachable, since AgendaViewModel now carries a default
+    /// SyncFreshness and its unit tests construct it with no running app. The
+    /// real app always has a bundle, so lazy vs. eager resolution is behaviourally
+    /// identical there (and `.current()` returns the same singleton either way).
+    private let resolveCenter: @Sendable () -> UNUserNotificationCenter
 
-    init(center: UNUserNotificationCenter = .current()) {
-        self.center = center
+    init(center: @autoclosure @escaping @Sendable () -> UNUserNotificationCenter = .current()) {
+        self.resolveCenter = center
     }
 
     func requestAuthorizationIfNeeded() async -> Bool {
+        let center = resolveCenter()
         let settings = await center.notificationSettings()
         switch settings.authorizationStatus {
         case .authorized, .provisional, .ephemeral:
@@ -73,10 +84,10 @@ final class UNUserNotificationScheduler: NotificationScheduling, @unchecked Send
         let interval = max(request.fireDate.timeIntervalSinceNow, 1)
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: interval, repeats: false)
         let osRequest = UNNotificationRequest(identifier: request.id, content: content, trigger: trigger)
-        try? await center.add(osRequest)
+        try? await resolveCenter().add(osRequest)
     }
 
     func cancel(id: String) async {
-        center.removePendingNotificationRequests(withIdentifiers: [id])
+        resolveCenter().removePendingNotificationRequests(withIdentifiers: [id])
     }
 }

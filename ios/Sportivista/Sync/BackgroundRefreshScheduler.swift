@@ -56,11 +56,40 @@ enum BackgroundRefreshScheduler {
         scheduleNextRefresh(dataStore: dataStore) // line up the next one first, per Apple's guidance
 
         let syncTask = Task {
-            _ = await syncClient.sync()
+            await syncAndFreshen(syncClient: syncClient, dataStore: dataStore)
             task.setTaskCompleted(success: true)
         }
         task.expirationHandler = {
             syncTask.cancel()
         }
+    }
+
+    /// WP-121 — the background refresh's WORK, split out of `handle` so it runs
+    /// without a real BGAppRefreshTask (the wrapper above still isn't unit-tested;
+    /// this delegates to `SyncFreshness`, which IS). Before WP-121 the background
+    /// sync called `syncClient.sync()` and NOTHING else — a server-side event move
+    /// left the already-scheduled push at its old time (audit 🔴) and the widget
+    /// untouched. Now it snapshots events around the sync and, on change,
+    /// reconciles reminders + reloads the widget with the SAME quality gates the
+    /// cold-start path uses. The `SyncFreshness` seam defaults to production but is
+    /// injectable so a test can drive it with a RecordingNotificationScheduler +
+    /// a recording widget reloader.
+    static func syncAndFreshen(
+        syncClient: SyncClient,
+        dataStore: DataStore,
+        freshness: SyncFreshness = SyncFreshness(),
+        now: Date = Date()
+    ) async {
+        let previousEvents = dataStore.loadEvents()
+        let result = await syncClient.sync()
+        await freshness.run(
+            result: result,
+            previousEvents: previousEvents,
+            newEvents: dataStore.loadEvents(),
+            interests: dataStore.loadInterests() ?? Interests(),
+            lastSync: dataStore.lastSync,
+            now: now,
+            leadTimeEnabled: NotificationLeadPreference.isLeadTimeEnabled()
+        )
     }
 }

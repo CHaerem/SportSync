@@ -125,7 +125,7 @@ mennesket, aldri av en agent.
 | WP-118 | Kjernefunksjonalitet-audit (read-only rapport) | 0I | — | ✅ rapport levert 20.07 — 🔴 varsel-reconcile kun ved kald oppstart; 🔴 widget-timeline aldri invalidert ved sync; 🟡 ingen foregrunn-sync, horisont-divergens (web 14d-cap/iOS ingen/data 42d), ICS uten DTEND, 100T-entitetsdublett + intet lens-miss-signal → WP-121–125 |
 | WP-119 | Portmåling-artefakt (port-report fra verify/coverage/build-alert) | 0I | — | 🔬 PR åpen — `scripts/build-port-report.js` (kjøres fra build-events før writeManifest, ingen workflow-endring) → `docs/data/port-report.json`; fire porter (coverage/amendRate/silentStops/participantStatus) grønn/gul/rød + ærlig `basis` (manglende kilde ⇒ «ukjent», aldri stille grønn); .gitignore-whitelist + manifest auto-inkluderer; nye tester (grønn/gul/rød/ukjent + integrasjon) |
 | WP-120 | «Det du følger»: visning + håndtering (fra WP-117-funn) | 0I | WP-117 | ⬜ bølge 3 |
-| WP-121 | iOS leverings-ferskhet: varsel-reconcile + widget-reload + foregrunn-sync | 0I | WP-118 | ⬜ bølge 2 |
+| WP-121 | iOS leverings-ferskhet: varsel-reconcile + widget-reload + foregrunn-sync | 0I | WP-118 | 🔬 bølge 2 — reconcile på alle sync-veier (SyncFreshness) + WidgetCenter-reload + foregrunn-gate; SyncFreshnessTests |
 | WP-122 | ~~Deltaker widget/detalj~~ → slått inn i WP-127 | 0I | — | — |
 | WP-123 | ICS: DTEND fra endTime (flerdagsevents) | 0I | — | 🔬 bølge 3 |
 | WP-124 | Horisont-konsistens: web «Fremover» (14–42 d) + iOS Uka-cap (EIERBESLUTNING) | 0I | WP-118 | ⬜ bølge 4 |
