@@ -157,7 +157,7 @@ launch. The widget does **not** compile it (a WidgetKit extension follows the OS
 own per-surface appearance). **`Interaction.swift`** gives every interactive glyph
 a HIG ≥44×44pt hit area (`.sportivistaTapTarget()` / `SportivistaActionButtonStyle`; owner
 finding: "veldig små knapper").
-Screenshots: `docs/design-v2/theme-toggle-*.png`, `docs/design-v2/tap-targets-*.png`.
+Screenshots: i WP-ens PR (bevis-galleriet fjernet 20.07, regel 8; regenerer ved behov: `design/screens/generate.sh`).png`, (fjernet 20.07 — se PR-historikk).
 
 ## Models
 
@@ -265,7 +265,7 @@ to the side that owns it (server and client intentionally differ):
   `.throughNorwegians` / `.throughAthletes` lens active a golf tournament renders
   as "Reitan teer av 14:32" rather than "The Open" — a pure rendering layer, the
   predicates and golden vectors untouched.
-  Screenshots: `docs/design-v2/lens-*.png`.
+  Screenshots: i WP-ens PR (bevis-galleriet fjernet 20.07, regel 8; regenerer ved behov: `design/screens/generate.sh`).png`.
 
 ## Agenda
 
@@ -300,7 +300,7 @@ when nothing is on); and the always-present command line at the bottom. The
 assistant's result (a diff or an answer) presents as a native `.sheet`
 (`.presentationDetents`) over the agenda — no longer a bespoke fade-overlay. The v2
 header glyphs (`P100`, the ticking clock, `»_`, the theme glyph) were removed; theme
-now lives in Deg. Screenshots: `docs/wp-83/*.png`.
+now lives in Deg. Screenshots: i WP-ens PR (bevis-galleriet fjernet 20.07, regel 8; regenerer ved behov: `design/screens/generate.sh`).png`.
 
 ## News
 
@@ -436,7 +436,7 @@ add through the same grounded flow) and "Hvorfor vises denne?"
 PR #292, a **test-only** fix: the `EffectiveInterests.merge → FeedCompiler.whyShown`
 data flow was verified correct, so no app code changed).
 
-Screenshots: `docs/design-v2/assistant-{idle,thinking,diff,answer}-{dark,light}.png`,
+Screenshots: i WP-ens PR (bevis-galleriet fjernet 20.07, regel 8; regenerer ved behov: `design/screens/generate.sh`).png`,
 driven by a DEBUG-only `SPORTIVISTA_DEMO=…` launch harness (never compiled into release).
 
 ## Profile
@@ -471,13 +471,13 @@ plus its sync/share/reset/effective-merge machinery. **Our server never sees thi
 - **`ProfileShareCodec.swift` / `ProfileQRCode.swift` / `ProfileSharePanel.swift`**
   — the valuable-NOW half needing **nothing but two phones**: a profile is a
   compressed base64url payload in a QR code + a `sportivista://` link, imported via the
-  same merge. Screenshots: `docs/design-v2/profile-share-{dark,light}.png`.
+  same merge. Screenshots: i WP-ens PR (bevis-galleriet fjernet 20.07, regel 8; regenerer ved behov: `design/screens/generate.sh`).png`.
 - **`EffectiveInterests.swift`** — makes "Bekreft → agendaen re-kompileres med det
   samme" real: `merge` folds the local `InterestProfile` into the SYNCED,
   server-owned `Interests` the agenda compiles from, so a confirmed mutation is live
   at once. **`ResetService.swift`** — "nullstill profil + re-onboard" (reset without
   reinstalling): one pure function clears local state through the same stores.
-  Screenshots: `docs/design-v2/reset-{entry,confirm,onboarding}-{dark,light}.png`.
+  Screenshots: i WP-ens PR (bevis-galleriet fjernet 20.07, regel 8; regenerer ved behov: `design/screens/generate.sh`).png`.
 
 ## Memory
 
@@ -506,7 +506,7 @@ spoiler-scoped sports/entities from `spoilerPolicy` facts and exposes a per-row
 spoilervern på". **"Hva jeg vet om deg"** (`WhatIKnowView`) is the trust surface +
 plain-language GDPR answer: everything remembered listed, facts editable, all
 deletable, plus **"Glem alt"** (wipes memory, keeps the follow-profile).
-Screenshots: `docs/design-v2/memory-{page,spoiler}-{dark,light}.png`.
+Screenshots: i WP-ens PR (bevis-galleriet fjernet 20.07, regel 8; regenerer ved behov: `design/screens/generate.sh`).png`.
 
 ## Onboarding
 
@@ -518,7 +518,7 @@ the quick-picks fallback — Norwegian "startpakker" a first-timer taps to build
 profile **without** Apple Intelligence (each carrying its own entity data, the path
 that must give full value on a cold start); `OnboardingView.swift` is the flow.
 Screenshots:
-`docs/design-v2/onboarding-{welcome,converse,quickpicks,landed}-{dark,light}.png`.
+(fjernet 20.07 — se PR-historikk).
 
 ## Testing
 
