@@ -17,7 +17,7 @@
 //  file only lays out the entrances (WP-83 non-goal: don't touch the logic).
 //
 //  Groups (DESIGN § Deg-skjermen):
-//    • PROFIL     — Hva jeg følger (n) · Sett opp på nytt
+//    • PROFIL     — Det du følger (n) · Sett opp på nytt
 //    • DATA OM MEG — Hva jeg vet om deg (n) · Det jeg ikke forsto (n) · Del profil
 //    • APP        — Varsel før start · Utseende (tema) · Nullstill
 //    • FOT        — the quiet «BYGG …» version line
@@ -87,9 +87,9 @@ struct DegView: View {
     private var profileGroup: some View {
         Section {
             NavigationLink {
-                FollowedRulesView(viewModel: viewModel)
+                FollowedListView(viewModel: viewModel)
             } label: {
-                rowLabel("list.star", "Hva jeg følger", value: "\(viewModel.profile.rules.count)")
+                rowLabel("list.star", "Det du følger", value: "\(viewModel.profile.rules.count)")
             }
             .accessibilityIdentifier("deg.follows")
 
@@ -249,71 +249,6 @@ struct DegView: View {
         Text(text)
             .font(.sportivista(.footnote, weight: .semibold))
             .foregroundStyle(SportivistaTokens.secondaryLabel)
-    }
-}
-
-// MARK: - "Hva jeg følger" (re-homed from AssistantPanel.profileSection)
-
-/// The follow list, pushed from Deg › Hva jeg følger. Renders `viewModel.profile`
-/// with the SAME per-rule «Fjern» the ark used (`AssistantViewModel.removeRule`) —
-/// no follow logic re-implemented, just relocated to its own screen.
-private struct FollowedRulesView: View {
-    var viewModel: AssistantViewModel
-
-    var body: some View {
-        List {
-            if viewModel.profile.isEmpty {
-                Section {
-                    Text("Ingenting ennå. Skriv en ytring i linjen nederst på agendaen for å begynne.")
-                        .font(.sportivista(.subheadline))
-                        .foregroundStyle(SportivistaTokens.secondaryLabel)
-                }
-                .listRowBackground(SportivistaTokens.cell)
-            } else {
-                Section {
-                    ForEach(viewModel.profile.rules) { rule in
-                        ruleRow(rule)
-                    }
-                }
-                .listRowBackground(SportivistaTokens.cell)
-            }
-        }
-        .listStyle(.insetGrouped)
-        .scrollContentBackground(.hidden)
-        .background(SportivistaTokens.background)
-        .navigationTitle("Hva jeg følger")
-        .navigationBarTitleDisplayMode(.inline)
-    }
-
-    private func ruleRow(_ rule: InterestRule) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
-            HStack(alignment: .firstTextBaseline) {
-                Text(rule.entityName)
-                    .font(.sportivista(.body, weight: .semibold))
-                    .foregroundStyle(SportivistaTokens.label)
-                Spacer()
-                Button("Fjern") { viewModel.removeRule(rule) }
-                    .font(.sportivista(.subheadline))
-                    .foregroundStyle(SportivistaTokens.destructive.opacity(0.85))
-                    .buttonStyle(.borderless)
-                    .sportivistaTapTarget()
-            }
-            Text(ruleSubtitle(rule))
-                .font(.sportivista(.caption))
-                .foregroundStyle(SportivistaTokens.secondaryLabel)
-            Text(rule.reason)
-                .font(.sportivista(.caption))
-                .foregroundStyle(SportivistaTokens.secondaryLabel.opacity(0.8))
-        }
-        .padding(.vertical, 4)
-    }
-
-    private func ruleSubtitle(_ rule: InterestRule) -> String {
-        var parts = [SportVocabulary.display(for: rule.sport)]
-        if let scope = rule.scope, !scope.isEmpty { parts.append(scope) }
-        if !rule.lens.isDefault { parts.append(rule.lens.label) }
-        parts.append("vekt \(String(format: "%.1f", rule.weight))")
-        return parts.joined(separator: " · ")
     }
 }
 

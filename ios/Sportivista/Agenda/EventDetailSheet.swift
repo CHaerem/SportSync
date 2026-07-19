@@ -17,8 +17,12 @@ struct EventDetailSheet: View {
     /// WP-16.4 — the full agenda row, so the sheet has the precomputed context
     /// data (whyShown + followable) alongside the event.
     let row: AgendaEventRow
-    /// WP-16.4 — a "Følg <entitet>" tap; the host routes it into the assistant's
-    /// diff/confirm flow. No-op default keeps standalone/preview use compiling.
+    /// WP-16.4 / WP-105 — a "Følg <entitet>" tap. The host routes it through the
+    /// direct follow apply-vei (`AssistantViewModel.follow`) — the SAME
+    /// ProfileStore path Deg › Legg til uses, one source of truth. 3b:
+    /// "veien fra «så noe interessant» til «følger» krever aldri assistenten" —
+    /// no diff round-trip, the tap IS the confirmation and the sheet closes.
+    /// No-op default keeps standalone/preview use compiling.
     var onFollow: (Entity) -> Void = { _ in }
     @Environment(\.dismiss) private var dismiss
     /// WP-16.4 — the "Hvorfor vises denne?" context action, collapsed by default.
@@ -108,12 +112,13 @@ struct EventDetailSheet: View {
 
     // MARK: - Context actions (WP-16.4)
 
-    /// The two in-context actions the "sømløs assistent" brief asks for, both
-    /// woven into the same flow as everything else: a quiet, deterministic
-    /// "Hvorfor vises denne?" (FeedCompiler.whyShown, no model needed) and a
-    /// "Følg <entitet>" per followable subject that routes through the
-    /// assistant's normal diff/confirm flow (nothing is applied by the tap
-    /// alone — the user still confirms the diff).
+    /// The two in-context actions: a quiet, deterministic "Hvorfor vises denne?"
+    /// (FeedCompiler.whyShown, no model needed) and a quiet "Følg <entitet>" per
+    /// followable subject. WP-105: the follow tap goes through the direct apply-
+    /// vei (host's `onFollow` → `AssistantViewModel.follow`), applying immediately
+    /// and closing the sheet — no assistant diff to confirm ("krever aldri
+    /// assistenten"). `row.followable` already excludes anything followed, so the
+    /// button only appears for a not-yet-followed subject.
     @ViewBuilder
     private var contextActionsSection: some View {
         if !row.whyShown.isEmpty || !row.followable.isEmpty {
