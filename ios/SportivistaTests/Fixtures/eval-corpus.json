@@ -480,6 +480,27 @@
           "requireNoPhantomRows": true
         }
       }
+    },
+    {
+      "id": "example-01-hva-gaar-i-kveld",
+      "category": "question",
+      "utterance": "Hva går i kveld",
+      "kind": "answer",
+      "note": "WP-104 — the conversation sheet's «Hva går i kveld? ›» example row submits this (punctuation-light, no «?», so the deterministic MockAnswerer's «i kveld» calendar match fires in CI; the real FM is punctuation-robust). An empty evening is a legitimate honest answer (no row count required); the reply must be about tonight and must not invent rows.",
+      "expect": {
+        "answer": {
+          "mustContainAny": ["kveld"],
+          "requireNoPhantomRows": true
+        }
+      }
+    },
+    {
+      "id": "example-02-endre-varsler-eller-tema",
+      "category": "command",
+      "utterance": "Endre varsler eller tema",
+      "kind": "command",
+      "note": "WP-104 — the conversation sheet's «Endre varsler eller tema ›» example row runs this VERBATIM through the command arm. The varsel anchor (with no negative word) resolves to turning notification lead-time ON — a harmless command that executes with a calm receipt.",
+      "expect": { "command": "notify:on" }
     }
   ]
 }

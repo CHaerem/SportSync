@@ -43,9 +43,9 @@ named `<mode>-<theme>.png`:
 | `reset-entry` | Deg screen with a seeded profile (entry point toward Nullstill) |
 | `reset-confirm` | Same Deg entry point — the env-only harness doesn't drive the extra tap into the nested Nullstill confirmation row, so this mode is currently indistinguishable from `reset-entry` in a screenshot (see `ContentView.swift`'s `mode.hasPrefix("reset")` branch: both cases just `showDeg = true`) |
 | `reset-onboarding` | The real reset flow re-raising onboarding |
-| `diff` | Assistant result sheet: a grounded follow proposal (diff) |
-| `answer` | Assistant result sheet: an answer with agenda rows |
-| `command-focused` | The command line focused with keyboard up: discovery pills (standing «Hva kan du gjøre?» first) + dismiss glyph (WP-99) |
+| `diff` | Assistant conversation sheet: a grounded follow proposal (diff) in the thread |
+| `answer` | Assistant conversation sheet: an answer with agenda rows in the thread |
+| `assistant-sheet` | The conversation sheet in its OPENED state (WP-104): one hjelpesetning + the three tappable example rows |
 
 The complete, authoritative mode list lives in
 `ios/Sportivista/ContentView.swift`'s `.task` demo-seeding switch,

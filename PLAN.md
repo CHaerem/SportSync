@@ -108,7 +108,7 @@ mennesket, aldri av en agent.
 | WP-99 | Tastatur-lukking + assistent-klarhet + agenda-layoutbug (eier-dogfooding) | 0G | WP-98 | ✅ #311 merget 18.07, installert på eierens iPhone (stempel 95b1fbe71) — TRE eier-funn fra fysisk-iPhone-dogfooding: (1) tastaturet i kommandolinja kunne ikke lukkes — HIG-native fiks: `.scrollDismissesKeyboard(.interactively)` på agenda+Deg, tapp-utenfor (simultaneous gesture, stjeler ikke rad-tap), lukke-glyf (`keyboard.chevron.compact.down`) i tom-fokusert-hullet; (2) uklart hva chatten kan → stående FØRSTE «Hva kan du gjøre?»-pill som ruter til eksisterende hjelp-arm (WP-68), verifisert at fokus-forslag ikke er mock-only; (3) rotårsak flerdags-golf-overlapp: `TimeColumn` (fixedSize+minWidth 58) tapte bredde-forhandlingen mot grådig `RowBody` (maxWidth .infinity) → bred dato-vindu-tekst tegnet OVER tittelen — fikset med `.layoutPriority(1)` på tidskolonnen; deterministisk offline-repro (GolfBoardDemoSeed) for onboarding-landed/-landing. Vektorer urørt (ren layout). 4 nye UI-tester + 1 unit; før/etter-skjermbilder |
 
 | WP-103 | Nyhets-server: `news.json` (entity-stampede pekere fra rss-digest) | 0H | — | 🔬 |
-| WP-104 | Assistent-inngang: segmented rot «Uka | Nyheter» + kapsel-knapp + samtaleark | 0H | WP-99 | ⬜ |
+| WP-104 | Assistent-inngang: segmented rot «Uka | Nyheter» + kapsel-knapp + samtaleark | 0H | WP-99 | 🔬 |
 | WP-105 | «Det du følger» + Legg til-søk (interesser uten assistent, 3b) | 0H | — | 🔬 |
 | WP-106 | Nyheter-v0-klienten (fire-seksjons-tavla) | 0H | WP-103, WP-104, WP-105 | ⬜ |
 
@@ -140,7 +140,7 @@ items/7 dager, byte-idempotent, whitelist i .gitignore, med i manifest.
 scripts/build-events.js && node scripts/validate-events.js` grønn; news.json
 i manifest.json.
 
-### WP-104 · Assistent-inngang (3a + samtaleark) — ⬜
+### WP-104 · Assistent-inngang (3a + samtaleark) — 🔬
 Eier `ios/Sportivista/ContentView.swift` + `ios/Sportivista/Assistant/`.
 Segmented «Uka | Nyheter» (ord) under headeren — Nyheter-siden viser en
 minimal plassholder-view (fil `News/NewsView.swift` OPPRETTES her som skall,

@@ -103,6 +103,16 @@ class SportivistaUITestCase: XCTestCase {
 		app.buttons.matching(NSPredicate(format: "label CONTAINS %@", title)).firstMatch
 	}
 
+	/// WP-104 — open the assistant conversation sheet from the bottom capsule
+	/// button, waiting for the sheet's field to appear before returning.
+	func openAssistantSheet(in app: XCUIApplication, file: StaticString = #filePath, line: UInt = #line) {
+		let capsule = app.buttons["assistant.capsule"]
+		XCTAssertTrue(capsule.waitForExistence(timeout: timeout), "the assistant capsule should be present", file: file, line: line)
+		capsule.tap()
+		XCTAssertTrue(app.textFields["assistant.field"].waitForExistence(timeout: timeout),
+		              "tapping the capsule should open the conversation sheet", file: file, line: line)
+	}
+
 	/// Scroll the app up until `element` is hittable (or a bounded number of
 	/// swipes elapse). Reveals a foot-of-panel control without a sleep.
 	func scrollUntilHittable(_ element: XCUIElement, in app: XCUIApplication, maxSwipes: Int = 6) {

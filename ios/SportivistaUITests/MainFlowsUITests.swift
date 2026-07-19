@@ -2,19 +2,19 @@
 //  MainFlowsUITests.swift
 //  SportivistaUITests
 //
-//  WP-70 — end-to-end regression of the six main UX flows, driven against the
-//  deterministic `SPORTIVISTA_DEMO=uitest` harness (mock assistant + seeded cache, no
-//  network). Each test is short and asserts BEHAVIOUR through stable
-//  accessibility identifiers / seeded fixture strings, never pixels (visual
-//  pixel-perfection is visual-qa's job on web; real-FM eval is WP-69's).
+//  WP-70 → WP-104 — end-to-end regression of the main UX flows, driven against
+//  the deterministic `SPORTIVISTA_DEMO=uitest` harness (mock assistant + seeded
+//  cache, no network). Each test is short and asserts BEHAVIOUR through stable
+//  accessibility identifiers / seeded fixture strings, never pixels.
 //
-//  Flows:
-//   1. Onboarding — quick-picks + the conversation step.
-//   2. Follow via the command line → diff → Bekreft → the row appears.
-//   3. N rapid starter-pack toggles without a hang (guards WP-60 coalescing).
-//   4. Event detail + «Hvorfor vises denne?».
-//   5. Theme toggle (system → dark → light → system).
-//   6. Reset flow (cancel, then carry through to re-onboarding).
+//  WP-104 retired the always-present inline command line: the assistant is now a
+//  bottom CAPSULE BUTTON (`assistant.capsule`) that opens the conversation SHEET
+//  (AssistantSheetView — field `assistant.field`, send `assistant.send`, the
+//  three example rows `assistant.example.*`, close `assistant.close`). The "we're
+//  back on the root" tell is therefore the capsule, not a text field. The old
+//  WP-99 keyboard-dismiss flows are rewritten to sheet open/close semantics (drag
+//  / tap-outside / Lukk), and the WP-82 inline discovery flows are gone with the
+//  line they tested.
 //
 
 import XCTest
@@ -53,17 +53,17 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		golf.tap()
 		assertExists(app.staticTexts["VALGT"], "tapping a pack should mark it valgt")
 
-		// Finish → the agenda (the always-present command line is the tell we
+		// Finish → the agenda (the always-present assistant capsule is the tell we
 		// left the overlay).
 		app.buttons["Ferdig"].tap()
 		assertExists(app.staticTexts["Klart"], "should reach the landing step")
 		app.buttons["Til agendaen"].tap()
-		assertExists(app.textFields["command.field"], "finishing onboarding should drop into the agenda")
+		assertExists(app.buttons["assistant.capsule"], "finishing onboarding should drop into the agenda")
 	}
 
-	// MARK: - Flow 2 · Follow via the command line
+	// MARK: - Flow 2 · Follow via the conversation sheet
 
-	func testFollowViaCommandLineSurfacesRow() {
+	func testFollowViaSheetSurfacesRow() {
 		let app = launchApp(state: "agenda")
 
 		// The seeded board shows the followed football row; the biathlon row is
@@ -71,19 +71,22 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		assertExists(agendaRow(UITestFixture.footballTitle, in: app), "the seeded followed football row should be on the board")
 		XCTAssertFalse(agendaRow(UITestFixture.biathlonTitle, in: app).exists, "biathlon must not be on the board before following it")
 
-		// Type the follow, confirm the diff.
-		let field = app.textFields["command.field"]
-		assertExists(field, "the command line should be present")
+		// Open the assistant sheet from the capsule, type the follow, confirm.
+		openAssistantSheet(in: app)
+		let field = app.textFields["assistant.field"]
+		assertExists(field, "the conversation sheet's field should be present")
 		field.tap()
 		field.typeText(UITestFixture.followUtterance)
-		app.buttons["command.send"].tap()
+		app.buttons["assistant.send"].tap()
 
 		let confirm = app.buttons["assistant.confirm"].firstMatch
-		assertExists(confirm, "the assistant ark should raise a confirmable diff")
+		assertExists(confirm, "the sheet should raise a confirmable diff in the thread")
 		confirm.tap()
 
-		// Immediate consequence: the biathlon row now appears on the recompiled board.
+		// Bekreft ⇒ arket lukkes ⇒ agendaen re-kompileres: the biathlon row now
+		// appears on the recompiled board, and the capsule is back.
 		assertExists(agendaRow(UITestFixture.biathlonTitle, in: app), "confirming the follow should surface the biathlon row")
+		assertExists(app.buttons["assistant.capsule"], "confirming closes the sheet and returns to the agenda")
 	}
 
 	// MARK: - Flow 3 · Rapid starter-pack toggles (guards WP-60 coalescing)
@@ -101,10 +104,7 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		// Fire five pack toggles back-to-back with no waits between them — each
 		// fires onProfileChanged → an agenda recompile behind the overlay. WP-60
 		// coalesces a burst to ≤2 recompiles; a regression here would jam the main
-		// thread and the taps below would not all land. We assert the resulting
-		// rule COUNT (a reasonable time-budget assertion, not flaky exactness):
-		// the five packs total 10 rules, and the count only reaches 10 if every
-		// tap was processed and the UI kept up.
+		// thread and the taps below would not all land.
 		for packId in ["starterpack.norsk-fotball",
 		               "starterpack.norske-golfere",
 		               "starterpack.sjakk-carlsen",
@@ -143,7 +143,7 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		assertExists(reason, "expanding it should show the deterministic reason")
 
 		app.buttons["Lukk"].tap()
-		assertExists(app.textFields["command.field"], "closing the sheet returns to the agenda")
+		assertExists(app.buttons["assistant.capsule"], "closing the sheet returns to the agenda")
 	}
 
 	// MARK: - Flow 5 · Theme cycle (WP-83 — moved from the header to Deg › Utseende)
@@ -204,24 +204,26 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		assertExists(app.staticTexts["Velkommen"], "completing reset should raise onboarding again")
 	}
 
-	// MARK: - Flow 7 · Presentation filter (WP-67 — set via command line, then reset)
+	// MARK: - Flow 7 · Presentation filter (WP-67 — set via the sheet, then reset)
 
-	func testPresentationFilterViaCommandLineThenReset() {
+	func testPresentationFilterViaSheetThenReset() {
 		let app = launchApp(state: "agenda")
 
 		// The seeded board shows the followed football row.
 		assertExists(agendaRow(UITestFixture.footballTitle, in: app), "the seeded football row should be on the board")
 
-		// Filter the VIEW to golf — nothing on the seeded board is golf, so the
-		// board empties to the honest "no matches" line while the profile is
-		// untouched (this is a presentation filter, not a follow).
-		let field = app.textFields["command.field"]
-		assertExists(field, "the command line should be present")
+		// Filter the VIEW to golf via the conversation sheet — nothing on the
+		// seeded board is golf, so the board empties to the honest "no matches"
+		// line while the profile is untouched (a presentation filter, not a follow).
+		openAssistantSheet(in: app)
+		let field = app.textFields["assistant.field"]
+		assertExists(field, "the conversation sheet's field should be present")
 		field.tap()
 		field.typeText("vis golf")
-		app.buttons["command.send"].tap()
+		app.buttons["assistant.send"].tap()
 
-		// The quiet filter line appears; the football row is filtered out.
+		// A present filter raises no ark — the sheet closes and the quiet filter
+		// line appears over the agenda; the football row is filtered out.
 		assertExists(app.staticTexts["agenda.filter.label"], "the filter line should appear over the agenda")
 		assertExists(app.staticTexts["Ingen treff for filteret."], "the golf filter hides the football row")
 		XCTAssertFalse(agendaRow(UITestFixture.footballTitle, in: app).exists, "the football row is hidden by the golf filter")
@@ -232,55 +234,47 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		XCTAssertFalse(app.staticTexts["agenda.filter.label"].exists, "the filter line is gone after reset")
 	}
 
-	// MARK: - Flow 8 · Command-line discoverability — focus shows context suggestions (WP-82)
+	// MARK: - Flow 8 · The capsule opens the conversation sheet; Lukk closes it (WP-104)
 
-	func testCommandLineFocusShowsContextSuggestions() {
+	func testCapsuleOpensSheetAndLukkCloses() {
 		let app = launchApp(state: "agenda")
 
-		// At rest, the suggestion row is NOT present — it appears only on focus.
-		let suggestion = app.buttons["assistant.suggestion.0"]
-		XCTAssertFalse(suggestion.exists, "context suggestions must not show before the line is focused")
+		// At rest, the sheet's field is NOT present — only the capsule is.
+		XCTAssertFalse(app.textFields["assistant.field"].exists, "the field lives in the sheet, not the root")
+		let capsule = app.buttons["assistant.capsule"]
+		assertExists(capsule, "the assistant capsule button should be pinned to the bottom")
+		capsule.tap()
 
-		// Focusing the command line raises the calm context-suggestion row.
-		let field = app.textFields["command.field"]
-		assertExists(field, "the command line should be present")
-		field.tap()
-		assertExists(suggestion, "focusing the line should raise a context-suggestion pill")
+		// The sheet is up: its header + the opened-state intro + the field.
+		assertExists(app.staticTexts["ASSISTENT"], "tapping the capsule opens the conversation sheet")
+		assertExists(app.staticTexts["assistant.intro"], "the opened sheet shows one hjelpesetning")
+		assertExists(app.textFields["assistant.field"], "the opened sheet carries the field")
 
-		// Tapping a suggestion FILLS the line (it does not submit) — the value
-		// lands in the field (read as the text field's `value`) so the user can
-		// edit or send it. "lag" is an ASCII token of the first suggestion that
-		// the placeholder does NOT contain, so the match is unambiguous.
-		suggestion.tap()
-		let value = (field.value as? String) ?? ""
-		XCTAssertTrue(value.contains("lag"),
-		              "tapping a suggestion should fill the command line with its text (got «\(value)»)")
+		// Lukk returns to the agenda; the field is gone, the capsule is back.
+		app.buttons["assistant.close"].tap()
+		assertVanishes(app.textFields["assistant.field"], "Lukk should dismiss the sheet")
+		assertExists(app.buttons["assistant.capsule"], "closing the sheet returns to the agenda")
 	}
 
-	// MARK: - Flow 9 · Command-line discoverability — typing shows live grounding hits (WP-82)
+	// MARK: - Flow 9 · Drag-down dismisses the sheet (WP-104 — tapp-utenfor/dra)
 
-	func testCommandLineTypingShowsGroundingHits() {
+	func testSheetDismissedByDragDown() {
 		let app = launchApp(state: "agenda")
 
-		// Type a prefix of a known entity (ASCII-only — typeText with æøå is flaky).
-		let field = app.textFields["command.field"]
-		assertExists(field, "the command line should be present")
-		field.tap()
-		field.typeText("ski")
+		app.buttons["assistant.capsule"].tap()
+		let field = app.textFields["assistant.field"]
+		assertExists(field, "the sheet should open from the capsule")
 
-		// A live grounding hit for the seeded biathlon tournament appears as a
-		// tappable row — "velg, ikke stav".
-		let hit = app.buttons["grounding.skiskyting-verdenscup"]
-		assertExists(hit, "typing should surface a live grounding hit for the entity")
+		// Swipe the sheet down from its header (the grabber region) to dismiss it —
+		// the native sheet's drag-to-dismiss, one of the WP-99 close paths in ark
+		// form. The capsule returning is the tell we're back on the agenda.
+		let header = app.staticTexts["ASSISTENT"]
+		let start = header.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+		let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 1.5))
+		start.press(forDuration: 0.05, thenDragTo: end)
 
-		// Selecting the hit runs the grounded follow flow: a confirmable diff
-		// rises, and confirming it surfaces the biathlon row on the recompiled board.
-		hit.tap()
-		let confirm = app.buttons["assistant.confirm"].firstMatch
-		assertExists(confirm, "selecting a grounding hit should raise a confirmable follow diff")
-		confirm.tap()
-		assertExists(app.staticTexts[UITestFixture.biathlonTitle],
-		             "confirming the selected follow should surface the biathlon row")
+		assertVanishes(field, "dragging the sheet down should dismiss it")
+		assertExists(app.buttons["assistant.capsule"], "dismissing the sheet returns to the agenda")
 	}
 
 	// MARK: - Flow 10 · Navigation — open Deg via the gearshape, then back-swipe (WP-83)
@@ -296,119 +290,100 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		assertExists(app.buttons["deg.follows"], "Deg should re-home «Hva jeg følger»")
 
 		// The native interactive pop gesture (tilbake-swipe) from the left edge
-		// returns to the agenda — the always-present command line is the tell.
+		// returns to the agenda — the always-present assistant capsule is the tell.
 		let edge = app.coordinate(withNormalizedOffset: CGVector(dx: 0.0, dy: 0.5))
 		let target = app.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5))
 		edge.press(forDuration: 0.05, thenDragTo: target)
-		assertExists(app.textFields["command.field"], "back-swiping Deg returns to the agenda")
+		assertExists(app.buttons["assistant.capsule"], "back-swiping Deg returns to the agenda")
 	}
 
-	// MARK: - Flow 11 · Assistant result is a native sheet (WP-83)
+	// MARK: - Flow 11 · An example row runs and answers in the thread (WP-104)
 
-	func testAssistantResultShowsAsSheet() {
+	func testExampleRowRunsAndAnswersInThread() {
 		let app = launchApp(state: "agenda")
 
-		// Type a follow and send — the result now rises as a native sheet whose
-		// header reads «ASSISTENT», with a confirmable diff inside it.
-		let field = app.textFields["command.field"]
-		assertExists(field, "the command line should be present")
-		field.tap()
-		field.typeText(UITestFixture.followUtterance)
-		app.buttons["command.send"].tap()
+		openAssistantSheet(in: app)
+		// The opened state shows the three tappable example rows (ikke chips).
+		let tonight = app.buttons["assistant.example.tonight"]
+		assertExists(tonight, "the opened sheet should offer the «Hva går i kveld?» example row")
+		tonight.tap()
 
-		assertExists(app.staticTexts["ASSISTENT"], "the result should present as a sheet titled ASSISTENT")
-		let confirm = app.buttons["assistant.confirm"].firstMatch
-		assertExists(confirm, "the sheet should carry a confirmable diff")
-
-		// Dismissing the sheet (its «Lukk») returns to the agenda with the command
-		// line still pinned beneath.
-		app.buttons["Lukk"].tap()
-		assertExists(app.textFields["command.field"], "closing the result sheet returns to the agenda")
+		// The prompt runs through the answer arm and lands in the SAME ark: the
+		// user's message shows as a bubble and the result thread appears — while
+		// the sheet stays open (an answer is not confirmed-then-closed).
+		assertExists(app.staticTexts["assistant.userMessage"], "the tapped example should land as a message bubble in the thread")
+		assertExists(app.staticTexts["ASSISTENT"], "the answer stays in the conversation sheet")
 	}
 
-	// MARK: - Flow 12 · Keyboard dismissal — tapping the agenda releases focus (WP-99)
+	// MARK: - Flow 12 · An example row runs a command (WP-104)
 
-	func testTappingAgendaDismissesKeyboard() {
+	func testExampleRowRunsCommand() {
 		let app = launchApp(state: "agenda")
 
-		// Focus the command line — its discovery row (the standing help pill) rises,
-		// a reliable proxy for "the line is focused / keyboard is up".
-		let field = app.textFields["command.field"]
-		assertExists(field, "the command line should be present")
-		field.tap()
-		let helpPill = app.buttons["assistant.help"]
-		assertExists(helpPill, "focusing the line raises the discovery row")
+		openAssistantSheet(in: app)
+		let settings = app.buttons["assistant.example.settings"]
+		assertExists(settings, "the opened sheet should offer the «Endre varsler eller tema» example row")
+		settings.tap()
 
-		// Tap the agenda (a day header — part of the board, NOT a row button,
-		// so nothing opens): focus is released and the discovery row collapses,
-		// i.e. the keyboard is dismissed (DESIGN § Hjelperen). Matched by the
-		// label-independent id — the label text is time-of-day-dependent (late
-		// at night the seeded now+Nh events tip past midnight and «I DAG» has
-		// no section), which made a label match flaky.
-		let dayHeader = app.staticTexts.matching(identifier: "agenda.dayHeader").firstMatch
-		assertExists(dayHeader, "the seeded board shows a day group header")
-		dayHeader.tap()
-		assertVanishes(helpPill, "tapping the agenda should release focus and dismiss the keyboard")
-		// Still on the agenda — no sheet was opened by the outside-tap.
-		assertExists(app.textFields["command.field"], "the agenda (and its command line) stays put")
+		// It routes through the command arm (notification lead-time) and shows a
+		// calm receipt (UTFØRT) in the thread — no profile diff to confirm.
+		assertExists(app.staticTexts["UTFØRT"], "the command example should show a calm receipt in the thread")
+		assertExists(app.staticTexts["assistant.userMessage"], "the command example also lands as a message bubble")
 	}
 
-	// MARK: - Flow 13 · A row tap still opens detail while the line is focused (WP-99)
+	// MARK: - Flow 13 · The mic capsule opens the sheet in diktering (WP-104)
 
-	func testRowTapStillOpensDetailWhileFocused() {
+	func testMicCapsuleOpensSheetFocused() {
 		let app = launchApp(state: "agenda")
 
-		// Focus the command line first, THEN tap a row: the tap-outside dismissal
-		// is a SIMULTANEOUS gesture, so it must not steal the row's own tap.
-		let field = app.textFields["command.field"]
-		assertExists(field, "the command line should be present")
-		field.tap()
-		assertExists(app.buttons["assistant.help"], "the line is focused")
+		let mic = app.buttons["assistant.capsule.mic"]
+		assertExists(mic, "the capsule should carry a mic for diktering")
+		mic.tap()
 
-		let row = agendaRow(UITestFixture.footballTitle, in: app)
-		assertExists(row, "the followed football row should be tappable")
-		row.tap()
-		// The detail sheet opened → the row's tap was NOT swallowed by the gesture.
-		assertExists(app.staticTexts["Hvorfor vises denne?"],
-		             "a row tap must still open its detail sheet while the command line is focused")
+		// The sheet opens with the field ready (focused → keyboard up, whose native
+		// dictation mic is the v1 diktering). We assert the sheet + field are up.
+		assertExists(app.staticTexts["ASSISTENT"], "the mic should open the conversation sheet")
+		assertExists(app.textFields["assistant.field"], "the diktering sheet carries the field")
 	}
 
-	// MARK: - Flow 14 · Empty-focused keyboard-dismiss glyph (WP-99)
+	// MARK: - Flow 14 · The follow example row pre-fills the field (WP-104 / WP-105 handoff)
 
-	func testEmptyFocusedShowsKeyboardDismissGlyph() {
+	func testFollowExampleRowPrefillsField() {
 		let app = launchApp(state: "agenda")
 
-		// Focusing the EMPTY line surfaces the keyboard-dismiss glyph in the
-		// trailing slot (where send lives once there's text) — the empty-focused
-		// hole the owner hit, with no way to put the keyboard away.
-		let field = app.textFields["command.field"]
-		assertExists(field, "the command line should be present")
-		field.tap()
-		let dismiss = app.buttons["command.dismissKeyboard"]
-		assertExists(dismiss, "an empty, focused line should offer a keyboard-dismiss glyph")
+		openAssistantSheet(in: app)
+		let follow = app.buttons["assistant.example.follow"]
+		assertExists(follow, "the opened sheet should offer the «Følg et lag eller en utøver» example row")
+		follow.tap()
 
-		// Tapping it releases focus → the glyph (and the discovery row) collapse.
-		dismiss.tap()
-		assertVanishes(dismiss, "tapping the glyph should dismiss the keyboard / release focus")
-		assertExists(app.textFields["command.field"], "the command line stays present after dismissing")
+		// It pre-fills «følg » into the field (the user still chooses the entity
+		// and sends) — a discovery affordance, never an applied change. No diff.
+		let field = app.textFields["assistant.field"]
+		assertExists(field, "the field should be present after tapping the follow row")
+		let value = (field.value as? String) ?? ""
+		XCTAssertTrue(value.lowercased().contains("f"),
+		              "the follow row should pre-fill the field with «følg » (got «\(value)»)")
+		XCTAssertFalse(app.buttons["assistant.confirm"].exists, "pre-filling must not apply anything")
 	}
 
-	// MARK: - Flow 15 · The standing help pill answers "what can you do?" (WP-99)
+	// MARK: - Flow 15 · Root segmented «Uka | Nyheter» (WP-104)
 
-	func testHelpPillAnswersCapabilityQuestion() {
+	func testRootSegmentedSwitchesToNyheter() {
 		let app = launchApp(state: "agenda")
 
-		// The standing first pill is present on focus and routes to the EXISTING
-		// help arm (WP-68), showing the capability answer in the result sheet.
-		let field = app.textFields["command.field"]
-		assertExists(field, "the command line should be present")
-		field.tap()
-		let helpPill = app.buttons["assistant.help"]
-		assertExists(helpPill, "the standing help pill should show on focus")
-		helpPill.tap()
+		// Uka is the default: the seeded football row is on the board.
+		assertExists(agendaRow(UITestFixture.footballTitle, in: app), "Uka shows the agenda by default")
 
-		assertExists(app.staticTexts["ASSISTENT"], "tapping the help pill should raise the assistant result sheet")
-		assertExists(staticText(containing: "Jeg kan tre ting", in: app),
-		             "the help pill should show the curated capability overview")
+		// Switch to Nyheter — the shell placeholder shows; the agenda row is gone.
+		app.buttons["Nyheter"].tap()
+		assertExists(app.staticTexts["news.placeholder"], "the Nyheter side shows the WP-106 shell placeholder")
+		XCTAssertFalse(agendaRow(UITestFixture.footballTitle, in: app).exists, "the agenda is not shown on the Nyheter side")
+
+		// The capsule stays pinned on both sides (bunnen tilhører hjelperen alene).
+		assertExists(app.buttons["assistant.capsule"], "the assistant capsule stays on the Nyheter side too")
+
+		// Back to Uka restores the agenda.
+		app.buttons["Uka"].tap()
+		assertExists(agendaRow(UITestFixture.footballTitle, in: app), "switching back to Uka restores the agenda")
 	}
 }
