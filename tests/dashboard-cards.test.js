@@ -566,3 +566,107 @@ describe("loadData: stable id from the server, index fallback for old payloads",
 		expect(html).toContain("1–0"); // eventRow reads this.liveScores[e.id] and rendered the live score
 	});
 });
+
+// WP-128: a just-finished multi-day event (endTime just past, start day in the past)
+// stayed in the display window but kept its PAST start-day heading, which then sat
+// ABOVE «I dag» (19.–20.07 the finished Corales/«Torsdag 16. juli» tronet øverst) —
+// a break of DESIGN § Agendaen lov 1 ("Aldri passerte dager"). It must live under
+// «I dag» instead; a past-day heading must never render. Tested on the pure grouping.
+describe("agenda day grouping: no past-day heading above «I dag» (WP-128)", () => {
+	const hoursAgo = (h) => new Date(Date.now() - h * 3600000).toISOString();
+	const daysAgo = (d) => new Date(Date.now() - d * 86400000).toISOString();
+	const inHours = (h) => new Date(Date.now() + h * 3600000).toISOString();
+
+	it("buckets a just-finished multi-day event (past start day) under «I dag», never its past start day", () => {
+		dash._fullHorizon = false;
+		dash.allEvents = [
+			// Started 4 days ago, ended ~1h ago — still inside the 3h recently-finished
+			// tail (so it's shown), but its start day is in the past.
+			{ id: "corales", sport: "golf", title: "Corales Championship", time: daysAgo(4), endTime: hoursAgo(1) },
+			{ id: "today1", sport: "football", title: "A vs B", homeTeam: "A", awayTeam: "B", time: inHours(2) },
+		];
+		const { groups } = dash.agendaDayGroups();
+		const todayKey = dash.osloDayKey(new Date());
+		// No heading may sit on a past day, and «I dag» is first (nothing above it).
+		expect(groups.every((g) => g.key >= todayKey)).toBe(true);
+		expect(groups[0].name).toBe("I dag");
+		// The finished multi-day event lives under «I dag».
+		const today = groups.find((g) => g.isToday);
+		expect(today.events.some((e) => e.id === "corales")).toBe(true);
+	});
+
+	it("keeps «I dag» the first heading even when the only event is a past-start one", () => {
+		dash._fullHorizon = false;
+		dash.allEvents = [
+			{ id: "solo", sport: "golf", title: "Some Championship", time: daysAgo(3), endTime: hoursAgo(2) },
+		];
+		const { groups } = dash.agendaDayGroups();
+		expect(groups).toHaveLength(1);
+		expect(groups[0].name).toBe("I dag");
+		expect(groups[0].isToday).toBe(true);
+	});
+});
+
+// WP-128: the live poller re-renders the whole agenda (innerHTML rebuild) every 60s,
+// which used to collapse whatever row the reader had expanded. eventRow now reads the
+// remembered-open set (this._agendaOpen) and bakes the open state back into the HTML,
+// so a re-render re-opens it. Tested on the pure eventRow string.
+describe("expanded agenda rows survive a live-poll re-render (WP-128)", () => {
+	const soon = () => new Date(Date.now() + 3600000).toISOString();
+	// Golf + venue → genuinely expandable (hasDetail true), with «Royal Portrush» in the detail.
+	const ev = { id: "exp1", sport: "golf", title: "The Open", time: soon(), venue: "Royal Portrush" };
+
+	it("renders aria-expanded=false with an empty, hidden detail when not remembered open", () => {
+		dash._agendaOpen = new Set();
+		const html = dash.eventRow(ev);
+		expect(html).toContain('aria-expanded="false"');
+		expect(html).toContain('class="ev-detail" hidden></div>'); // detail is empty + hidden
+		expect(html).not.toContain("Royal Portrush");
+	});
+
+	it("bakes the open state back into the row when the id is remembered (survives the rebuild)", () => {
+		dash._agendaOpen = new Set(["exp1"]);
+		const html = dash.eventRow(ev);
+		expect(html).toContain('aria-expanded="true"');
+		expect(html).not.toContain('class="ev-detail" hidden'); // detail shown, not hidden
+		expect(html).toContain("Royal Portrush");                // detail content present after the rebuild
+	});
+
+	it("isRowOpen reflects the remembered-open set", () => {
+		dash._agendaOpen = new Set(["exp1"]);
+		expect(dash.isRowOpen("exp1")).toBe(true);
+		expect(dash.isRowOpen("nope")).toBe(false);
+	});
+});
+
+// WP-128: «Neste opp» must not repeat an entity's next event when that same event
+// already has its own visible agenda row in the window (renderAgenda records the
+// shown ids). Without the set (before the first agenda render) it shows everything.
+describe("«Neste opp» dedupes rows already visible in the agenda (WP-128)", () => {
+	const inDays = (n) => new Date(Date.now() + n * 86400000).toISOString();
+
+	it("drops a glance entry whose next event already has an agenda row in the window", () => {
+		dash.covers = { alwaysTrack: {
+			athletes: [{ name: "Casper Ruud", aliases: ["Ruud"], sport: "tennis" }],
+			teams: [{ name: "Lyn", sport: "football" }],
+		} };
+		dash.allEvents = [
+			{ id: "ruud-swiss", sport: "tennis", title: "Swiss Open (Casper Ruud)", time: inDays(3) },
+			{ id: "lyn-match", sport: "football", title: "Strømsgodset – Lyn", homeTeam: "Strømsgodset", awayTeam: "Lyn", time: inDays(5) },
+		];
+		// Ruud's next event is already a visible agenda row; Lyn's is not.
+		dash._agendaShownIds = new Set(["ruud-swiss"]);
+		const rows = dash.nextUpEntries();
+		expect(rows.map((r) => r.entry.name)).toEqual(["Lyn"]);
+	});
+
+	it("shows everything when no agenda has rendered yet (no shown-id set)", () => {
+		dash.covers = { alwaysTrack: {
+			athletes: [{ name: "Casper Ruud", aliases: ["Ruud"], sport: "tennis" }],
+			teams: [],
+		} };
+		dash.allEvents = [{ id: "ruud-swiss", sport: "tennis", title: "Swiss Open (Casper Ruud)", time: inDays(3) }];
+		dash._agendaShownIds = undefined;
+		expect(dash.nextUpEntries().map((r) => r.entry.name)).toEqual(["Casper Ruud"]);
+	});
+});

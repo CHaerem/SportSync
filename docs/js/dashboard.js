@@ -10,7 +10,7 @@
 //   js/live.js     — live-now line + ESPN live polling
 //   js/detail.js   — progressive-disclosure event detail (tap to expand)
 //   js/followed.js — "Dine neste" + "Hva vi følger" index
-//   js/chrome.js   — shell chrome (clock, date, footer, AI-budget, install hint)
+//   js/chrome.js   — shell chrome (date, footer, AI-budget, install hint)
 // Depends on: shared-constants.js.
 
 class Dashboard {
@@ -24,12 +24,15 @@ class Dashboard {
 		this.liveF1 = null;
 		this._liveInterval = null;
 		this._liveVisible = !document.hidden;
+		// Agenda rows the reader has expanded, by event id — remembered so the 60s
+		// live-poll re-render (which rebuilds the agenda's innerHTML) re-opens them
+		// instead of collapsing what's being read (WP-128; mirrors live.js' _liveOpen).
+		this._agendaOpen = new Set();
 	}
 
 	async init() {
 		// Theme is owned by js/theme.js (shared across pages).
 		this.renderDate();
-		this.startClock();
 		await this.loadData();
 		this.render();
 		this._lastRefresh = Date.now();
@@ -96,8 +99,11 @@ class Dashboard {
 	render() {
 		this.renderTodayLine();
 		this.renderLive();
-		this.renderNextUp();
+		// Agenda before "Neste opp": renderAgenda records which event ids are visible
+		// in the window (this._agendaShownIds) so renderNextUp can dedupe a glance row
+		// that already has its own agenda row (WP-128).
 		this.renderAgenda();
+		this.renderNextUp();
 		this.renderFollowed();
 		this.renderFooter();
 		this.renderUsage();
@@ -255,9 +261,12 @@ class Dashboard {
 	}
 
 	// ── The agenda: one list, grouped by day ─────────────────────────────────
-	renderAgenda() {
-		const el = document.getElementById('agenda');
-		if (!el) return;
+	/** The pure grouping behind the agenda: the windowed, series-collapsed events
+	 *  bucketed into day sections. Testable without a DOM. Also records
+	 *  `this._agendaShownIds` (what's visible in the window) so "Neste opp" can
+	 *  dedupe, and rebuilds `this._eventById` for tap-to-expand lookups.
+	 *  Returns { groups: [{ key, name, isToday, events }], hasMore, empty }. */
+	agendaDayGroups() {
 		const now = Date.now();
 		const start = now - 3 * SS_CONSTANTS.MS_PER_HOUR;
 		const maxHorizon = now + 14 * SS_CONSTANTS.MS_PER_DAY;
@@ -275,31 +284,48 @@ class Dashboard {
 
 		this._eventById = new Map(this.allEvents.map((e) => [e.id, e]));
 		for (const it of items) if (it.isSeries) this._eventById.set(it.id, it);
+		// The ids currently on the board (post-collapse) — "Neste opp" dedupes against these.
+		this._agendaShownIds = new Set(shown.map((e) => e.id));
 
-		if (shown.length === 0) {
-			el.innerHTML = `<p class="empty">Ingen kommende arrangementer akkurat nå.</p>`;
-			return;
-		}
+		if (shown.length === 0) return { groups: [], hasMore: false, empty: true };
 
 		const todayKey = this.osloDayKey(new Date());
 		const tomorrowKey = this.osloDayKey(new Date(now + SS_CONSTANTS.MS_PER_DAY));
 		const groups = new Map();
 		for (const e of shown) {
-			// Multi-day events that started earlier but are still running belong under "I dag",
-			// not their (past) start day.
+			// Anything still in the display window whose start day is already past —
+			// a still-running OR just-finished multi-day event (kept briefly with its
+			// FERDIG status/result), or a late-night event from yesterday still inside
+			// the 3h tail — lives under "I dag". A past-day heading must NEVER render
+			// above "I dag" (DESIGN § Agendaen, lov 1: "Aldri passerte dager"; WP-128).
 			let key = this.osloDayKey(new Date(e.time));
-			if (key < todayKey && e.endTime && new Date(e.endTime).getTime() >= now) key = todayKey;
+			if (key < todayKey) key = todayKey;
 			if (!groups.has(key)) groups.set(key, []);
 			groups.get(key).push(e);
 		}
 
-		let html = '';
+		const out = [];
 		for (const [key, evs] of groups) {
 			let name;
 			if (key === todayKey) name = 'I dag';
 			else if (key === tomorrowKey) name = 'I morgen';
 			else name = new Date(evs[0].time).toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Oslo' });
-			html += `<section class="day${key === todayKey ? ' is-today' : ''}"><div class="day-name">${escapeHtml(name)}</div>${evs.map((e) => this.eventRow(e)).join('')}</section>`;
+			out.push({ key, name, isToday: key === todayKey, events: evs });
+		}
+		return { groups: out, hasMore, empty: false };
+	}
+
+	renderAgenda() {
+		const el = document.getElementById('agenda');
+		if (!el) return;
+		const { groups, hasMore, empty } = this.agendaDayGroups();
+		if (empty) {
+			el.innerHTML = `<p class="empty">Ingen kommende arrangementer akkurat nå.</p>`;
+			return;
+		}
+		let html = '';
+		for (const g of groups) {
+			html += `<section class="day${g.isToday ? ' is-today' : ''}"><div class="day-name">${escapeHtml(g.name)}</div>${g.events.map((e) => this.eventRow(e)).join('')}</section>`;
 		}
 		if (hasMore) html += `<button type="button" class="agenda-more">Vis resten av de neste to ukene</button>`;
 		el.innerHTML = html;
@@ -308,6 +334,11 @@ class Dashboard {
 		if (!this._revealed) { el.classList.add('reveal'); this._revealed = true; }
 		else { el.classList.remove('reveal'); }
 	}
+
+	/** Is this row currently expanded? Read by eventRow/seriesRow so a re-render
+	 *  bakes the open state back into the HTML — the reader's open row survives the
+	 *  60s live-poll rebuild (WP-128). */
+	isRowOpen(id) { return !!(this._agendaOpen && this._agendaOpen.has(id)); }
 
 	/** Fold same-tournament stage races (cycling "Etappe N", etc.) into one series item. */
 	collapseSeries(events, now) {
@@ -407,15 +438,16 @@ class Dashboard {
 		else if (done) trailing = `<span class="ev-done">Ferdig${done.score ? `<span class="ev-done-score">${escapeHtml(done.score)}</span>` : ''}</span>`;
 		else trailing = this.whereToWatch(e);
 		const expandable = this.hasDetail(e);
+		const open = expandable && this.isRowOpen(e.id);
 		const attrs = expandable
-			? ` role="button" tabindex="0" aria-expanded="false" data-event-id="${escapeHtml(e.id)}"`
+			? ` role="button" tabindex="0" aria-expanded="${open}" data-event-id="${escapeHtml(e.id)}"`
 			: '';
 		return `<div class="ev-wrap"><div class="ev${this.isMustSee(e) ? ' must' : ''}${status ? ' cancelled' : ''}${done ? ' done' : ''}${expandable ? ' expandable' : ''}"${attrs}>
 			${this.dotCell(this.isMustSee(e))}
 			<span class="ev-time">${escapeHtml(this.timeLabel(e))}</span>
 			<span class="ev-main"><span class="ev-title">${this.eventTitle(e)}</span>${this.eventMeta(e, trailing)}</span>
 			${this.infoCell(e)}
-		</div><div class="ev-detail" hidden></div></div>`;
+		</div><div class="ev-detail"${open ? '' : ' hidden'}>${open ? this.eventDetail(e) : ''}</div></div>`;
 	}
 
 	/** A stage race collapsed to one line: next stage + count, tap to expand. */
@@ -424,12 +456,13 @@ class Dashboard {
 		const m = String(s.nextStage.title || '').match(/(etappe|stage)\s*\d+/i);
 		const nextLabel = m ? m[0] : ssShortName(s.nextStage.title || '');
 		const meta = `neste: ${escapeHtml(nextLabel)}<span class="ev-sep"> · </span>${s.stages.length} etapper<span class="ev-sep"> · </span>${this.whereToWatch(s.nextStage)}`;
-		return `<div class="ev-wrap"><div class="ev expandable series" role="button" tabindex="0" aria-expanded="false" data-event-id="${escapeHtml(s.id)}">
+		const open = this.isRowOpen(s.id);
+		return `<div class="ev-wrap"><div class="ev expandable series" role="button" tabindex="0" aria-expanded="${open}" data-event-id="${escapeHtml(s.id)}">
 			${this.dotCell(false)}
 			<span class="ev-time">${escapeHtml(this.osloTime(date))}</span>
 			<span class="ev-main"><span class="ev-title">${escapeHtml(s.tournament)}</span><span class="ev-meta">${meta}</span></span>
 			<span></span>
-		</div><div class="ev-detail" hidden></div></div>`;
+		</div><div class="ev-detail"${open ? '' : ' hidden'}>${open ? this.eventDetail(s) : ''}</div></div>`;
 	}
 
 	/** Expanded series: every stage as a quiet line (past ones dimmed). */
@@ -469,6 +502,11 @@ class Dashboard {
 			if (!open && !detail.innerHTML) detail.innerHTML = this.eventDetail(e);
 			row.setAttribute('aria-expanded', String(!open));
 			detail.hidden = open;
+			// Remember open rows so the 60s live-poll re-render (renderAgenda's
+			// innerHTML rebuild) re-opens whatever the reader has expanded — eventRow
+			// reads this set and bakes the open state back into the HTML (WP-128).
+			this._agendaOpen = this._agendaOpen || new Set();
+			if (open) this._agendaOpen.delete(id); else this._agendaOpen.add(id);
 		};
 		agenda.addEventListener('click', (evt) => {
 			const link = evt.target.closest('a');

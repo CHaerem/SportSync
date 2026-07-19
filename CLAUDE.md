@@ -178,13 +178,15 @@ widget and, since the 18.07 reskin (commit `1a5e89d31`), the web (`docs/`) too. 
 old Tekst-TV exception is CLOSED** (DESIGN.md § Cross-surface, lines 290–297): the
 teletext-rooted identity (a monospace type stack, near-black `#0A0A0C` page, warm
 paper) is retired. Web keeps its own layout details (one column max 640px, the
-day-grouped agenda, the ticking amber clock in the header) but its colours and type
-are now the baseline. The web values below must stay verifiable against `base.css`;
+day-grouped agenda) but its colours and type are now the baseline. (WP-128: the
+ticking amber header clock was removed for iOS parity; the header keeps the theme
+glyph ◐ as a deliberate exception since web has no "Deg" screen — see DESIGN.md
+§ Cross-surface.) The web values below must stay verifiable against `base.css`;
 DESIGN.md is the source of intent behind them.
 
 - `docs/index.html` — shell: header (wordmark · date · theme toggle), one quiet editorial headline line, live-now line (conditional), the agenda, "Dette dekker vi" disclosure, footer. `docs/rediger.html` — the follow-request page (see below); `docs/activity.html` — the ops/activity view.
 - `docs/css/` — `base.css` (Apple-native tokens: true-black dark default `#000000` (cell `#1C1C1E`), grouped-light `#F2F2F7` (cell `#FFFFFF`) via prefers-color-scheme; amber `#FFB000` dark / `#9A6800` light as the ONLY accent; the **system font stack** — `-apple-system, BlinkMacSystemFont, "SF Pro Text", …` — with tabular numerals opted in where digits must align; max-width 640px, fixed 120px time column), `layout.css` (single centered column, all breakpoints), `cards.css` (agenda rows, day groups)
-- `docs/js/` — the `Dashboard` class is split along its seams across a shared prototype (window-global, no build step): `dashboard.js` (~456 lines: lifecycle + hero + the day-grouped agenda), `live.js` (ESPN live polling, 60s), `detail.js` (expand/detail + AI-provenance modal), `followed.js` ("Dette dekker vi" disclosure), `chrome.js` (clock/date/footer/usage/install-hint). `theme.js` is the shared 3-step theme toggle (system → dark → light) used on all pages; `shared-constants.js` holds shared utilities (time windows, escaping, name matching) that mirror the server helpers; `edit.js` drives `rediger.html`.
+- `docs/js/` — the `Dashboard` class is split along its seams across a shared prototype (window-global, no build step): `dashboard.js` (~456 lines: lifecycle + hero + the day-grouped agenda), `live.js` (ESPN live polling, 60s), `detail.js` (expand/detail + AI-provenance modal), `followed.js` ("Dette dekker vi" disclosure), `chrome.js` (date/footer/usage/install-hint). `theme.js` is the shared 3-step theme toggle (system → dark → light) used on all pages; `shared-constants.js` holds shared utilities (time windows, escaping, name matching) that mirror the server helpers; `edit.js` drives `rediger.html`.
 - Each event row answers only: **when · what · where to watch**. Must-see (favorite / importance≥4 / Norwegian) gets a small accent dot — the gentlest possible emphasis, never a card. Channel shown quietly, with an honest faint "–" when unknown.
 - The editorial agent produces a single `headline` block shown as one quiet line under the date (a "nice extra"), nothing more. AI-research events carry a small ⓘ that opens a source modal on tap.
 
