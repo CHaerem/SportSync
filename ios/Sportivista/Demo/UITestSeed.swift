@@ -53,6 +53,9 @@ enum UITestSeed {
 	/// test and the seed can never drift.
 	static let biathlonEventTitle = "Skiskyting verdenscup: sprint"
 	static let footballEventTitle = "Lyn mot Sogndal"
+	/// WP-115 — a seeded NYTT pointer (matches the FK Lyn Oslo follow by entityId)
+	/// so the in-app-browser smoke test has a row to tap.
+	static let newsPointerTitle = "Lyn klar for cupfinalen"
 
 	/// Whether this launch requested the UI-test harness.
 	static var isRequested: Bool {
@@ -130,6 +133,21 @@ enum UITestSeed {
 			["id": "skiskyting-verdenscup", "name": "Skiskyting verdenscup", "aliases": ["skiskyting"], "sport": "biathlon", "type": "tournament"],
 		]
 
+		// WP-115: one NYTT pointer stamped with the FK Lyn Oslo entity id, so the
+		// Nyheter board's NYTT section has a lens-matched row for the in-app-browser
+		// smoke test to tap. Only matters in the "agenda" state (which follows FK
+		// Lyn Oslo); the "onboarding" state clears the profile, so the lens filters
+		// it out — harmless.
+		let news: [String: Any] = [
+			"items": [
+				[
+					"id": "uitest-n1", "title": newsPointerTitle,
+					"link": "https://www.nrk.no/sport/lyn-cupfinale", "source": "nrk-sport",
+					"sport": "football", "entityIds": ["fk-lyn-oslo"], "publishedAt": at(hours: -2),
+				],
+			],
+		]
+
 		// followBroadly is EMPTY (honoured as-is, not the server default) so only
 		// what the profile follows lands on the board.
 		let interests: [String: Any] = [
@@ -140,6 +158,7 @@ enum UITestSeed {
 		write(events, "events.json", cache)
 		write(entities, "entities.json", cache)
 		write(interests, "interests.json", cache)
+		write(news, "news.json", cache)
 		try? cache.writeSyncState(SyncState(etag: nil, appliedFiles: [:], lastSync: now))
 	}
 
