@@ -37,7 +37,7 @@
 import fs from "fs";
 import path from "path";
 import { pathToFileURL } from "url";
-import { rootDataPath, readJsonIfExists, iso, MS_PER_HOUR, MS_PER_DAY } from "./lib/helpers.js";
+import { rootDataPath, configDirPath, readJsonIfExists, iso, MS_PER_HOUR, MS_PER_DAY } from "./lib/helpers.js";
 
 export const PORT_REPORT_NAME = "port-report.json";
 export const WINDOW_DAYS = 14;
@@ -386,7 +386,7 @@ export function buildPortReport(inputs = {}, now = Date.now()) {
 }
 
 /** Read the pipeline's outputs from disk, build the report, write it. Fail-soft. */
-export function writePortReport(dataDir = rootDataPath(), configDir = defaultConfigDir(), now = Date.now()) {
+export function writePortReport(dataDir = rootDataPath(), configDir = configDirPath(), now = Date.now()) {
 	const ledgerPath = path.join(dataDir, "calibration-ledger.jsonl");
 	let ledgerLines = [];
 	try {
@@ -413,10 +413,6 @@ export function writePortReport(dataDir = rootDataPath(), configDir = defaultCon
 	);
 	fs.writeFileSync(path.join(dataDir, PORT_REPORT_NAME), JSON.stringify(report, null, 2));
 	return report;
-}
-
-function defaultConfigDir() {
-	return process.env.SPORTSYNC_CONFIG_DIR || path.resolve(process.cwd(), "scripts", "config");
 }
 
 function main() {
