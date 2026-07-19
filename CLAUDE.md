@@ -185,6 +185,7 @@ stay verifiable against `base.css`; DESIGN.md is the source of intent behind the
 `usage-state.json` + `usage-history.jsonl` + `usage-summary.json` (quota governor: snapshot, append-only history, digest),
 `scout-log.json`, `calibration.json` + `calibration-ledger.jsonl`, `tv-listings.json`,
 `entities.json` (stable-id index of known athletes/teams/tournaments/leagues, published by `build-entities.js`; `build-events.js` uses it to stamp `entityId` onto matched events),
+`news.json` (lens-ready news pointers — `id`/`title`/`link`/`source`/`sport`/`entityIds`/`publishedAt`, NEVER article text — built from `rss-digest.json` × the entity index by `scripts/lib/news.js` and published by `build-events.js`; dedupe-on-link, cap ~100 items / 7 days, byte-idempotent; the client lens-filters on `entityIds`/`sport` per profile),
 `manifest.json` (per-file `bytes` + `sha256`, published by `build-manifest.js` — the sync contract that lets a client diff its cache without re-downloading everything),
 `app-version.json` (siste ios/-commit, published by `build-events.js` via `scripts/lib/app-version.js` — the iOS app compares its build-time stamp against it and shows «SISTE / NYERE FINNES»),
 `catalog.json` (a published read-only copy of `scripts/config/catalog.json` — "what we cover" — so the dashboard's "Dette dekker vi" surface can render it; WP-96 replaced the published `interests.json`, which is now the owner's private profile and is no longer published),

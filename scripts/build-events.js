@@ -6,6 +6,7 @@ import { readJsonIfExists, rootDataPath, MS_PER_DAY, matchInterest, mustWatchEnt
 import { resolveStreaming } from "./lib/norwegian-rights.js";
 import { writeManifest } from "./build-manifest.js";
 import { readIosCommit, buildAppVersion, readTestflight } from "./lib/app-version.js";
+import { buildNews } from "./lib/news.js";
 import { fileURLToPath } from "url";
 import { writeEntities } from "./build-entities.js";
 import { validateEvents, loadEventSchema } from "./validate-events.js";
@@ -749,6 +750,18 @@ if (appVersion) {
 	fs.writeFileSync(path.join(dataDir, "app-version.json"), JSON.stringify(appVersion, null, 2) + "\n");
 	console.log(`Published app-version.json (ios @ ${appVersion.iosCommit}).`);
 }
+
+// WP-103: publish news.json — lens-ready news pointers built from the RSS
+// digest × the entity index. Reuses the SAME word-boundary entity name-matching
+// build-events uses to stamp entityId on events (helpers.matchesEntity), so the
+// Brooklyn/Lyn substring trap is avoided identically. Pure builder lives in
+// scripts/lib/news.js; written here (before writeManifest) so the manifest
+// covers it and the client can diff-sync it. Byte-idempotent on unchanged input
+// (no run-timestamp in the file). Empty/missing digest ⇒ { items: [] }.
+const rssDigest = readJsonIfExists(path.join(dataDir, "rss-digest.json"));
+const news = buildNews({ digest: rssDigest, entities });
+fs.writeFileSync(path.join(dataDir, "news.json"), JSON.stringify(news, null, 2) + "\n");
+console.log(`Published news.json (${news.items.length} item(s)).`);
 
 // WP-03: publish manifest.json (bytes + sha256 per published data file) —
 // last thing this script does, so it reflects everything build-events.js
