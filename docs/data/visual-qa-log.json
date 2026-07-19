@@ -1,31 +1,17 @@
 {
-  "checkedAt": "2026-07-18T11:20:00Z",
+  "checkedAt": "2026-07-19T21:55:19Z",
   "widths": [375, 393, 900],
-  "verdict": "issues",
-  "findings": [
-    {
-      "width": 393,
-      "area": "footer / page background",
-      "issue": "A faint diagonal hatch/checkerboard pattern is visible filling the space below the footer line ('Oppdatert for 25 min siden · Abonner i kalender · last ned · Aktivitet · AI-budsjett …') at the very bottom of the full-page capture. Same pattern is visible at 375px but does not appear at 900px, where the background stays a flat colour all the way to the bottom edge. Suggests the page background colour isn't filling the full scrollable height on narrow widths, exposing an unstyled/transparent area below the real content.",
-      "severity": "low"
-    },
-    {
-      "width": 393,
-      "area": "agenda row — VM-finalen 2026",
-      "issue": "The channel label wraps as 'NRK' on one line and an orphaned '1' alone on the next ('FIFA World Cup · Finale · NRK / 1'). Same row fits on one line at 375px and 900px, so this is a narrow-range wrapping quirk specific to 393px, not a content-hiding truncation.",
-      "severity": "low"
-    }
-  ],
+  "verdict": "pass",
+  "findings": [],
   "notes": [
-    "No horizontal scroll or edge clipping at 375px; single quiet column holds at all three widths, layout scales cleanly to the 900px desktop width without turning into a grid.",
-    "Match/event names read in full, nothing truncated in a way that hides key info: 'The Open', 'Corales Puntacana Championship', 'EFG Swiss Open Gstaad', 'Tour de France 2026', 'London Athletics Meet – Karsten Warholm (400m hekk)', 'Round 6 – XXVI Obert Internacional Sant Martí 2026', 'VM-bronsefinale', 'Moët & Chandon Belgian Grand Prix', 'VM-finalen 2026', '100 Thieves – Falcons', 'NM friidrett 2026 (Trondheim)'.",
-    "Norwegian-channel contract holds: only Viaplay, TV 2 Play, NRK1/NRK TV, NRK 1, BLAST.tv (gratis offisiell strøm) appear as 'where to watch' at any width — no ESPN/FOX/Sky seen.",
-    "One row (Round 6 – XXVI Obert Internacional Sant Martí 2026, chess) shows the honest empty '–' channel placeholder, clearly distinguishable from a missing/broken value.",
-    "No flags/crests/images are used anywhere in this design (pure monospace text, per the Tekst-TV identity) — nothing to check for broken image icons; not a defect.",
-    "'DINE NESTE' tracked list (Viktor Hovland, Kristoffer Ventura, Kristoffer Reitan, Casper Ruud, 100 Thieves, '+4 til i «Hva vi følger»') renders fully with correct relative-time labels (pågår nå / om 4 dager), no truncation.",
-    "Must-see accent dot appears on 6 of 11 visible rows today (The Open, Corales Puntacana, EFG Swiss Open Gstaad, Warholm, VM-finalen, 100 Thieves–Falcons) — a fairly high density but each is plausibly a followed/high-importance entry, not an indiscriminate blanket accent; worth a periodic recheck if the ratio keeps climbing.",
-    "Header, day-group headings ('I DAG' / 'I MORGEN' / 'ONSDAG 22. JULI' / 'TORSDAG 23. JULI'), 'Vis resten av de neste to ukene', 'Hva vi følger' disclosure + 'Rediger' link, and footer (Oppdatert for 25 min siden / Abonner i kalender / last ned / Aktivitet / AI-budsjett: uke 60% · økt 8%) are all intact and aligned at every width.",
-    "Live clock in the header updates correctly across the three captures (11:19:21 → 11:19:25 → 11:19:29).",
-    "Could not assess: whether the ⓘ AI-provenance badges (EFG Swiss Open Gstaad, Warholm meet, VM-bronsefinale, VM-finalen, 100 Thieves–Falcons, NM friidrett) open a working source modal — that requires interaction, not just a static screenshot."
+    "All three widths (375/393/900px) render a single quiet column with generous spacing — no horizontal scroll or clipped content at any width, including the tightest 375px shot.",
+    "No match names truncated; Norwegian team/athlete names (Strømsgodset, Casper Ruud, Håvard Nygaard, Kristoffer Ventura) fully visible.",
+    "Every event shows a 'where to watch' channel and all are Norwegian-available: TV 2 Play, NRK, BLAST.tv, HBO Max (Sport), Viaplay — no foreign broadcasters (no FOX/ESPN/Sky) seen.",
+    "Times and multi-day date ranges (e.g. '16.-19. juli', '23.-26. juli') are sensibly formatted; round/stage labels present where relevant (e.g. 'Finale', 'neste: Etappe 16').",
+    "Must-see accent dot used sparingly — only on a subset of rows (PGA Tour events, Swiss Open, VM-finalen, 100 Thieves match), not applied indiscriminately.",
+    "Header, 'Neste opp' block, day headings, 'Dette dekker vi' disclosure, and footer (usage/AI-budsjett line) all intact and aligned across all three widths.",
+    "Previously logged issues (2026-07-18: faint hatch pattern below footer at 393px, 'NRK / 1' orphan-wrap on the VM-finalen row at 393px) were NOT reproduced in this run — both areas look clean now.",
+    "No national flags or club crests appeared in this data snapshot; design uses plain monospace text throughout (Tekst-TV identity) so there was nothing to check for broken image icons.",
+    "No broken image icons or empty boxes observed anywhere in the three screenshots."
   ]
 }
