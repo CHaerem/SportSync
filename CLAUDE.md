@@ -14,7 +14,7 @@ autopilot, pipeline manifest) with a **lean, reliable design** built on one idea
 Four priorities, in order:
 1. **Correct, complete data** — especially events that static APIs miss
 2. **Dynamic AI research** — scheduled agents with web search find and verify events
-3. **Calm dashboard** — one quiet single-column agenda (max 640px), near-black dark default, PWA
+3. **Calm dashboard** — one quiet single-column agenda (max 640px), true-black dark default, PWA
 4. **Transparent tracking** — AI decides what to track and writes human-readable
    `tracked.json` with a defensible `reason` per entry
 
@@ -64,6 +64,15 @@ Nine workflows run `anthropics/claude-code-action@v1` with a prompt file:
 | **self-repair** | `scripts/agents/self-repair.md` | `claude-opus-4-8` | daily 06:30 UTC | The mechanic: detect real breakage (failed runs, failing tests, validation errors, broken fetchers), fix ON A BRANCH, prove it, open a PR. Workflow re-gates tests and **auto-merges + deploys** — EXCEPT the three protected paths below, which are left open for review. Ignores quota/transient failures |
 | **improve** | `scripts/agents/improve.md` | `claude-opus-4-8` | weekly Mon 07:00 UTC | Evolution: mine the logs for ONE evidenced improvement (source/skill/prompt/threshold/fetcher tuning), open a PR. Workflow re-gates tests and **auto-merges** it (except protected paths). Biased toward sharpening what exists over adding machinery (the v1 lesson) |
 
+### CI, test-gate & release workflows (PR/tag-triggered, no AI)
+
+Beyond the two kinds of scheduled work above, four non-agent workflows back the automation but run no prompt:
+
+- **`ci.yml`** — the universal web test-gate: `npm ci && npm test` (the full vitest suite) on every PR, plus pushes to `main` that touch `scripts/`/`tests/`/`docs/js/`/`package*.json`/`vitest.config.js`. This is the required check (`web-tests`) branch protection enforces; before it existed only the self-fixing loops re-ran the tests (inside `merge-gate.js`) — human/main-loop PRs had no machine gate at all.
+- **`ios-tests.yml`** — the always-reporting iOS test-gate: the Swift unit suite (hostless bundles via the `Sportivista` scheme, incl. the golden vectors that pin JS↔Swift bit-identically) on PRs touching `ios/`. A cheap `detect` job self-skips the macOS job when `ios/` is untouched, so the required check (`ios-tests`) is satisfied without ever standing "expected" forever. macOS runners are free on the public repo; secretless (simulator tests don't sign — `CODE_SIGNING_ALLOWED=NO` is the project default); UI tests run elsewhere (local/agent-driven).
+- **`ios-release.yml`** — the TestFlight release lane (WP-17): from a clean checkout it archives, cloud-signs, and uploads the app to App Store Connect, then records the upload (`scripts/record-testflight.js`; build number from `scripts/next-testflight-build.js` — ASC is the source of truth) and kicks the static pipeline to publish `app-version.json`. Manual (`workflow_dispatch`) or an `ios-v*` tag; needs the three `ASC_*` secrets from an **ADMIN** ASC key (App Manager can't cloud-sign).
+- **`preview-deploy.yml`** — the GitHub Pages deploy (`concurrency: pages-deploy`, never cancel-in-progress): assembles `_site` from `main` plus a `/preview/<branch>/` copy per open PR, then deploys. Triggered by a push to `main` under `docs/**`, by `workflow_call` (how the static pipeline auto-publishes — a `GITHUB_TOKEN` push can't fire the `push` path), by `repository_dispatch`, or manually. Deliberately **not** on `pull_request` (that raced the shared concurrency group → "Deployment failed, try again later").
+
 ### Autonomy model (what ships unattended)
 
 The self-fixing loops (ui-fix, self-repair, improve) each fix on a branch, open a
@@ -88,7 +97,7 @@ commit; a test failure leaves the PR open and fails the run loudly.
 Claude Code Max quota is finite and shared with interactive use. Two mechanisms keep the agents from silently dying when it runs low:
 
 - **Tiered model + deep-tier fallback** — the 4-hourly workhorse runs on `claude-opus-4-8` (`standard` tier): Opus is always available on this OAuth tier, so the action's exit status is trustworthy and there is **no commit-detection heuristic** — a quiet run that finds nothing new is a legitimate no-op, not a failure. The `deep` tier (escalations + weekly sweep) prefers `claude-fable-5`, detects if it produced no commit (unavailable / weekly-quota exhausted — Fable error-reports as job success), and re-runs on `claude-opus-4-8`. Quota exhaustion is handled by `usage-gate.js` (below), **not** by failing on no-commit — so the deep tier does not fail loudly on a quiet run either. (History: an earlier design tried Fable 5 on every run and failed loudly on no-commit; that produced a ~50% false-failure rate — a no-op was misread as quota death. Fable 5 is in fact available on this tier when weekly quota is not exhausted.)
-- **`usage-monitor.yml`** (hourly, no prompt) — runs `scripts/check-usage.js`, which reads REAL account-wide quota. There is no supported quota API for a Max OAuth token, but a **minimal `/v1/messages` call with `CLAUDE_CODE_OAUTH_TOKEN` returns the `anthropic-ratelimit-unified-*` headers** (5h + 7d utilization, reset epochs, allowed/allowed_warning/rejected). It writes `usage-state.json` (green/amber/red + skipAll/skipNiceToHave), **appends the reading to `usage-history.jsonl`** (append-only, trimmed to ~100 days), and rolls that into **`usage-summary.json`** (latest + 24h trend + 7d/30d peak/avg week utilization + hours spent conserving). It then runs `scripts/update-readme-status.js`, which regenerates the **AI-budsjett block in `README.md`** (between `<!-- STATUS:START/END -->` markers) — budget/ops lives in the repo README, not on the calm dashboard. NB: the headers are **account-wide** (shared with interactive use) — this is total quota pressure, not per-agent attribution. The `improve` agent mines `usage-summary.json` (+ `gh run list` for per-agent frequency) to tune schedules/thresholds to the budget.
+- **`usage-monitor.yml`** (hourly 05–22 UTC, cron `20 5-22`, no prompt) — runs `scripts/check-usage.js`, which reads REAL account-wide quota. There is no supported quota API for a Max OAuth token, but a **minimal `/v1/messages` call with `CLAUDE_CODE_OAUTH_TOKEN` returns the `anthropic-ratelimit-unified-*` headers** (5h + 7d utilization, reset epochs, allowed/allowed_warning/rejected). It writes `usage-state.json` (green/amber/red + skipAll/skipNiceToHave), **appends the reading to `usage-history.jsonl`** (append-only, trimmed to ~100 days), and rolls that into **`usage-summary.json`** (latest + 24h trend + 7d/30d peak/avg week utilization + hours spent conserving). It then runs `scripts/update-readme-status.js`, which regenerates the **AI-budsjett block in `README.md`** (between `<!-- STATUS:START/END -->` markers) — budget/ops lives in the repo README, not on the calm dashboard. NB: the headers are **account-wide** (shared with interactive use) — this is total quota pressure, not per-agent attribution. The `improve` agent mines `usage-summary.json` (+ `gh run list` for per-agent frequency) to tune schedules/thresholds to the budget.
 - **Gate** — every agent runs `scripts/usage-gate.js <critical|optional>` as a pre-flight step and only proceeds `if: steps.usage.outputs.run == 'true'`. `critical` (research, verify, scout) skip only when `skipAll` (session near-exhausted / rejected); `optional` (editorial, coverage-critic, visual-qa, **and the self-fixing loops ui-fix, self-repair, improve**) also skip when amber/red. **Fail-open**: missing/stale (>3h)/unparsed state ⇒ run. The dashboard shows a quiet "AI-budsjett" line from `usage-state.json`.
 
 ### Coverage & correctness loops (the core mission)
@@ -163,16 +172,19 @@ no dashboard grid, no competing panels.
 
 **`DESIGN.md` is the normative UI contract** for every surface. Any agent or human
 changing UI reads it first and never deviates without an explicit owner instruction.
-It is now an **Apple-native baseline** (semantic system colours, Dynamic Type, SF
-Symbols, amber as the one accent) that the **iOS app + widget follow**; **web
-(`docs/`) is the deliberate exception until the rebrand** and keeps the v2 **Tekst-TV**
-identity (teletext-rooted): a monospace type stack, amber as the single accent, a
-near-black page, quantized/flat/honest — never faux-analog. The web values below must
-stay verifiable against `base.css`; DESIGN.md is the source of intent behind them.
+It is an **Apple-native baseline** (semantic system colours, Dynamic Type, SF
+Symbols, amber as the one accent) that **every surface now follows** — the iOS app +
+widget and, since the 18.07 reskin (commit `1a5e89d31`), the web (`docs/`) too. **The
+old Tekst-TV exception is CLOSED** (DESIGN.md § Cross-surface, lines 290–297): the
+teletext-rooted identity (a monospace type stack, near-black `#0A0A0C` page, warm
+paper) is retired. Web keeps its own layout details (one column max 640px, the
+day-grouped agenda, the ticking amber clock in the header) but its colours and type
+are now the baseline. The web values below must stay verifiable against `base.css`;
+DESIGN.md is the source of intent behind them.
 
-- `docs/index.html` — shell: header (wordmark · date · theme toggle), one quiet editorial headline line, live-now line (conditional), the agenda, "Hva vi følger" disclosure, footer. `docs/rediger.html` — the follow-request page (see below); `docs/activity.html` — the ops/activity view.
-- `docs/css/` — `base.css` (calm tokens: near-black dark default `#0A0A0C`, warm-paper light `#F5F1E6` via prefers-color-scheme; amber `#FFB000` as the ONLY accent; a **monospace type stack** — `ui-monospace, "SF Mono", Menlo, …` — with tabular numerals; max-width 640px, fixed 120px time column), `layout.css` (single centered column, all breakpoints), `cards.css` (agenda rows, day groups)
-- `docs/js/` — the `Dashboard` class is split along its seams across a shared prototype (window-global, no build step): `dashboard.js` (~446 lines: lifecycle + hero + the day-grouped agenda), `live.js` (ESPN live polling, 60s), `detail.js` (expand/detail + AI-provenance modal), `followed.js` ("Hva vi følger" disclosure), `chrome.js` (clock/date/footer/usage/install-hint). `theme.js` is the shared 3-step theme toggle (system → dark → light) used on all pages; `shared-constants.js` holds shared utilities (time windows, escaping, name matching) that mirror the server helpers; `edit.js` drives `rediger.html`.
+- `docs/index.html` — shell: header (wordmark · date · theme toggle), one quiet editorial headline line, live-now line (conditional), the agenda, "Dette dekker vi" disclosure, footer. `docs/rediger.html` — the follow-request page (see below); `docs/activity.html` — the ops/activity view.
+- `docs/css/` — `base.css` (Apple-native tokens: true-black dark default `#000000` (cell `#1C1C1E`), grouped-light `#F2F2F7` (cell `#FFFFFF`) via prefers-color-scheme; amber `#FFB000` dark / `#9A6800` light as the ONLY accent; the **system font stack** — `-apple-system, BlinkMacSystemFont, "SF Pro Text", …` — with tabular numerals opted in where digits must align; max-width 640px, fixed 120px time column), `layout.css` (single centered column, all breakpoints), `cards.css` (agenda rows, day groups)
+- `docs/js/` — the `Dashboard` class is split along its seams across a shared prototype (window-global, no build step): `dashboard.js` (~456 lines: lifecycle + hero + the day-grouped agenda), `live.js` (ESPN live polling, 60s), `detail.js` (expand/detail + AI-provenance modal), `followed.js` ("Dette dekker vi" disclosure), `chrome.js` (clock/date/footer/usage/install-hint). `theme.js` is the shared 3-step theme toggle (system → dark → light) used on all pages; `shared-constants.js` holds shared utilities (time windows, escaping, name matching) that mirror the server helpers; `edit.js` drives `rediger.html`.
 - Each event row answers only: **when · what · where to watch**. Must-see (favorite / importance≥4 / Norwegian) gets a small accent dot — the gentlest possible emphasis, never a card. Channel shown quietly, with an honest faint "–" when unknown.
 - The editorial agent produces a single `headline` block shown as one quiet line under the date (a "nice extra"), nothing more. AI-research events carry a small ⓘ that opens a source modal on tap.
 
@@ -183,6 +195,7 @@ stay verifiable against `base.css`; DESIGN.md is the source of intent behind the
 `coverage-gaps.json`, `coverage-audit.json` (coverage-critic), `visual-qa-log.json` (visual-qa),
 `ui-fix-log.json` (ui-fix), `self-repair-log.json` (self-repair), `improve-log.json` (improve),
 `usage-state.json` + `usage-history.jsonl` + `usage-summary.json` (quota governor: snapshot, append-only history, digest),
+`build-alert.json` (build-events health signal, written every run with `ok: true/false` — WP-94's degrade-gracefully gate keeps the previous good `events.json` on a schema/contract break instead of publishing a bad one, and records the violation here for self-repair; clears automatically on the next clean build),
 `scout-log.json`, `calibration.json` + `calibration-ledger.jsonl`, `tv-listings.json`,
 `entities.json` (stable-id index of known athletes/teams/tournaments/leagues, published by `build-entities.js`; `build-events.js` uses it to stamp `entityId` onto matched events),
 `news.json` (lens-ready news pointers — `id`/`title`/`link`/`source`/`sport`/`entityIds`/`publishedAt`, NEVER article text — built from `rss-digest.json` × the entity index by `scripts/lib/news.js` and published by `build-events.js`; dedupe-on-link, cap ~100 items / 7 days, byte-idempotent; the client lens-filters on `entityIds`/`sport` per profile),
@@ -197,10 +210,11 @@ by default) or the agents' `git add` silently skips them.
 ### Companion docs & the iOS app
 
 - **`DESIGN.md`** — the **normative design contract** for every surface: tokens,
-  type, layout laws. The iOS app + widget follow the **Apple-native baseline**
-  (semantic system colours + Dynamic Type); web (`docs/`) keeps the **Tekst-TV**
-  identity until the rebrand (the deliberate exception). Agents that touch UI read it
-  first; it is verified value-for-value against the code and is *not* freely rewritten.
+  type, layout laws. **Every surface now follows the Apple-native baseline**
+  (semantic system colours + Dynamic Type) — the iOS app + widget and, since the
+  18.07 reskin, the web (`docs/`) too (the Tekst-TV exception is closed). Agents that
+  touch UI read it first; it is verified value-for-value against the code and is *not*
+  freely rewritten.
 - **`PLAN.md`** — the commercialization/execution backlog (phases, work packages,
   gates). Long-horizon planning lives here, not in this file; consult it for what's
   queued/in-flight and update the relevant WP status row when you complete one.
@@ -223,7 +237,7 @@ matrisen per flate). Les den relevante FØR du planlegger/bygger.
 - `npm run build` — fetch data + build events + calendar
 - `npm run build:events` / `npm run validate:data` / `npm run build:calendar`
 - `npm run fetch:results`
-- `npm test` — vitest, 36 focused files (~470 tests), a few seconds
+- `npm test` — vitest, 44 focused files (648 tests), a few seconds
 - `npm run screenshot` — Playwright dashboard screenshot (`node scripts/screenshot.js out.png --width=1280 --full-page`)
 
 ## Conventions
@@ -236,12 +250,12 @@ matrisen per flate). Les den relevante FØR du planlegger/bygger.
 
 ## Testing
 
-`tests/` — 36 files / ~470 tests, all fast and network-free:
-- Pipeline: `build-events`, `build-events-schema`, `events-schema`, `validate-events`, `build-ics`, `build-entities`, `build-manifest`, `detect-coverage-gaps`, `aggregate-calibration`, `integration-pipeline` (spawn scripts against temp `SPORTSYNC_DATA_DIR`/`SPORTSYNC_CONFIG_DIR`)
+`tests/` — 44 files / 648 tests, all fast and network-free:
+- Pipeline: `build-events`, `build-events-schema`, `build-events-degrade` (WP-94 degrade-gracefully gate), `events-schema`, `validate-events`, `build-ics`, `build-entities`, `build-manifest`, `news` (news.json pointer build), `detect-coverage-gaps`, `aggregate-calibration`, `integration-pipeline` (spawn scripts against temp `SPORTSYNC_DATA_DIR`/`SPORTSYNC_CONFIG_DIR`)
 - Fetchers: `fetch-results`, `fetch-results-golden` (byte-identical output freeze), `fetch-rss`, `fetch-standings`, `f1-fetcher`, `esports`, `golf`
-- Libs: `helpers`, `event-normalizer`, `response-validator`, `llm-client` (mocked fetch), `tvkampen-scraper`, `pgatour-scraper`, `norwegian-rights`, `usage`, `readme-status`, `merge-gate`, `apply-follow-request`
+- Libs: `helpers`, `event-normalizer`, `response-validator`, `llm-client` (mocked fetch), `tvkampen-scraper`, `pgatour-scraper`, `norwegian-rights`, `usage`, `usage-gate` (freshness-aware skip logic), `escalate-research` (scout/coverage-critic dispatch), `app-version` (iOS «har jeg siste?» half), `asc-api` (App Store Connect release-lane client), `readme-status`, `merge-gate`, `apply-follow-request`
 - Client: `dashboard-cards` — loaded via `tests/helpers/load-client.js` (vm sandbox, no jsdom); `feed-vectors` (golden personalisation vectors, see `tests/fixtures/feed-vectors/DIVERGENCES.md`)
-- Coherence: `agent-prompts` (prompt contracts match client renderers; scans every `scripts/agents/*.md` for skill references), `workflows` (YAML references existing files), `interests-schema`, `tracked-schema`, `hooks` (the safety hooks)
+- Coherence: `agent-prompts` (prompt contracts match client renderers; scans every `scripts/agents/*.md` for skill references), `workflows` (YAML references existing files), `interests-schema`, `tracked-schema`, `catalog-schema` (the AI-managed coverage compass), `design-tokens` (`design/tokens.json` locks shipped CSS/Swift reality), `ios-dynamic-type-gate` (HIG gate: no isolated `.system(size:)` in `ios/Sportivista/`), `hooks` (the safety hooks)
 
 Coherence tests are the v2 replacement for v1's feedback loops: if a prompt, workflow,
 or schema drifts from the code, CI fails.

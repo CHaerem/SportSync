@@ -103,10 +103,12 @@ ios/
 │   ├── DesignTokens.swift         shared baseline tokens: semantic system colours + amber + Dynamic Type font API (also used by widget + tests)
 │   ├── ThemeOverride.swift        manual system/dark/light override enum (pure)
 │   ├── Interaction.swift          shared ≥44pt tap-target helpers
+│   ├── LaunchTrace.swift          DEBUG-only launch-phase timing — the «Henter data …» cold-start measuring stick (no-op in Release)
 │   ├── Models/                    Codable models mirroring the data contract
 │   ├── Sync/                      manifest-diff sync + cache + background refresh
 │   ├── Feed/                      FeedCompiler + agenda formatting + lens renderer
 │   ├── Agenda/                    the day-grouped agenda UI + detail sheets
+│   ├── News/                      the Nyheter board: client lens + pure four-section builder + off-main model + thin view
 │   ├── Widget/                    the widget's pure timeline logic
 │   ├── Notifications/             local push reminders for must-watch events
 │   ├── Assistant/                 on-device (Foundation Models) assistant
@@ -300,6 +302,45 @@ assistant's result (a diff or an answer) presents as a native `.sheet`
 header glyphs (`P100`, the ticking clock, `»_`, the theme glyph) were removed; theme
 now lives in Deg. Screenshots: `docs/wp-83/*.png`.
 
+## News
+
+`Sportivista/News/` is the **Nyheter board** — the other half of the root segmented
+control («Uka | Nyheter», WP-104/106). It is ENDELIG: exactly four sections, no
+unread counters, no engagement mechanics (spec § Nyheter-v0, DESIGN § Nyheter).
+
+- `NewsBoard.swift` — the **pure builder**. A function of plain cached values (news,
+  featured, results, events, entities, profile, spoiler shield, now) with no I/O and
+  no clock read, so the whole board is unit-testable directly (`NewsBoardTests` /
+  `NewsLensTests`) and the view is a thin renderer over it. Four sections: **I DIN
+  VERDEN I DAG** (the editorial headline from `featured.json`, one line), **NYTT**
+  (lens-matched `news.json` pointers, newest first, capped 20), **RESULTAT** (followed
+  teams' recent football results, each stamped whether the spoiler shield must mask
+  its score), **FREMOVER** (followed events beyond the 7-day near horizon —
+  forvarsler; capped 8, via `FeedCompiler.isEventInWindow`, never a manual `time >= x`
+  filter so multi-day events survive).
+- `NewsLens.swift` — the **client-side lens** (the two-layer architecture: the server
+  publishes catalog-wide, the profile is on-device). A pointer shows when it is ABOUT
+  something followed, decided two ways: an `entityIds` ∩ followed-entities hit, or a
+  followed WHOLE-sport rule (a `sport`/`category`-type entity). It reuses the profile's
+  own rule semantics + `SportVocabulary` (the same keyword→sport / category→sports maps
+  the assistant grounds against) — it invents no new fuzzy matching. Athlete/team/
+  tournament rules stay entity-scoped (following Hovland admits golf headlines that
+  name Hovland, not every golf headline). `matchesEvent` applies the same lens to a
+  full `Event` for FREMOVER, mirroring `AgendaViewModel.ruleMatches`.
+- `NewsModel.swift` — the **living, ContentView-owned model** (WP-107). It survives
+  root-segment switches, so a switch back to Nyheter renders the last board instantly
+  (never a blank/hitch), and the heavy build (five cache reads + decodes + `EntityIndex`
+  build + `NewsBoard.build`) runs OFF the main actor — the same coalescing shape as
+  `AgendaViewModel` (one compute at a time, "siste vinner"), guarded by the shared
+  `MainThreadGuard`, and only when the board is actually stale (a profile change or a
+  completed sync — a plain tab switch is a no-op). This removed the "merkbar lag hver
+  gang man bytter til Nyheter" the owner saw on build 6.
+- `NewsView.swift` — the **thin renderer** over `news.board`: an `.insetGrouped` `List`
+  with a «Det du følger ›» link to WP-105's `FollowedListView`, a provenance ⓘ on the
+  brief, NYTT rows that tap OUT to the source (`Link`, never inlining article text —
+  DSM art. 15), and the spoiler-shielded RESULTAT reveal. No spinner ever (DESIGN
+  § Bevegelse); amber is the one accent.
+
 ## Widget
 
 `Sportivista/Widget/WidgetTimelineBuilder.swift` is a **pure function** (no
@@ -391,7 +432,9 @@ file in Application Support, **no network code**, surfaced as a discreet "DET JE
 IKKE FORSTO (N)" disclosure with a "Del rapport" `ShareLink` over an **anonymised**
 export. **Context actions** (`EventDetailSheet`): "Følg <entitet>" (a pre-filled
 add through the same grounded flow) and "Hvorfor vises denne?"
-(`FeedCompiler.whyShown`).
+(`FeedCompiler.whyShown` — its XCUITest `testEventDetailWhyShown` was fixed in
+PR #292, a **test-only** fix: the `EffectiveInterests.merge → FeedCompiler.whyShown`
+data flow was verified correct, so no app code changed).
 
 Screenshots: `docs/design-v2/assistant-{idle,thinking,diff,answer}-{dark,light}.png`,
 driven by a DEBUG-only `SPORTIVISTA_DEMO=…` launch harness (never compiled into release).
@@ -488,11 +531,13 @@ request, the Foundation Models tests drive `MockInterestAssistant`/`MockAnswerer
 only, and they reuse the frozen `SportivistaTests/Fixtures/*` snapshots as decode input
 and mock-server responses.
 
-There are **55 `*Tests.swift` files (~512 tests)**, at least one per subsystem —
-e.g. `SyncClientTests` (304 / changed-manifest / offline / corrupt-download),
-`CacheStoreTests` (App Group fallback), the `FeedCompilerUnit`/`FeedVector` pair,
-`AgendaViewModelTests`, `NotificationPlannerTests`, and the Assistant / Profile /
-Memory / Onboarding suites (see the `SportivistaTests/` listing for all). Run them with:
+There are **61 `*Tests.swift` files** (plus 8 shared doubles/fixtures — 69 `.swift`
+in all) and **573 tests**, at least one per subsystem — e.g. `SyncClientTests` (304 /
+changed-manifest / offline / corrupt-download), `CacheStoreTests` (App Group fallback),
+the `FeedCompilerUnit`/`FeedVector` pair, `AgendaViewModelTests`,
+`NotificationPlannerTests`, the `NewsBoard`/`NewsLens`/`NewsModel` trio (WP-106/107),
+and the Assistant / Profile / Memory / Onboarding suites (see the `SportivistaTests/`
+listing for all). Run them with:
 
 ```sh
 cd ios && xcodegen generate

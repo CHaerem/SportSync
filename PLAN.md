@@ -1,4 +1,4 @@
-# Zenji (tidl. SportSync) → personlig sportsfeed: implementeringsplan
+# Sportivista → personlig sportsfeed: implementeringsplan
 
 Arbeidsdokument for å delegere arbeid til agenter. Strategien («hvorfor») ligger i
 [kommersialiserings-dossieret](https://claude.ai/code/artifact/21c2971d-238a-48fe-b870-1c57218bd661)
@@ -55,7 +55,7 @@ mennesket, aldri av en agent.
 | WEB-1 | Web etter DESIGN.md (flatt radspråk) | 0B | WP-14.1 | ✅ merget (#256) |
 | WP-16 | FM-lekegrind (samtale→profil) | 0B | WP-10 | ✅ merget (#246, +16.1 #247 linse/ærlighet, +16.2 #248 fuzzy-resolver) — 152/152 iOS-tester (mot mock; FM kjøres ikke i CI) + DeviceDev bygget/signert/installert på fysisk iPhone (launch krever engangs manuell utvikler-trust på enheten) |
 | WP-16.4 | Sømløs assistent | 0B | WP-16,WP-14 | ✅ merget (#257) |
-| WP-17 | 💰 TestFlight-oppsett | 0B | WP-14 | 🔬 pågår 18.07 — Apple Developer-enrollment GODKJENT: gratis-teamet ble konvertert in place (samme team-ID 9LVCB72DT8); `app.sportivista.ios` + widget-id + App Group + iCloud-container registrert via provisjoneringsbygg; device-bygget signerer nå fulle entitlements, embedder widgeten og kompilerer med `-D SPORTIVISTA_CLOUDKIT` (CloudKitProfileSync aktiv) — installert på eierens iPhone. ✅ FULLFØRT 18.07 kveld: app-record (eier, app-id 6792373768), ASC API-nøkkel NHMW747CLA (App Manager — NB: mangler cloud-signing, distribusjonssignering går via Xcode-kontosesjonen), bygg 0.1.0 (1) arkivert + lastet opp (to valideringsfunn fikset: ITSAppUsesNonExemptEncryption, TARGETED_DEVICE_FAMILY=1 per target — #313), prosessert VALID, intern gruppe «Intern» (auto-alle-bygg) opprettet via API med eieren som tester. Eier: installer TestFlight-appen og aksepter invitasjonen. Eksterne testere: FORTSATT gatet bak grønn portmåling (WP-96-gate åpnet, portene måles). OPPFØLGER 19.07 — full CI/CD: universell web-testgate (ci.yml, npm-suiten gatet før INGEN PR-er utenom loopene), alltid-rapporterende iOS-gate (ios-tests.yml, macos-26 gratis på offentlig repo, skippes selv når ios/ er urørt), TestFlight-release-lane (ios-release.yml: ASC-styrt byggnummer, cloud-signering med Admin-nøkkel, auto-record av opplastingen), merge-gate venter på PR-sjekker, static-pipeline fetch-depth 0 (ærlig iosCommit). Håndhevings-lærdom 19.07: required checks på plattformnivå blokkerer også github-actions-botens DIREKTEPUSH (brakk release-lanens registrerings-commit; ville brukket pipelinens datacommits), og GitHub tillater ikke Actions-appen som bypass-aktør i rulesets på personlige repoer — så sjekk-håndhevingen bor i merge-gate (`gh pr checks --watch --fail-fast` før merge), som uansett er punktet alle automatiske merges går gjennom. Første lane-release (bygg 5) beviste arkiv+cloud-signering+opplasting E2E; kun registrerings-pushen røk (protection, nå fjernet — registrert manuelt). Versjonslærdommer: TestFlight viser aldri lavere versjonsstreng (1.0.x-linjen er låst inne av bygg 1–2); XcodeGen baker literal-versjoner uten $()-referanser |
+| WP-17 | 💰 TestFlight-oppsett | 0B | WP-14 | ✅ 18.07 — Apple Developer-enrollment GODKJENT: gratis-teamet ble konvertert in place (samme team-ID 9LVCB72DT8); `app.sportivista.ios` + widget-id + App Group + iCloud-container registrert via provisjoneringsbygg; device-bygget signerer nå fulle entitlements, embedder widgeten og kompilerer med `-D SPORTIVISTA_CLOUDKIT` (CloudKitProfileSync aktiv) — installert på eierens iPhone. ✅ FULLFØRT 18.07 kveld: app-record (eier, app-id 6792373768), ASC API-nøkkel NHMW747CLA (App Manager — NB: mangler cloud-signing, distribusjonssignering går via Xcode-kontosesjonen), bygg 0.1.0 (1) arkivert + lastet opp (to valideringsfunn fikset: ITSAppUsesNonExemptEncryption, TARGETED_DEVICE_FAMILY=1 per target — #313), prosessert VALID, intern gruppe «Intern» (auto-alle-bygg) opprettet via API med eieren som tester. Eier: installer TestFlight-appen og aksepter invitasjonen. Eksterne testere: FORTSATT gatet bak grønn portmåling (WP-96-gate åpnet, portene måles). OPPFØLGER 19.07 — full CI/CD: universell web-testgate (ci.yml, npm-suiten gatet før INGEN PR-er utenom loopene), alltid-rapporterende iOS-gate (ios-tests.yml, macos-26 gratis på offentlig repo, skippes selv når ios/ er urørt), TestFlight-release-lane (ios-release.yml: ASC-styrt byggnummer, cloud-signering med Admin-nøkkel, auto-record av opplastingen), merge-gate venter på PR-sjekker, static-pipeline fetch-depth 0 (ærlig iosCommit). Håndhevings-lærdom 19.07: required checks på plattformnivå blokkerer også github-actions-botens DIREKTEPUSH (brakk release-lanens registrerings-commit; ville brukket pipelinens datacommits), og GitHub tillater ikke Actions-appen som bypass-aktør i rulesets på personlige repoer — så sjekk-håndhevingen bor i merge-gate (`gh pr checks --watch --fail-fast` før merge), som uansett er punktet alle automatiske merges går gjennom. Første lane-release (bygg 5) beviste arkiv+cloud-signering+opplasting E2E; kun registrerings-pushen røk (protection, nå fjernet — registrert manuelt). Versjonslærdommer: TestFlight viser aldri lavere versjonsstreng (1.0.x-linjen er låst inne av bygg 1–2); XcodeGen baker literal-versjoner uten $()-referanser |
 | WP-18 | Linse-rendering (P320: event × deltakelse × linse) | 0B | WP-13,WP-16.1 | ✅ merget (#259, 14.07) — `LensRenderer` (Feed/, widget-trygg) + Agenda-integrasjon: golf rendres gjennom de norske du følger (tee time overstyrer tid/dag/sortering, status verbatim i meta, grasiøs degradering); de 5 predikatene urørt (13/13 gylne vektorer bit-like); 273/273 iOS-tester (+16), 373/373 JS urørt, begge schemes bygger, ZenjiDeviceDev installert; skjermbilder `ios/docs/design-v2/lens-{dark,light}.png` |
 | WP-19 | Profil-sync (P360: iCloud + QR-bro) | 0B | WP-16 | ✅ merget (#260) — 317/317 |
 | WP-30 | Personlig minne (P350) | 0B | WP-16.4,WP-19 | ✅ merget (#261) — 356/356 |
@@ -118,7 +118,7 @@ mennesket, aldri av en agent.
 | WP-111 | Web: deltaker-visning + ferskhetsvakt + «Om»-lesbarhet + Zenji-headere | 0I | — | 🔬 |
 | WP-112 | iOS: perf-port-robusthet + deltaker-visning i agendaraden | 0I | — | ⬜ |
 | WP-113 | Sikkerhet: preview-deploy-injeksjon + CI-skrivevakt (BESKYTTEDE STIER — eier merger) | 0I | — | ⬜ |
-| WP-114 | Dok-resynk etter 19.07-gjennomgangen | 0I | — | ⬜ |
+| WP-114 | Dok-resynk etter 19.07-gjennomgangen | 0I | — | 🔬 |
 | WP-115 | iOS: in-app nyhetsbrowser (SFSafariViewController) | 0I | WP-106 | ⬜ bølge 2 |
 | WP-116 | Dekningsbredde: katalog-utvidelse + deltaker-/«Om»-kontrakter i research/verify | 0I | WP-110 | ⬜ bølge 2 |
 | WP-117 | Design-review av alle flater (read-only rapport) | 0I | — | ⬜ |
@@ -337,7 +337,7 @@ DegView-raden omdøpt «Det du følger» (id `deg.follows` uendret). Event-detal
 følg assistent-fri. Tester: `SportivistaTests/FollowActionTests.swift` +
 UI-røyk `SportivistaUITests/FollowedListUITests.swift`.
 
-### WP-106 · Nyheter-v0-klienten — ⬜ (bølge 2)
+### WP-106 · Nyheter-v0-klienten — ✅
 Fyller `News/` med fire-seksjons-tavla per spec: brief (featured.json),
 NYTT (news.json linse-matchet på entityIds/sport), RESULTAT (recent-results
 bak spoiler-skjoldet), FREMOVER (events utover horisonten). Sync: news.json +
@@ -553,9 +553,9 @@ lock-in isolert til ett lag).
 
 ## FASE 0C · Flyttedagen: rebrand + repo-splitt (besluttet 13.07.2026)
 
-**Statusnote 13.07.2026:** Navnet er Zenji; eier kjøpte sportivista.com (tidl. zenji.app) og valgte å
+**Statusnote 13.07.2026:** Navnet er Zenji; eier kjøpte zenji.app og valgte å
 rename repoet umiddelbart (billigste tidspunkt — null brukere å brekke). Gjort:
-repo → `CHaerem/sportivista.com (tidl. zenji.app)`, alle serverte stier/brand-strenger oppdatert
+repo → `CHaerem/zenji.app`, alle serverte stier/brand-strenger oppdatert
 (manifest, sw.js, HTML, README, package.json). Konsekvens: **navnet er nå
 offentlig** → zenji.no/.tv bør kjøpes STRAKS; formell varemerkesjekk står
 fortsatt åpen; gamle PWA-installasjoner/ICS-abonnement på /SportSync/-URL-en er
@@ -600,7 +600,7 @@ er en ressurs i denne fasen.
 **Triggere (én holder):** (1) kommersiell lansering nærmer seg og prompts/skills
 utgjør reell konkurransefordel, (2) inntekt skaper kopist-insentiv, (3) B2B-/
 partnersamtaler krever IP-hygiene.
-**Design når den utføres (invertert etter renamen):** `sportivista.com (tidl. zenji.app)` BEHOLDES
+**Design når den utføres (invertert etter renamen):** `CHaerem/sportivista` BEHOLDES
 offentlig og strippes til kun site-innhold (`docs/`) — Pages/URL uavbrutt; nytt
 PRIVAT `zenji-engine` får motoren (agenter, prompts, quirks, fetchere, tester,
 workflows + secrets); deploy key scopet til site-repoet gir cross-repo-push av
@@ -1439,10 +1439,10 @@ Eierbeslutning (varemerke-søk utsatt, risiko akseptert av eier): repo omdøpt t
 merget til main, Pages-domene → `sportivista.com` (GoDaddy-DNS A/AAAA/CNAME via API),
 `zenji.app` kuttet som domene (auto-fornyelse skrus av — dør ved utløp 2027-07-13).
 iOS: `app.sportivista.ios`-id-er, `group.app.sportivista`, `sportivista://`, baseURL →
-`sportivista.com/data/`. Web: navnebyttet; Tekst-TV-utseendet består til egen web-reskin.
-Gjenstår: formelt varemerke-søk+registrering (eier), `sportivista.no`-forwarding (manuell,
-GoDaddy-UI), zenji.app renewAuto-toggle (manuell — API-PATCH bet ikke), web-reskin til
-baseline, mekanisk target-rename (Zenji.xcodeproj → Sportivista), TestFlight (WP-17).
+`sportivista.com/data/`. Web: navnebyttet; Tekst-TV-utseendet reskinnet til Apple-native baseline 18.07 (commit `1a5e89d31`).
+Utført siden: mekanisk target-rename (`Zenji.xcodeproj` → `Sportivista.xcodeproj`), web-reskin
+til baseline (18.07), TestFlight-lanen (WP-17). Gjenstår: formelt varemerke-søk+registrering (eier),
+`sportivista.no`-forwarding (manuell, GoDaddy-UI), zenji.app renewAuto-toggle (manuell — API-PATCH bet ikke).
 
 ## FASE 0F · iOS-UX: Apple-native baseline (audit 17.07.2026) — ✅ KOMPLETT 17.07.2026 (#289–#295)
 
