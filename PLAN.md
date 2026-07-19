@@ -109,7 +109,7 @@ mennesket, aldri av en agent.
 
 | WP-103 | Nyhets-server: `news.json` (entity-stampede pekere fra rss-digest) | 0H | — | 🔬 |
 | WP-104 | Assistent-inngang: segmented rot «Uka | Nyheter» + kapsel-knapp + samtaleark | 0H | WP-99 | ⬜ |
-| WP-105 | «Det du følger» + Legg til-søk (interesser uten assistent, 3b) | 0H | — | ⬜ |
+| WP-105 | «Det du følger» + Legg til-søk (interesser uten assistent, 3b) | 0H | — | 🔬 |
 | WP-106 | Nyheter-v0-klienten (fire-seksjons-tavla) | 0H | WP-103, WP-104, WP-105 | ⬜ |
 
 ---
@@ -152,13 +152,26 @@ grønn (eksisterende tastatur-tester omskrives mot arket), 4 schemes bygger,
 vektorer bit-like, mock-tester for eksempelradene + eval-corpus-cases for de
 to kjørbare eksemplene (0E-regelen).
 
-### WP-105 · Det du følger + Legg til (3b) — ⬜
+### WP-105 · Det du følger + Legg til (3b) — 🔬
 Eier `ios/Sportivista/Profile/` + event-detaljfila. «Det du følger» som vanlig
 liste (fra Deg, rad → detalj, Slutt å følge), «Legg til»-søk mot entities.json
 med Følg-knapper, Følg-knapp i event-detaljen. RØRER IKKE ContentView.swift
 (WP-104 eier den — navigasjon nås fra DegView). **Aksept:** unit-suite +
 mock-tester; profil-endringer går gjennom samme ProfileStore-vei som
 assistenten (én kilde til sannhet).
+🔬 **Implementert (branch wp-105-det-du-folger):** ny delt apply-vei
+`Profile/AssistantViewModel+Follow.swift` (`follow(_:)`/`isFollowing(_:)` — trakter
+inn i samme `InterestProfile.applying` + `ProfileStore.save` + `onProfileChanged`
+som `confirm`/`toggleStarterPack`; ingen ny skrivevei). Nye
+`Profile/FollowedListView.swift` (Det du følger + rad→detalj + Slutt-å-følge via
+`removeRule` bak rolig `confirmationDialog`) og `Profile/AddFollowSearchView.swift`
+(søk mot `EntityIndex(DataStore().loadEntities())`, Følg-knapp per rad → `follow`).
+DegView-raden omdøpt «Det du følger» (id `deg.follows` uendret). Event-detaljens
+«Følg»-knapp beholder `onFollow`-sømmen, nå dokumentert mot den direkte apply-veien.
+**Integrasjons-handoff til WP-104 (én linje i ContentView.follow):**
+`assistant.proposeFollow(entity)` → `assistant.follow(entity)` gjør detalj-/swipe-
+følg assistent-fri. Tester: `SportivistaTests/FollowActionTests.swift` +
+UI-røyk `SportivistaUITests/FollowedListUITests.swift`.
 
 ### WP-106 · Nyheter-v0-klienten — ⬜ (bølge 2)
 Fyller `News/` med fire-seksjons-tavla per spec: brief (featured.json),
