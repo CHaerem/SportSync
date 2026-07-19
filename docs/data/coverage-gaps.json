@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-19T17:56:50.527Z",
-  "gapCount": 2,
+  "generatedAt": "2026-07-19T19:05:54.959Z",
+  "gapCount": 3,
   "anomalyCount": 1,
   "gaps": [
     {
@@ -12,7 +12,18 @@
       "link": "https://www.nrk.no/sport/derfor-uteble-fifa-presidenten-fra-bronsekampen-i-vm-1.17962651",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-19T17:56:50.140Z"
+      "detectedAt": "2026-07-19T19:05:54.431Z"
+    },
+    {
+      "kind": "entity",
+      "entity": "British Open",
+      "type": "missing",
+      "imminent": false,
+      "headline": "Reitan med god sisterunde i British Open – ble nummer 18",
+      "link": "https://www.nrk.no/sport/reitan-med-god-sisterunde-i-british-open-_-ble-nummer-18-1.17963060",
+      "feed": "nrk-sport",
+      "matchCount": 1,
+      "detectedAt": "2026-07-19T19:05:54.431Z"
     },
     {
       "kind": "entity",
@@ -23,16 +34,16 @@
       "link": "https://www.nrk.no/sport/seiersfesten-fortsatte-for-antonelli-_-hamilton-kjorte-pa-mekaniker-1.17962899",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-19T17:56:50.140Z"
+      "detectedAt": "2026-07-19T19:05:54.431Z"
     }
   ],
   "anomalies": [
     {
       "sport": "chess",
-      "issue": "file-empty",
-      "detail": "docs/data/chess.json has no events and none on the board — source may be down or changed",
-      "severity": "low",
-      "detectedAt": "2026-07-19T17:56:50.527Z"
+      "issue": "dropped-in-build",
+      "detail": "1 upcoming chess event(s) in the source file but 0 on the board — build/normalisation may be dropping them",
+      "severity": "high",
+      "detectedAt": "2026-07-19T19:05:54.959Z"
     }
   ],
   "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board (kind entity/sport), or a tracked.json reason that claims an upcoming event the board lacks (kind tracked-claim, RSS-independent). anomalies: a fetcher's own data looks unreliable."
