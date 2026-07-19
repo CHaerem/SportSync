@@ -2,7 +2,7 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
-import { readJsonIfExists, rootDataPath, MS_PER_DAY, matchInterest, mustWatchEntity, normalizeParticipants, normalizeNorwegianPlayers, normalizeText, containsName, entityTerms } from "./lib/helpers.js";
+import { readJsonIfExists, rootDataPath, MS_PER_DAY, makeCoverageGate, mustWatchEntity, normalizeParticipants, normalizeNorwegianPlayers, normalizeText, containsName, entityTerms } from "./lib/helpers.js";
 import { resolveStreaming } from "./lib/norwegian-rights.js";
 import { writeManifest } from "./build-manifest.js";
 import { readIosCommit, buildAppVersion, readTestflight } from "./lib/app-version.js";
@@ -546,68 +546,16 @@ if (keptConfirmed > 0) {
 // calendar bell (see mustWatchEntity), which stays an owner artifact.
 const catalog = readJsonIfExists(path.join(configDir, "catalog.json")) || {};
 const interests = readJsonIfExists(path.join(configDir, "interests.json")) || {};
-// Sports covered WHOLESALE (every in-sport event stays) — catalog tier1. NB:
-// chess and esports are deliberately NOT here — Sportivista covers them through a
-// named-entity catalog (elite tournaments + top players / tier-1 teams), not
-// wholesale, so they are entity-gated below. Default mirrors the pre-WP-96
-// followBroadly set for a catalog-less run (tests, first build).
-const coveredBroadly = new Set(
-	(catalog.tier1 || ["football", "golf", "f1", "cycling", "biathlon", "cross-country", "alpine", "nordic", "ski jumping"]).map((s) => s.toLowerCase())
-);
-// Entity-gated sports (WP-92 gate, now catalog-keyed): sports we cover ONLY
-// through the named catalog long-tail, never wholesale. For these a sport-scoped
-// catalog-entity match is REQUIRED — the norwegian / favorite / importance /
-// ai-research shortcuts do NOT apply. Without this a minor open with a lone
-// Norwegian club player (the live "XXVI Obert Internacional Sant Martí" case) or
-// a CS2 match between two uncovered teams slips onto the board, because such
-// events are often flagged norwegian:true or arrive as source:"ai-research".
-// tier1 still wins (checked first). The entity NAMES live in catalog.json.
-const ENTITY_GATED_SPORTS = new Set(["chess", "esports"]);
-const catalogEntities = [
-	...(catalog.tier2?.teams || []),
-	...(catalog.tier2?.athletes || []),
-	...(catalog.tier2?.tournaments || []),
-];
-
-// The haystack the coverage matcher scans (mirrors helpers.js mustWatchEntity):
-// title + tournament + home/away + Norwegian players + participants.
-// Deliberately excludes venue.
-function relevanceHaystack(e) {
-	return [e.title, e.tournament, e.homeTeam, e.awayTeam,
-		...(e.norwegianPlayers || []).map((p) => p?.name || p),
-		...(e.participants || []).map((p) => p?.name || p)].join(" ");
-}
-
-// isCovered — "does Sportivista cover this event?" (server scope). Structurally
-// identical to the pre-WP-96 isRelevant, but keyed off catalog.json instead of
-// interests.json. The per-user "is this relevant to ME?" decision is NOT made
-// here any more — it is the client lens's job (FeedCompiler.isRelevant), which
-// still reads a personal profile. The golden feed-vectors' `relevant` set pins
-// that (unchanged) client lens; this server filter is a superset upstream of it
-// (see tests/fixtures/feed-vectors/DIVERGENCES.md §6 + the isCovered tests in
-// tests/build-events.test.js).
-function isCovered(e) {
-	const sport = (e.sport || "").toLowerCase();
-	// (1) Wholesale-covered sport → in. Checked first so it wins over the gate.
-	if (coveredBroadly.has(sport)) return true;
-	const hay = relevanceHaystack(e);
-	// (2) Entity-gated sport (chess/esports): a SPORT-SCOPED catalog-entity match
-	// is the only way in — no norwegian/favorite/importance/ai-research blanket.
-	// Sport-scoping stops a cross-sport entity from admitting it (e.g. a chess
-	// event held in the city of Barcelona must not match the football club
-	// "Barcelona").
-	if (ENTITY_GATED_SPORTS.has(sport)) {
-		return matchInterest(hay, catalogEntities, { sport: e.sport }) != null;
-	}
-	// (3) Any other non-broad sport (e.g. tennis): a Norwegian / favorite /
-	// high-importance event stays. ai-research is NOT a blanket pass on its own —
-	// an AI-found event must ALSO be a tier1 sport (at (1)) or match a catalog
-	// entity (at (4)).
-	if (e.norwegian || e.isFavorite || (e.importance || 0) >= 4) return true;
-	// (4) Catalog-entity match, UNSCOPED (a deliberate divergence from the bell —
-	// see tests/fixtures/feed-vectors/DIVERGENCES.md §1).
-	return matchInterest(hay, catalogEntities) != null;
-}
+// isCovered — "does Sportivista cover this event?" (server scope), keyed off
+// catalog.json (WP-96). The logic (tier1 wholesale; chess/esports entity-gated via a
+// SPORT-SCOPED catalog-entity match; other non-broad sports kept only by
+// norwegian/favorite/importance≥4 or an unscoped catalog-entity match — the Sant
+// Martí class is dropped, ai-research is no blanket pass) now lives in
+// helpers.makeCoverageGate. It was extracted (WP-110) so THIS board filter and
+// detect-coverage-gaps.js's dropped-in-build anomaly share ONE gate and can't drift:
+// an event the catalog never covers is a legitimate build drop, not a source
+// anomaly. See tests/build-events.test.js + tests/fixtures/feed-vectors/DIVERGENCES.md §6.
+const isCovered = makeCoverageGate(catalog);
 
 // Keep events from the last 14 days + upcoming, and only those the catalog covers
 const cutoff = Date.now() - 14 * MS_PER_DAY;

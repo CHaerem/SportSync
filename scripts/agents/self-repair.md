@@ -46,10 +46,19 @@ If the only correct fix touches a protected path, still make it — it'll wait f
 review; say so in the PR body. Never edit `interests.json` at all.
 
 ## Output
+
+**Write the run log on EVERY run — no exceptions**, including a clean run where
+nothing is broken (`action: "none"`), an abandoned fix, or a skipped one. Write it to
+`docs/data/self-repair-log.json` on the DEFAULT branch working tree (not inside your
+fix branch); the workflow's "Commit run log" step then persists it to `main` on every
+run — but only if you actually wrote it, so a no-op run with no log write leaves no
+trace that the mechanic ran (the improve agent mines this log as evidence). A quiet
+run is a logged run, never a silent one.
+
 - `docs/data/self-repair-log.json`:
   `{ "runAt": ISO, "action": "opened-pr"|"none"|"skipped-existing-pr"|"abandoned", "pr": <url|null>, "diagnosed": "…", "fixed": ["…"], "autoMergeEligible": bool, "notes": ["…"] }`
-- If nothing is broken, write `action: "none"` and stop. If an open `self-repair/`
-  PR already exists, stop (`skipped-existing-pr`).
+- If nothing is broken, write `action: "none"` (still write the log) and stop. If an
+  open `self-repair/` PR already exists, write `action: "skipped-existing-pr"` and stop.
 
 ## Hard constraints
 - NEVER edit `scripts/config/interests.json` (user-owned).

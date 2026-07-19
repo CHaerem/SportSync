@@ -12,6 +12,7 @@ import {
 	entryClaimTerms,
 	parseNorwegianDates,
 } from "../scripts/detect-coverage-gaps.js";
+import { makeCoverageGate } from "../scripts/lib/helpers.js";
 
 const NOW = Date.parse("2026-07-03T12:00:00Z");
 const interests = { alwaysTrack: { athletes: ["Viktor Hovland"], teams: ["Lyn"], tournaments: [] } };
@@ -229,6 +230,55 @@ describe("detectSourceAnomalies", () => {
 		const f1 = a.find((x) => x.sport === "f1");
 		expect(f1?.issue).toBe("dropped-in-build");
 		expect(f1?.severity).toBe("high");
+	});
+
+	// WP-110 · the catalog gate. chess/esports are entity-gated: an event the
+	// catalog never covers (a minor open with a lone club player — the "Sant Martí"
+	// class) is a LEGITIMATE build drop, so it must NOT surface as dropped-in-build.
+	// This was a chronic HIGH false positive firing every pipeline cycle.
+	describe("dropped-in-build is catalog-gated (Sant Martí false positive)", () => {
+		const catalog = {
+			tier1: ["football", "golf", "f1", "cycling"],
+			tier2: { athletes: [{ name: "Magnus Carlsen", aliases: ["Carlsen"], sport: "chess" }] },
+		};
+		const isCovered = makeCoverageGate(catalog);
+
+		it("does NOT flag an uncovered entity-gated chess event the build correctly drops", () => {
+			const s = healthy();
+			// A minor Norwegian chess open, one club player, no catalog entity — the
+			// build's isCovered drops it, so it is not a source anomaly. (Source-file
+			// events carry no `sport` field; the gate forces it from the file key.)
+			s.chess = { tournaments: [{ events: [{
+				title: "Round 6 – XXVI Obert Internacional Sant Martí 2026",
+				time: "2026-07-05T10:00:00Z",
+				norwegian: true,
+				participants: [{ name: "Johan-Sebastian Christiansen" }],
+			}] }] };
+			const board = boardWithAll().filter((e) => e.sport !== "chess");
+			const a = detectSourceAnomalies({ sources: s, events: board, isCovered, now: NOW });
+			expect(a.find((x) => x.sport === "chess")).toBeUndefined();
+		});
+
+		it("STILL flags a catalog-covered entity-gated event dropped from the board", () => {
+			const s = healthy();
+			// Names a tracked catalog athlete → the build should keep it, so its
+			// absence from the board is a real drop worth flagging.
+			s.chess = { tournaments: [{ events: [{
+				title: "Norway Chess 2026 – Carlsen vs Nakamura",
+				time: "2026-07-05T10:00:00Z",
+				participants: [{ name: "Magnus Carlsen" }, { name: "Hikaru Nakamura" }],
+			}] }] };
+			const board = boardWithAll().filter((e) => e.sport !== "chess");
+			const a = detectSourceAnomalies({ sources: s, events: board, isCovered, now: NOW });
+			expect(a.find((x) => x.sport === "chess")?.issue).toBe("dropped-in-build");
+		});
+
+		it("still flags a tier1 sport dropped from the board (gate is a no-op for wholesale sports)", () => {
+			const s = healthy();
+			const board = boardWithAll().filter((e) => e.sport !== "f1");
+			const a = detectSourceAnomalies({ sources: s, events: board, isCovered, now: NOW });
+			expect(a.find((x) => x.sport === "f1")?.issue).toBe("dropped-in-build");
+		});
 	});
 });
 

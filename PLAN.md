@@ -114,7 +114,7 @@ mennesket, aldri av en agent.
 | WP-107 | Ytelse: Nyheter-bytte-jank + oppstarts-«Henter data» (eier-dogfooding bygg 6) | 0H+ | WP-106 | ✅ #323 merget 19.07 |
 | WP-108 | Visuell affordanse: kapsel-anker + ekte Capsule + sport-symbol per rad (eier-dogfooding bygg 6) | 0H+ | WP-106 | ✅ #324 merget 19.07 |
 
-| WP-110 | Pipeline-vakter: sjakk-falsk-positiv + kontrakter | 0I | — | ⬜ |
+| WP-110 | Pipeline-vakter: sjakk-falsk-positiv + kontrakter | 0I | — | 🔬 PR åpnet 20.07 — dropped-in-build katalog-gatet (delt `makeCoverageGate` i helpers, build-events + gap-detektor deler én gate; Sant Martí-anomali borte, øvrige gaps uendret); usage-gate-kommentar oppdatert (token wiret); cyclingstage-tidssemantikk-quirk lagt til; scout/self-repair logg-kontrakt strammet (logg+commit på HVER kjøring) |
 | WP-111 | Web: deltaker-visning + ferskhetsvakt + «Om»-lesbarhet + Zenji-headere | 0I | — | 🔬 |
 | WP-112 | iOS: perf-port-robusthet + deltaker-visning i agendaraden | 0I | — | ⬜ |
 | WP-113 | Sikkerhet: preview-deploy-injeksjon + CI-skrivevakt (BESKYTTEDE STIER — eier merger) | 0I | — | ⬜ |

@@ -24,8 +24,17 @@ Noise (never escalate): match results, transfer gossip, injuries without
 schedule impact, opinion pieces, anything already reflected in events.json.
 
 ## Act
+
+**Every run leaves a record — no exceptions.** You MUST append a log entry AND
+commit + push `docs/data/scout-log.json` on EVERY run, including a quiet one where
+you escalate nothing. The committed log is the proof the watchtower ran; a run that
+ends without a new committed entry is indistinguishable from the scout being asleep.
+(On 18–19 Jul ~half the hourly runs left no log — that must not recur.) "Quiet" is a
+verdict you record and commit, never a reason to skip the write.
+
 1. Read the inputs. Think briefly.
-2. Append your verdict to `docs/data/scout-log.json` (keep last 100 entries):
+2. Append your verdict to `docs/data/scout-log.json` (keep last 100 entries) — do
+   this on every run, quiet or escalate:
    `{ "runAt": ISO, "verdict": "quiet" | "escalate", "reason": "...", "signals": ["..."] }`
 3. **Escalation cap: max 2 escalations per calendar day (UTC).** Count today's
    `"escalate"` entries in scout-log.json before escalating — if already 2, log
@@ -38,7 +47,10 @@ schedule impact, opinion pieces, anything already reflected in events.json.
    this agent lacks `actions: write` and the dispatch 403s (this is the bug WP-91
    fixed; the sentinel file is the working path). Still include what you saw in the
    log entry so the research agent's next run can find it.
-5. Commit only `docs/data/scout-log.json`:
+5. Commit only `docs/data/scout-log.json` — ALWAYS, as the final step of every run
+   (quiet runs included; this is the step that was being skipped):
    `git add docs/data/scout-log.json && git commit -m "scout: <verdict>" && git push || (git pull --rebase origin main && git push)`
 
-Be fast. If nothing stands out in 2-3 minutes, log "quiet" and stop.
+Be fast. If nothing stands out in 2-3 minutes, still append the "quiet" entry and
+run the commit + push in step 5 before you stop — logging without committing does
+not count as a completed run.
