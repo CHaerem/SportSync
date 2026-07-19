@@ -123,7 +123,7 @@ mennesket, aldri av en agent.
 | WP-116 | Dekningsbredde: katalog-utvidelse + deltaker-/«Om»-kontrakter i research/verify | 0I | WP-110 | ⬜ bølge 2 |
 | WP-117 | Design-review av alle flater (read-only rapport) | 0I | — | ✅ rapport levert 20.07 — bekreftet alle tre eier-svakheter + W1 fortids-daggruppe over «I DAG», W2 live-poll kollapser åpne rader, rediger-amber-overload, onboarding-copy «kommandolinjen», RESULTAT-seksjon feilplassert, DESIGN.md selvmotsigelse om web-klokka, stale skjermkatalog → WP-120/126–129 |
 | WP-118 | Kjernefunksjonalitet-audit (read-only rapport) | 0I | — | ✅ rapport levert 20.07 — 🔴 varsel-reconcile kun ved kald oppstart; 🔴 widget-timeline aldri invalidert ved sync; 🟡 ingen foregrunn-sync, horisont-divergens (web 14d-cap/iOS ingen/data 42d), ICS uten DTEND, 100T-entitetsdublett + intet lens-miss-signal → WP-121–125 |
-| WP-119 | Portmåling-artefakt (port-report fra verify/coverage/build-alert) | 0I | — | ⬜ bølge 2 |
+| WP-119 | Portmåling-artefakt (port-report fra verify/coverage/build-alert) | 0I | — | 🔬 PR åpen — `scripts/build-port-report.js` (kjøres fra build-events før writeManifest, ingen workflow-endring) → `docs/data/port-report.json`; fire porter (coverage/amendRate/silentStops/participantStatus) grønn/gul/rød + ærlig `basis` (manglende kilde ⇒ «ukjent», aldri stille grønn); .gitignore-whitelist + manifest auto-inkluderer; nye tester (grønn/gul/rød/ukjent + integrasjon) |
 | WP-120 | «Det du følger»: visning + håndtering (fra WP-117-funn) | 0I | WP-117 | ⬜ bølge 3 |
 | WP-121 | iOS leverings-ferskhet: varsel-reconcile + widget-reload + foregrunn-sync | 0I | WP-118 | ⬜ bølge 2 |
 | WP-122 | ~~Deltaker widget/detalj~~ → slått inn i WP-127 | 0I | — | — |

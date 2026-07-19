@@ -5,6 +5,7 @@ import crypto from "crypto";
 import { readJsonIfExists, rootDataPath, MS_PER_DAY, makeCoverageGate, mustWatchEntity, normalizeParticipants, normalizeNorwegianPlayers, normalizeText, containsName, entityTerms } from "./lib/helpers.js";
 import { resolveStreaming } from "./lib/norwegian-rights.js";
 import { writeManifest } from "./build-manifest.js";
+import { writePortReport } from "./build-port-report.js";
 import { readIosCommit, buildAppVersion, readTestflight } from "./lib/app-version.js";
 import { buildNews } from "./lib/news.js";
 import { fileURLToPath } from "url";
@@ -711,8 +712,20 @@ const news = buildNews({ digest: rssDigest, entities });
 fs.writeFileSync(path.join(dataDir, "news.json"), JSON.stringify(news, null, 2) + "\n");
 console.log(`Published news.json (${news.items.length} item(s)).`);
 
+// WP-119: publish port-report.json — mechanical measurement of the four gates
+// that decide external-tester readiness (coverage / amend-rate / silent stops /
+// participant status). Runs here (before writeManifest, so the manifest covers
+// it) rather than as its own workflow step — .github/workflows/** is protected.
+// Reads THIS build's fresh build-alert.json + published catalog.json and the
+// PREVIOUS manifest.json (writeManifest runs next); fail-soft on any missing
+// source (the port says "unknown", never a silent green).
+const portReport = writePortReport(dataDir, configDir);
+console.log(
+	`Wrote port-report.json (coverage=${portReport.ports.coverage} amendRate=${portReport.ports.amendRate} silentStops=${portReport.ports.silentStops} participantStatus=${portReport.ports.participantStatus}).`
+);
+
 // WP-03: publish manifest.json (bytes + sha256 per published data file) —
 // last thing this script does, so it reflects everything build-events.js
-// itself just wrote (events.json, tracked.json, interests.json).
+// itself just wrote (events.json, tracked.json, interests.json, port-report.json).
 const manifest = writeManifest(dataDir);
 console.log(`Wrote manifest.json (${Object.keys(manifest.files).length} file(s)).`);
