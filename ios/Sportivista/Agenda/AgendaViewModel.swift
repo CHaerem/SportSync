@@ -598,7 +598,7 @@ final class AgendaViewModel {
             guard let id = fe.id, let event = lookup[id] else { return nil }
             return AgendaLiveRow(
                 id: id,
-                title: AgendaFormat.title(homeTeam: fe.homeTeam, awayTeam: fe.awayTeam, fallback: fe.title),
+                title: AgendaFormat.title(homeTeam: fe.homeTeam, awayTeam: fe.awayTeam, participants: fe.participants, fallback: fe.title),
                 channelLabel: AgendaFormat.channelLabel(event.streaming)
             )
         }
@@ -636,12 +636,21 @@ final class AgendaViewModel {
             // happen if a caller hand-built a FeedEvent bypassing
             // EventBridge) safely drops the row rather than crashing.
             guard let id = feedEvent.id, let event = lookup[id] else { return nil }
-            let title = AgendaFormat.title(homeTeam: feedEvent.homeTeam, awayTeam: feedEvent.awayTeam, fallback: feedEvent.title)
+            let title = AgendaFormat.title(homeTeam: feedEvent.homeTeam, awayTeam: feedEvent.awayTeam, participants: feedEvent.participants, fallback: feedEvent.title)
+            // WP-112: when a head-to-head matchup from `participants` was promoted
+            // to the title (a generic "VM-finalen 2026" → "Spania – Argentina"),
+            // keep the ORIGINAL title as the dempet context line so the competition
+            // isn't lost — otherwise the usual tournament meta. A home/away rename
+            // keeps the tournament meta (teams present → the title still changed,
+            // but that path already carries its tournament), so the promotion is
+            // detected by "no teams AND the title changed".
+            let hasTeams = !(feedEvent.homeTeam ?? "").isEmpty && !(feedEvent.awayTeam ?? "").isEmpty
+            let metaTournament = (!hasTeams && title != feedEvent.title) ? feedEvent.title : event.tournament
             return .event(AgendaEventRow(
                 id: id,
                 timeLabel: AgendaFormat.timeLabel(time: feedEvent.time, endTime: feedEvent.endTime),
                 title: title,
-                metaLabel: AgendaFormat.metaLabel(tournament: event.tournament, title: title),
+                metaLabel: AgendaFormat.metaLabel(tournament: metaTournament, title: title),
                 channelLabel: AgendaFormat.channelLabel(event.streaming),
                 isMustSee: mustSee,
                 mustWatch: mustWatch,

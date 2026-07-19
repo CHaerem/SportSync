@@ -60,6 +60,66 @@ final class AgendaFormatTests: XCTestCase {
         XCTAssertEqual(AgendaFormat.title(homeTeam: "Lyn", awayTeam: nil, fallback: "Lyn – Sogndal"), "Lyn – Sogndal")
     }
 
+    // MARK: - title with head-to-head participants (WP-112 — the "VM-finale" hole)
+
+    func testTitle_twoParticipantsGenericTitle_isMatchup() {
+        // The VM-finale shape: participants Spania/Argentina under a generic
+        // "VM-finalen 2026", no home/away teams → the matchup becomes the title.
+        XCTAssertEqual(
+            AgendaFormat.title(homeTeam: nil, awayTeam: nil, participants: [Participant(name: "Spania"), Participant(name: "Argentina")], fallback: "VM-finalen 2026"),
+            "Spania – Argentina"
+        )
+    }
+
+    func testTitle_teamsWinOverParticipants() {
+        // Explicit home/away teams still take precedence over participants.
+        XCTAssertEqual(
+            AgendaFormat.title(homeTeam: "Lyn", awayTeam: "Sogndal", participants: [Participant(name: "A"), Participant(name: "B")], fallback: "irrelevant"),
+            "Lyn – Sogndal"
+        )
+    }
+
+    func testTitle_singleParticipant_keepsTitle() {
+        // A lone participant (a cycling team entry) is NOT a head-to-head.
+        XCTAssertEqual(
+            AgendaFormat.title(homeTeam: nil, awayTeam: nil, participants: [Participant(name: "Uno-X Mobility")], fallback: "Arctic Race of Norway 2026"),
+            "Arctic Race of Norway 2026"
+        )
+    }
+
+    func testTitle_manyParticipants_keepsTitle_neverANameList() {
+        // A four-team CS2 group stage (or a golf field) must never become a name
+        // list — the many-participant case keeps the event's own title.
+        let field = [Participant(name: "Team Vitality"), Participant(name: "Natus Vincere"), Participant(name: "FaZe Clan"), Participant(name: "Team Falcons")]
+        XCTAssertEqual(
+            AgendaFormat.title(homeTeam: nil, awayTeam: nil, participants: field, fallback: "Esports World Cup 2026 – CS2 (gruppespill)"),
+            "Esports World Cup 2026 – CS2 (gruppespill)"
+        )
+    }
+
+    func testTitle_titleAlreadyNamesBothSides_keepsTitle() {
+        // A non-generic title that already carries both names is left alone (no
+        // redundant re-write, keeps any extra framing the title adds).
+        XCTAssertEqual(
+            AgendaFormat.title(homeTeam: nil, awayTeam: nil, participants: [Participant(name: "Spania"), Participant(name: "Argentina")], fallback: "Spania mot Argentina (finale)"),
+            "Spania mot Argentina (finale)"
+        )
+    }
+
+    func testTitle_participantWithEmptyName_notTreatedAsMatchup() {
+        // A malformed pair with an empty side is not a matchup → keep the title.
+        XCTAssertEqual(
+            AgendaFormat.title(homeTeam: nil, awayTeam: nil, participants: [Participant(name: "Spania"), Participant(name: "   ")], fallback: "VM-finalen 2026"),
+            "VM-finalen 2026"
+        )
+    }
+
+    func testMatchupTitle_directHelper() {
+        XCTAssertEqual(AgendaFormat.matchupTitle(participants: [Participant(name: "Spania"), Participant(name: "Argentina")], title: "VM-finalen 2026"), "Spania – Argentina")
+        XCTAssertNil(AgendaFormat.matchupTitle(participants: [Participant(name: "Spania")], title: "Noe"))
+        XCTAssertNil(AgendaFormat.matchupTitle(participants: [], title: "Noe"))
+    }
+
     // MARK: - metaLabel (the quiet second line, "ved behov")
 
     func testMetaLabel_tournamentDistinctFromTitle_isShown() {

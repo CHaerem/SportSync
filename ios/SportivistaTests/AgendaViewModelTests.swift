@@ -206,6 +206,46 @@ final class AgendaViewModelTests: XCTestCase {
         XCTAssertFalse(row.title.contains("juli"), "no date text may leak into the title")
     }
 
+    // MARK: - WP-112: head-to-head participant display (the "VM-finale" hole)
+
+    func testBuildSections_headToHeadParticipants_showsMatchupAndKeepsGenericTitleAsMeta() {
+        // The VM-finale hole: the participants (Spania/Argentina) existed in the
+        // data but a generic "VM-finalen 2026" title hid them. The row now leads
+        // with the matchup and demotes the generic title to the quiet context
+        // line, so nothing is lost. Pure display — relevance/compile untouched
+        // (FeedVectorTests is the guarantee the golden vectors stay bit-identical).
+        let now = iso("2026-07-19T08:00:00Z")
+        let event = EventBuilder.make(
+            sport: "football", title: "VM-finalen 2026", time: "2026-07-19T19:00:00Z",
+            tournament: "FIFA World Cup", streaming: [["platform": "NRK 1"]],
+            participants: ["Spania", "Argentina"], round: "Finale"
+        )
+        let interests = Interests(followBroadly: ["football"])
+
+        let sections = AgendaViewModel.buildSections(events: [event], interests: interests, now: now)
+        guard case .event(let row) = allItems(sections).first else { return XCTFail("expected one event row") }
+        XCTAssertEqual(row.title, "Spania – Argentina", "the matchup leads the row")
+        XCTAssertEqual(row.metaLabel, "VM-finalen 2026", "the generic title is preserved as the quiet context line")
+        XCTAssertEqual(row.channelLabel, "NRK 1")
+    }
+
+    func testBuildSections_teamMatch_stillUsesTournamentMeta_notPromoted() {
+        // A normal home/away team match is NOT the promoted path: the title is
+        // the teams and the meta stays the tournament (regression guard so the
+        // WP-112 meta-promotion only fires for the participant matchup case).
+        let now = iso("2026-07-13T08:00:00Z")
+        let event = EventBuilder.make(
+            sport: "football", title: "Lyn mot Sogndal", time: "2026-07-13T18:00:00Z",
+            homeTeam: "Lyn", awayTeam: "Sogndal", tournament: "Eliteserien"
+        )
+        let interests = Interests(followBroadly: ["football"])
+
+        let sections = AgendaViewModel.buildSections(events: [event], interests: interests, now: now)
+        guard case .event(let row) = allItems(sections).first else { return XCTFail("expected one event row") }
+        XCTAssertEqual(row.title, "Lyn – Sogndal")
+        XCTAssertEqual(row.metaLabel, "Eliteserien", "team matches keep the tournament meta, never the title")
+    }
+
     // MARK: - WP-14.1: the "live now" line (DESIGN.md §4)
 
     func testLiveRows_ongoingEvent_isLiveWithChannel() {

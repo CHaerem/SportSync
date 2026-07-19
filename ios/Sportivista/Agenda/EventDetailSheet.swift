@@ -34,7 +34,7 @@ struct EventDetailSheet: View {
     private var event: Event { row.event }
 
     private var titleText: String {
-        AgendaFormat.title(homeTeam: event.homeTeam, awayTeam: event.awayTeam, fallback: event.title)
+        AgendaFormat.title(homeTeam: event.homeTeam, awayTeam: event.awayTeam, participants: event.participants, fallback: event.title)
     }
 
     var body: some View {

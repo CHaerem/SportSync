@@ -26,6 +26,8 @@ enum EventBuilder {
         streaming: [[String: Any]] = [],
         norwegian: Bool = false,
         norwegianPlayers: [[String: Any]] = [],
+        participants: [String] = [],
+        round: String? = nil,
         isFavorite: Bool = false,
         importance: Int? = nil,
         source: String? = nil,
@@ -45,6 +47,8 @@ enum EventBuilder {
         if let tournament { dict["tournament"] = tournament }
         if !streaming.isEmpty { dict["streaming"] = streaming }
         if !norwegianPlayers.isEmpty { dict["norwegianPlayers"] = norwegianPlayers }
+        if !participants.isEmpty { dict["participants"] = participants.map { ["name": $0] } }
+        if let round { dict["round"] = round }
         if let importance { dict["importance"] = importance }
         if let source { dict["source"] = source }
         if let confidence { dict["confidence"] = confidence }
