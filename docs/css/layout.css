@@ -11,8 +11,8 @@
 	.wrap { padding: 0 16px; }
 }
 
-/* Masthead — Sportivista + date, a ticking amber
-   clock. Two quiet rows, one hairline under. */
+/* Masthead — Sportivista + date. Two quiet rows, one hairline under.
+   (WP-128: the ticking amber clock is gone — parity with iOS; time lives in the row.) */
 .masthead {
 	position: sticky;
 	top: 0;
@@ -51,9 +51,11 @@
 	letter-spacing: 0.04em;
 }
 .mast-index { color: var(--fg-3); }
+/* A quiet amber masthead label (tabular). No longer a clock on index.html (WP-128);
+   still used by activity.html for its «aktivitet» page label. */
 .masthead-clock {
 	font-size: 13px;
-	color: var(--accent);          /* the ticking clock — the only continuous motion */
+	color: var(--accent);
 	font-variant-numeric: tabular-nums;
 	letter-spacing: 0.04em;
 }

@@ -292,9 +292,19 @@ skal likevel bestå denne før merge; håndhev det som kan håndheves i CI:
   (true-black `#000000`-side i mørk, `#F2F2F7` grouped-light) og amber som eneste
   aksent. Verdiene er tokenisert i `base.css` og skal stå verifiserbart mot
   denne tabellen. Web beholder sine egne layout-detaljer (én kolonne maks 640px,
-  dag-gruppert agenda, den tikkende amber-klokka i toppen), men fargene og
-  typografien er baseline. Det historiske Tekst-TV-uttrykket (mono type-stack,
-  near-black `#0A0A0C`, varmt-papir) er dermed avviklet.
+  dag-gruppert agenda), men fargene og typografien er baseline. Det historiske
+  Tekst-TV-uttrykket (mono type-stack, near-black `#0A0A0C`, varmt-papir) er
+  dermed avviklet.
+- **Klokke-paritet (WP-128):** den sekundtikkende amber-klokka i web-headeren er
+  **FJERNET** — datoen består, tid bor i raden (samsvar med § Bevegelse og iOS).
+- **Tema-glyf-unntak (WP-128):** web beholder tema-toggle-glyfen ◐ i headeren
+  (system → mørk → lys) som et *bevisst* unntak fra § Tema. iOS flyttet temavalget
+  til Deg › Utseende, men web har ingen Deg-skjerm, så header-glyfen er den eneste
+  plassen det kan bo.
+- **Sport-symbol-unntak (WP-128):** § Radens anatomis per-sport SF-symbol gjelder
+  KUN native flater. Web har ingen SF Symbols, og emoji/logo i kromet er forbudt
+  (§ Forbudsliste), så web signaliserer sport gjennom innholdet (tittel + meta),
+  ikke en per-rad-glyf. Et eget web-ikonsett innføres ikke bare for dette.
 - **Stemme:** norsk, lavmælt, presis. «Kanal ukjent», ikke «Ingen streaming!».
   Aldri utropstegn i kromet. Feil forklarer hva og hvorfor.
 

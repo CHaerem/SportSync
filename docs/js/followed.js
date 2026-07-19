@@ -14,9 +14,15 @@ Object.assign(window.Dashboard.prototype, {
 		// WP-96: sourced from the catalog (what we cover), not a personal profile.
 		const at = this.covers && this.covers.alwaysTrack;
 		if (!at) return [];
+		// WP-128: don't repeat an entity's next event in the glance when that same
+		// event already has its own visible agenda row in the window (renderAgenda
+		// records the shown ids). Absent the set (e.g. before first agenda render),
+		// no dedupe — the glance still shows everything.
+		const shown = this._agendaShownIds;
 		return [...(at.athletes || []), ...(at.teams || [])]
 			.map((entry) => ({ entry, next: this.nextEventForEntity(entry) }))
 			.filter((x) => x.next)
+			.filter((x) => !(shown && shown.has(x.next.id)))
 			.sort((a, b) => new Date(a.next.time) - new Date(b.next.time));
 	},
 

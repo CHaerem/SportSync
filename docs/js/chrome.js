@@ -1,5 +1,5 @@
-// Sportivista — shell chrome: the ticking clock, the date stamp, the footer (freshness
-// + staleness), the quiet AI-budget line, and the iOS install hint.
+// Sportivista — shell chrome: the date stamp, the footer (freshness + staleness),
+// the quiet AI-budget line, and the iOS install hint.
 // Extends window.Dashboard.prototype (see js/dashboard.js). Loads AFTER dashboard.js.
 Object.assign(window.Dashboard.prototype, {
 
@@ -24,18 +24,6 @@ Object.assign(window.Dashboard.prototype, {
 	renderDate() {
 		const el = document.getElementById('hero-date');
 		if (el) el.textContent = new Date().toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Oslo' });
-	},
-
-	/** Teletext-style ticking clock in the header. */
-	startClock() {
-		const el = document.getElementById('masthead-clock');
-		if (!el) return;
-		const tick = () => {
-			el.textContent = new Date().toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Europe/Oslo' });
-		};
-		tick();
-		clearInterval(this._clockInterval);
-		this._clockInterval = setInterval(tick, 1000);
 	},
 
 	renderFooter() {
