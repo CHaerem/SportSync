@@ -63,7 +63,7 @@ final class MemoryAssistantTests: XCTestCase {
     @MainActor
     func test_viewModel_memoryCRUD_andForgetAll() {
         let store = AssistantTestSupport.tempMemoryStore()
-        let vm = AssistantViewModel(assistant: MockInterestAssistant(), profileStore: store.profileStore, index: index, memoryStore: store)
+        let vm = AssistantViewModel(assistant: MockInterestAssistant(), profileStore: store.profileStore, index: self.index, memoryStore: store)
         XCTAssertEqual(vm.memoryItemCount, 0)
 
         // Add a fact.
@@ -93,7 +93,7 @@ final class MemoryAssistantTests: XCTestCase {
     @MainActor
     func test_viewModel_spoilerShield_tracksMemory() {
         let store = AssistantTestSupport.tempMemoryStore()
-        let vm = AssistantViewModel(assistant: MockInterestAssistant(), profileStore: store.profileStore, index: index, memoryStore: store)
+        let vm = AssistantViewModel(assistant: MockInterestAssistant(), profileStore: store.profileStore, index: self.index, memoryStore: store)
         XCTAssertTrue(vm.spoilerShield.isEmpty)
         vm.updateFact(MemoryFact(sport: "f1", kind: .spoilerPolicy, value: "opptak", reason: "r", updatedAt: now))
         XCTAssertTrue(vm.spoilerShield.sports.contains("f1"), "the exposed shield reflects a just-added spoiler policy")

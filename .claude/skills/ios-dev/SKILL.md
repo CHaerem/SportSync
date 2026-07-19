@@ -138,6 +138,22 @@ xcodebuild -exportArchive -archivePath <path>.xcarchive \
 - Førstegangs launch krever manuell utvikler-trust på enheten (Innstillinger
   → Generelt → VPN og enhetsadministrering).
 
+## Launch-/ytelsesmåling (LaunchTrace — brukt til 2780→303 ms-fiksene 19.07)
+
+`LaunchTrace.mark/point` (ios/Sportivista/LaunchTrace.swift) printer
+`[LAUNCH …ms]`-faser; aktiv i DEBUG og i Release med
+`SWIFT_ACTIVE_COMPILATION_CONDITIONS='SPORTIVISTA_CLOUDKIT SPORTIVISTA_TRACE'`.
+Fang på ENHET med `xcrun devicectl device process launch --device <UUID>
+--terminate-existing --console app.sportivista.ios > logg &` (kill etter ~15 s);
+i simulator med `simctl launch --console-pty`. Lærdommer som IKKE skal
+gjenoppdages: mål Release (Debug-tall lyver 3–5×), mål KJØRING 2+ (første
+launch etter install har kalde sider — post-install-tallet er ikke
+gjenåpnings-tallet), og telefonen må være ULÅST for devicectl-launch.
+Kjente launch-feller fikset 19.07: SystemLanguageModel-availability-sjekk og
+EntityIndex-bygging synkront i init (nå utsatt/lat), ubetinget
+index-invalidering + full rekompilering etter 304-sync (nå SyncResult-styrt),
+og kast-første-resultat-koalescering i startReload (nå males hver runde).
+
 ## Fallgruver som faktisk har bitt
 
 - **Flere DerivedData-kataloger:** hver xcodegen-regenerering kan gi ny

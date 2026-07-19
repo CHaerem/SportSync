@@ -21,7 +21,7 @@ final class MisunderstoodLogViewModelTests: XCTestCase {
         AssistantViewModel(
             assistant: MockInterestAssistant(behavior: behavior),
             profileStore: AssistantTestSupport.tempProfileStore(),
-            index: index,
+            index: self.index,
             misunderstoodLog: AssistantTestSupport.tempMisunderstoodLog()
         )
     }
