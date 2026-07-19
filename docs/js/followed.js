@@ -42,9 +42,11 @@ Object.assign(window.Dashboard.prototype, {
 
 	// ── "Hva vi følger" — one quiet disclosure at the bottom ──────────────────
 	// It answers the recurring "when's X next?" question, entity-first: for each
-	// athlete/team you follow, the next known event — UNWINDOWED (ignores the
-	// agenda's 14-day cap) so a match months out still shows, and honestly says
-	// "ikke satt opp ennå" when there's nothing scheduled. Tournaments stay chips.
+	// athlete/team/TOURNAMENT you follow, the next known event — UNWINDOWED
+	// (ignores the agenda's 14-day cap) so a match months out still shows, and
+	// honestly says "ikke satt opp ennå" when there's nothing scheduled. WP-120:
+	// tournaments are next-event rows too (was a chip line) — every followed row
+	// now answers "what does following this GIVE me?", matching the iOS surface.
 	renderFollowed() {
 		const wrap = document.getElementById('followed');
 		const body = document.getElementById('followed-body');
@@ -53,17 +55,13 @@ Object.assign(window.Dashboard.prototype, {
 		const at = this.covers && this.covers.alwaysTrack;
 		if (!at) { wrap.hidden = true; return; }
 
-		const chip = (x) => `<span class="chip-follow">${escapeHtml(ssEntityName(x))}</span>`;
-		const chipGroup = (label, items) => (items || []).length
-			? `<div class="chip-group"><div class="chip-group-label">${label}</div><div class="chips-row">${items.map((x) => chip(x)).join('')}</div></div>`
-			: '';
 		const nextGroup = (label, items, notifyDefault) => (items || []).length
 			? `<div class="chip-group"><div class="chip-group-label">${label}</div><ul class="follow-next">${items.map((x) => this.followRow(x, notifyDefault)).join('')}</ul></div>`
 			: '';
 		body.innerHTML = '<div class="followed-layer">'
 			+ nextGroup('Utøvere', at.athletes, true)
 			+ nextGroup('Lag', at.teams, true)
-			+ chipGroup('Turneringer', at.tournaments, false)
+			+ nextGroup('Turneringer', at.tournaments, false)
 			+ `<div class="followed-hint">Dette er sportene og navnene Sportivista dekker · trykk en rad for detaljer. <a class="followed-edit" href="rediger.html">Savner du noe? Be om dekning →</a></div>`
 			+ '</div>';
 		wrap.hidden = false;
@@ -71,25 +69,11 @@ Object.assign(window.Dashboard.prototype, {
 
 	/** The next upcoming event for a followed entity, searched across ALL events
 	 *  (not the agenda window). Sport-scoped so "Barcelona" (football) never
-	 *  matches a Tour stage through the city. Returns the event or null. */
+	 *  matches a Tour stage through the city. Returns the event or null. Delegates
+	 *  to the shared ssNextEventForEntity (WP-120) so the dashboard and the rediger
+	 *  page find "next" identically. */
 	nextEventForEntity(entry) {
-		const terms = trackedTerms([entry]).map((t) => t.toLowerCase()).filter(Boolean);
-		if (!terms.length) return null;
-		const sport = (entry && typeof entry === 'object') ? entry.sport : null;
-		const floor = Date.now() - 3 * SS_CONSTANTS.MS_PER_HOUR;
-		let best = null, bestStart = Infinity;
-		for (const e of this.allEvents) {
-			if (sport && e.sport && e.sport !== sport) continue;
-			const start = new Date(e.time).getTime();
-			const end = e.endTime ? new Date(e.endTime).getTime() : start;
-			if (!(end >= floor)) continue; // already over
-			const hay = [e.title, e.tournament, e.homeTeam, e.awayTeam,
-				...(e.norwegianPlayers || []).map((p) => p.name || p),
-				...(e.participants || []).map((p) => p.name || p)].filter(Boolean).join(' ');
-			if (!terms.some((t) => ssContainsTerm(hay, t))) continue;
-			if (start < bestStart) { best = e; bestStart = start; }
-		}
-		return best;
+		return ssNextEventForEntity(this.allEvents, entry);
 	},
 
 	/** Calm relative-day label in Oslo terms. */

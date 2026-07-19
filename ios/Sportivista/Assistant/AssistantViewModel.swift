@@ -158,6 +158,12 @@ final class AssistantViewModel {
     /// submit (so a just-confirmed follow is reflected). Defaults to an empty
     /// feed for the mutation-only unit tests that don't inject one.
     private let feedProvider: () -> FeedQuery
+    /// WP-120 — the raw cached events + news pointers behind the «Det du følger»
+    /// read surfaces (per-entity KOMMENDE + SISTE NYTT). Injected like
+    /// `feedProvider` (defaults empty for the mutation-only tests); wired in the
+    /// app to the same DataStore the feed reads. Read-only: no write path here.
+    private let eventsProvider: () -> [Event]
+    private let newsProvider: () -> [NewsItem]
     /// WP-16.4 — the in-flight interpret task, so the command line can cancel it.
     private var currentTask: Task<Void, Never>?
 
@@ -177,12 +183,16 @@ final class AssistantViewModel {
         memoryStore: MemoryStore? = nil,
         distiller: any MemoryDistiller = FoundationModelsMemoryDistiller(),
         feedProvider: @escaping () -> FeedQuery = { FeedQuery(now: Date()) },
+        eventsProvider: @escaping () -> [Event] = { [] },
+        newsProvider: @escaping () -> [NewsItem] = { [] },
         deferAvailabilityCheck: Bool = false
     ) {
         self.assistant = assistant
         self.profileStore = profileStore
         self.indexProvider = index
         self.misunderstoodLog = misunderstoodLog
+        self.eventsProvider = eventsProvider
+        self.newsProvider = newsProvider
         // Default the memory store over the SAME profile file, so memory and the
         // profile share one on-disk `ProfileSyncState`.
         self.memoryStore = memoryStore ?? MemoryStore(profileStore: profileStore)
@@ -241,6 +251,10 @@ final class AssistantViewModel {
                 let effective = EffectiveInterests.merge(profile: profile, into: base, index: indexBox.value)
                 return FeedQuery.build(events: events, interests: effective, now: Date())
             },
+            // WP-120 — the read-only substrate for «Det du følger»: the same cached
+            // events + news the agenda/Nyheter boards read (no new source).
+            eventsProvider: { dataStore.loadEvents() },
+            newsProvider: { dataStore.loadNews() },
             deferAvailabilityCheck: true
         )
         // Den utsatte FM-tilgjengelighetssjekken (se init) — av hovedtråden.
@@ -256,6 +270,38 @@ final class AssistantViewModel {
     var hasEntities: Bool { !index.isEmpty }
 
     func refreshAvailability() { availability = assistant.availability() }
+
+    // MARK: - WP-120 — the «Det du følger» read snapshot
+
+    /// A read-only snapshot for the «Det du følger» surfaces: the relevance-
+    /// filtered agenda (for per-entity KOMMENDE), the raw events keyed by id (so a
+    /// KOMMENDE tap can open the full event detail), the lens-ready news pointers
+    /// (for SISTE NYTT) and the shared entity index (for per-rule type + matching).
+    /// Built from the SAME providers the assistant already uses — no new matching,
+    /// no write path. A `FollowPresenter` bundles the pure per-rule logic.
+    struct FollowSnapshot {
+        var presenter: FollowPresenter
+        var eventsById: [String: Event]
+    }
+
+    /// Build the snapshot at `now` (defaults to the wall clock). Reads the cached
+    /// events + news once each — cheap enough for a one-off navigation into the
+    /// follow list/detail (not a hot path), and always fresh so a just-added
+    /// follow's next event shows immediately.
+    func followSnapshot(now: Date = Date()) -> FollowSnapshot {
+        let feed = feedProvider()
+        let events = eventsProvider()
+        let news = newsProvider()
+        let idx = index
+        let byId = Dictionary(
+            events.compactMap { e -> (String, Event)? in e.id.map { ($0, e) } },
+            uniquingKeysWith: { first, _ in first }
+        )
+        return FollowSnapshot(
+            presenter: FollowPresenter(feed: feed, index: idx, news: news, now: now),
+            eventsById: byId
+        )
+    }
 
     // MARK: - Submit (intent routing)
 

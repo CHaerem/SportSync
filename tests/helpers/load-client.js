@@ -25,6 +25,8 @@ export function createClientSandbox() {
 		parseInt,
 		parseFloat,
 		isNaN,
+		URL,
+		URLSearchParams,
 		matchMedia: () => ({ matches: false }),
 		localStorage: (() => {
 			const store = new Map();

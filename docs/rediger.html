@@ -17,19 +17,30 @@
 		.edit-back { display: inline-block; color: var(--fg-3); font-size: 13px; margin-bottom: 18px; text-decoration: none; }
 		.edit-back:hover { color: var(--accent); }
 		.edit-group { margin-bottom: 28px; }
-		.edit-group h2 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); margin: 0 0 10px; }
-		.edit-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); }
-		.edit-row:last-child { border-bottom: none; }
-		.edit-title { font-size: 15px; font-weight: 500; }
-		.bell { margin-left: 5px; font-size: 12px; }
-		.tag { margin-left: 7px; font-size: 11px; color: var(--fg-3); text-transform: uppercase; letter-spacing: 0.04em; }
-		.edit-alias { font-size: 12px; color: var(--fg-3); margin-top: 3px; }
-		.edit-actions { display: flex; gap: 8px; flex-shrink: 0; }
+		/* Calm group headers (DESIGN § Gruppeoverskrift: secondaryLabel, not amber). */
+		.edit-group h2 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-3); margin: 0 0 10px; }
+		/* ── Coverage rows — one quiet row per followed name; tap to expand ────
+		   WP-120: name in --fg, next-event subtitle dempet, at most one accent per
+		   row (the resting row has none — the two actions live in the detail). */
+		.ed-list { list-style: none; margin: 0; padding: 0; }
+		.ed-item { border-bottom: 1px solid var(--line); }
+		.ed-item:last-child { border-bottom: none; }
+		.ed-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 11px 0; cursor: pointer; }
+		.ed-row:hover .ed-name { color: var(--accent); }
+		.ed-main { min-width: 0; }
+		.ed-name { font-size: 15px; font-weight: 500; color: var(--fg); overflow-wrap: break-word; }
+		.ed-next { display: block; font-size: 12.5px; color: var(--fg-2); margin-top: 2px; }
+		.ed-next.no-event { color: var(--fg-3); font-style: italic; }
+		.ed-meta { font-size: 11px; color: var(--fg-3); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; flex-shrink: 0; }
+		.ed-detail { padding: 2px 0 12px 0; display: grid; gap: 8px; }
+		.ed-alias { font-size: 12px; color: var(--fg-3); }
+		.ed-detail-when { font-size: 13px; color: var(--fg-2); }
+		.ed-actions { display: flex; gap: 8px; }
 		.btn { font-size: 12.5px; padding: 5px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); text-decoration: none; white-space: nowrap; transition: border-color 0.12s, color 0.12s; }
 		.btn:hover { border-color: var(--accent); color: var(--accent); }
 		.btn-danger:hover { border-color: #FF453A; color: #FF453A; }
 		.add-box { margin: 4px 0 26px; }
-		.add-box h2 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); margin: 0 0 10px; }
+		.add-box h2 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-3); margin: 0 0 10px; }
 		.add-search { width: 100%; box-sizing: border-box; font: inherit; font-size: 15px; padding: 10px 13px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--fg); }
 		.add-search:focus { outline: none; border-color: var(--accent); }
 		.add-suggestions { margin-top: 8px; display: flex; flex-direction: column; gap: 6px; }
@@ -57,7 +68,7 @@
 	<main class="wrap">
 		<a class="edit-back" href="index.html">‹ Tilbake til oversikten</a>
 		<h1>Rediger det du følger</h1>
-		<p class="edit-lead">Trykk for å endre det som allerede står her — ingen skriving, ingen JSON. Send inn skjemaet, så <strong>oppdateres lista automatisk</strong> og siden bygges om (~et par minutter). 🔔 = du får kalendervarsel før start.</p>
+		<p class="edit-lead">Trykk en rad for å se neste hendelse og endre den — ingen skriving, ingen JSON. Send inn skjemaet, så <strong>oppdateres lista automatisk</strong> og siden bygges om (~et par minutter).</p>
 
 		<div id="edit-root"><p class="muted">Laster …</p></div>
 
