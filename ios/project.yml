@@ -239,6 +239,12 @@ targets:
       # models (NewsItem/FeaturedBrief/RecentResults) live in Sportivista/Models
       # instead, so the widget-shared DataStore that loads them still compiles.
       - path: Sportivista/News
+      # WP-115: the shared SFSafariViewController wrapper (SafariView) — NewsView
+      # (compiled above) references it, so the hostless bundle needs it too. Its
+      # Reader-hint config is unit-tested directly (SafariViewTests) without
+      # instantiating the controller. App + SportivistaDeviceDev pick it up via
+      # `path: Sportivista`; the widget deliberately does NOT (no outbound links).
+      - path: Sportivista/Shared
       # WP-31: the first-run onboarding — pure gate/starter-pack logic + the
       # SwiftUI flow — compiled directly into the hostless bundle (same "no
       # @testable import" pattern). App + SportivistaDeviceDev pick these up via

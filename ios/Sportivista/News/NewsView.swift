@@ -10,8 +10,10 @@
 //    • «Det du følger ›» — a quiet link atop the board to WP-105's FollowedListView.
 //    1. I DIN VERDEN I DAG — the editorial brief's headline (featured.json), one
 //       quiet line, with a provenance ⓘ ("bygget på dine events og resultater").
-//    2. NYTT — lens-matched RSS pointers (news.json); each row taps OUT to the
-//       source (Link), never inlining article text (DSM art. 15).
+//    2. NYTT — lens-matched RSS pointers (news.json); each row opens the source
+//       in an IN-APP browser (WP-115: SFSafariViewController over the board, a
+//       Reader-mode hint), keeping an «Åpne i Safari» escape in the row's context
+//       menu and SFSafariVC's own menu — never inlining article text (DSM art. 15).
 //    3. RESULTAT — followed teams' results, the score ALWAYS behind «Vis
 //       resultat» when the spoiler shield applies (the same reveal the event
 //       detail sheet uses).
@@ -38,6 +40,10 @@ struct NewsView: View {
 	var assistant: AssistantViewModel
 
 	@State private var provenanceShown = false
+	/// WP-115 — the URL currently shown in the in-app browser sheet. Item-keyed so
+	/// each NYTT row presents its own SFSafariViewController; the board owns the
+	/// single sheet, the rows just hand it a URL.
+	@State private var browserTarget: BrowserTarget?
 
 	/// The board the model currently holds — a plain accessor so the section
 	/// builders below read exactly as before.
@@ -55,6 +61,13 @@ struct NewsView: View {
 		.scrollContentBackground(.hidden)
 		.background(SportivistaTokens.background)
 		.accessibilityIdentifier("news.board")
+		// WP-115: a NYTT pointer opens IN-APP here (SFSafariViewController over the
+		// board) rather than launching external Safari. Reader mode is hinted (news
+		// pointers are article-like); SFSafariVC keeps its own «Åpne i Safari» menu.
+		.sheet(item: $browserTarget) { target in
+			SafariView(url: target.url, entersReaderIfAvailable: true, accessibilityId: "news.safari")
+				.ignoresSafeArea()
+		}
 		// Only rebuilds when the board is stale (first appearance / after a
 		// profile change or sync marked it). A plain switch onto an already-current
 		// board is a no-op — the fix for the per-switch lag. Profile changes and
@@ -135,8 +148,10 @@ struct NewsView: View {
 					.listRowBackground(SportivistaTokens.cell)
 			} else {
 				ForEach(board.news) { item in
-					NewsPointerRow(item: item)
-						.listRowBackground(SportivistaTokens.cell)
+					NewsPointerRow(item: item) { url in
+						browserTarget = BrowserTarget(url: url)
+					}
+					.listRowBackground(SportivistaTokens.cell)
 				}
 			}
 		} header: {
@@ -186,25 +201,53 @@ struct NewsView: View {
 	}
 }
 
-// MARK: - NYTT row (taps OUT to the source)
+// MARK: - In-app browser target
 
-/// One news pointer. Whole row is a `Link` to the source (opens externally —
-/// DSM art. 15: pointers send traffic out, never inline the article). Rad-DNA
-/// = agendaens: the type-tag slot is DELIBERATELY omitted in v0 (classification
-/// missing) but the layout is ready for it; title on one line, then a quiet
-/// line of sport · source ↗ · relative time.
+/// The URL currently shown in the in-app browser sheet — item-keyed so each NYTT
+/// row presents its own SFSafariViewController.
+private struct BrowserTarget: Identifiable {
+	let url: URL
+	var id: String { url.absoluteString }
+}
+
+// MARK: - NYTT row (opens the source IN-APP)
+
+/// One news pointer. Whole row is a `Button` that opens the source in the IN-APP
+/// browser (WP-115: SFSafariViewController over the board — the board owns the
+/// sheet, this row just hands it the URL). Still a pointer, not an inline article
+/// (DSM art. 15): the in-app browser loads the publisher's own page. A context
+/// menu keeps the «Åpne i Safari» escape to the real browser. Rad-DNA = agendaens:
+/// the type-tag slot is DELIBERATELY omitted in v0 (classification missing) but
+/// the layout is ready for it; title on one line, then a quiet line of
+/// sport · source ↗ · relative time.
 private struct NewsPointerRow: View {
 	let item: NewsItem
+	/// Open the source IN-APP (the board presents the SFSafariViewController sheet).
+	let onOpen: (URL) -> Void
+	@Environment(\.openURL) private var openURL
+
+	private var url: URL? { URL(string: item.link) }
 
 	var body: some View {
-		Group {
-			if let url = URL(string: item.link) {
-				Link(destination: url) { content }
-			} else {
-				content
+		Button {
+			if let url { onOpen(url) }
+		} label: {
+			content
+		}
+		.buttonStyle(.plain)
+		.disabled(url == nil)
+		.accessibilityIdentifier("news.item")
+		.accessibilityAddTraits(.isLink)
+		.contextMenu {
+			if let url {
+				Button {
+					// The escape to the REAL browser — opens externally in Safari.
+					openURL(url)
+				} label: {
+					Label("Åpne i Safari", systemImage: "safari")
+				}
 			}
 		}
-		.accessibilityIdentifier("news.item")
 	}
 
 	private var content: some View {
