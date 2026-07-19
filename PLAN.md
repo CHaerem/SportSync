@@ -111,8 +111,8 @@ mennesket, aldri av en agent.
 | WP-104 | Assistent-inngang: segmented rot «Uka/Nyheter» + kapsel-knapp + samtaleark | 0H | WP-99 | ✅ bølge 1 merget 19.07 (#318/#319/#320) |
 | WP-105 | «Det du følger» + Legg til-søk (interesser uten assistent, 3b) | 0H | — | ✅ bølge 1 merget 19.07 (#318/#319/#320) |
 | WP-106 | Nyheter-v0-klienten (fire-seksjons-tavla) | 0H | WP-103, WP-104, WP-105 | ✅ #321 merget 19.07 — FASE 0H KOMPLETT |
-| WP-107 | Ytelse: Nyheter-bytte-jank + oppstarts-«Henter data» (eier-dogfooding bygg 6) | 0H+ | WP-106 | 🔬 PR åpen — TO rotårsaker: (1) Nyheter-jank: `NewsView` bygde tavla i `.task` SYNKRONT på MainActor ved HVERT segmentbytte (fem disk-lesinger+dekoding + `EntityIndex`-bygg + `NewsBoard.build`) fordi `@State board` døde med view-en; målt ~343 ms/bygg (Debug/sim, fixtures) — en synlig frys per bytte. Fiks: ny `@Observable NewsModel` eid av `ContentView` (overlever bytter), bygger OFF main (`nonisolated async`, delt `MainThreadGuard`), koalescerer, og bygger KUN når tavla er stale (profil-endring / fullført synk) — et rent bytte er no-op (0 ms hovedtråd). (2) oppstart-«Henter data …»: `refresh()` gjorde to synkrone full-`events.json`-dekodinger på hovedtråden (previous/newEvents) som stjal main akkurat når den off-main agenda-reloaden ville hoppe tilbake og male — flyttet til `Task.detached`. 5 nye unit-tester (no-rebuild-på-bytte, markStale, koalescering, off-main-guard); vektorer + NewsBoard/NewsLens-gulltester urørt (ingen matching-endring) |
-| WP-108 | Visuell affordanse: kapsel-anker + ekte Capsule + sport-symbol per rad (eier-dogfooding bygg 6) | 0H+ | WP-106 | 🔬 |
+| WP-107 | Ytelse: Nyheter-bytte-jank + oppstarts-«Henter data» (eier-dogfooding bygg 6) | 0H+ | WP-106 | ✅ #323 merget 19.07 |
+| WP-108 | Visuell affordanse: kapsel-anker + ekte Capsule + sport-symbol per rad (eier-dogfooding bygg 6) | 0H+ | WP-106 | ✅ #324 merget 19.07 |
 
 ---
 
