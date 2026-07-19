@@ -49,6 +49,10 @@ struct ContentView: View {
 
     @State private var agenda: AgendaViewModel
     @State private var assistant: AssistantViewModel
+    /// WP-107 — the Nyheter board's model, owned HERE (not inside NewsView) so it
+    /// survives root-segment switches: the board stays built, and a switch back to
+    /// Nyheter is instant instead of re-running the disk-read/decode/compile.
+    @State private var news: NewsModel
     /// WP-104 — the root's two sides (Claude Design-handoff): a segmented with
     /// ORDS under the header — «Uka» (the agenda) vs «Nyheter» (the news board).
     @State private var rootTab: RootTab = .uka
@@ -141,6 +145,8 @@ struct ContentView: View {
         #else
         self._assistant = State(initialValue: AssistantViewModel(dataStore: dataStore, profileStore: profileStore))
         #endif
+        // WP-107 — the shared Nyheter model reads the SAME cache + profile store.
+        self._news = State(initialValue: NewsModel(dataStore: dataStore, profileStore: profileStore))
 
         // WP-31 — first-run decision, made before the first frame so there's no
         // flash of the agenda before the overlay. A SPORTIVISTA_DEMO launch never auto-
@@ -210,7 +216,7 @@ struct ContentView: View {
                     AgendaView(viewModel: agenda, onFollow: follow, onOpen: { assistant.recordOpened($0) },
                                openEventID: $requestedEventID)
                 case .nyheter:
-                    NewsView(dataStore: dataStore, profileStore: profileStore, assistant: assistant)
+                    NewsView(news: news, assistant: assistant)
                 }
             }
             // Liquid Glass (iOS 26): the assistant capsule is the app's ONE custom
@@ -284,7 +290,13 @@ struct ContentView: View {
         .task {
             // Recompile the agenda the instant the assistant applies a change
             // (move 4). Set here (not in init) so it can capture `agenda`.
-            assistant.onProfileChanged = { agenda.reloadFromCache(now: Date()) }
+            // WP-107: the Nyheter board re-lenses on the SAME change (off-main),
+            // so a just-added follow is reflected even while Nyheter is off-screen
+            // — the board is ready the next time the user switches to it.
+            assistant.onProfileChanged = {
+                agenda.reloadFromCache(now: Date())
+                news.rebuild()
+            }
             // WP-66 — the assistant's command arm's HOST-owned side effects
             // (theme override, re-onboarding, the confirmed reset, opening an
             // event's detail). VM-owned effects run inside the view model.
@@ -583,7 +595,13 @@ struct ContentView: View {
         let demoMode = ProcessInfo.processInfo.environment["SPORTIVISTA_DEMO"]
         if demoMode == "lens" || demoMode == "filter" || demoMode == UITestSeed.demoMode { return }
         #endif
-        let previousEvents = dataStore.loadEvents()
+        // WP-107: decode the pre-sync events OFF the main actor. This was a
+        // synchronous full-events.json decode ON the main thread, fired right
+        // after the first cache paint was scheduled — it stole the main thread
+        // exactly when the off-main agenda reload wanted to hop back and apply,
+        // so "Henter data …" lingered longer than it needed to at every launch.
+        let dataStore = self.dataStore
+        let previousEvents = await Task.detached { dataStore.loadEvents() }.value
         _ = await syncClient.sync()
         // WP-60: this view drives its own sync (it also reconciles notifications
         // below), so it must invalidate the agenda's cached entity index too —
@@ -592,12 +610,20 @@ struct ContentView: View {
         agenda.reloadFromCache(now: Date())
         #if DEBUG
         // The screenshot harness must not trip the first-launch notification
-        // permission alert over the design it's capturing.
+        // permission alert over the design it's capturing (and must keep the
+        // seeded Nyheter board — so no post-sync news rebuild in a demo run).
         if ProcessInfo.processInfo.environment["SPORTIVISTA_DEMO"] != nil { return }
         #endif
+        // WP-107: the sync may have rewritten news/featured/results/events — rebuild
+        // the Nyheter board (off-main) so it is fresh and ready before the user ever
+        // switches to it.
+        news.rebuild()
+        // WP-107: decode the post-sync events off the main actor too (was a second
+        // synchronous full-decode on main).
+        let newEvents = await Task.detached { dataStore.loadEvents() }.value
         await notificationPlanner.reconcile(
             previousEvents: previousEvents,
-            newEvents: dataStore.loadEvents(),
+            newEvents: newEvents,
             interests: dataStore.loadInterests() ?? Interests(),
             lastSync: dataStore.lastSync,
             // WP-66 — honour the assistant-set notification lead-time preference.
