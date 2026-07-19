@@ -1,8 +1,30 @@
 {
-  "generatedAt": "2026-07-19T19:13:11.098Z",
-  "gapCount": 3,
+  "generatedAt": "2026-07-19T20:42:51.861Z",
+  "gapCount": 6,
   "anomalyCount": 1,
   "gaps": [
+    {
+      "kind": "entity",
+      "entity": "Kristoffer Reitan",
+      "type": "missing",
+      "imminent": false,
+      "headline": "Reitan med god sisterunde i British Open – ble nummer 18",
+      "link": "https://www.nrk.no/sport/reitan-med-god-sisterunde-i-british-open-_-ble-nummer-18-1.17963060",
+      "feed": "nrk-sport",
+      "matchCount": 1,
+      "detectedAt": "2026-07-19T20:42:51.321Z"
+    },
+    {
+      "kind": "entity",
+      "entity": "Reitan",
+      "type": "missing",
+      "imminent": false,
+      "headline": "Reitan med god sisterunde i British Open – ble nummer 18",
+      "link": "https://www.nrk.no/sport/reitan-med-god-sisterunde-i-british-open-_-ble-nummer-18-1.17963060",
+      "feed": "nrk-sport",
+      "matchCount": 1,
+      "detectedAt": "2026-07-19T20:42:51.321Z"
+    },
     {
       "kind": "entity",
       "entity": "Fotball-VM",
@@ -12,7 +34,7 @@
       "link": "https://www.nrk.no/sport/derfor-uteble-fifa-presidenten-fra-bronsekampen-i-vm-1.17962651",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-19T19:13:10.573Z"
+      "detectedAt": "2026-07-19T20:42:51.321Z"
     },
     {
       "kind": "entity",
@@ -23,7 +45,7 @@
       "link": "https://www.nrk.no/sport/reitan-med-god-sisterunde-i-british-open-_-ble-nummer-18-1.17963060",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-19T19:13:10.573Z"
+      "detectedAt": "2026-07-19T20:42:51.321Z"
     },
     {
       "kind": "entity",
@@ -34,7 +56,19 @@
       "link": "https://www.nrk.no/sport/seiersfesten-fortsatte-for-antonelli-_-hamilton-kjorte-pa-mekaniker-1.17962899",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-19T19:13:10.573Z"
+      "detectedAt": "2026-07-19T20:42:51.321Z"
+    },
+    {
+      "kind": "tracked-claim",
+      "entity": "Viktor Hovland",
+      "group": "athletes",
+      "sport": "golf",
+      "type": "missing",
+      "imminent": false,
+      "claimedDate": "2026-08-16T00:00:00.000Z",
+      "reason": "tracked.json asserts board coverage for this interest, but no matching event is on the board",
+      "trackedId": "viktor-hovland",
+      "detectedAt": "2026-07-19T20:42:51.830Z"
     }
   ],
   "anomalies": [
@@ -43,7 +77,7 @@
       "issue": "dropped-in-build",
       "detail": "1 upcoming chess event(s) in the source file but 0 on the board — build/normalisation may be dropping them",
       "severity": "high",
-      "detectedAt": "2026-07-19T19:13:11.097Z"
+      "detectedAt": "2026-07-19T20:42:51.861Z"
     }
   ],
   "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board (kind entity/sport), or a tracked.json reason that claims an upcoming event the board lacks (kind tracked-claim, RSS-independent). anomalies: a fetcher's own data looks unreliable."
