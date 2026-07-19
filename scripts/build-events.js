@@ -2,7 +2,7 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
-import { readJsonIfExists, rootDataPath, MS_PER_DAY, makeCoverageGate, mustWatchEntity, normalizeParticipants, normalizeNorwegianPlayers, normalizeText, containsName, entityTerms } from "./lib/helpers.js";
+import { readJsonIfExists, rootDataPath, configDirPath, MS_PER_DAY, makeCoverageGate, mustWatchEntity, normalizeParticipants, normalizeNorwegianPlayers, normalizeText, containsName, entityTerms } from "./lib/helpers.js";
 import { resolveStreaming } from "./lib/norwegian-rights.js";
 import { writeManifest } from "./build-manifest.js";
 import { writePortReport } from "./build-port-report.js";
@@ -13,9 +13,7 @@ import { writeEntities } from "./build-entities.js";
 import { validateEvents, loadEventSchema } from "./validate-events.js";
 
 const dataDir = rootDataPath();
-const configDir =
-	process.env.SPORTSYNC_CONFIG_DIR ||
-	path.resolve(process.cwd(), "scripts", "config");
+const configDir = configDirPath();
 
 // Stable event ID: first 12 hex chars of a sha256 hash of the same dedupe key
 // used throughout this file (`${sport}|${title}|${time}`, see the preservation
@@ -80,14 +78,20 @@ function enrichEntityIds(event) {
 	else delete event.awayTeamEntityId;
 }
 
-// Auto-discover sport files by convention: any JSON with a { tournaments: [...] } structure
+// Auto-discover sport files by convention: any JSON with a { tournaments: [...] }
+// structure. Cache the parsed JSON as we go so the load pass below can reuse it —
+// each sport file used to be read+parsed twice per build (discovery + load), and on
+// the hourly cadence that double I/O is pure waste (WP-130).
 const dataFiles = fs.readdirSync(dataDir).filter((f) => f.endsWith(".json"));
 const sports = [];
+const sportData = new Map();
 for (const f of dataFiles) {
 	if (f === "events.json") continue;
 	const data = readJsonIfExists(path.join(dataDir, f));
 	if (data && Array.isArray(data.tournaments)) {
-		sports.push(f.replace(".json", ""));
+		const sport = f.replace(".json", "");
+		sports.push(sport);
+		sportData.set(sport, data);
 	}
 }
 
@@ -147,10 +151,10 @@ function pushEvent(ev, sport, tournament) {
 	all.push(event);
 }
 
-// 1. Load standard sport JSON files (static fetchers)
+// 1. Load standard sport JSON files (static fetchers) — reuse the JSON already
+// parsed during discovery above (no second read of the same file).
 for (const sport of sports) {
-	const file = path.join(dataDir, `${sport}.json`);
-	const json = readJsonIfExists(file);
+	const json = sportData.get(sport);
 	if (!json || !Array.isArray(json.tournaments)) continue;
 	json.tournaments.forEach((t) => {
 		(t.events || []).forEach((ev) => pushEvent(ev, sport, t.name));

@@ -58,12 +58,8 @@
 import fs from "fs";
 import path from "path";
 import { pathToFileURL } from "url";
-import { readJsonIfExists, rootDataPath, normalizeText, containsName } from "./lib/helpers.js";
+import { readJsonIfExists, rootDataPath, configDirPath, normalizeText, containsName } from "./lib/helpers.js";
 import { sportsConfig as defaultSportsConfig } from "./config/sports-config.js";
-
-function configDirDefault() {
-	return process.env.SPORTSYNC_CONFIG_DIR || path.resolve(process.cwd(), "scripts", "config");
-}
 
 /**
  * WP-64: the sports shown broadly on the board even without a specific tracked
@@ -289,7 +285,7 @@ class EntityIndexBuilder {
  * cross-source dedup deterministically without depending on that file's
  * content staying stable over time.
  */
-export function buildEntityIndex(configDir = configDirDefault(), sportsConfigData = defaultSportsConfig) {
+export function buildEntityIndex(configDir = configDirPath(), sportsConfigData = defaultSportsConfig) {
 	const builder = new EntityIndexBuilder();
 
 	// 1. tracked.json — ids reused verbatim; this source always wins dedup
@@ -386,7 +382,7 @@ function decorateAliases(entities) {
 }
 
 /** Build + write docs/data/entities.json. Returns the entity array. */
-export function writeEntities(dataDir = rootDataPath(), configDir = configDirDefault()) {
+export function writeEntities(dataDir = rootDataPath(), configDir = configDirPath()) {
 	const entities = buildEntityIndex(configDir);
 	fs.writeFileSync(path.join(dataDir, "entities.json"), JSON.stringify(entities, null, 2));
 	return entities;

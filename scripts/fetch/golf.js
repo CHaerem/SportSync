@@ -202,6 +202,24 @@ export async function fetchGolfPlayerStatuses(leagueSlug, eventId, competitors, 
 	return out;
 }
 
+// De-dupe ESPN scoreboard events into `allEvents`, keyed by id (or name). `seen`
+// maps that key → the event's index in allEvents; when the same tournament comes
+// back under an EARLIER date (a multi-day event's Thursday start beating a later
+// default-endpoint copy), keep the earlier one. Shared by the per-date and
+// default-endpoint passes below, which ran byte-identical merge loops (WP-130).
+function mergeEvents(events, allEvents, seen) {
+	for (const ev of events) {
+		const key = ev.id || ev.name;
+		const idx = seen.get(key);
+		if (idx === undefined) {
+			seen.set(key, allEvents.length);
+			allEvents.push(ev);
+		} else if (new Date(ev.date) < new Date(allEvents[idx].date)) {
+			allEvents[idx] = ev;
+		}
+	}
+}
+
 export async function fetchGolfESPN() {
 	// Get golfers filtered by tour
 	const getGolfersForTour = (tourName) => {
@@ -259,16 +277,7 @@ export async function fetchGolfESPN() {
 					const data = await fetchJson(`${tour.url}?dates=${dateStr}`);
 					const v = validateESPNScoreboard(data, tour.name);
 					for (const w of v.warnings) console.warn(w);
-					for (const ev of v.events) {
-						const key = ev.id || ev.name;
-						const idx = seen.get(key);
-						if (idx === undefined) {
-							seen.set(key, allEvents.length);
-							allEvents.push(ev);
-						} else if (new Date(ev.date) < new Date(allEvents[idx].date)) {
-							allEvents[idx] = ev;
-						}
-					}
+					mergeEvents(v.events, allEvents, seen);
 				} catch (err) {
 					console.warn(`${tour.name} date query ${dateStr} failed: ${err.message}`);
 				}
@@ -279,16 +288,7 @@ export async function fetchGolfESPN() {
 				const data = await fetchJson(tour.url);
 				const v = validateESPNScoreboard(data, tour.name);
 				for (const w of v.warnings) console.warn(w);
-				for (const ev of v.events) {
-					const key = ev.id || ev.name;
-					const idx = seen.get(key);
-					if (idx === undefined) {
-						seen.set(key, allEvents.length);
-						allEvents.push(ev);
-					} else if (new Date(ev.date) < new Date(allEvents[idx].date)) {
-						allEvents[idx] = ev;
-					}
-				}
+				mergeEvents(v.events, allEvents, seen);
 			} catch (err) {
 				console.warn(`${tour.name} default query failed: ${err.message}`);
 			}

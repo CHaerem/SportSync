@@ -53,6 +53,14 @@ export function normalizeText(s) {
 		.toLowerCase();
 }
 
+// The boundary regex is a pure function of the (normalized) needle, so memoize it:
+// containsName is the hottest path in the hourly build — tens of thousands of calls
+// via findEntityId / detect-coverage-gaps / lib/news — and rebuilding the RegExp on
+// every call dominated that cost. The needle set is bounded (tracked/catalog entities
+// plus a handful of markers), so the cache stays small; no eviction needed. The regex
+// carries no `g` flag, so `.test()` is stateless and the cached instance is reusable.
+const NAME_REGEX_CACHE = new Map();
+
 /**
  * Word-boundary, accent-insensitive containment. "Lyn" matches "Lyn Oslo" and
  * "Vålerenga-Lyn" but NOT "Brooklyn"/"lynnedslag" — boundaries kill the class of
@@ -62,8 +70,13 @@ export function containsName(haystack, name) {
 	const n = normalizeText(name).trim();
 	if (!n) return false;
 	const h = normalizeText(haystack);
-	const escaped = n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-	return new RegExp(`(?:^|[^\\p{L}\\p{N}])${escaped}(?:[^\\p{L}\\p{N}]|$)`, "iu").test(h);
+	let re = NAME_REGEX_CACHE.get(n);
+	if (!re) {
+		const escaped = n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+		re = new RegExp(`(?:^|[^\\p{L}\\p{N}])${escaped}(?:[^\\p{L}\\p{N}]|$)`, "iu");
+		NAME_REGEX_CACHE.set(n, re);
+	}
+	return re.test(h);
 }
 
 /**
@@ -140,11 +153,10 @@ export function notifyEntities(interests) {
 /** Which notify-entity (if any) makes this event a must-watch — else null. */
 export function mustWatchEntity(event, interests) {
 	if (!event) return null;
-	const hay = [
-		event.title, event.tournament, event.homeTeam, event.awayTeam,
-		...((event.norwegianPlayers || []).map((p) => p?.name || p)),
-		...((event.participants || []).map((p) => p?.name || p)),
-	].join(" ");
+	// Same participant haystack the coverage gate scans (title + tournament +
+	// home/away + Norwegian players + participants, venue excluded) — kept as the
+	// single canonical builder so the two can't drift (WP-130).
+	const hay = coverageHaystack(event);
 	// Sport-scope so a sport-tagged entity (e.g. FC Barcelona) can't match a
 	// different sport's event that merely mentions the name (a Tour de France
 	// stage in the city of Barcelona). Untagged entities/events still match freely.
@@ -458,4 +470,15 @@ export function hasEvents(obj) {
 
 export function rootDataPath() {
 	return process.env.SPORTSYNC_DATA_DIR || path.resolve(process.cwd(), "docs", "data");
+}
+
+/**
+ * The scripts/config directory — the ONE place the config-dir override is
+ * resolved (mirrors rootDataPath). Honors SPORTSYNC_CONFIG_DIR so the
+ * integration tests (and any sandboxed run) can point every script at a temp
+ * config; falls back to the repo's scripts/config. Replaces five hand-rolled
+ * copies of this expression (WP-130).
+ */
+export function configDirPath() {
+	return process.env.SPORTSYNC_CONFIG_DIR || path.resolve(process.cwd(), "scripts", "config");
 }

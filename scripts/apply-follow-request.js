@@ -8,6 +8,7 @@ import fs from "fs";
 import path from "path";
 import { pathToFileURL } from "url";
 import { validateAgainstSchema } from "./lib/validate-schema.js";
+import { configDirPath } from "./lib/helpers.js";
 
 const LABELS = {
 	action: "Handling",
@@ -108,7 +109,11 @@ export function applyChange(interests, f) {
 
 function main() {
 	const fields = fieldsFromForm(process.env.ISSUE_BODY || "");
-	const configDir = path.resolve(process.cwd(), "scripts", "config");
+	// WP-130: honor SPORTSYNC_CONFIG_DIR like the rest of the pipeline (was hard-
+	// pinned to scripts/config). The follow-request workflow doesn't set the
+	// override, so production behavior is unchanged; it just lets a sandboxed run
+	// point the transcriber at a temp config.
+	const configDir = configDirPath();
 	const interestsPath = path.join(configDir, "interests.json");
 	const interests = JSON.parse(fs.readFileSync(interestsPath, "utf-8"));
 	const schema = JSON.parse(fs.readFileSync(path.join(configDir, "interests.schema.json"), "utf-8"));

@@ -10,12 +10,34 @@
 
 import path from "path";
 import { pathToFileURL } from "url";
-import { fetchJson, iso, rootDataPath, readJsonIfExists, writeJsonPretty } from "./lib/helpers.js";
+import { fetchJson, iso, rootDataPath, configDirPath, readJsonIfExists, writeJsonPretty } from "./lib/helpers.js";
 import { validateESPNStandings, validateESPNScoreboard } from "./lib/response-validator.js";
 import { golfCompetitorFields } from "./lib/golf.js";
 
 const ESPN_BASE = "https://site.api.espn.com/apis/v2/sports";
 const ESPN_SITE = "https://site.api.espn.com/apis/site/v2/sports";
+
+// ESPN exposes each entry's numbers as a stats[] array of { name, value } —
+// flatten it to a { name: value } object once instead of re-inlining the loop in
+// every parser (WP-130).
+function flattenStats(entry) {
+	const stats = {};
+	for (const s of entry.stats || []) {
+		stats[s.name] = s.value;
+	}
+	return stats;
+}
+
+// Variant used by the driver→team correlation: keep ONLY per-race stats (s.played)
+// and coerce missing values to 0, so two drivers' race points can be summed against
+// a constructor's.
+function flattenRacePoints(entry) {
+	const racePoints = {};
+	for (const s of entry.stats || []) {
+		if (s.played) racePoints[s.name] = s.value || 0;
+	}
+	return racePoints;
+}
 
 function parseFootballStandings(data, label) {
 	const validated = validateESPNStandings(data, label);
@@ -26,10 +48,7 @@ function parseFootballStandings(data, label) {
 	if (!group?.standings?.entries) return [];
 
 	return group.standings.entries.map((entry) => {
-		const stats = {};
-		for (const s of entry.stats || []) {
-			stats[s.name] = s.value;
-		}
+		const stats = flattenStats(entry);
 		return {
 			position: stats.rank || 0,
 			team: entry.team?.displayName || entry.team?.name || "Unknown",
@@ -62,7 +81,7 @@ export async function fetchLaLigaStandings() {
  * Falls back gracefully if config is missing.
  */
 function loadTrackedGolfers() {
-	const configDir = process.env.SPORTSYNC_CONFIG_DIR || path.resolve(process.cwd(), "scripts", "config");
+	const configDir = configDirPath();
 	const golfers = readJsonIfExists(path.join(configDir, "norwegian-golfers.json"));
 	const byTour = new Map();
 	if (!Array.isArray(golfers)) return byTour;
@@ -190,26 +209,17 @@ export function buildDriverTeamMap(driverEntries, constructorGroup) {
 	if (!constructorGroup?.standings?.entries?.length) return map;
 
 	// Extract per-race points for each driver
-	const driverRacePoints = driverEntries.map((entry) => {
-		const racePoints = {};
-		for (const s of entry.stats || []) {
-			if (s.played) racePoints[s.name] = s.value || 0;
-		}
-		return {
-			name: entry.athlete?.displayName || "Unknown",
-			racePoints,
-		};
-	});
+	const driverRacePoints = driverEntries.map((entry) => ({
+		name: entry.athlete?.displayName || "Unknown",
+		racePoints: flattenRacePoints(entry),
+	}));
 
 	// Extract per-race points for each constructor
 	for (const cEntry of constructorGroup.standings.entries) {
 		const teamName = cEntry.team?.displayName || "";
 		if (!teamName) continue;
 
-		const constructorRacePoints = {};
-		for (const s of cEntry.stats || []) {
-			if (s.played) constructorRacePoints[s.name] = s.value || 0;
-		}
+		const constructorRacePoints = flattenRacePoints(cEntry);
 
 		const raceKeys = Object.keys(constructorRacePoints);
 		if (raceKeys.length === 0) continue;
@@ -246,10 +256,7 @@ export async function fetchF1Standings() {
 	const driverTeamMap = buildDriverTeamMap(driverGroup.standings.entries, constructorGroup);
 
 	return driverGroup.standings.entries.map((entry) => {
-		const stats = {};
-		for (const s of entry.stats || []) {
-			stats[s.name] = s.value;
-		}
+		const stats = flattenStats(entry);
 		const driverName = entry.athlete?.displayName || "Unknown";
 		return {
 			position: stats.rank || 0,
@@ -284,10 +291,7 @@ export async function fetchTennisRankings() {
 			}
 
 			result[tour.key] = group.standings.entries.slice(0, 20).map((entry) => {
-				const stats = {};
-				for (const s of entry.stats || []) {
-					stats[s.name] = s.value;
-				}
+				const stats = flattenStats(entry);
 				return {
 					position: stats.rank || 0,
 					player: entry.athlete?.displayName || entry.team?.displayName || "Unknown",
