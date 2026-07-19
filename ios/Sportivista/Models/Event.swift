@@ -75,6 +75,10 @@ struct Event: Codable, Equatable {
     var isFavorite: Bool
     /// Round/phase label, e.g. "Semifinale".
     var round: String?
+    /// Playing surface, e.g. tennis "Grus"/"Hard" — a quiet key-fact line in the
+    /// detail sheet ("Underlag") when present. Mirrors dashboard.js detail.js's
+    /// defensive `e.surface` read; absent from most events.
+    var surface: String?
     /// Computed by build-events.js — true when the event hits a
     /// tracked/must-watch entity.
     var mustWatch: Bool
@@ -110,7 +114,7 @@ struct Event: Codable, Equatable {
         case id, sport, tournament, title, time, endTime, venue, meta, norwegian, streaming,
              participants, norwegianPlayers, totalPlayers, link, status, featuredGroups,
              homeTeam, awayTeam, homeTeamEntityId, awayTeamEntityId, isFavorite, round,
-             mustWatch, format, stage, result, context, importance, summary, source,
+             surface, mustWatch, format, stage, result, context, importance, summary, source,
              confidence, evidence, researchedAt, verifiedAt, verificationStatus,
              verificationSources, norwegianRelevance, tags
     }
@@ -142,6 +146,7 @@ struct Event: Codable, Equatable {
         awayTeamEntityId = try c.decodeIfPresent(String.self, forKey: .awayTeamEntityId)
         isFavorite = try c.decodeIfPresent(Bool.self, forKey: .isFavorite) ?? false
         round = try c.decodeIfPresent(String.self, forKey: .round)
+        surface = try c.decodeIfPresent(String.self, forKey: .surface)
         mustWatch = try c.decodeIfPresent(Bool.self, forKey: .mustWatch) ?? false
         format = try c.decodeIfPresent(String.self, forKey: .format)
         stage = try c.decodeIfPresent(String.self, forKey: .stage)

@@ -43,13 +43,9 @@ struct EventDetailSheet: View {
                 if let venue = event.venue, !venue.isEmpty, venue != "TBD" {
                     DetailRow(label: "Arena", value: venue)
                 }
-                if let summary = event.summary, !summary.isEmpty {
-                    DetailRow(label: "Om", value: summary)
-                }
+                aboutSection
 
                 contextActionsSection
-
-                resultSection
 
                 Section {
                     if event.streaming.isEmpty {
@@ -86,6 +82,12 @@ struct EventDetailSheet: View {
                 } header: {
                     header("VARSEL")
                 }
+
+                // RESULTAT sist (WP-127) — DESIGN § Event-detalj orders the sheet
+                // Arena · Om · Hvor ser jeg det · Funnet av AI · Varsel · Resultat.
+                // The result (spoiler-masked when needed) is the LAST section, so a
+                // glance at the sheet never lands on the outcome first.
+                resultSection
             }
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
@@ -108,6 +110,30 @@ struct EventDetailSheet: View {
             .font(.sportivista(.caption2, weight: .semibold))
             .foregroundStyle(SportivistaTokens.accent)
             .tracking(0.5)
+    }
+
+    // MARK: - "Om" (WP-127 — paragraphs, not a wall)
+
+    /// The "Om" block: the summary split into calm paragraphs (with a soft
+    /// length cap + "Mer" for extremely long texts) plus the quiet key-fact
+    /// lines — Runde / Underlag / Format — where those fields exist. Mirrors the
+    /// web detail's structure (detail.js `aboutParagraphs` + the key-fact rows);
+    /// the wall-of-text single `Text` it replaces was 600–786 chars in live data.
+    @ViewBuilder
+    private var aboutSection: some View {
+        let paragraphs = AgendaFormat.aboutParagraphs(event.summary)
+        if !paragraphs.isEmpty {
+            AboutRow(paragraphs: paragraphs)
+        }
+        if let round = event.round, !round.isEmpty {
+            DetailRow(label: "Runde", value: round)
+        }
+        if let surface = event.surface, !surface.isEmpty {
+            DetailRow(label: "Underlag", value: surface)
+        }
+        if let format = event.format, !format.isEmpty {
+            DetailRow(label: "Format", value: format)
+        }
     }
 
     // MARK: - Context actions (WP-16.4)
@@ -205,6 +231,63 @@ struct EventDetailSheet: View {
                 header("RESULTAT")
             }
         }
+    }
+}
+
+/// The "Om" summary as calm paragraphs (WP-127). `AgendaFormat.aboutParagraphs`
+/// has already split the text; this renders each as its own `Text` under a quiet
+/// "OM" label, with a soft length cap: an extremely long summary shows its
+/// leading paragraph(s) up to the cap plus a "Mer" reveal, so the sheet opens
+/// calm rather than as one wall. Dynamic-Type throughout (no fixed point sizes).
+private struct AboutRow: View {
+    let paragraphs: [String]
+    @State private var expanded = false
+
+    /// Soft cap in characters. At/under it the whole text shows; over it, the
+    /// leading paragraph(s) that reach the cap show, with a "Mer" for the rest.
+    private let softCap = 320
+
+    private var totalLength: Int { paragraphs.reduce(0) { $0 + $1.count } }
+    private var isLong: Bool { totalLength > softCap }
+
+    private var visible: [String] {
+        guard isLong, !expanded else { return paragraphs }
+        var shown: [String] = []
+        var total = 0
+        for p in paragraphs {
+            shown.append(p)
+            total += p.count
+            if total >= softCap { break }
+        }
+        return shown
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("OM")
+                .font(.sportivista(.caption2, weight: .semibold))
+                .foregroundStyle(SportivistaTokens.secondaryLabel)
+            ForEach(Array(visible.enumerated()), id: \.offset) { _, para in
+                Text(para)
+                    .font(.sportivista(.subheadline))
+                    .foregroundStyle(SportivistaTokens.label)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            if isLong && !expanded && visible.count < paragraphs.count {
+                Button {
+                    expanded = true
+                } label: {
+                    Text("Mer")
+                        .font(.sportivista(.footnote, weight: .semibold))
+                        .foregroundStyle(SportivistaTokens.accent)
+                        // A comfortable tap target even though the label is small.
+                        .frame(minHeight: 44, alignment: .leading)
+                        .contentShape(Rectangle())
+                }
+            }
+        }
+        .padding(.vertical, 4)
+        .listRowBackground(SportivistaTokens.cell)
     }
 }
 

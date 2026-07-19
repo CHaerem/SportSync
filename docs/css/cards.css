@@ -145,12 +145,24 @@
 .ev-detail {
 	padding: 4px 0 16px calc(14px + 12px + var(--time-col) + 12px);
 	display: grid;
+	grid-template-columns: minmax(0, 1fr);   /* one column, fills the width so .d-prose can break out cleanly */
 	gap: 6px;
 	font-size: 13.5px;
 }
 .ev-detail .d-row { display: flex; gap: 10px; align-items: baseline; }
 .ev-detail .d-k { color: var(--fg-3); min-width: 62px; flex-shrink: 0; }
 .ev-detail .d-v { color: var(--fg-2); }
+/* Long prose ("Om") gets the FULL row width instead of the narrow key/value value
+   column: cancel the title-column indent so a 700+-char summary reads across the
+   whole card, not a ~130px strip (WP-127). Short facts (Arena/Runde/Se på) keep
+   key/value. The label sits on its own line above the paragraphs. */
+.ev-detail .d-prose {
+	margin-left: calc(-38px - var(--time-col));   /* = -(14 + 12 + time-col + 12), cancels .ev-detail's indent */
+	width: calc(100% + 38px + var(--time-col));
+}
+.ev-detail .d-prose .d-k { display: block; min-width: 0; margin-bottom: 4px; }
+.ev-detail .d-prose .d-p { color: var(--fg-2); margin: 0 0 6px; line-height: 1.5; overflow-wrap: break-word; }
+.ev-detail .d-prose .d-p:last-child { margin-bottom: 0; }
 .ev-detail a { color: var(--accent); border-bottom: 1px solid transparent; }
 .ev-detail a:hover { border-bottom-color: var(--accent); }
 /* Collapsed stage race (e.g. Tour de France): past stages dimmed when expanded */

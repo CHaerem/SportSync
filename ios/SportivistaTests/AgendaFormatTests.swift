@@ -120,6 +120,48 @@ final class AgendaFormatTests: XCTestCase {
         XCTAssertNil(AgendaFormat.matchupTitle(participants: [], title: "Noe"))
     }
 
+    // MARK: - aboutParagraphs (WP-127 — the "Om" wall, split calmly)
+    // Mirrors the web dashboard-cards "«Om» readability" cases so the two
+    // surfaces split identically (dashboard.js `aboutParagraphs`).
+
+    func testAboutParagraphs_multiSentence_splitsIntoParagraphs() {
+        let summary = "Første setning her. Andre setning her. Tredje setning kommer. Fjerde runder av."
+        let paras = AgendaFormat.aboutParagraphs(summary)
+        XCTAssertGreaterThan(paras.count, 1, "four sentences must not stay one wall")
+        // Grouped into runs of two.
+        XCTAssertEqual(paras.count, 2)
+        XCTAssertEqual(paras[0], "Første setning her. Andre setning her.")
+        XCTAssertEqual(paras[1], "Tredje setning kommer. Fjerde runder av.")
+    }
+
+    func testAboutParagraphs_doesNotSplitInsideAbbreviationsOrNumbers() {
+        // "kl. 21.00" and "29. juli" must NOT be read as sentence boundaries —
+        // two real sentences (≤2) collapse to one calm block.
+        let summary = "Kampen vises på NRK1 (kl. 21.00 norsk tid). Løpet går 29. juli i Aalborg."
+        let paras = AgendaFormat.aboutParagraphs(summary)
+        XCTAssertEqual(paras.count, 1)
+        XCTAssertTrue(paras[0].contains("kl. 21.00"))
+        XCTAssertTrue(paras[0].contains("29. juli"))
+    }
+
+    func testAboutParagraphs_explicitBlankLines_splitFirst() {
+        let summary = "Første avsnitt.\n\nAndre avsnitt her."
+        let paras = AgendaFormat.aboutParagraphs(summary)
+        XCTAssertEqual(paras, ["Første avsnitt.", "Andre avsnitt her."])
+    }
+
+    func testAboutParagraphs_collapsesWhitespaceWithinABlock() {
+        let summary = "Ett  avsnitt   med\n  ekstra   mellomrom."
+        let paras = AgendaFormat.aboutParagraphs(summary)
+        XCTAssertEqual(paras, ["Ett avsnitt med ekstra mellomrom."])
+    }
+
+    func testAboutParagraphs_emptyOrNil_isEmpty() {
+        XCTAssertEqual(AgendaFormat.aboutParagraphs(""), [])
+        XCTAssertEqual(AgendaFormat.aboutParagraphs("   "), [])
+        XCTAssertEqual(AgendaFormat.aboutParagraphs(nil), [])
+    }
+
     // MARK: - metaLabel (the quiet second line, "ved behov")
 
     func testMetaLabel_tournamentDistinctFromTitle_isShown() {

@@ -97,6 +97,24 @@ final class WidgetTimelineBuilderTests: XCTestCase {
         XCTAssertEqual(first?.channelLabel, "Viaplay")
     }
 
+    func testBuildEntries_headToHeadParticipants_highlightTitleIsTheMatchup() {
+        // WP-112/127 — an event carrying two participants but no home/away teams
+        // (the "VM-finale" shape: generic title "VM-finalen 2026", participants
+        // Spania/Argentina) must surface in the widget highlight as the matchup,
+        // NOT the generic title — the same AgendaFormat.title the agenda row uses.
+        let now = iso("2026-07-13T08:00:00Z")
+        let event = EventBuilder.make(
+            sport: "football", title: "VM-finalen 2026", time: "2026-07-13T18:00:00Z",
+            tournament: "FIFA World Cup", participants: ["Spania", "Argentina"], importance: 5
+        )
+        let interests = Interests(followBroadly: ["football"])
+
+        let entries = WidgetTimelineBuilder.buildEntries(events: [event], interests: interests, now: now)
+
+        XCTAssertEqual(entries.first?.hasHighlight, true)
+        XCTAssertEqual(entries.first?.title, "Spania – Argentina")
+    }
+
     func testBuildEntries_noRelevantEvents_producesEmptyHighlightEntry() {
         let now = iso("2026-07-13T08:00:00Z")
         let entries = WidgetTimelineBuilder.buildEntries(events: [], interests: Interests(), now: now)
