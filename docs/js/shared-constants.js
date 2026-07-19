@@ -40,6 +40,21 @@ function ssShortName(name) {
 	return name.replace(/ FC$| AFC$| CF$| FK$/i, '').replace(/^FC |^AFC /i, '').trim();
 }
 
+/** The head-to-head matchup names for an event as a PLAIN "A – B" string — when
+ *  `participants` is EXACTLY two named sides and there's no home/away pair — else
+ *  null. Fires only for two: a golf/CS2 field of four is a tournament, not a
+ *  matchup, and keeps its own title. Un-escaped: HTML callers escape the result
+ *  (dashboard.js `participantMatchup`), plain-text callers (detail.js share/
+ *  report titles) use it directly. Mirrors iOS `AgendaFormat.matchupTitle`. */
+function ssParticipantMatchup(e) {
+	if (!e || (e.homeTeam && e.awayTeam)) return null;
+	const names = (Array.isArray(e.participants) ? e.participants : [])
+		.map((p) => (p && p.name) || (typeof p === 'string' ? p : ''))
+		.filter(Boolean);
+	if (names.length !== 2) return null;
+	return `${ssShortName(names[0])} – ${ssShortName(names[1])}`;
+}
+
 /** Fuzzy team name matching (normalize + substring inclusion) */
 function ssTeamMatch(a, b) {
 	const normalize = s => s.toLowerCase().replace(/ fc$| afc$| cf$| fk$/i, '').replace(/^fc |^afc /i, '').trim();
@@ -97,6 +112,7 @@ window.isEventInWindow = isEventInWindow;
 window.ssShortReason = ssShortReason;
 window.escapeHtml = escapeHtml;
 window.ssShortName = ssShortName;
+window.ssParticipantMatchup = ssParticipantMatchup;
 window.ssTeamMatch = ssTeamMatch;
 window.ssEntityName = ssEntityName;
 window.trackedTerms = trackedTerms;

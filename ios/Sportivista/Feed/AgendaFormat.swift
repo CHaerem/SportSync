@@ -101,6 +101,60 @@ enum AgendaFormat {
         return "\(names[0]) – \(names[1])"
     }
 
+    // MARK: - "Om" — the summary, split into calm paragraphs (WP-127)
+
+    /// Split a free-text summary into calm paragraphs so the detail sheet's "Om"
+    /// section isn't one wall of text — the exact mirror of dashboard.js's
+    /// `aboutParagraphs` (WP-111). Explicit blank lines (`\n\n`) split first;
+    /// otherwise a block of more than two sentences is grouped into runs of two.
+    /// Sentence boundaries are only `.`/`!`/`?`/`…` (+ an optional closing quote)
+    /// followed by whitespace and a capital — so "kl. 21.00", "UCI 2.Pro" and
+    /// "29. juli" stay intact. Pure display; returns raw (un-escaped) strings —
+    /// SwiftUI `Text` renders them safely, no HTML escaping needed here.
+    static func aboutParagraphs(_ text: String?) -> [String] {
+        let raw = (text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !raw.isEmpty else { return [] }
+        let blocks = splitByRegex(raw, "\\n\\s*\\n")
+            .map { collapseWhitespace($0) }
+            .filter { !$0.isEmpty }
+        var out: [String] = []
+        for block in blocks {
+            let sentences = splitByRegex(block, "(?<=[.!?…][»\")'\u{201D}\u{2019}]?)\\s+(?=[A-ZÆØÅ])")
+                .map { $0.trimmingCharacters(in: .whitespaces) }
+                .filter { !$0.isEmpty }
+            if sentences.count <= 2 { out.append(block); continue }
+            var i = 0
+            while i < sentences.count {
+                let group = sentences[i..<min(i + 2, sentences.count)]
+                out.append(group.joined(separator: " "))
+                i += 2
+            }
+        }
+        return out
+    }
+
+    /// Split `s` on every match of `pattern` (keeping the pieces between the
+    /// matches) — the Foundation equivalent of JS `String.prototype.split(regex)`.
+    private static func splitByRegex(_ s: String, _ pattern: String) -> [String] {
+        guard let re = try? NSRegularExpression(pattern: pattern) else { return [s] }
+        let ns = s as NSString
+        var pieces: [String] = []
+        var last = 0
+        for m in re.matches(in: s, range: NSRange(location: 0, length: ns.length)) {
+            pieces.append(ns.substring(with: NSRange(location: last, length: m.range.location - last)))
+            last = m.range.location + m.range.length
+        }
+        pieces.append(ns.substring(from: last))
+        return pieces
+    }
+
+    /// Collapse any run of whitespace to a single space and trim — mirrors the
+    /// per-block JS `replace(/\s+/g, ' ').trim()`.
+    private static func collapseWhitespace(_ s: String) -> String {
+        return s.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
     /// The quiet meta line under the title (DESIGN.md "Radens anatomi":
     /// "meta: turnering — én dempet linje ved behov"). Returns the tournament
     /// ONLY when it adds context the title doesn't already carry — i.e. it is

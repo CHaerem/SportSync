@@ -115,9 +115,15 @@ Object.assign(window.Dashboard.prototype, {
 		} else if (e.norwegianPlayers?.length) {
 			add('Norske', escapeHtml(e.norwegianPlayers.map((p) => p.name || p).join(', ')));
 		}
-		// "Om" — the summary, structured into calm paragraphs instead of one wall.
-		// First paragraph carries the "Om" label; the rest continue under a blank key.
-		this.aboutParagraphs(e.summary).forEach((p, i) => add(i === 0 ? 'Om' : '', p));
+		// "Om" — the summary as calm paragraphs in a FULL-WIDTH prose block
+		// (.d-prose), NOT squeezed into the narrow ~130px key/value value column
+		// (WP-127). The short key-facts above (Arena/Runde/…) keep key/value; long
+		// prose earns the whole row width. aboutParagraphs already escapes each part.
+		const proseParas = this.aboutParagraphs(e.summary);
+		if (proseParas.length) {
+			const body = proseParas.map((p) => `<p class="d-p">${p}</p>`).join('');
+			rows.push(`<div class="d-prose"><span class="d-k">Om</span><div class="d-prose-body">${body}</div></div>`);
+		}
 
 		const streams = Array.isArray(e.streaming) ? e.streaming : [];
 		if (streams.length) {
@@ -190,14 +196,26 @@ Object.assign(window.Dashboard.prototype, {
 		return null;
 	},
 
+	/** The plain-text display title for share/report — the participant matchup
+	 *  ("Spania – Argentina") or the home/away pair for a head-to-head, else the
+	 *  event's own title. The text-context mirror of eventTitle (which returns
+	 *  escaped HTML for the row): uses the shared ssParticipantMatchup so the
+	 *  detail names the SAME two sides the agenda row and the iOS sheet do (WP-127). */
+	eventPlainTitle(e) {
+		if (!e) return '';
+		if (e.homeTeam && e.awayTeam) return `${ssShortName(e.homeTeam)} – ${ssShortName(e.awayTeam)}`;
+		return ssParticipantMatchup(e) || e.title || '';
+	},
+
 	/** Native share sheet for an event (when · what · where). */
 	shareEvent(e) {
 		if (!e || typeof navigator === 'undefined' || !navigator.share) return;
 		const d = new Date(e.time);
 		const day = d.toLocaleDateString('nb-NO', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Oslo' });
 		const chan = (Array.isArray(e.streaming) && e.streaming[0] && e.streaming[0].platform) || '';
-		const text = [e.title, `${day} ${this.osloTime(d)}`, chan].filter(Boolean).join(' · ');
-		navigator.share({ title: e.title, text, url: location.href }).catch(() => {});
+		const title = this.eventPlainTitle(e);
+		const text = [title, `${day} ${this.osloTime(d)}`, chan].filter(Boolean).join(' · ');
+		navigator.share({ title, text, url: location.href }).catch(() => {});
 	},
 
 	/** Report a problem with an event → a prefilled GitHub feedback issue. */
@@ -212,7 +230,7 @@ Object.assign(window.Dashboard.prototype, {
 			`- Sport: ${e.sport}`, `- Tittel: ${e.title}`, `- Tid: ${local}`,
 			`- Kanal: ${chan}`, `- Kilde: ${e.source || 'statisk'}${e.confidence ? ` (${e.confidence})` : ''}`,
 		].join('\n');
-		const p = new URLSearchParams({ labels: 'event-feedback', title: `[feil] ${e.title}`, body });
+		const p = new URLSearchParams({ labels: 'event-feedback', title: `[feil] ${this.eventPlainTitle(e)}`, body });
 		window.open(`https://github.com/${SS_REPO}/issues/new?${p.toString()}`, '_blank', 'noopener');
 	},
 

@@ -137,6 +137,31 @@ describe("head-to-head participants render as the row matchup", () => {
 	});
 });
 
+// WP-127: the detail's share/report title must name the SAME two sides the row
+// title does — the plain-text mirror of eventTitle, via the shared ssParticipantMatchup.
+describe("detail title (share/report) names the participants", () => {
+	it("uses the participant matchup, not the generic title", () => {
+		expect(dash.eventPlainTitle({ title: "VM-finalen 2026", participants: [{ name: "Spania" }, { name: "Argentina" }] }))
+			.toBe("Spania – Argentina");
+	});
+
+	it("uses home – away (shortened) for a team match", () => {
+		expect(dash.eventPlainTitle({ homeTeam: "Liverpool FC", awayTeam: "Arsenal FC", title: "Liverpool vs Arsenal" }))
+			.toBe("Liverpool – Arsenal");
+	});
+
+	it("falls back to the event's own title for a many-sided field (not a matchup)", () => {
+		expect(dash.eventPlainTitle({ title: "Esports World Cup 2026", participants: [{ name: "A" }, { name: "B" }, { name: "C" }, { name: "D" }] }))
+			.toBe("Esports World Cup 2026");
+	});
+
+	it("returns plain (un-escaped) text — the caller (navigator.share/issue url) is not HTML", () => {
+		// ssParticipantMatchup is the shared, un-escaped source; eventTitle escapes for the row.
+		expect(dash.eventPlainTitle({ title: "x", participants: [{ name: "A & B" }, { name: "C" }] }))
+			.toBe("A & B – C");
+	});
+});
+
 // WP-111: editorial (featured.json) is a "nice extra" that can be quota-skipped for
 // a day. A stale brief is a factual error on the hero (19.07: yesterday's "finalen
 // venter i morgen" stayed up all through finale day). Discard anything > ~20h old.
@@ -182,7 +207,20 @@ describe("«Om» readability — paragraphs, not a wall", () => {
 		expect(paras.length).toBeGreaterThan(1); // not one wall
 		const detail = dash.eventDetail({ sport: "football", title: "x", summary });
 		expect(detail).toContain('<span class="d-k">Om</span>');
-		expect((detail.match(/class="d-v"/g) || []).length).toBeGreaterThan(2); // Hvorfor + ≥2 paragraphs
+		// WP-127: the "Om" prose is a full-width .d-prose block of <p class="d-p">
+		// paragraphs, no longer squeezed into the narrow key/value value column.
+		expect(detail).toContain('class="d-prose"');
+		expect((detail.match(/<p class="d-p">/g) || []).length).toBeGreaterThan(1); // ≥2 paragraphs
+	});
+
+	it("puts long prose in a full-width .d-prose block, not the narrow d-v column", () => {
+		const summary = "Første setning her. Andre setning her. Tredje setning kommer.";
+		const detail = dash.eventDetail({ sport: "football", title: "x", summary });
+		expect(detail).toContain('<div class="d-prose">');
+		expect(detail).toContain('<div class="d-prose-body">');
+		expect(detail).toContain('<p class="d-p">');
+		// The paragraphs must NOT be emitted as key/value value cells.
+		expect(detail).not.toContain('<span class="d-v">Første setning');
 	});
 
 	it("does not split inside abbreviations/numbers like «kl. 21.00» or «29. juli»", () => {

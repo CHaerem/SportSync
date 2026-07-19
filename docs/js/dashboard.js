@@ -198,16 +198,13 @@ class Dashboard {
 	}
 
 	/** A head-to-head read off `participants` (exactly two named sides, no home/away
-	 *  pair): the escaped "Spania – Argentina" string, else null. Deliberately fires
-	 *  only for two — a golf/CS2 field of four is a tournament, not a matchup, and
-	 *  must keep its own title rather than becoming a name list. */
+	 *  pair): the escaped "Spania – Argentina" string, else null. The matchup logic
+	 *  lives in shared-constants.js (`ssParticipantMatchup`) so detail.js can reuse
+	 *  it for the share/report title; here it's escaped for HTML rendering. Fires
+	 *  only for two — a golf/CS2 field of four is a tournament, not a matchup. */
 	participantMatchup(e) {
-		if (e.homeTeam && e.awayTeam) return null;
-		const names = (Array.isArray(e.participants) ? e.participants : [])
-			.map((p) => (p && p.name) || (typeof p === 'string' ? p : ''))
-			.filter(Boolean);
-		if (names.length !== 2) return null;
-		return `${escapeHtml(ssShortName(names[0]))} – ${escapeHtml(ssShortName(names[1]))}`;
+		const m = ssParticipantMatchup(e);
+		return m ? escapeHtml(m) : null;
 	}
 
 	eventTitle(e) {
