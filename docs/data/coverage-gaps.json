@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-19T14:23:04.011Z",
-  "gapCount": 2,
+  "generatedAt": "2026-07-19T14:52:56.360Z",
+  "gapCount": 3,
   "anomalyCount": 1,
   "gaps": [
     {
@@ -12,7 +12,7 @@
       "link": "https://www.nrk.no/sport/derfor-uteble-fifa-presidenten-fra-bronsekampen-i-vm-1.17962651",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-19T14:23:03.505Z"
+      "detectedAt": "2026-07-19T14:52:55.826Z"
     },
     {
       "kind": "entity",
@@ -23,16 +23,27 @@
       "link": "https://www.nrk.no/sport/reitan-loft-for-siste-runde-i-british-open-1.17962468",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-19T14:23:03.505Z"
+      "detectedAt": "2026-07-19T14:52:55.826Z"
+    },
+    {
+      "kind": "entity",
+      "entity": "Formel 1",
+      "type": "missing",
+      "imminent": false,
+      "headline": "Seiersfesten fortsatte for Antonelli – Hamilton kjørte på mekaniker",
+      "link": "https://www.nrk.no/sport/seiersfesten-fortsatte-for-antonelli-_-hamilton-kjorte-pa-mekaniker-1.17962899",
+      "feed": "nrk-sport",
+      "matchCount": 1,
+      "detectedAt": "2026-07-19T14:52:55.826Z"
     }
   ],
   "anomalies": [
     {
       "sport": "chess",
-      "issue": "dropped-in-build",
-      "detail": "1 upcoming chess event(s) in the source file but 0 on the board — build/normalisation may be dropping them",
-      "severity": "high",
-      "detectedAt": "2026-07-19T14:23:04.011Z"
+      "issue": "file-empty",
+      "detail": "docs/data/chess.json has no events and none on the board — source may be down or changed",
+      "severity": "low",
+      "detectedAt": "2026-07-19T14:52:56.360Z"
     }
   ],
   "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board (kind entity/sport), or a tracked.json reason that claims an upcoming event the board lacks (kind tracked-claim, RSS-independent). anomalies: a fetcher's own data looks unreliable."
