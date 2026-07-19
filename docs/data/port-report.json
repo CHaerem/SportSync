@@ -1,0 +1,170 @@
+{
+  "generatedAt": "2026-07-19T22:48:19.921Z",
+  "windowDays": 14,
+  "ports": {
+    "coverage": "green",
+    "amendRate": "green",
+    "silentStops": "green",
+    "participantStatus": "green"
+  },
+  "basis": {
+    "coverageAudit": true,
+    "verifyLog": true,
+    "calibrationLedger": true,
+    "buildAlert": true,
+    "manifest": true,
+    "catalog": true,
+    "notes": [
+      "amendRate.byDay dekker ALLE verify-kildesjekker (ledgeren registrerer ikke event-ledetid, så <72t-filteret kommer fra verify-log sitt neste-7-dager-omfang)."
+    ]
+  },
+  "coverage": {
+    "openGaps": 1,
+    "bySeverity": {
+      "high": 0,
+      "medium": 0,
+      "low": 1
+    },
+    "oldestGapAgeDays": 2.7,
+    "escalatable": 0,
+    "catalogMatched": 1,
+    "auditedAt": "2026-07-19T22:00:00Z",
+    "gaps": [
+      {
+        "interest": "F1 hele sesongen — kvalifisering + race",
+        "severity": "low",
+        "ageDays": 2.7,
+        "recurrences": 2,
+        "catalogMatched": true
+      }
+    ]
+  },
+  "amendRate": {
+    "nearTermRate": 0.18,
+    "nearTermChecked": 11,
+    "nearTermAmended": 2,
+    "verifyRunAt": "2026-07-19T07:41:25.633Z",
+    "windowRate": 0.25,
+    "windowChecks": 60,
+    "windowAmendments": 15,
+    "windowCorrections": 0,
+    "byDay": [
+      {
+        "date": "2026-07-06",
+        "checks": 5,
+        "amendments": 2,
+        "corrections": 0,
+        "rate": 0.4
+      },
+      {
+        "date": "2026-07-07",
+        "checks": 4,
+        "amendments": 1,
+        "corrections": 0,
+        "rate": 0.25
+      },
+      {
+        "date": "2026-07-08",
+        "checks": 4,
+        "amendments": 0,
+        "corrections": 0,
+        "rate": 0
+      },
+      {
+        "date": "2026-07-09",
+        "checks": 3,
+        "amendments": 0,
+        "corrections": 0,
+        "rate": 0
+      },
+      {
+        "date": "2026-07-10",
+        "checks": 4,
+        "amendments": 2,
+        "corrections": 0,
+        "rate": 0.5
+      },
+      {
+        "date": "2026-07-11",
+        "checks": 4,
+        "amendments": 1,
+        "corrections": 0,
+        "rate": 0.25
+      },
+      {
+        "date": "2026-07-12",
+        "checks": 3,
+        "amendments": 0,
+        "corrections": 0,
+        "rate": 0
+      },
+      {
+        "date": "2026-07-13",
+        "checks": 1,
+        "amendments": 0,
+        "corrections": 0,
+        "rate": 0
+      },
+      {
+        "date": "2026-07-14",
+        "checks": 5,
+        "amendments": 2,
+        "corrections": 0,
+        "rate": 0.4
+      },
+      {
+        "date": "2026-07-15",
+        "checks": 3,
+        "amendments": 2,
+        "corrections": 0,
+        "rate": 0.67
+      },
+      {
+        "date": "2026-07-16",
+        "checks": 5,
+        "amendments": 2,
+        "corrections": 0,
+        "rate": 0.4
+      },
+      {
+        "date": "2026-07-17",
+        "checks": 3,
+        "amendments": 2,
+        "corrections": 0,
+        "rate": 0.67
+      },
+      {
+        "date": "2026-07-18",
+        "checks": 8,
+        "amendments": 0,
+        "corrections": 0,
+        "rate": 0
+      },
+      {
+        "date": "2026-07-19",
+        "checks": 8,
+        "amendments": 1,
+        "corrections": 0,
+        "rate": 0.13
+      }
+    ]
+  },
+  "silentStops": {
+    "buildOk": true,
+    "buildCheckedAt": "2026-07-19T22:48:19.830Z",
+    "buildAgeHours": 0,
+    "manifestGeneratedAt": "2026-07-19T22:13:48.392Z",
+    "manifestAgeHours": 0.58,
+    "staleFiles": []
+  },
+  "participantStatus": {
+    "checkedAt": "2026-07-19T07:41:25.633Z",
+    "verifyAgeHours": 15.12,
+    "corrections": 2,
+    "unresolved": 0,
+    "signals": [
+      "VM-finalen 2026 bekreftet: 19.07 19:00 UTC (15:00 ET), MetLife Stadium — Spania mot Argentina; deltakere lagt til. NRK-kanal beholdt (rettigheter delt NRK/TV…",
+      "Tennis Gstaad: Casper Ruud slått ut i kvartfinalen (tapte mot J.M. Cerundolo, fre 17.07). Amendet norwegianPlayers-status til \"slått ut\" (WP-95 deltakelsessj…"
+    ]
+  }
+}
