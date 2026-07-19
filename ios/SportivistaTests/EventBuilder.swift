@@ -38,9 +38,11 @@ enum EventBuilder {
         id: String? = nil,
         result: String? = nil,
         homeTeamEntityId: String? = nil,
-        awayTeamEntityId: String? = nil
+        awayTeamEntityId: String? = nil,
+        status: String? = nil
     ) -> Event {
         var dict: [String: Any] = ["sport": sport, "title": title, "time": time, "norwegian": norwegian, "isFavorite": isFavorite]
+        if let status { dict["status"] = status }
         if let endTime { dict["endTime"] = endTime }
         if let homeTeam { dict["homeTeam"] = homeTeam }
         if let awayTeam { dict["awayTeam"] = awayTeam }

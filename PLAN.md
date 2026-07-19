@@ -130,7 +130,7 @@ mennesket, aldri av en agent.
 | WP-123 | ICS: DTEND fra endTime (flerdagsevents) | 0I | — | 🔬 bølge 3 |
 | WP-124 | Horisont-konsistens: web «Fremover» (14–42 d) + iOS Uka-cap (EIERBESLUTNING) | 0I | WP-118 | ⬜ bølge 4 |
 | WP-125 | Entitets-konsolidering (100T-alias) + lens-miss-signal | 0I | WP-118 | ⬜ bølge 4 |
-| WP-126 | Live-koherens: ett delt live-begrep på alle flater (eierbestilling 20.07) | 0I | WP-121 | ⬜ bølge 3 |
+| WP-126 | Live-koherens: ett delt live-begrep på alle flater (eierbestilling 20.07) | 0I | WP-121 | 🔬 bølge 3 — ssLiveState (web) + AgendaViewModel.liveState (iOS-speil): 'direkte'/'pågår'/null; «Direkte nå» viser TdF/sjakk/CS2 (ESPN beriker); iOS minutt-tikk (TimelineView.everyMinute); followed.js relDay bruker delt def. Widget: WP-127 eier fila (urørt) |
 | WP-127 | Detalj & widget: «Om»-avsnitt iOS + deltaker-titler + RESULTAT sist + prosa-bredde web | 0I | WP-112 | 🔬 bølge 3 |
 | WP-128 | Web-agenda: fortids-dag-fiks + ekspandert-tilstand over live-poll + klokke-avstemming | 0I | WP-117 | 🔬 bølge 3 |
 | WP-129 | Onboarding-copy (kapsel-modellen) + stale kommentarer + regenerert skjermkatalog | 0I | WP-117 | ⬜ bølge 4 |

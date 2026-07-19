@@ -3,6 +3,7 @@ import { describe, it, expect, beforeAll } from "vitest";
 import { createClientSandbox, loadClientScript } from "./helpers/load-client.js";
 
 let dash;
+let win;
 
 beforeAll(() => {
 	const sandbox = createClientSandbox();
@@ -13,6 +14,7 @@ beforeAll(() => {
 	loadClientScript(sandbox, "followed.js");
 	loadClientScript(sandbox, "chrome.js");
 	dash = sandbox.window.dashboard;
+	win = sandbox.window;
 });
 
 const soon = () => new Date(Date.now() + 3600000).toISOString();
@@ -706,5 +708,76 @@ describe("«Neste opp» dedupes rows already visible in the agenda (WP-128)", ()
 		dash.allEvents = [{ id: "ruud-swiss", sport: "tennis", title: "Swiss Open (Casper Ruud)", time: inDays(3) }];
 		dash._agendaShownIds = undefined;
 		expect(dash.nextUpEntries().map((r) => r.entry.name)).toEqual(["Casper Ruud"]);
+	});
+});
+
+// WP-126 — the ONE shared live definition (ssLiveState) + the "Direkte nå" line
+// showing non-ESPN sports (a Tour stage / chess round / CS2 match), not just the
+// ESPN-polled football/golf/F1.
+describe("shared live state (ssLiveState)", () => {
+	// Summer (CEST, UTC+2): Oslo 03:00 = 01:00Z, Oslo 14:00 = 12:00Z.
+	const ssLiveState = () => win.ssLiveState;
+
+	it("uses the sport default duration when there is no endTime", () => {
+		const start = "2026-07-14T12:00:00Z";
+		const e = { sport: "football", time: start }; // ~2h15 default
+		const s = new Date(start).getTime();
+		expect(win.ssLiveState(e, s + 60 * 60 * 1000)).toBe("direkte"); // 1h in
+		expect(win.ssLiveState(e, s + 3 * 60 * 60 * 1000)).toBe(null); // 3h in → past default
+		expect(win.ssLiveState(e, s - 60 * 1000)).toBe(null); // not started yet
+	});
+
+	it("a Tour de France stage mid-session is 'direkte'", () => {
+		const e = { sport: "cycling", title: "Etappe 12", time: "2026-07-14T11:30:00Z", endTime: "2026-07-14T15:30:00Z" };
+		expect(win.ssLiveState(e, new Date("2026-07-14T13:00:00Z").getTime())).toBe("direkte");
+		expect(win.ssLiveState(e, new Date("2026-07-14T16:00:00Z").getTime())).toBe(null); // finished
+	});
+
+	it("a multi-day tournament is 'pågår' outside the daily window (03:00), 'direkte' inside (14:00)", () => {
+		const e = { sport: "golf", title: "The Open", time: "2026-07-13T08:00:00Z", endTime: "2026-07-18T20:00:00Z" };
+		expect(win.ssLiveState(e, new Date("2026-07-15T01:00:00Z").getTime())).toBe("pågår"); // Oslo 03:00
+		expect(win.ssLiveState(e, new Date("2026-07-15T12:00:00Z").getTime())).toBe("direkte"); // Oslo 14:00
+	});
+
+	it("a finished single-session event is null", () => {
+		const e = { sport: "tennis", title: "Semifinale", time: "2026-07-14T10:00:00Z", endTime: "2026-07-14T13:00:00Z" };
+		expect(win.ssLiveState(e, new Date("2026-07-14T15:00:00Z").getTime())).toBe(null);
+	});
+
+	it("an authoritative in-progress status wins outright", () => {
+		const e = { sport: "football", time: "2026-07-14T10:00:00Z", status: "STATUS_IN_PROGRESS" };
+		// now is way past any default duration, but the status says live
+		expect(win.ssLiveState(e, new Date("2026-07-14T20:00:00Z").getTime())).toBe("direkte");
+	});
+});
+
+describe("the 'Direkte nå' line (live.js)", () => {
+	it("directLiveEvents surfaces a non-ESPN sport (cycling) that is live now", () => {
+		const now = new Date("2026-07-14T13:00:00Z").getTime();
+		dash.allEvents = [
+			{ id: "tdf-12", sport: "cycling", title: "Etappe 12", time: "2026-07-14T11:30:00Z", endTime: "2026-07-14T15:30:00Z", streaming: [{ platform: "TV 2 Play", url: "https://tv2.no" }] },
+			{ id: "done", sport: "tennis", title: "Ferdig", time: "2026-07-14T08:00:00Z", endTime: "2026-07-14T10:00:00Z" },
+			{ id: "later", sport: "football", title: "Senere", time: "2026-07-14T19:00:00Z" },
+		];
+		const live = dash.directLiveEvents(now);
+		expect(live.map((e) => e.id)).toEqual(["tdf-12"]); // the cycling stage, not the finished/future ones
+	});
+
+	it("renders a calm live row with the event's title + channel", () => {
+		const html = dash.liveEventRow({ id: "tdf-12", sport: "cycling", title: "Etappe 12", time: "2026-07-14T11:30:00Z", streaming: [{ platform: "TV 2 Play", url: "https://tv2.no" }] });
+		expect(html).toContain("live-item");
+		expect(html).toContain("Etappe 12");
+		expect(html).toContain("TV 2 Play");
+	});
+
+	it("hasLiveEvents is true for a live non-ESPN event (drives the 60s tick)", () => {
+		dash.allEvents = [{ id: "tdf-12", sport: "cycling", title: "Etappe 12", time: "2026-07-14T11:30:00Z", endTime: "2026-07-14T15:30:00Z" }];
+		const realNow = Date.now;
+		Date.now = () => new Date("2026-07-14T13:00:00Z").getTime();
+		try {
+			expect(dash.hasLiveEvents()).toBe(true);
+		} finally {
+			Date.now = realNow;
+		}
 	});
 });

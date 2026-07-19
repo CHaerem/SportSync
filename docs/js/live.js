@@ -3,19 +3,59 @@
 Object.assign(window.Dashboard.prototype, {
 
 	// ── Live now (quiet line at the top) ─────────────────────────────────────
+	// WP-126: ONE shared live definition (ssLiveState). Every board event that is
+	// 'direkte' right now shows here — not just the ESPN-polled football/golf/F1.
+	// An ESPN score/leaderboard merely ENRICHES a row (score = bonus, not the
+	// entrance ticket), so a Tour stage / chess round / CS2 match finally appears
+	// in "Direkte nå" too. 'pågår' multi-day events stay OUT of the line (they
+	// carry their own agenda row).
 	renderLive() {
 		const box = document.getElementById('live-now');
 		if (!box) return;
+		const now = Date.now();
 		const items = [];
+		const shownIds = new Set();
+		// ESPN football live scores enrich their board row with the running score.
 		for (const [id, live] of Object.entries(this.liveScores)) {
 			if (live.state !== 'in') continue;
 			items.push(`<div class="live-wrap"><div class="live-item"><span class="live-dot"></span><span class="live-body"><span class="live-name">${escapeHtml(ssShortName(live.homeName))} <span class="live-score">${live.home}–${live.away}</span> ${escapeHtml(ssShortName(live.awayName))}</span></span><span class="live-meta">${escapeHtml(live.clock || '')}</span></div></div>`);
+			shownIds.add(id);
 		}
+		// Golf + F1 keep their ESPN-driven expandable leaderboard / running-order
+		// rows — that live poll is the RELIABLE signal for those two, so they are
+		// owned by this path and are NOT re-derived from the coarse daily-window
+		// heuristic below (which would risk a false 'direkte' between rounds).
 		if (this.liveLeaderboard?.state === 'in' && this.liveLeaderboard.top?.length) items.push(this.liveGolfItem(this.liveLeaderboard));
 		if (this.liveF1?.state === 'in' && this.liveF1.top?.length) items.push(this.liveF1Item(this.liveF1));
+		// WP-126: all remaining live board events — the sports the ESPN poll can't
+		// see (cycling, chess, CS2, tennis) plus any unpolled football — as calm
+		// when·what·where rows.
+		for (const e of this.directLiveEvents(now)) {
+			if (shownIds.has(e.id)) continue;              // already shown with its ESPN score
+			if (e.sport === 'golf' || e.sport === 'f1') continue; // owned by the ESPN rows above
+			if (this.liveScores[e.id]?.state === 'post') continue; // ESPN says it's finished — trust the poll
+			items.push(this.liveEventRow(e));
+		}
 		if (items.length === 0) { box.hidden = true; return; }
 		box.innerHTML = `<div class="live-label"><span class="live-dot"></span>Direkte nå</div>${items.join('')}`;
 		box.hidden = false;
+	},
+
+	/** WP-126 — every board event that is LIVE right now ('direkte' per the shared
+	 *  ssLiveState), earliest-started first. Sport- and poll-agnostic: this is the
+	 *  entrance ticket to "Direkte nå" (mirrors iOS `liveRows`). 'pågår' multi-day
+	 *  events are excluded by ssLiveState itself. */
+	directLiveEvents(now = Date.now()) {
+		return this.allEvents
+			.filter((e) => !e.isSeries && ssLiveState(e, now) === 'direkte')
+			.sort((a, b) => new Date(a.time) - new Date(b.time));
+	},
+
+	/** One calm "Direkte nå" row for a board event with no ESPN enrichment
+	 *  (cycling stage, chess round, CS2 match, an unpolled football match, …):
+	 *  when·what·where — the same quiet shape as the score rows, minus the score. */
+	liveEventRow(e) {
+		return `<div class="live-wrap"><div class="live-item"><span class="live-dot"></span><span class="live-body"><span class="live-name">${this.eventTitle(e)}</span></span><span class="live-meta">${this.whereToWatch(e)}</span></div></div>`;
 	},
 
 	/** One leaderboard row (position · name · trailing value); your player is
@@ -78,13 +118,14 @@ Object.assign(window.Dashboard.prototype, {
 		this._liveInterval = setInterval(() => this.pollLiveScores(), 60 * 1000);
 		setTimeout(() => this.pollLiveScores(), 3000);
 	},
+	// WP-126: gate the 60s poll on the SHARED live definition, not just the three
+	// ESPN sports. So a live cycling stage / chess round keeps the "Direkte nå"
+	// line re-rendering (and truthful — a finished event drops) every minute, the
+	// web counterpart of iOS's minute tick. The per-sport ESPN fetches inside
+	// pollLiveScores keep their own guards, so no needless network calls result.
 	hasLiveEvents() {
 		const now = Date.now();
-		return this.allEvents.some((e) => {
-			const start = new Date(e.time).getTime();
-			const end = e.endTime ? new Date(e.endTime).getTime() : start + 4 * SS_CONSTANTS.MS_PER_HOUR;
-			return start <= now && now <= end && ['football', 'golf', 'f1'].includes(e.sport);
-		});
+		return this.allEvents.some((e) => ssLiveState(e, now) === 'direkte');
 	},
 	async pollLiveScores() {
 		if (!this._liveVisible || !this.hasLiveEvents()) return;
