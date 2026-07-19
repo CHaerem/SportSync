@@ -761,34 +761,43 @@ struct ContentView: View {
 
     @ViewBuilder
     private var liveNowLine: some View {
-        if !agenda.liveNow.isEmpty {
-            VStack(alignment: .leading, spacing: 5) {
-                ForEach(agenda.liveNow) { row in
-                    HStack(spacing: 8) {
-                        Text("▌ LIVE")
-                            .font(.sportivista(.caption, weight: .semibold))
-                            .foregroundStyle(SportivistaTokens.live)
-                        Text(row.title)
-                            .font(.sportivista(.subheadline))
-                            .foregroundStyle(SportivistaTokens.label)
-                            .lineLimit(1)
-                        Text("·")
-                            .font(.sportivista(.subheadline))
-                            .foregroundStyle(SportivistaTokens.secondaryLabel.opacity(0.6))
-                        Text(row.channelLabel)
-                            .font(.sportivista(.subheadline))
-                            .foregroundStyle(SportivistaTokens.secondaryLabel)
-                            .lineLimit(1)
+        // WP-126: a light minute tick so the line stays TRUE between reloads — a
+        // finished event drops and a just-started one appears without waiting for
+        // the next sync. `TimelineView(.everyMinute)` is a data refresh, not an
+        // animation (Reduce-Motion-friendly; never per-second). `currentLiveRows`
+        // re-derives from the reload snapshot through the SAME shared live
+        // definition (`liveState`) the compile used.
+        TimelineView(.everyMinute) { context in
+            let rows = agenda.currentLiveRows(now: context.date)
+            if !rows.isEmpty {
+                VStack(alignment: .leading, spacing: 5) {
+                    ForEach(rows) { row in
+                        HStack(spacing: 8) {
+                            Text("▌ LIVE")
+                                .font(.sportivista(.caption, weight: .semibold))
+                                .foregroundStyle(SportivistaTokens.live)
+                            Text(row.title)
+                                .font(.sportivista(.subheadline))
+                                .foregroundStyle(SportivistaTokens.label)
+                                .lineLimit(1)
+                            Text("·")
+                                .font(.sportivista(.subheadline))
+                                .foregroundStyle(SportivistaTokens.secondaryLabel.opacity(0.6))
+                            Text(row.channelLabel)
+                                .font(.sportivista(.subheadline))
+                                .foregroundStyle(SportivistaTokens.secondaryLabel)
+                                .lineLimit(1)
+                        }
                     }
                 }
+                .frame(maxWidth: 640, alignment: .leading)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 10)
+                Rectangle()
+                    .fill(SportivistaTokens.separator)
+                    .frame(height: 1)
             }
-            .frame(maxWidth: 640, alignment: .leading)
-            .frame(maxWidth: .infinity, alignment: .center)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 10)
-            Rectangle()
-                .fill(SportivistaTokens.separator)
-                .frame(height: 1)
         }
     }
 

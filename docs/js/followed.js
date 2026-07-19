@@ -79,9 +79,13 @@ Object.assign(window.Dashboard.prototype, {
 	/** Calm relative-day label in Oslo terms. */
 	relDay(e) {
 		const now = Date.now();
-		const start = new Date(e.time).getTime();
-		const end = e.endTime ? new Date(e.endTime).getTime() : start;
-		if (start <= now && end >= now) return 'pågår nå';
+		// WP-126: use the ONE shared live definition, not a raw [start,end] window.
+		// A multi-day tournament at 03:00 is 'pågår' (underway) — not 'pågår nå',
+		// which would falsely imply an active session right now; only a genuine
+		// live session (a plausible active window) reads "pågår nå".
+		const live = ssLiveState(e, now);
+		if (live === 'direkte') return 'pågår nå';
+		if (live === 'pågår') return 'pågår';
 		const days = Math.round((Date.parse(this.osloDayKey(new Date(e.time))) - Date.parse(this.osloDayKey(new Date(now)))) / SS_CONSTANTS.MS_PER_DAY);
 		if (days <= 0) return 'i dag';
 		if (days === 1) return 'i morgen';

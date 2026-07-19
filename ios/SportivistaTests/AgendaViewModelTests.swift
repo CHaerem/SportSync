@@ -283,6 +283,55 @@ final class AgendaViewModelTests: XCTestCase {
         XCTAssertEqual(AgendaViewModel.liveRows(events: events, interests: interests, now: now).count, 2, "the live line shows at most two")
     }
 
+    // MARK: - WP-126: the ONE shared live definition (mirrors ssLiveState / the
+    // web dashboard-cards case matrix bit-for-bit).
+
+    /// Bridge one Event to its FeedEvent + resolved Event (as liveRows does).
+    private func bridged(_ event: Event) -> (FeedEvent, Event?) {
+        let (fes, lookup) = EventBridge.bridge([event])
+        let fe = fes[0]
+        return (fe, fe.id.flatMap { lookup[$0] })
+    }
+
+    func testLiveState_noEndTime_usesSportDefault() {
+        // football ~2h15 default when there is no endTime
+        let (fe, ev) = bridged(EventBuilder.make(sport: "football", title: "Kamp", time: "2026-07-14T12:00:00Z"))
+        XCTAssertNil(AgendaViewModel.liveState(fe, event: ev, now: iso("2026-07-14T11:00:00Z")), "not started")
+        XCTAssertEqual(AgendaViewModel.liveState(fe, event: ev, now: iso("2026-07-14T13:00:00Z")), .direkte, "1h in")
+        XCTAssertNil(AgendaViewModel.liveState(fe, event: ev, now: iso("2026-07-14T15:00:00Z")), "3h in → past the ~2h15 default")
+    }
+
+    func testLiveState_tourStageMidSession_isDirekte() {
+        let (fe, ev) = bridged(EventBuilder.make(sport: "cycling", title: "Etappe 12", time: "2026-07-14T11:30:00Z", endTime: "2026-07-14T15:30:00Z"))
+        XCTAssertEqual(AgendaViewModel.liveState(fe, event: ev, now: iso("2026-07-14T13:00:00Z")), .direkte)
+        XCTAssertNil(AgendaViewModel.liveState(fe, event: ev, now: iso("2026-07-14T16:00:00Z")), "past its endTime")
+    }
+
+    func testLiveState_multiDayTournament_pagaarOutsideWindow_direkteInside() {
+        // Summer (CEST, UTC+2): Oslo 03:00 = 01:00Z, Oslo 14:00 = 12:00Z.
+        let (fe, ev) = bridged(EventBuilder.make(sport: "golf", title: "The Open", time: "2026-07-13T08:00:00Z", endTime: "2026-07-18T20:00:00Z"))
+        XCTAssertEqual(AgendaViewModel.liveState(fe, event: ev, now: iso("2026-07-15T01:00:00Z")), .pagaar, "Oslo 03:00 → underway, not an active session")
+        XCTAssertEqual(AgendaViewModel.liveState(fe, event: ev, now: iso("2026-07-15T12:00:00Z")), .direkte, "Oslo 14:00 → inside the daily window")
+    }
+
+    func testLiveState_finishedSingleSession_isNil() {
+        let (fe, ev) = bridged(EventBuilder.make(sport: "tennis", title: "Semi", time: "2026-07-14T10:00:00Z", endTime: "2026-07-14T13:00:00Z"))
+        XCTAssertNil(AgendaViewModel.liveState(fe, event: ev, now: iso("2026-07-14T15:00:00Z")))
+    }
+
+    func testLiveState_inProgressStatus_winsOutright() {
+        // now is way past any default duration, but the source status says live.
+        let (fe, ev) = bridged(EventBuilder.make(sport: "football", title: "Kamp", time: "2026-07-14T10:00:00Z", status: "STATUS_IN_PROGRESS"))
+        XCTAssertEqual(AgendaViewModel.liveState(fe, event: ev, now: iso("2026-07-14T20:00:00Z")), .direkte)
+    }
+
+    func testLiveRows_multiDayTournament_excludedAt0300_includedAt1400() {
+        let event = EventBuilder.make(sport: "golf", title: "The Open", time: "2026-07-13T08:00:00Z", endTime: "2026-07-18T20:00:00Z", streaming: [["platform": "TV 2 Play"]])
+        let interests = Interests(followBroadly: ["golf"])
+        XCTAssertTrue(AgendaViewModel.liveRows(events: [event], interests: interests, now: iso("2026-07-15T01:00:00Z")).isEmpty, "'pågår' (Oslo 03:00) is never the ▌LIVE line")
+        XCTAssertEqual(AgendaViewModel.liveRows(events: [event], interests: interests, now: iso("2026-07-15T12:00:00Z")).count, 1, "'direkte' (Oslo 14:00) shows")
+    }
+
     // MARK: - End-to-end against the real, checked-in fixtures
 
     func testBuildSections_realFixtures_tourDeFranceCollapsesAndLynIsMustWatch() throws {

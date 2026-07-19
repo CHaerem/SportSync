@@ -218,6 +218,22 @@ final class AgendaViewModel {
         lastSync = result.lastSync
         profileIsEmpty = result.profileIsEmpty
         cachedEntityIndex = result.index
+        liveSnapshot = (result.liveEvents, result.liveInterests)
+    }
+
+    /// WP-126 — the snapshot the live line re-derives from on the display's minute
+    /// tick (`currentLiveRows`). Set on every applied reload.
+    private var liveSnapshot: (events: [Event], interests: Interests)?
+
+    /// WP-126 — the live line re-derived against `now`, the display's minute tick
+    /// (ContentView wraps the line in `TimelineView(.everyMinute)`). Uses the SAME
+    /// pure `liveRows` the reload used, so it is bit-identical at reload time and
+    /// merely stays TRUE between reloads — a finished event drops, a just-started
+    /// one appears. Falls back to the last reload's `liveNow` before the first
+    /// snapshot exists.
+    func currentLiveRows(now: Date = Date()) -> [AgendaLiveRow] {
+        guard let snap = liveSnapshot else { return liveNow }
+        return Self.liveRows(events: snap.events, interests: snap.interests, now: now)
     }
 
     /// Everything one reload produces, computed off-main and handed to `apply`
@@ -230,6 +246,11 @@ final class AgendaViewModel {
         /// The index the compute used (the cached one, or a freshly built one) —
         /// stored back so the next reload reuses it.
         var index: EntityIndex
+        /// WP-126 — the events + interests the live line re-derives from between
+        /// reloads (the display's minute tick), so a finished event drops and a
+        /// just-started one appears without waiting for the next sync.
+        var liveEvents: [Event]
+        var liveInterests: Interests
     }
 
     /// The off-main entry: `nonisolated async` so awaiting it from the main actor
@@ -321,7 +342,8 @@ final class AgendaViewModel {
         }
         return Reload(
             sections: sections, liveNow: liveNow, lastSync: dataStore.lastSync,
-            profileIsEmpty: profile.isEmpty, index: index
+            profileIsEmpty: profile.isEmpty, index: index,
+            liveEvents: events, liveInterests: interests
         )
     }
 
@@ -611,7 +633,7 @@ final class AgendaViewModel {
         let (feedEvents, lookup) = EventBridge.bridge(events)
         let live = feedEvents.filter { fe in
             guard FeedCompiler.isRelevant(fe, interests: interests, now: now) else { return false }
-            return isLiveNow(fe, event: fe.id.flatMap { lookup[$0] }, now: now)
+            return liveState(fe, event: fe.id.flatMap { lookup[$0] }, now: now) == .direkte
         }
         .sorted { lhs, rhs in
             let lSee = FeedCompiler.isMustSee(lhs, interests: interests)
@@ -629,19 +651,69 @@ final class AgendaViewModel {
         }
     }
 
-    /// True when the event is in progress at `now` (see `liveRows`). A source
-    /// `status` that names an in-progress state wins outright; otherwise the
-    /// `[time, endTime]` window decides.
-    nonisolated static func isLiveNow(_ fe: FeedEvent, event: Event?, now: Date) -> Bool {
-        if let status = event?.status?.lowercased() {
-            if status.contains("in_progress") || status.contains("in-progress")
-                || status == "in" || status.contains("live") || status.contains("halftime") {
-                return true
-            }
+    // MARK: - WP-126: the ONE shared live definition
+
+    /// The live state of an event at `now` — mirrored 1:1 with `ssLiveState` in
+    /// docs/js/shared-constants.js (read that file's block comment for the full
+    /// heuristic + the sport-default table). `.direkte` = now inside a plausible
+    /// ACTIVE session (the ▌ LIVE line); `.pagaar` = a multi-day tournament that's
+    /// underway but outside today's plausible daily window (never the live line);
+    /// nil = not started / finished. Conservative by design — we would rather say
+    /// `.pagaar` than a false `.direkte`.
+    enum LiveState { case direkte, pagaar }
+
+    /// ~24h: an endTime further than this past the start marks a multi-day
+    /// tournament (golf week, multi-day chess), which uses the daily-window rule.
+    nonisolated static let liveMultiDay: TimeInterval = 24 * 60 * 60
+
+    nonisolated static func liveState(_ fe: FeedEvent, event: Event?, now: Date) -> LiveState? {
+        // 1. an authoritative in-progress source status wins outright (same
+        //    substrings as the JS mirror).
+        if let status = event?.status?.lowercased(),
+           status == "in" || status.contains("in_progress") || status.contains("in-progress")
+            || status.contains("live") || status.contains("halftime") {
+            return .direkte
         }
-        guard let time = fe.time else { return false }
-        let end = fe.endTime ?? time
-        return time <= now && end >= now
+        // 2. need a start, and it must have arrived.
+        guard let start = fe.time, now >= start else { return nil }
+        let rawEnd = fe.endTime
+        // 3. multi-day tournament → conservative Oslo daily window [08:00, 22:00).
+        if let end = rawEnd, end.timeIntervalSince(start) > liveMultiDay {
+            if now > end { return nil }
+            return isWithinDailyWindow(now) ? .direkte : .pagaar
+        }
+        // 4. single session: trust a plausible endTime, else the sport default.
+        let effectiveEnd: Date
+        if let end = rawEnd, end > start {
+            effectiveEnd = end
+        } else {
+            effectiveEnd = start.addingTimeInterval(sportDefaultDuration(fe.sport))
+        }
+        return now <= effectiveEnd ? .direkte : nil
+    }
+
+    /// Sport-typed default session duration (WP-126) — the fallback when an event
+    /// carries no endTime. Kept identical to JS `ssSportDefaultMs`.
+    nonisolated static func sportDefaultDuration(_ sport: String) -> TimeInterval {
+        switch sport.lowercased() {
+        case "football": return 135 * 60      // ~2h15 incl. stoppage + half-time
+        case "f1", "formula1": return 120 * 60 // a race/quali/practice session
+        case "cycling": return 330 * 60       // a road stage (~5h30)
+        case "chess": return 300 * 60         // a classical round (~5h)
+        case "cs2", "esports": return 150 * 60 // a best-of match (~2h30)
+        case "tennis": return 210 * 60        // a best-of match (~3h30)
+        case "golf": return 600 * 60          // a day's play fallback (~10h; golf is normally multi-day)
+        default: return 180 * 60              // conservative generic session (~3h)
+        }
+    }
+
+    /// Whether the Oslo-local hour sits inside the plausible daily playing window
+    /// [08:00, 22:00) — the multi-day daily-window check (mirrors JS `ssOsloHour`).
+    nonisolated static func isWithinDailyWindow(_ now: Date) -> Bool {
+        var cal = Calendar(identifier: .gregorian)
+        cal.timeZone = TimeZone(identifier: "Europe/Oslo") ?? .current
+        let h = cal.component(.hour, from: now)
+        return h >= 8 && h < 22
     }
 
     nonisolated private static func makeItem(

@@ -125,6 +125,80 @@ function ssNextEventForEntity(events, entry, now = Date.now()) {
 	return best;
 }
 
+// ── Live state (WP-126: the ONE shared "is it live right now?" definition) ────
+// Mirrored 1:1 in iOS `AgendaViewModel.liveState` (Swift). Returns:
+//   'direkte' — now sits inside a plausible ACTIVE session → the ▌ live line
+//   'pågår'   — a multi-day tournament that's underway but OUTSIDE today's
+//               plausible daily playing window (calm; it has its own agenda
+//               row and must NEVER get the live dot — the 03:00 golf bug)
+//   null      — not started yet, or finished
+//
+// This is a HEURISTIC and deliberately CONSERVATIVE: we would rather say
+// 'pågår' than a false 'direkte'. The rules, in order:
+//   1. An authoritative source `status` naming an in-progress state wins.
+//   2. Before `time`, or with no `time`, → null.
+//   3. A multi-day tournament (endTime more than ~24h after start — golf weeks,
+//      multi-day chess) can't tell us its per-day session start, so we fall back
+//      to a plausible daily window in Oslo local time [08:00, 22:00): inside →
+//      'direkte', otherwise 'pågår'; past its endTime → null. (We lack the
+//      venue-local clock — hence the conservative Oslo-clock window; a US golf
+//      afternoon read as 'pågår' late Oslo-evening is the accepted trade-off.)
+//   4. A single session: trust `endTime` when present (a plausible session
+//      length ≤ ~24h), else assume a sport-typed default duration from `time`
+//      (football ~2h15, F1 session ~2h, cycling stage ~5h30, chess round ~5h,
+//      CS2 match ~2h30, tennis ~3h30, golf-day ~10h, else ~3h). Live while
+//      now ≤ effectiveEnd, then null.
+const SS_MULTIDAY_MS = 24 * MS_PER_HOUR;
+
+/** Sport-typed default session duration in ms (WP-126) — the fallback when an
+ *  event carries no endTime. Kept identical to iOS `sportDefaultDuration`. */
+function ssSportDefaultMs(sport) {
+	switch ((sport || '').toLowerCase()) {
+		case 'football': return 135 * MS_PER_MINUTE; // ~2h15 incl. stoppage + half-time
+		case 'f1': case 'formula1': return 120 * MS_PER_MINUTE; // a race/quali/practice session
+		case 'cycling': return 330 * MS_PER_MINUTE; // a road stage (~5h30)
+		case 'chess': return 300 * MS_PER_MINUTE; // a classical round (~5h)
+		case 'cs2': case 'esports': return 150 * MS_PER_MINUTE; // a best-of match (~2h30)
+		case 'tennis': return 210 * MS_PER_MINUTE; // a best-of match (~3h30)
+		case 'golf': return 600 * MS_PER_MINUTE; // a day's play fallback (~10h; golf is normally multi-day)
+		default: return 180 * MS_PER_MINUTE; // conservative generic session (~3h)
+	}
+}
+
+/** The Oslo-local hour (0–23) at `ms` — for the multi-day daily-window check.
+ *  Uses Date's own tz formatter (not the Intl global, which the test sandbox
+ *  doesn't stub); `% 24` folds the en-GB midnight "24" quirk back to 0. */
+function ssOsloHour(ms) {
+	const s = new Date(ms).toLocaleString('en-GB', { timeZone: 'Europe/Oslo', hour: '2-digit', hour12: false });
+	return parseInt(s, 10) % 24;
+}
+
+/** The ONE shared live definition — see the block comment above. Returns
+ *  'direkte' | 'pågår' | null. `now` is a ms number or a Date (defaults to now). */
+function ssLiveState(event, now) {
+	if (!event) return null;
+	const nowMs = now instanceof Date ? now.getTime() : (now == null ? Date.now() : now);
+	// 1. authoritative in-progress status wins outright (mirror iOS substrings)
+	const status = String(event.status || '').toLowerCase();
+	if (status === 'in' || status.includes('in_progress') || status.includes('in-progress')
+		|| status.includes('live') || status.includes('halftime')) return 'direkte';
+	// 2. need a start, and it must have arrived
+	if (!event.time) return null;
+	const start = new Date(event.time).getTime();
+	if (!Number.isFinite(start) || nowMs < start) return null;
+	const rawEnd = event.endTime ? new Date(event.endTime).getTime() : null;
+	const hasEnd = rawEnd != null && Number.isFinite(rawEnd);
+	// 3. multi-day tournament → conservative daily window
+	if (hasEnd && rawEnd - start > SS_MULTIDAY_MS) {
+		if (nowMs > rawEnd) return null;
+		const h = ssOsloHour(nowMs);
+		return (h >= 8 && h < 22) ? 'direkte' : 'pågår';
+	}
+	// 4. single session
+	const effectiveEnd = (hasEnd && rawEnd > start) ? rawEnd : start + ssSportDefaultMs(event.sport);
+	return nowMs <= effectiveEnd ? 'direkte' : null;
+}
+
 /** Trim an agent reason to a one-line gist (drops the provenance prefix). */
 function ssShortReason(r, max = 130) {
 	if (!r) return '';
@@ -142,6 +216,7 @@ window.SS_CONSTANTS = Object.freeze({
 
 window.SS_REPO = SS_REPO;
 window.isEventInWindow = isEventInWindow;
+window.ssLiveState = ssLiveState;
 window.ssShortReason = ssShortReason;
 window.escapeHtml = escapeHtml;
 window.ssShortName = ssShortName;
