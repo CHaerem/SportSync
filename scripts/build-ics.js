@@ -70,6 +70,21 @@ function vevent(ev, withAlarm) {
 	lines.push(`UID:${uid}`);
 	lines.push(`DTSTAMP:${nowStamp}`);
 	lines.push(`DTSTART:${dtStart}`);
+	// DTEND from endTime so multi-day events (golf, stage races, EM/NM friidrett,
+	// CS2 group stages) render as calendar BLOCKS, not single points (WP-123).
+	// We emit DATE-TIME (UTC) values, for which RFC 5545's "non-inclusive end" is
+	// the exact end INSTANT: the event occupies the half-open interval
+	// [DTSTART, DTEND). endTime already IS that instant (e.g. golf's final-round
+	// 20:00Z), so it maps to DTEND UNCHANGED — no +adjustment. (The +1 nudge is
+	// only needed for VALUE=DATE all-day events, which we never emit.) Guarded to
+	// a valid instant strictly after start so a malformed or non-positive-duration
+	// endTime never yields an invalid DTEND; endTime-less events are byte-unchanged.
+	if (ev.endTime) {
+		const startMs = Date.parse(ev.time);
+		const endMs = Date.parse(ev.endTime);
+		if (Number.isFinite(startMs) && Number.isFinite(endMs) && endMs > startMs)
+			lines.push(`DTEND:${formatDateTime(ev.endTime)}`);
+	}
 	if (ev.venue) lines.push(`LOCATION:${esc(ev.venue)}`);
 	const parts = [];
 	if (ev.tournament) parts.push(ev.tournament);
