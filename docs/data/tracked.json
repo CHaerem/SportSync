@@ -62,6 +62,18 @@
         "https://obosligaenkamper.com/lyn/"
       ],
       "priority": "high"
+    },
+    {
+      "id": "eliteserien-2026",
+      "name": "Eliteserien",
+      "sport": "football",
+      "reason": "Manuelt seedet (WP-133) for å tette et entitets-dekningshull: catalog.json dekker Eliteserien (tier2.tournaments) — øverste norske fotballnivå — men build-entities.js bygger entities.json fra tracked.json/sports-config.js/norwegian-golfers.json (IKKE katalogen), så det fantes ingen Eliteserien-entitet å grunnfeste mot. Uten den falt WP-132s «Norsk fotball»-startpakke tilbake til bare landslaget, og et web-/app-søk på «Eliteserien» hadde ingen stabil id (kun OBOS-ligaen — eierens Lyn-nivå — var grunnfestet). Denne seed-entryen gir Eliteserien en stabil entitet (type league); research-agenten reconcilierer den mot katalogen på neste kjøring. Ingen konkrete kamper legges til her (statiske fetchere + research dekker terminlista) — dette er ren entitets-bokføring.",
+      "addedAt": "2026-07-20T12:00:00Z",
+      "addedBy": "manual-seed WP-133",
+      "evidence": [
+        "catalog.json#tier2.tournaments"
+      ],
+      "priority": "high"
     }
   ],
   "athletes": [
@@ -184,6 +196,18 @@
       ],
       "expires": "2026-08-03T23:59:59Z",
       "priority": "medium"
+    },
+    {
+      "id": "jakob-ingebrigtsen",
+      "name": "Jakob Ingebrigtsen",
+      "sport": "athletics",
+      "reason": "Manuelt seedet (WP-133) for å tette et entitets-dekningshull: catalog.json dekker Jakob Ingebrigtsen (tier2.athletes) — Norges største friidrettsstjerne — men entities.json manglet ham helt (kun Warholm fantes blant friidrettsutøverne), så WP-132s «Friidrett»-startpakke måtte grunnfeste på Warholm + EM-turneringen «gjennom de norske» i stedet for Ingebrigtsen direkte, og et søk på «Ingebrigtsen» hadde ingen stabil id. Denne seed-entryen gir ham en stabil entitet (type athlete); research-agenten reconcilierer mot katalogen på neste kjøring. Ingen konkrete stevner legges til her (research dekker startlistene når de slippes — Ingebrigtsen står trolig over EM 2026 pga. sykdom/akilles-op, VG 8. juli) — dette er ren entitets-bokføring.",
+      "addedAt": "2026-07-20T12:00:00Z",
+      "addedBy": "manual-seed WP-133",
+      "evidence": [
+        "catalog.json#tier2.athletes"
+      ],
+      "priority": "high"
     }
   ],
   "tournaments": [

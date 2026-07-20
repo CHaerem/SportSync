@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-20T07:56:43.527Z",
+  "generatedAt": "2026-07-20T10:51:52.723Z",
   "windowDays": 14,
   "ports": {
     "coverage": "red",
@@ -25,7 +25,7 @@
       "medium": 2,
       "low": 0
     },
-    "oldestGapAgeDays": 3.08,
+    "oldestGapAgeDays": 3.2,
     "escalatable": 1,
     "catalogMatched": 3,
     "auditedAt": "2026-07-20T06:46:45Z",
@@ -33,33 +33,33 @@
       {
         "interest": "Sykkel — Tour de France Femmes 2026 (Grand Tour, tier1 wholesale)",
         "severity": "high",
-        "ageDays": 0.05,
+        "ageDays": 0.17,
         "recurrences": 0,
         "catalogMatched": true
       },
       {
         "interest": "Sjakk — Grand Chess Tour, Saint Louis-leiren (Saint Louis Rapid & Blitz + Sinquefield Cup)",
         "severity": "medium",
-        "ageDays": 0.05,
+        "ageDays": 0.17,
         "recurrences": 0,
         "catalogMatched": true
       },
       {
         "interest": "F1 hele sesongen — kvalifisering + race",
         "severity": "medium",
-        "ageDays": 3.08,
+        "ageDays": 3.2,
         "recurrences": 3,
         "catalogMatched": true
       }
     ]
   },
   "amendRate": {
-    "nearTermRate": 0.18,
-    "nearTermChecked": 11,
-    "nearTermAmended": 2,
-    "verifyRunAt": "2026-07-19T07:41:25.633Z",
-    "windowRate": 0.25,
-    "windowChecks": 60,
+    "nearTermRate": 0,
+    "nearTermChecked": 2,
+    "nearTermAmended": 0,
+    "verifyRunAt": "2026-07-20T08:22:52.000Z",
+    "windowRate": 0.23,
+    "windowChecks": 64,
     "windowAmendments": 15,
     "windowCorrections": 0,
     "byDay": [
@@ -160,25 +160,29 @@
         "amendments": 1,
         "corrections": 0,
         "rate": 0.13
+      },
+      {
+        "date": "2026-07-20",
+        "checks": 4,
+        "amendments": 0,
+        "corrections": 0,
+        "rate": 0
       }
     ]
   },
   "silentStops": {
     "buildOk": true,
-    "buildCheckedAt": "2026-07-20T07:56:43.451Z",
+    "buildCheckedAt": "2026-07-20T10:51:52.645Z",
     "buildAgeHours": 0,
-    "manifestGeneratedAt": "2026-07-20T07:13:01.793Z",
-    "manifestAgeHours": 0.73,
+    "manifestGeneratedAt": "2026-07-20T07:56:44.800Z",
+    "manifestAgeHours": 2.92,
     "staleFiles": []
   },
   "participantStatus": {
-    "checkedAt": "2026-07-19T07:41:25.633Z",
-    "verifyAgeHours": 24.25,
-    "corrections": 2,
+    "checkedAt": "2026-07-20T08:22:52.000Z",
+    "verifyAgeHours": 2.48,
+    "corrections": 0,
     "unresolved": 0,
-    "signals": [
-      "VM-finalen 2026 bekreftet: 19.07 19:00 UTC (15:00 ET), MetLife Stadium — Spania mot Argentina; deltakere lagt til. NRK-kanal beholdt (rettigheter delt NRK/TV…",
-      "Tennis Gstaad: Casper Ruud slått ut i kvartfinalen (tapte mot J.M. Cerundolo, fre 17.07). Amendet norwegianPlayers-status til \"slått ut\" (WP-95 deltakelsessj…"
-    ]
+    "signals": []
   }
 }
