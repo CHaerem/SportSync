@@ -16,6 +16,7 @@ const SHELL_FILES = [
     '/css/cards.css',
     '/js/shared-constants.js',
     '/js/lens.js',
+    '/js/profile-sync.js',
     '/js/theme.js',
     '/js/dashboard.js',
     '/js/live.js',
