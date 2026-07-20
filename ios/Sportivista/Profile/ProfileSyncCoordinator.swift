@@ -49,6 +49,10 @@ struct ProfileSyncCoordinator: Sendable {
             if !outcome.toPush.isEmpty {
                 try await backend.push(outcome.toPush)
             }
+            // Publish the full merged state as a web-readable snapshot (best-effort:
+            // a snapshot failure must never undo a successful merge/push). No-op on
+            // backends that don't override it (LocalOnly/mock).
+            try? await backend.writeSnapshot(outcome.merged)
             return Result(merged: outcome.merged, didSync: true, pushed: pushCount)
         } catch {
             // Offline-først: keep local exactly as it was, never surface a

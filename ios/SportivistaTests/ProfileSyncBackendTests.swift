@@ -104,6 +104,40 @@ final class ProfileSyncBackendTests: XCTestCase {
         XCTAssertTrue(pushes.isEmpty, "remote is already current → no push")
     }
 
+    // MARK: - Snapshot channel (the web-readable full-state publish)
+
+    func test_sync_publishesMergedStateAsSnapshot() async {
+        let backend = MockProfileSyncBackend(remote: ProfileSyncState(rules: [synced("b", at: 10, device: "B")]))
+        let coordinator = ProfileSyncCoordinator(backend: backend)
+        let local = ProfileSyncState(rules: [synced("a", at: 10, device: "A")])
+        let result = await coordinator.sync(local: local)
+
+        let snapshots = await backend.recordedSnapshots()
+        XCTAssertEqual(snapshots.count, 1, "each successful sync publishes one web-readable snapshot")
+        XCTAssertEqual(snapshots.last, result.merged, "the snapshot IS the full merged state the web reads")
+        XCTAssertEqual(snapshots.last?.rules.map(\.entityId), ["a", "b"])
+    }
+
+    func test_offline_publishesNoSnapshot() async {
+        let backend = MockProfileSyncBackend(remote: ProfileSyncState(), failPull: true)
+        let coordinator = ProfileSyncCoordinator(backend: backend)
+        _ = await coordinator.sync(local: ProfileSyncState(rules: [synced("a", at: 10, device: "A")]))
+        let snapshots = await backend.recordedSnapshots()
+        XCTAssertTrue(snapshots.isEmpty, "a failed sync round publishes nothing")
+    }
+
+    func test_facts_convergeThroughTheBackend() async {
+        let fact = MemoryFact(id: "f1", entityId: nil, sport: "chess", kind: .note,
+                              value: "nybegynner", reason: "sa det", updatedAt: t(20), deviceID: "A")
+        let backend = MockProfileSyncBackend(remote: ProfileSyncState())
+        let coordinator = ProfileSyncCoordinator(backend: backend)
+        let result = await coordinator.sync(local: ProfileSyncState(facts: [fact]))
+        XCTAssertEqual(result.merged.facts.map(\.id), ["f1"], "the local fact is retained")
+        // The mock now preserves facts through push, so the remote holds it too.
+        let remote = await backend.currentRemote()
+        XCTAssertEqual(remote.facts.map(\.id), ["f1"], "the fact reached the remote (mock push keeps facts)")
+    }
+
     // MARK: - Store round-trip (a peer's rule lands in ProfileStore.load)
 
     func test_storeRoundTrip_mergesPeerRule() async throws {

@@ -86,6 +86,14 @@
 			<p class="muted" id="import-status" hidden></p>
 		</details>
 
+		<details class="add-box icloud-box" id="icloud-box" hidden>
+			<summary><h2 style="display:inline">Synk med iCloud</h2></summary>
+			<p class="muted">Logg inn med Apple-ID-en din, så synker profilen automatisk begge veier med iPhone-appen — via din egen private iCloud, aldri via vår server.</p>
+			<div id="apple-sign-in-button"></div>
+			<div id="apple-sign-out-button"></div>
+			<p class="muted" id="icloud-status" hidden></p>
+		</details>
+
 		<div class="edit-foot">
 			<p class="muted">Endringer vises her når siden er bygd om (~et par minutter etter innsending). Vil du endre alt for hånd (aliaser, varsel-tid m.m.)? <a href="https://github.dev/CHaerem/sportivista/blob/main/scripts/config/interests.json" target="_blank" rel="noopener">Rediger fila direkte</a>.</p>
 		</div>
@@ -96,6 +104,11 @@
 	<script src="js/profile-sync.js"></script>
 	<script src="js/theme.js"></script>
 	<script src="js/edit.js"></script>
+	<!-- iCloud sync (optional): CloudKit JS from Apple's CDN + the public token.
+	     Both are inert until icloud-config.js carries a token — no dead network. -->
+	<script src="js/icloud-config.js"></script>
+	<script src="https://cdn.apple-cloudkit.com/ck/2/cloudkit.js" async></script>
+	<script src="js/icloud-sync.js"></script>
 	<script>
 		// Personal-profile import: paste an app QR/link (or arrive with a
 		// #profile=… / ?d=… fast-path from the phone's share sheet) and MERGE it
@@ -126,6 +139,17 @@
 				const payload = q.get('profile') || q.get('d');
 				if (payload) { box.open = true; field.value = payload; run(payload); }
 			} catch { /* ignore */ }
+		})();
+
+		// iCloud sync init — only when a token is configured (icloud-config.js).
+		// CloudKit JS loads async, so wait for it briefly; give up quietly after ~10s.
+		(function () {
+			if (!window.ssICloud || !window.SPORTIVISTA_ICLOUD || !window.SPORTIVISTA_ICLOUD.apiToken) return;
+			let tries = 0;
+			const t = setInterval(() => {
+				if (typeof CloudKit !== 'undefined') { clearInterval(t); window.ssICloud.init({ onSynced: () => {} }); }
+				else if (++tries > 40) clearInterval(t);
+			}, 250);
 		})();
 	</script>
 </body>

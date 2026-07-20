@@ -16,6 +16,15 @@
 //  deletions — so a peer holding a stale live copy cannot resurrect an
 //  unfollowed entity (the same tombstone discipline the merge enforces).
 //
+//  THE WEB CHANNEL (`ProfileSnapshot`): CloudKit JS in a browser CANNOT decrypt
+//  `encryptedValues`, so the per-record path above is invisible to the web. To
+//  sync with the web we ALSO publish one PLAINTEXT snapshot per device
+//  (`writeSnapshot` → a ProfileShareCodec payload in a `payload` field, recordName
+//  = this device) and fold every device's snapshot back in on `pull`. The native
+//  iOS↔iOS path stays E2E; the snapshot is the deliberately-plaintext bridge (its
+//  content is still ONLY in the user's own private DB — never shared, never our
+//  server). See docs/icloud-sync-setup.md.
+//
 //  ACCOUNT CONSTRAINT (binding): the free personal team (DEVELOPMENT_TEAM
 //  9LVCB72DT8) cannot provision the CloudKit entitlement on a device build
 //  (SportivistaDeviceDev), so that build uses LocalOnlyProfileSync. This file
@@ -43,7 +52,18 @@ final class CloudKitProfileSync: ProfileSyncBackend, @unchecked Sendable {
         static let rule = "ProfileRule"
         static let episodic = "EpisodicNote"
         static let counter = "Counter"
+        /// WP — the web-readable channel: one record per device, a single PLAINTEXT
+        /// `payload` field (a ProfileShareCodec string of the device's full merged
+        /// state). CloudKit JS can read this (it CANNOT read the encryptedValues on
+        /// the record types above), so this is how the browser learns the profile.
+        static let snapshot = "ProfileSnapshot"
     }
+
+    /// A stable per-device id used as this device's ProfileSnapshot recordName, so
+    /// each device owns exactly one snapshot record (no clobbering). Minted once
+    /// next to the app's data; matches the DeviceIdentity discipline used for the
+    /// rule stamps.
+    private let snapshotDeviceID: String
 
     /// Defaults to the app's default container's PRIVATE database and a dedicated
     /// custom zone (custom zones are what enable `encryptedValues`). A different
@@ -51,6 +71,9 @@ final class CloudKitProfileSync: ProfileSyncBackend, @unchecked Sendable {
     init(container: CKContainer = .default(), zoneName: String = "SportivistaProfile") {
         self.database = container.privateCloudDatabase
         self.zoneID = CKRecordZone.ID(zoneName: zoneName, ownerName: CKCurrentUserDefaultName)
+        let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
+            ?? FileManager.default.temporaryDirectory
+        self.snapshotDeviceID = DeviceIdentity.stableID(directory: dir)
     }
 
     // MARK: - Pull
@@ -60,7 +83,25 @@ final class CloudKitProfileSync: ProfileSyncBackend, @unchecked Sendable {
         async let rules = fetchRules()
         async let notes = fetchEpisodic()
         async let counters = fetchCounters()
-        return try await ProfileSyncState(rules: rules, episodic: notes, counters: counters).deduplicated()
+        async let snapshots = fetchSnapshots()
+        var state = try await ProfileSyncState(rules: rules, episodic: notes, counters: counters).deduplicated()
+        // Fold in every device's snapshot (the WEB writes ONLY a snapshot; other
+        // iPhones write both channels). The snapshot carries the FULL state incl.
+        // facts, so this is also how facts cross devices. Merge is commutative +
+        // idempotent, so the snapshot channel and the per-record channel converge.
+        for snap in try await snapshots {
+            state = ProfileMerge.merge(local: state, remote: snap).merged
+        }
+        return state
+    }
+
+    /// Decode every device's ProfileSnapshot payload back to a state. A malformed
+    /// or absent payload is skipped, not fatal.
+    private func fetchSnapshots() async throws -> [ProfileSyncState] {
+        try await fetchAll(type: RecordType.snapshot).compactMap { record in
+            guard let payload = record["payload"] as? String else { return nil }
+            return try? ProfileShareCodec.decode(payload)
+        }
     }
 
     private func fetchRules() async throws -> [SyncedRule] {
@@ -129,6 +170,24 @@ final class CloudKitProfileSync: ProfileSyncBackend, @unchecked Sendable {
         // We only ever push a merge WINNER, so overwrite the server copy
         // wholesale (`.allKeys`); non-atomic so one bad record can't sink the batch.
         _ = try await database.modifyRecords(saving: toSave, deleting: [],
+                                             savePolicy: .allKeys, atomically: false)
+    }
+
+    // MARK: - Snapshot (the web-readable channel)
+
+    /// Upsert THIS device's ProfileSnapshot: the full merged state encoded as a
+    /// ProfileShareCodec payload in one PLAINTEXT `payload` field, so CloudKit JS
+    /// (the browser) can read the whole profile with the user's own Apple sign-in.
+    /// recordName = this device, so devices never clobber each other's snapshots.
+    /// (v1 writes every sync round; a change-diff skip is a cheap future optimisation.)
+    func writeSnapshot(_ state: ProfileSyncState) async throws {
+        try await ensureZone()
+        let payload = try ProfileShareCodec.encode(state)
+        let record = CKRecord(recordType: RecordType.snapshot,
+                              recordID: CKRecord.ID(recordName: snapshotDeviceID, zoneID: zoneID))
+        record["payload"] = payload as CKRecordValue
+        record["updatedAt"] = Date() as CKRecordValue
+        _ = try await database.modifyRecords(saving: [record], deleting: [],
                                              savePolicy: .allKeys, atomically: false)
     }
 
