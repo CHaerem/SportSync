@@ -2,7 +2,7 @@
 import fs from "fs";
 import path from "path";
 import crypto from "crypto";
-import { readJsonIfExists, rootDataPath, configDirPath, MS_PER_DAY, makeCoverageGate, mustWatchEntity, normalizeParticipants, normalizeNorwegianPlayers, normalizeText, containsName, entityTerms } from "./lib/helpers.js";
+import { readJsonIfExists, rootDataPath, configDirPath, MS_PER_DAY, makeCoverageGate, normalizeParticipants, normalizeNorwegianPlayers, normalizeText, containsName, entityTerms } from "./lib/helpers.js";
 import { resolveStreaming } from "./lib/norwegian-rights.js";
 import { writeManifest } from "./build-manifest.js";
 import { writePortReport } from "./build-port-report.js";
@@ -546,11 +546,11 @@ if (keptConfirmed > 0) {
 // want, and NOTHING scoped to one person. The compass is catalog.json ("hva vi
 // DEKKER"), NOT interests.json ("hva DU følger"): personal precision (Carlsen-
 // only, 100-Thieves-only, …) is removed from the server and owned by the client
-// lens alone (docs/js + iOS FeedCompiler — proven safe to move by WP-92). The
-// interests.json read below is a SEPARATE concern: the owner-scoped must-watch /
-// calendar bell (see mustWatchEntity), which stays an owner artifact.
+// lens alone (docs/js + iOS FeedCompiler — proven safe to move by WP-92). WP-131:
+// build-events no longer reads interests.json at all — the events.json it publishes
+// is USER-NEUTRAL (no owner must-watch stamp). The owner's calendar bell is computed
+// on the owner artifact side, in build-ics.js (events.ics VALARM).
 const catalog = readJsonIfExists(path.join(configDir, "catalog.json")) || {};
-const interests = readJsonIfExists(path.join(configDir, "interests.json")) || {};
 // isCovered — "does Sportivista cover this event?" (server scope), keyed off
 // catalog.json (WP-96). The logic (tier1 wholesale; chess/esports entity-gated via a
 // SPORT-SCOPED catalog-entity match; other non-broad sports kept only by
@@ -573,14 +573,10 @@ const kept = all.filter((e) => {
 	return true;
 });
 kept.sort((a, b) => new Date(a.time) - new Date(b.time));
-// Tag must-watch deterministically from interests.json — the OWNER'S calendar
-// bell (WP-96: this is the ONE server field still keyed off the owner's personal
-// profile; it feeds the owner's events.ics VALARM + the owner web board's row
-// mark). For external users the bell is a client concern — iOS FeedCompiler
-// recomputes mustWatch from each device's own profile and ignores this stamp.
-// The compass for what's ON the board is the catalog (isCovered above), never
-// interests; this stamp only annotates already-covered events for the owner.
-let mustWatchCount = 0;
+// WP-131: no per-owner annotation is written here anymore. The board is the
+// catalog (isCovered above); must-watch is an OWNER concept and is derived on
+// the owner-artifact side (build-ics.js, from the user-owned interests.json)
+// for the events.ics VALARM. events.json stays user-neutral.
 for (const e of kept) {
 	// WP-04: recompute canonical participation form for every output event —
 	// same rationale as the id recompute below. Preserved ai-research /
@@ -597,8 +593,10 @@ for (const e of kept) {
 	// objects (dropping any entityId carried over from a previous run), so
 	// this is the pass that actually makes it stick for every output event.
 	enrichEntityIds(e);
-	e.mustWatch = mustWatchEntity(e, interests) != null;
-	if (e.mustWatch) mustWatchCount++;
+	// WP-131: events.json is user-neutral (no owner must-watch stamp). Strip any
+	// that a preserved event carried in from a previous build; the owner bell is
+	// computed in build-ics.js, and every client recomputes from its own profile.
+	delete e.mustWatch;
 	// Recompute the stable id from the event's CURRENT sport|title|time so every
 	// output path emits one — including preserved ai-research / kept-on-board
 	// events pushed directly from a previous events.json (which may predate
@@ -674,7 +672,7 @@ if (hardErrorCount > 0) {
 	);
 }
 console.log(
-	`Aggregated ${kept.length} events (${mustWatchCount} must-watch; filtered ${all.length - kept.length} past/irrelevant, of which ${droppedIrrelevant} off-interest) into events.json`
+	`Aggregated ${kept.length} events (filtered ${all.length - kept.length} past/irrelevant, of which ${droppedIrrelevant} off-interest) into events.json`
 );
 
 // Publish tracked.json (AI bookkeeping) + catalog.json (what we cover) so the

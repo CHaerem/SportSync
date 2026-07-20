@@ -135,7 +135,7 @@ mennesket, aldri av en agent.
 | WP-128 | Web-agenda: fortids-dag-fiks + ekspandert-tilstand over live-poll + klokke-avstemming | 0I | WP-117 | ✅ #336 merget 20.07 |
 | WP-129 | Onboarding-klarhet: formål i klarspråk + kapsel-copy + stale kommentarer | 0I | WP-117 | ✅ #342 merget 20.07 |
 | WP-130 | Pipeline-kvalitet: refaktor-auditens quick-wins | 0I | — | ✅ #338 merget 20.07 — containsName-memo, haystack-dedup ×3, én fillesing, configDirPath (+2 env-bugfiks), 2 døde eksporter, flattenStats, golf mergeEvents |
-| WP-131 | Interests-arv-sanering: eier-personlige flagg ut av publiserte artefakter | 0I | WP-96 | ⬜ |
+| WP-131 | Interests-arv-sanering: eier-personlige flagg ut av publiserte artefakter | 0I | WP-96 | 🔬 |
 | WP-132 | Onboarding: quick-picks-først + generiske pakker + assistent-intro (dyp personalisering) | 0I | WP-129 | ⬜ |
 
 ---

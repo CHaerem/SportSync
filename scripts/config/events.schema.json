@@ -100,7 +100,7 @@
 		},
 		"mustWatch": {
 			"type": "boolean",
-			"description": "Beregnet av build-events.js — true når eventet treffer en tracked/must-watch-entitet."
+			"description": "UTGÅTT (WP-131): stemples ikke lenger av build-events.js — publisert events.json er bruker-nøytral. Must-watch er et eier-begrep og beregnes på eier-artefaktet (build-ics.js → events.ics VALARM); hver klient regner ut sitt eget varsel/must-see fra egen profil. Feltet tolereres her kun for bakoverkompatibilitet med tidligere publiserte events.json inntil neste bygg."
 		},
 		"format": {
 			"type": "string",

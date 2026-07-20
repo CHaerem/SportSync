@@ -179,7 +179,10 @@ Object.assign(window.Dashboard.prototype, {
 		else if (e.norwegian) why = 'Norsk deltakelse';
 		else if (SPORT[e.sport]) why = `Vi dekker ${escapeHtml(SPORT[e.sport])}`;
 		else why = 'Del av det vi dekker';
-		if (e.mustWatch) why += ` · varsel ${this.notifyLead()} min før`;
+		// WP-131: no per-user "varsel N min før" note here. The web board is
+		// catalog-wide with no personal profile (this.interests is null since
+		// WP-96), so it can't — and shouldn't — claim a reminder for anyone. The
+		// bell is an owner/iOS concern (events.ics VALARM / device NotificationPlanner).
 		return why;
 	},
 
