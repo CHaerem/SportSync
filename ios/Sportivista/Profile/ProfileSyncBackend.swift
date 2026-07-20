@@ -61,6 +61,17 @@ struct LocalOnlyProfileSync: ProfileSyncBackend {
 enum ProfileSyncBackendFactory {
     static func make() -> any ProfileSyncBackend {
         #if SPORTIVISTA_CLOUDKIT
+        // The iCloud entitlement is provisioned for the iOS DEVICE build — not for
+        // the SAME binary running as an iOS-app-on-Mac ("Designed for iPad", e.g.
+        // when the run destination is "My Mac" instead of the iPhone). There the
+        // container isn't provisioned, so `CKContainer.default()` raises an uncaught
+        // NSException at launch → SIGABRT crash-loop. Cross-device sync is a
+        // nice-to-have, NEVER a launch requirement (LocalOnlyProfileSync is the
+        // documented fallback), so degrade instead of crashing. The Simulator/CI
+        // never compile this branch; the real paid-account iPhone build is unaffected.
+        if ProcessInfo.processInfo.isiOSAppOnMac {
+            return LocalOnlyProfileSync()
+        }
         return CloudKitProfileSync()
         #else
         return LocalOnlyProfileSync()
