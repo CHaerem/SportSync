@@ -137,7 +137,7 @@ mennesket, aldri av en agent.
 | WP-130 | Pipeline-kvalitet: refaktor-auditens quick-wins | 0I | — | ✅ #338 merget 20.07 — containsName-memo, haystack-dedup ×3, én fillesing, configDirPath (+2 env-bugfiks), 2 døde eksporter, flattenStats, golf mergeEvents |
 | WP-131 | Interests-arv-sanering: eier-personlige flagg ut av publiserte artefakter | 0I | WP-96 | 🔬 |
 | WP-132 | Onboarding: quick-picks-først + generiske pakker + assistent-intro (dyp personalisering) | 0I | WP-129 | 🔬 quick-picks er første steg for alle (samtale = sekundær «…eller fortell med egne ord»); pakker generisert (norsk-fotball=landslaget, ny vintersport-pakke, CS2=EWC-major, dropp Lyn/100T/rain/Barcelona) og grunnfestet mot entities.json; nytt assistent-intro-steg med 3 trykkbare dyp-personaliserings-eksempler (linse/følg/spoiler) + «prøv nå»; eval-corpus-case `intro-01` + oppdaterte onboarding-UI-flyter |
-| WP-133 | Entitets-dekning: Eliteserien + Ingebrigtsen + Norge-dedup + pakke-repek | 0I | WP-132 | ⬜ |
+| WP-133 | Entitets-dekning: Eliteserien + Ingebrigtsen + Norge-dedup + pakke-repek | 0I | WP-132 | 🔬 tracked.json seedet (manual-seed WP-133) med `eliteserien-2026` (league) + `jakob-ingebrigtsen` (athlete) — begge dekket i catalog.json men manglet entitet; Norge/Norway-dublett konsolidert til én `norge`-entitet via kuratert known-alias-tabell i build-entities (sports-config reordnet Norge-først); «Norsk fotball»→Eliteserien+landslaget, «Friidrett»→Warholm+Ingebrigtsen (dropp EM-omvei); iOS-fixture (entities+manifest) re-frosset; regresjonstester; ingen docs/data rørt (pipeline republiserer) |
 | WP-134 | Visningsbugs: tekst-forskyvning/feil størrelse (eier-dogfooding 20.07) | 0I | — | ⬜ |
 
 ---
@@ -1957,5 +1957,42 @@ ingen endring i assistent-armene/FM-prompter; ingen serverendring. **Aksept:**
 onboarding-UI-flyt grønn (quick-picks-først), pakkene grunnfester mot
 entities.json-id-er som finnes, eval-corpus-case for ett intro-eksempel
 (0E-regelen), full unit-suite + 4 schemes + vektorer, skjermbilder begge temaer.
+
+### WP-133 · Entitets-dekning: Eliteserien + Ingebrigtsen + Norge-dedup + pakke-repek
+**Bakgrunn (WP-132-oppfølging):** WP-132 grunnfestet startpakkene mot
+`entities.json`, men to entiteter manglet selv om `catalog.json` dekker dem:
+**Eliteserien** (tier2.tournaments) hadde ingen entitet — kun `obos-ligaen-2026`
+(eierens Lyn-nivå) — så «Norsk fotball»-pakken falt tilbake til bare landslaget;
+og **Jakob Ingebrigtsen** (tier2.athletes) manglet helt (kun Warholm fantes), så
+«Friidrett» måtte rute gjennom EM-turneringen. Årsak: `build-entities.js` bygger
+entities.json fra tracked.json/sports-config.js/norwegian-golfers.json — IKKE fra
+katalogen. I tillegg lå landslaget som DUBLETT `norway` + `norge` (sports-config
+lister begge stavemåter; WP-125s `isNicknameForm` folder dem ikke siden ingen er
+initialform av den andre) → samme lens-miss-klasse som 100T.
+**Innhold:** (1) SEED (manuell seeding tillatt ved launch): `scripts/config/tracked.json`
+får en `leagues`-entry `eliteserien-2026` (Eliteserien, football) + en `athletes`-entry
+`jakob-ingebrigtsen` (athletics), begge med `addedBy: "manual-seed WP-133"` og
+evidens som siterer `catalog.json#tier2.*`; research-agenten reconcilierer mot
+katalogen senere. Seedet bor i `scripts/config/` (kilden build-entities leser),
+IKKE i `docs/data/` (pipeline-eid, publisert) — pipelinen republiserer entities/
+tracked på neste kjøring. (2) NORGE-DEDUP: kuratert **known-alias-tabell** i
+build-entities (`KNOWN_ALIAS_GROUPS = [["norway","norge"]]` → `isKnownAlias` inn i
+`termsOverlap`) — bevisst valgt over en generisk kryss-språk-heuristikk fordi den
+er kirurgisk (bare de listede stavemåtene folder, kan aldri over-merge to reelle
+lag; same-sport+same-type håndheves fortsatt av upsert). sports-config reordnet
+`["…","Norge","Norway"]` så den konsoliderte entiteten blir `norge` (norsk
+visningsnavn), «Norway» folder inn som alias. (3) PAKKE-REPEK (StarterPacks.swift):
+«Norsk fotball» → Eliteserien + landslaget (`eliteserien-2026`, `norge`);
+«Friidrett» → Warholm + Ingebrigtsen (dropper `em-friidrett-2026`-omveien).
+(4) FIXTURE-REFRYS: iOS `Fixtures/entities.json` (+`manifest.json` sha/bytes) får
+de tre entitets-endringene konsistent. **Ikke-mål:** ingen konkrete events legges
+til (research/fetchere dekker terminlistene); ingen katalogendring (den dekket
+allerede begge); ingen berøring av `docs/data/`, interests.json eller beskyttede
+stier. **Aksept:** vitest grønn (build-entities-regresjonstester for Norge-dedup +
+produksjonsvakt, tracked-schema, feed-vectors, manifest); sandbox
+`build-entities → build-events → validate-events` rent (/tmp, ikke docs/data);
+full iOS unit-suite + 4 schemes + gylne vektorer bit-like etter fixture-refrys
+(`test_starterPacks_areGroundedAndUnique` fortsatt grønn — pakkene grunnfester mot
+de nye id-ene).
 
 

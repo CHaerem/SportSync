@@ -25,14 +25,13 @@
 //  so those render as the Norwegian names you'd actually watch, not a flat
 //  foreign leaderboard.
 //
+//  WP-133 — Eliteserien and Jakob Ingebrigtsen are now grounded server-side
+//  (both seeded as entities in tracked.json → entities.json), so "Norsk fotball"
+//  follows Eliteserien + the national team and "Friidrett" follows Warholm +
+//  Ingebrigtsen directly. WP-133 also consolidated the Norway/Norge national-team
+//  duplicate into a single `norge` entity (curated known-alias in build-entities).
+//
 //  Grounding notes (why some owner-named entities aren't literal ids):
-//    • Eliteserien has no entity server-side yet (only OBOS-ligaen is grounded,
-//      which is the owner's own tier) — so "Norsk fotball" grounds on the
-//      broadly-meaningful national team. Adding Eliteserien to the catalog is a
-//      server change, out of WP-132's scope.
-//    • Jakob Ingebrigtsen has no athlete entity yet — "Friidrett" grounds on
-//      Warholm + EM friidrett `throughNorwegians`, which surfaces every Norwegian
-//      (Ingebrigtsen included) when they compete.
 //    • Grand Slams / golf majors beyond The Open have no entities — following
 //      Ruud/Hovland already surfaces their matches in those tournaments.
 //    • Winter sport (skiskyting/langrenn/alpint/hopp) grounds on the four
@@ -124,12 +123,14 @@ enum StarterPacks {
         StarterPack(
             id: "norsk-fotball",
             title: "Norsk fotball",
-            subtitle: "Landslaget — herrer og kvinner",
-            reason: "Lagt til fra startpakken «Norsk fotball» — det norske landslaget.",
+            subtitle: "Eliteserien og landslaget",
+            reason: "Lagt til fra startpakken «Norsk fotball» — Eliteserien og det norske landslaget.",
             rules: [
-                // The national team is the one broadly-meaningful Norwegian
-                // football follow (not the owner's club). Eliteserien has no
-                // grounded entity yet (server-side), so the pack lands on it.
+                // The two broadly-meaningful Norwegian football follows (not the
+                // owner's club): the top league + the national team. Both are now
+                // grounded server-side (WP-133 seeded Eliteserien as an entity and
+                // consolidated the Norway/Norge national-team duplicate to `norge`).
+                StarterRule("eliteserien-2026", "Eliteserien", sport: "football", type: "league"),
                 StarterRule("norge", "Norge", sport: "football", type: "team"),
             ]
         ),
@@ -150,13 +151,14 @@ enum StarterPacks {
         StarterPack(
             id: "friidrett",
             title: "Friidrett",
-            subtitle: "Karsten Warholm og norsk friidrett i mesterskapene",
-            reason: "Lagt til fra startpakken «Friidrett».",
+            subtitle: "Karsten Warholm og Jakob Ingebrigtsen",
+            reason: "Lagt til fra startpakken «Friidrett» — Karsten Warholm og Jakob Ingebrigtsen.",
             rules: [
+                // The two marquee Norwegian track stars, both grounded server-side.
+                // WP-133 seeded Ingebrigtsen as an entity, so the pack follows him
+                // directly instead of routing through the EM-tournament workaround.
                 StarterRule("karsten-warholm", "Karsten Warholm", sport: "athletics", type: "athlete"),
-                // EM through the Norwegians surfaces every Norwegian (Ingebrigtsen
-                // included) when they compete — Ingebrigtsen has no own entity yet.
-                StarterRule("em-friidrett-2026", "EM friidrett 2026", sport: "athletics", type: "tournament", lens: .throughNorwegians),
+                StarterRule("jakob-ingebrigtsen", "Jakob Ingebrigtsen", sport: "athletics", type: "athlete"),
             ]
         ),
         StarterPack(

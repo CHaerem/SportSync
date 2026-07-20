@@ -45,11 +45,21 @@
  * matched events/news stamped with the other (a real lens-miss). `isNicknameForm`
  * (below) closes it: "100T" now folds in as an ALIAS of "100 Thieves", one id.
  *
- * Known, accepted limitation: dedup still needs a token overlap OR an
- * initial-form match. Purely alternate spellings with no shared token AND no
- * abbreviation relationship (e.g. "Norway" vs. "Norge") are NOT folded and end
- * up as separate entities. Fine for this WP — matching against event text still
- * works either way, just under two ids; true synonym-resolution is future work.
+ * WP-133: dedup ALSO fires for a curated cross-language SYNONYM — the "Norway"
+ * ⇄ "Norge" class. Two spellings of the same national side share no token and
+ * are not initial-forms of each other, so the token-overlap / initial-form rules
+ * above never fold them; left un-folded, sports-config's own "Norway"/"Norge"
+ * pair became two team entities, so a fan following one never matched events
+ * stamped with the other (the WP-125 lens-miss class, again). `isKnownAlias`
+ * (below) closes it via an explicit, curated table — deliberately narrower than a
+ * generic cross-language heuristic: only the exact listed spellings fold, so it
+ * can never over-merge two genuinely different teams.
+ *
+ * Known, accepted limitation: dedup still needs a token overlap, an initial-form
+ * match, OR a curated known-alias pair. Purely alternate spellings with no shared
+ * token, no abbreviation relationship, and no table entry are NOT folded and end
+ * up as separate entities. Matching against event text still works either way,
+ * just under two ids; general synonym-resolution is future work.
  *
  * NOTE ON TYPE ACCURACY: tracked.json files a few entries under its "leagues"
  * bucket that are really clubs (e.g. "fc-barcelona"), because tracked.json
@@ -269,13 +279,42 @@ function isNicknameForm(a, b) {
 	return false;
 }
 
-/** Do two term sets share a word-boundary or nickname/initial-form match? */
+/**
+ * WP-133: curated cross-language synonym groups for NATIONAL TEAMS — the
+ * "Norway" ⇄ "Norge" class. Each group lists spellings (already normalizeText'd:
+ * lowercased, diacritics folded) of ONE and the same entity. Kept intentionally
+ * small and explicit: an entry only folds the exact spellings it names, so it
+ * cannot over-merge two genuinely different teams the way a generic
+ * cross-language heuristic might. Same-sport + same-type is still enforced by the
+ * caller (upsert), so a "Norge" in a different sport is unaffected. Extend as
+ * more national sides enter the config (e.g. ["sweden", "sverige"]).
+ */
+const KNOWN_ALIAS_GROUPS = [
+	["norway", "norge"],
+];
+
+/**
+ * WP-133: are a and b two listed spellings of the same known entity (national
+ * team)? True only when both normalized terms appear in the SAME curated group.
+ */
+function isKnownAlias(a, b) {
+	const na = normalizeText(a).trim();
+	const nb = normalizeText(b).trim();
+	if (!na || !nb || na === nb) return false;
+	return KNOWN_ALIAS_GROUPS.some((group) => group.includes(na) && group.includes(nb));
+}
+
+/**
+ * Do two term sets share a word-boundary, nickname/initial-form, or curated
+ * known-alias (WP-133) match?
+ */
 function termsOverlap(aTerms, bTerms) {
 	for (const a of aTerms) {
 		for (const b of bTerms) {
 			if (normalizeText(a).trim() === normalizeText(b).trim()) return true;
 			if (containsName(a, b) || containsName(b, a)) return true;
 			if (isNicknameForm(a, b)) return true;
+			if (isKnownAlias(a, b)) return true;
 		}
 	}
 	return false;
