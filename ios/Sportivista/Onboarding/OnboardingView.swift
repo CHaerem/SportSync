@@ -43,6 +43,10 @@ struct OnboardingView: View {
     /// Skip from the welcome: mark done, leave the profile empty. The agenda's
     /// own empty state then points back at the command line.
     var onSkip: () -> Void
+    /// WP-132 — «Prøv nå» / a tapped example from the assistant-intro step:
+    /// finish onboarding AND open the assistant, optionally pre-filling the
+    /// field with `prefill` (nil = open empty). The host owns the actual sheet.
+    var onTryAssistant: (String?) -> Void
     /// DEBUG screenshot harness only: jump straight to a step so each state can
     /// be captured deterministically. Nil in the shipping flow (always `.welcome`).
     var initialStep: OnboardingStep? = nil
@@ -64,9 +68,9 @@ struct OnboardingView: View {
                     VStack(alignment: .leading, spacing: 24) {
                         switch step {
                         case .welcome: welcomeStep
-                        case .converse: converseStep
                         case .quickPicks: quickPicksStep
-                        case .landing: landingStep
+                        case .converse: converseStep
+                        case .assistantIntro: assistantIntroStep
                         }
                     }
                     .padding(.horizontal, 24)
@@ -128,9 +132,8 @@ struct OnboardingView: View {
             .overlay(Rectangle().stroke(SportivistaTokens.accent.opacity(0.3), lineWidth: 1))
 
             VStack(alignment: .leading, spacing: 14) {
-                Button("Kom i gang") {
-                    go(to: OnboardingGate.buildStep(aiAvailable: assistant.availability.isAvailable))
-                }
+                // WP-132: quick-picks is the first build step for everyone.
+                Button("Kom i gang") { go(to: .quickPicks) }
                 .font(.sportivistaTabular(.subheadline, weight: .bold))
                 .foregroundStyle(SportivistaTokens.accent)
                 .buttonStyle(SportivistaActionButtonStyle(tint: SportivistaTokens.accent, fullWidth: true))
@@ -144,7 +147,7 @@ struct OnboardingView: View {
         }
     }
 
-    // MARK: - Step 2 · Converse (the primary path)
+    // MARK: - Step · Converse (the secondary «fortell med egne ord» path)
 
     private var converseStep: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -167,8 +170,8 @@ struct OnboardingView: View {
             followingNow
 
             stepFooter(
-                alternative: ("Velg fra startpakker i stedet", { go(to: .quickPicks) }),
-                primary: ("Ferdig", { go(to: .landing) })
+                alternative: ("Tilbake til startpakker", "onboarding.backToPacks", { go(to: .quickPicks) }),
+                primary: ("Fortsett", "onboarding.continue", { go(to: .assistantIntro) })
             )
         }
     }
@@ -336,7 +339,7 @@ struct OnboardingView: View {
                 .font(.sportivistaTabular(.caption, weight: .regular))
                 .foregroundStyle(SportivistaTokens.label.opacity(0.65))
                 .fixedSize(horizontal: false, vertical: true)
-            Button("Velg fra startpakker i stedet") { go(to: .quickPicks) }
+            Button("Tilbake til startpakker") { go(to: .quickPicks) }
                 .font(.sportivistaTabular(.caption, weight: .bold))
                 .foregroundStyle(SportivistaTokens.accent)
                 .sportivistaTapTarget()
@@ -347,7 +350,7 @@ struct OnboardingView: View {
         .overlay(Rectangle().stroke(SportivistaTokens.label.opacity(0.2), lineWidth: 1))
     }
 
-    // MARK: - Step 3 · Quick picks (fallback + for everyone)
+    // MARK: - Step · Quick picks (the first build step, for everyone — WP-132)
 
     private var quickPicksStep: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -364,18 +367,20 @@ struct OnboardingView: View {
             followingNow
 
             stepFooter(
-                alternative: assistant.availability.isAvailable ? ("Skriv i stedet", { go(to: .converse) }) : nil,
-                primary: ("Ferdig", { go(to: .landing) })
+                // The say-what-you-follow path is a clearly-secondary entry off
+                // this step (Apple-Intelligence-gated), never the primary route.
+                alternative: assistant.availability.isAvailable ? ("… eller fortell med egne ord", "onboarding.converseEntry", { go(to: .converse) }) : nil,
+                primary: ("Fortsett", "onboarding.continue", { go(to: .assistantIntro) })
             )
         }
     }
 
     private var quickPicksIntro: String {
         if assistant.availability.isAvailable {
-            return "Tapp for å legge til. Du kan endre alt senere, eller skrive fritt til Sportivista i stedet."
+            return "Tapp det du vil følge — du kan velge flere. Du kan endre alt senere, eller fortelle Sportivista med egne ord."
         }
         // Honest degradation: Apple Intelligence is off / unsupported here.
-        return "Tapp for å legge til. (Å skrive fritt til Sportivista krever Apple Intelligence, som ikke er på her — men startpakkene gir deg alt du trenger.)"
+        return "Tapp det du vil følge — du kan velge flere. Alt kan endres senere. (Å fortelle med egne ord krever Apple Intelligence, som ikke er på her — men startpakkene gir deg alt du trenger.)"
     }
 
     private func packRow(_ pack: StarterPack) -> some View {
@@ -418,58 +423,101 @@ struct OnboardingView: View {
         .accessibilityIdentifier("starterpack.\(pack.id)")
     }
 
-    // MARK: - Step 4 · Landing
+    // MARK: - Step · Assistant intro (the calm finish that SHOWS depth — WP-132)
 
-    private var landingStep: some View {
+    /// The three tappable examples of DEEP personalisation. Each is a real,
+    /// currently-supported arm — a lens scope, an athlete follow, and a scoped
+    /// spoiler policy (spoilervern must name a sport/entity; a blanket rule is
+    /// ignored by `SpoilerShield`, so it is scoped to F1 here). The first two
+    /// are pinned by eval-corpus cases (`intro-*`); all three are honest.
+    private var assistantIntroExamples: [(id: String, utterance: String)] {
+        [
+            ("norske-tdf", "bare de norske i Tour de France"),
+            ("alt-warholm", "følg alt Warholm gjør"),
+            ("spoiler-f1", "ikke vis F1-resultater før jeg har sett løpet"),
+        ]
+    }
+
+    private var assistantIntroStep: some View {
         VStack(alignment: .leading, spacing: 20) {
-            stepHeading("Klart")
+            stepHeading("Gjør Sportivista til din")
+            Text("Startpakkene er bare begynnelsen. Fortell Sportivista med egne ord, så skreddersyr den seg — helt ned på detaljnivå. Tapp et eksempel for å prøve.")
+                .font(.sportivistaTabular(.subheadline, weight: .regular))
+                .foregroundStyle(SportivistaTokens.label.opacity(0.85))
+                .fixedSize(horizontal: false, vertical: true)
+
+            VStack(spacing: 10) {
+                ForEach(assistantIntroExamples, id: \.id) { example in
+                    exampleRow(example.id, example.utterance)
+                }
+            }
+
+            if !assistant.availability.isAvailable, let message = assistant.availability.message {
+                Text(message)
+                    .font(.sportivistaTabular(.footnote, weight: .regular))
+                    .foregroundStyle(SportivistaTokens.label.opacity(0.7))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
             if assistant.profile.isEmpty {
                 Text("Du følger ingenting ennå — det er helt greit. Trykk assistenten nederst når du vil legge til noe.")
                     .font(.sportivistaTabular(.subheadline, weight: .regular))
                     .foregroundStyle(SportivistaTokens.label.opacity(0.85))
                     .fixedSize(horizontal: false, vertical: true)
             } else {
-                Text("Agendaen din er klar, og viser allerede det du valgte.")
-                    .font(.sportivistaTabular(.subheadline, weight: .regular))
-                    .foregroundStyle(SportivistaTokens.label.opacity(0.85))
-                    .fixedSize(horizontal: false, vertical: true)
                 followingNow
             }
 
-            VStack(alignment: .leading, spacing: 8) {
-                Text("Du kan alltid si mer til Sportivista — trykk assistenten nederst.")
-                    .font(.sportivistaTabular(.footnote, weight: .regular))
-                    .foregroundStyle(SportivistaTokens.label.opacity(0.75))
-                    .fixedSize(horizontal: false, vertical: true)
-                // A quiet preview of the always-present assistant capsule
-                // (§ Hjelperen): leading assistant symbol · the same prompt ·
-                // the amber mic — so the finish points at the REAL control, not
-                // the retired command line.
-                HStack(spacing: 10) {
-                    Image(systemName: SportSymbol.assistant)
-                        .font(.sportivistaTabular(.subheadline, weight: .semibold))
-                        .foregroundStyle(SportivistaTokens.secondaryLabel)
-                    Text(AssistantViewModel.capsulePrompt)
-                        .font(.sportivistaTabular(.subheadline, weight: .regular))
-                        .foregroundStyle(SportivistaTokens.secondaryLabel)
-                        .lineLimit(1)
-                    Spacer(minLength: 0)
-                    Image(systemName: "mic")
-                        .font(.sportivistaTabular(.subheadline, weight: .semibold))
-                        .foregroundStyle(SportivistaTokens.accent)
-                }
-                .accessibilityHidden(true)
-            }
-            .padding(14)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .overlay(Rectangle().stroke(SportivistaTokens.separator, lineWidth: 1))
+            VStack(alignment: .leading, spacing: 14) {
+                // «Prøv nå»: finish AND open the assistant (empty) so the user can
+                // say anything — the primary, inviting action.
+                Button("Prøv nå") { onTryAssistant(nil) }
+                    .font(.sportivistaTabular(.subheadline, weight: .bold))
+                    .foregroundStyle(SportivistaTokens.accent)
+                    .buttonStyle(SportivistaActionButtonStyle(tint: SportivistaTokens.accent, fullWidth: true))
+                    .accessibilityIdentifier("onboarding.tryAssistant")
 
-            Button("Til agendaen") { onFinish() }
-                .font(.sportivistaTabular(.subheadline, weight: .bold))
-                .foregroundStyle(SportivistaTokens.accent)
-                .buttonStyle(SportivistaActionButtonStyle(tint: SportivistaTokens.accent, fullWidth: true))
-                .padding(.top, 4)
+                // The quiet skip: straight into the (already-filled) agenda.
+                Button("Til agendaen") { onFinish() }
+                    .font(.sportivistaTabular(.footnote, weight: .regular))
+                    .foregroundStyle(SportivistaTokens.secondaryLabel)
+                    .sportivistaTapTarget()
+                    .accessibilityIdentifier("onboarding.toAgenda")
+            }
+            .padding(.top, 4)
         }
+    }
+
+    /// One tappable deep-personalisation example — the quoted utterance in a
+    /// calm row (≥44pt). A tap finishes onboarding and opens the assistant with
+    /// the phrase pre-filled, so the user sees exactly how it is said.
+    private func exampleRow(_ id: String, _ utterance: String) -> some View {
+        Button { onTryAssistant(utterance) } label: {
+            HStack(alignment: .top, spacing: 12) {
+                Text("»")
+                    .font(.sportivistaTabular(.callout, weight: .bold))
+                    .foregroundStyle(SportivistaTokens.accent)
+                    .frame(width: 14, alignment: .leading)
+                    .accessibilityHidden(true)
+                Text("«\(utterance)»")
+                    .font(.sportivistaTabular(.subheadline, weight: .regular))
+                    .foregroundStyle(SportivistaTokens.label)
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 8)
+                Image(systemName: "chevron.right")
+                    .font(.sportivistaTabular(.footnote, weight: .semibold))
+                    .foregroundStyle(SportivistaTokens.secondaryLabel)
+                    .accessibilityHidden(true)
+            }
+            .padding(12)
+            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+            .contentShape(Rectangle())
+            .background(SportivistaTokens.label.opacity(0.03))
+            .overlay(Rectangle().stroke(SportivistaTokens.separator, lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Prøv: \(utterance)")
+        .accessibilityIdentifier("onboarding.example.\(id)")
     }
 
     // MARK: - Shared pieces
@@ -506,18 +554,23 @@ struct OnboardingView: View {
         }
     }
 
-    private func stepFooter(alternative: (String, () -> Void)?, primary: (String, () -> Void)) -> some View {
+    private func stepFooter(
+        alternative: (label: String, id: String, action: () -> Void)?,
+        primary: (label: String, id: String, action: () -> Void)
+    ) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             if let alternative {
-                Button(alternative.0) { alternative.1() }
+                Button(alternative.label) { alternative.action() }
                     .font(.sportivistaTabular(.footnote, weight: .regular))
                     .foregroundStyle(SportivistaTokens.secondaryLabel)
                     .sportivistaTapTarget()
+                    .accessibilityIdentifier(alternative.id)
             }
-            Button(primary.0) { primary.1() }
+            Button(primary.label) { primary.action() }
                 .font(.sportivistaTabular(.subheadline, weight: .bold))
                 .foregroundStyle(SportivistaTokens.accent)
                 .buttonStyle(SportivistaActionButtonStyle(tint: SportivistaTokens.accent, fullWidth: true))
+                .accessibilityIdentifier(primary.id)
         }
         .padding(.top, 8)
     }
@@ -546,7 +599,7 @@ struct OnboardingView: View {
                 .font(.sportivistaTabular(.footnote, weight: .regular))
                 .foregroundStyle(SportivistaTokens.label.opacity(0.8))
                 .fixedSize(horizontal: false, vertical: true)
-            Button("Velg fra startpakker i stedet") { go(to: .quickPicks) }
+            Button("Tilbake til startpakker") { go(to: .quickPicks) }
                 .font(.sportivistaTabular(.caption, weight: .bold))
                 .foregroundStyle(SportivistaTokens.accent)
                 .sportivistaTapTarget()

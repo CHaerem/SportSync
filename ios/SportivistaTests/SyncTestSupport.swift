@@ -53,7 +53,11 @@ enum SyncTestSupport {
         // swiftlint:disable:next force_try
         let base = try! SportivistaJSON.decoder.decode(Manifest.self, from: Fixture.data("manifest"))
         var files = base.files
-        for (filename, content) in newFilesOfInterest {
+        // WP-132: entities.json also drifts from the base manifest's declared
+        // hash (the fixture gains new entities over time), so refresh it from the
+        // current fixture the same way as the WP-106 files below.
+        let refreshed = newFilesOfInterest.merging(["entities.json": Fixture.data("entities")]) { _, new in new }
+        for (filename, content) in refreshed {
             files[filename] = Manifest.FileEntry(bytes: content.count, sha256: content.sha256Hex, sourceLastUpdated: nil)
         }
         let manifest = Manifest(generatedAt: base.generatedAt, schemaVersion: base.schemaVersion, files: files)

@@ -51,12 +51,10 @@ final class OnboardingTests: XCTestCase {
         XCTAssertFalse(OnboardingGate.shouldShow(completed: true, profileIsEmpty: false))
     }
 
-    func test_gate_buildStep_followsAvailability() {
-        XCTAssertEqual(OnboardingGate.buildStep(aiAvailable: true), .converse,
-                       "conversation-first when Apple Intelligence is available")
-        XCTAssertEqual(OnboardingGate.buildStep(aiAvailable: false), .quickPicks,
-                       "quick-picks when it isn't")
-    }
+    // WP-132: the entry-step flip. Quick-picks is now the first build step for
+    // everyone (the welcome goes straight there), so there is no availability-
+    // gated build-step decision left in the gate — the conversation is a
+    // clearly-secondary entry off the quick-picks step (proven in the UI flow).
 
     func test_flag_persistsAcrossReads() {
         // The @AppStorage flag is a plain UserDefaults bool — prove a round-trip
@@ -125,6 +123,31 @@ final class OnboardingTests: XCTestCase {
         let vm = makeVM()
         vm.toggleStarterPack(pack("norsk-sykkel"))
         XCTAssertEqual(vm.profile.rule(for: "tour-de-france-2026")?.lens, .throughNorwegians)
+    }
+
+    // WP-132: the generic packs ground on broadly-meaningful, real entities.
+    func test_winterPack_groundsToTheFourSportEntities() {
+        let vm = makeVM()
+        vm.toggleStarterPack(pack("vintersport"))
+        XCTAssertEqual(Set(vm.profile.rules.map(\.entityId)),
+                       ["sport-biathlon", "sport-cross-country", "sport-alpine", "sport-ski-jumping"],
+                       "the winter pack follows the four sport-level entities (WP-64/116) — off-season, so it matches nothing yet, but the follows are real")
+    }
+
+    func test_footballPack_isTheNationalTeam_notTheOwnersClub() {
+        let vm = makeVM()
+        vm.toggleStarterPack(pack("norsk-fotball"))
+        XCTAssertEqual(vm.profile.rules.map(\.entityId), ["norge"],
+                       "«Norsk fotball» follows the national team, not the owner's club (WP-132 de-personalisation)")
+    }
+
+    func test_cs2Pack_isGeneralised_notTheOwnersTeam() {
+        let vm = makeVM()
+        vm.toggleStarterPack(pack("cs2"))
+        let ids = Set(vm.profile.rules.map(\.entityId))
+        XCTAssertEqual(ids, ["esports-world-cup-2026-cs2"], "CS2 grounds on the marquee tournament")
+        XCTAssertFalse(ids.contains("100-thieves"), "the owner's team is no longer a starter pack")
+        XCTAssertFalse(ids.contains("havard-rain-nygaard"), "the owner's player is no longer a starter pack")
     }
 
     func test_togglePack_addsThenRemoves() {

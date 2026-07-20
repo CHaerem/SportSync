@@ -21,19 +21,26 @@ import XCTest
 
 final class MainFlowsUITests: SportivistaUITestCase {
 
-	// MARK: - Flow 1 · Onboarding (quick-picks + conversation)
+	// MARK: - Flow 1 · Onboarding (quick-picks first, then the conversation) — WP-132
 
-	func testOnboardingConversationThenQuickPicks() {
+	func testOnboardingQuickPicksThenConversation() {
 		let app = launchApp(state: "onboarding")
 
-		// Welcome → start (the mock reads "available", so the build step is the
-		// conversation path).
+		// Welcome → Kom i gang → the quick-picks step (the FIRST build step for
+		// everyone now — the WP-132 flip). Tap a curated pack.
 		assertExists(app.staticTexts["Velkommen"], "onboarding should open on the welcome step")
 		app.buttons["Kom i gang"].tap()
 
-		// Conversation step: say what you follow, confirm the diff, watch the
-		// "Følger nå" list grow.
-		assertExists(app.staticTexts["Fortell meg hva du følger"], "welcome should lead to the conversation step")
+		assertExists(app.staticTexts["Velg det du bryr deg om"], "welcome should lead straight to the quick-picks step")
+		let golf = app.buttons["starterpack.norske-golfere"]
+		assertExists(golf, "the curated starter packs should render first")
+		golf.tap()
+		assertExists(app.staticTexts["VALGT"], "tapping a pack should mark it valgt")
+
+		// The clearly-secondary «fortell med egne ord» entry → the conversation:
+		// say what you follow, confirm the diff, watch "Følger nå" grow.
+		app.buttons["onboarding.converseEntry"].tap()
+		assertExists(app.staticTexts["Fortell meg hva du følger"], "the secondary entry opens the conversation step")
 		let field = app.textFields["onboarding.field"]
 		assertExists(field, "the onboarding command line should be present")
 		field.tap()
@@ -45,19 +52,12 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		confirm.tap()
 		assertExists(app.staticTexts[UITestFixture.biathlonEntityName], "the confirmed follow should show under «Følger nå»")
 
-		// Fall back to the quick-picks step and tap a curated pack.
-		app.buttons["Velg fra startpakker i stedet"].tap()
-		assertExists(app.staticTexts["Velg det du bryr deg om"], "should land on the quick-picks step")
-		let golf = app.buttons["starterpack.norske-golfere"]
-		assertExists(golf, "the curated starter packs should render")
-		golf.tap()
-		assertExists(app.staticTexts["VALGT"], "tapping a pack should mark it valgt")
-
-		// Finish → the agenda (the always-present assistant capsule is the tell we
-		// left the overlay).
-		app.buttons["Ferdig"].tap()
-		assertExists(app.staticTexts["Klart"], "should reach the landing step")
-		app.buttons["Til agendaen"].tap()
+		// Continue → the assistant-intro finish (which SHOWS the deep
+		// personalisation) → into the agenda (the capsule is the tell we left).
+		app.buttons["onboarding.continue"].tap()
+		assertExists(app.staticTexts["Gjør Sportivista til din"], "should reach the assistant-intro step")
+		assertExists(app.buttons["onboarding.example.norske-tdf"], "the intro shows tappable deep-personalisation examples")
+		app.buttons["onboarding.toAgenda"].tap()
 		assertExists(app.buttons["assistant.capsule"], "finishing onboarding should drop into the agenda")
 	}
 
@@ -94,17 +94,17 @@ final class MainFlowsUITests: SportivistaUITestCase {
 	func testRapidStarterPackTogglesStayResponsive() {
 		let app = launchApp(state: "onboarding")
 
-		// Navigate to the quick-picks step.
+		// Quick-picks is the first build step now (WP-132) — welcome leads
+		// straight there, no conversation detour.
 		assertExists(app.staticTexts["Velkommen"], "onboarding should open on the welcome step")
 		app.buttons["Kom i gang"].tap()
-		assertExists(app.staticTexts["Fortell meg hva du følger"], "welcome should lead to the conversation step")
-		app.buttons["Velg fra startpakker i stedet"].tap()
-		assertExists(app.staticTexts["Velg det du bryr deg om"], "should land on the quick-picks step")
+		assertExists(app.staticTexts["Velg det du bryr deg om"], "welcome should lead straight to the quick-picks step")
 
 		// Fire five pack toggles back-to-back with no waits between them — each
 		// fires onProfileChanged → an agenda recompile behind the overlay. WP-60
 		// coalesces a burst to ≤2 recompiles; a regression here would jam the main
-		// thread and the taps below would not all land.
+		// thread and the taps below would not all land. The five packs sum to 9
+		// rules: norsk-fotball(1) + golf(3) + sjakk(1) + sykkel(2) + friidrett(2).
 		for packId in ["starterpack.norsk-fotball",
 		               "starterpack.norske-golfere",
 		               "starterpack.sjakk-carlsen",
@@ -115,11 +115,11 @@ final class MainFlowsUITests: SportivistaUITestCase {
 			pack.tap()
 		}
 
-		assertExists(app.staticTexts["FØLGER NÅ (10)"], "all five packs should apply (10 rules) within the time budget")
+		assertExists(app.staticTexts["FØLGER NÅ (9)"], "all five packs should apply (9 rules) within the time budget")
 
 		// Responsiveness proof: the UI is still live after the burst.
-		app.buttons["Ferdig"].tap()
-		assertExists(app.staticTexts["Klart"], "the app should stay responsive after the toggle burst")
+		app.buttons["onboarding.continue"].tap()
+		assertExists(app.staticTexts["Gjør Sportivista til din"], "the app should stay responsive after the toggle burst")
 	}
 
 	// MARK: - Flow 4 · Event detail + «Hvorfor vises denne?»
