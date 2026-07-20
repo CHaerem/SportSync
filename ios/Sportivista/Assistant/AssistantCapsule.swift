@@ -18,25 +18,31 @@
 import SwiftUI
 
 struct AssistantCapsule: View {
+    /// Which root surface the capsule sits on — the resting label NAMES a
+    /// capability contextual to it (WP-142, § Hjelperen), not a blank "Spør …".
+    var context: AssistantViewModel.CapsuleContext
     /// Open the samtaleark (a plain tap anywhere on the capsule).
     var onOpen: () -> Void
     /// Open the samtaleark straight into diktering (the trailing mic).
     var onDictate: () -> Void
 
+    private var prompt: String { AssistantViewModel.capsulePrompt(for: context) }
+
     var body: some View {
         HStack(spacing: 10) {
             Button(action: onOpen) {
                 HStack(spacing: 10) {
-                    // Rev. 19.07 eier-funn: without a leading anchor the grey
-                    // placeholder reads as a dead text field. The assistant symbol
+                    // Rev. 19.07 eier-funn: without a leading anchor the label
+                    // reads as a dead text field. The assistant symbol
                     // (secondaryLabel, matching the prompt — never amber; the mic
                     // keeps the one accent) is the Maps-pattern anchor DESIGN
-                    // § Hjelperen now requires.
+                    // § Hjelperen requires — kept even now the resting line NAMES a
+                    // capability (WP-142), so the row never reads as a blank field.
                     Image(systemName: SportSymbol.assistant)
                         .font(.sportivista(.subheadline))
                         .foregroundStyle(SportivistaTokens.secondaryLabel)
                         .accessibilityHidden(true)
-                    Text(AssistantViewModel.capsulePrompt)
+                    Text(prompt)
                         .font(.sportivista(.subheadline))
                         .foregroundStyle(SportivistaTokens.secondaryLabel)
                         .lineLimit(1)
@@ -47,7 +53,7 @@ struct AssistantCapsule: View {
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Assistent")
-            .accessibilityHint("Spør, eller be om noe")
+            .accessibilityHint(prompt)
             .accessibilityIdentifier("assistant.capsule")
 
             Button(action: onDictate) {

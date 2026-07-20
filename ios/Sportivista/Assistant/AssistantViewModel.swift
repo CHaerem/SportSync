@@ -868,8 +868,22 @@ final class AssistantViewModel {
 
     // MARK: - WP-104 — the conversation sheet's opened state (tilstand 1)
 
-    /// The capsule button's resting label (§ Hjelperen: "Spør, eller be om noe …").
-    static let capsulePrompt = "Spør, eller be om noe …"
+    /// Which root surface the capsule sits on. WP-142: the resting label NAMES a
+    /// capability contextual to that surface instead of the old blank "Spør …"
+    /// placeholder that read as a command line. ContentView maps its `RootTab` in.
+    enum CapsuleContext { case uka, nyheter }
+
+    /// The capsule button's resting label (§ Hjelperen). WP-142: a quiet line that
+    /// NAMES what the user can do here — active voice, plain, contextual per surface,
+    /// ONE line, at most two concrete abilities — never a blank "Spør, eller be om
+    /// noe …" that read as a command line. The guiding-by-engagement (the example
+    /// rows) lives in the opened sheet, not as chips on the calm agenda.
+    static func capsulePrompt(for context: CapsuleContext) -> String {
+        switch context {
+        case .uka: return "Følg et lag, eller spør om uka"
+        case .nyheter: return "Følg noe, eller spør om nyhetene"
+        }
+    }
     /// The one hjelpesetning shown at the top of the freshly-opened sheet.
     static let sheetIntro = "Skriv eller snakk — helt vanlig norsk."
     /// The field placeholder in the opened/typing states.

@@ -35,6 +35,14 @@ enum RootTab: String, CaseIterable, Identifiable {
         case .nyheter: return "Nyheter"
         }
     }
+    /// WP-142 — which contextual resting label the assistant capsule shows on
+    /// this surface (the capsule NAMES a capability instead of a blank "Spør …").
+    var capsuleContext: AssistantViewModel.CapsuleContext {
+        switch self {
+        case .uka: return .uka
+        case .nyheter: return .nyheter
+        }
+    }
 }
 
 struct ContentView: View {
@@ -250,7 +258,10 @@ struct ContentView: View {
             // correct automatic bottom inset. It stays put on BOTH tabs (DESIGN
             // § Navigasjon: "Bunnen tilhører hjelperen alene").
             .safeAreaInset(edge: .bottom) {
-                AssistantCapsule(onOpen: openAssistant, onDictate: dictateToAssistant)
+                // WP-142: the capsule's resting line NAMES a capability contextual
+                // to the current surface (Uka vs Nyheter), so it never reads as a
+                // blank command line. Guiding-by-engagement stays in the sheet.
+                AssistantCapsule(context: rootTab.capsuleContext, onOpen: openAssistant, onDictate: dictateToAssistant)
             }
             .background(SportivistaTokens.background.ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
