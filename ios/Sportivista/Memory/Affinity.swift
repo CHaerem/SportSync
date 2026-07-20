@@ -2,7 +2,7 @@
 //  Affinity.swift
 //  Sportivista
 //
-//  WP-134 — on-device adaptive personalisation (axis A: "improve FOR the user").
+//  WP-138 — on-device adaptive personalisation (axis A: "improve FOR the user").
 //  Turns the observed `BehaviorStat` signal (open / expand / dismiss per entity
 //  and per sport — already recorded, already synced E2E-free via the CloudKit
 //  snapshot) into a mild, deterministic per-subject affinity score.

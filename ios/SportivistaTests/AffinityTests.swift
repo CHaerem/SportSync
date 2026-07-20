@@ -2,7 +2,7 @@
 //  AffinityTests.swift
 //  SportivistaTests
 //
-//  WP-134 — the pure affinity function: monotone in engagement, bounded/saturating
+//  WP-138 — the pure affinity function: monotone in engagement, bounded/saturating
 //  so a heavy day can't dominate, dismiss-dominant (negative), unseen == 0, and
 //  entity+sport combine. No store, no UI.
 //

@@ -83,14 +83,24 @@ struct FollowPresenter {
     // MARK: - Sectioning by rule type
 
     /// The rules grouped into their display groups, in canonical order, dropping
-    /// empty groups. Order within a group is preserved (the profile is already
-    /// sorted by (sport, name)).
-    func sections(for rules: [InterestRule]) -> [FollowSection] {
-        var byGroup: [FollowGroup: [InterestRule]] = [:]
-        for rule in rules { byGroup[group(for: rule), default: []].append(rule) }
+    /// empty groups. Within a group, WP-138 applies a mild affinity LIFT: the
+    /// entities you engage with most float up, with the profile's existing
+    /// (sport, name) order as a STABLE tie-break — so an EMPTY affinity (a fresh
+    /// user, or no signal) reproduces today's order byte-for-byte. This is a lift
+    /// where the intra-group order was otherwise arbitrary (alphabetical), never a
+    /// change to WHICH rules appear.
+    func sections(for rules: [InterestRule], affinity: Affinity = Affinity(behavior: [])) -> [FollowSection] {
+        var byGroup: [FollowGroup: [(rule: InterestRule, idx: Int)]] = [:]
+        for (i, rule) in rules.enumerated() { byGroup[group(for: rule), default: []].append((rule, i)) }
         return FollowGroup.allCases.compactMap { g in
             guard let rs = byGroup[g], !rs.isEmpty else { return nil }
-            return FollowSection(group: g, rules: rs)
+            let lifted = rs.sorted { a, b in
+                let sa = affinity.score(entityId: a.rule.entityId, sport: a.rule.sport)
+                let sb = affinity.score(entityId: b.rule.entityId, sport: b.rule.sport)
+                if sa != sb { return sa > sb }
+                return a.idx < b.idx            // stable → empty affinity keeps original order
+            }
+            return FollowSection(group: g, rules: lifted.map(\.rule))
         }
     }
 

@@ -2051,7 +2051,7 @@ full iOS unit-suite + 4 schemes + gylne vektorer bit-like etter fixture-refrys
 (`test_starterPacks_areGroundedAndUnique` fortsatt grønn — pakkene grunnfester mot
 de nye id-ene).
 
-### WP-134 · Adaptiv personalisering on-device (akse A — «forbedre FOR brukeren»)
+### WP-138 · Adaptiv personalisering on-device (akse A — «forbedre FOR brukeren»)
 **Bakgrunn (data-strategi 20.07, seksjonen «BRUKERDATA → PRODUKTFORBEDRING»):**
 akse A er den umiddelbare, personvern-frie gevinsten — appen tilpasser seg DEG
 lokalt, null byte forlater enheten. Signalet finnes ALLEREDE: `BehaviorCounter`
@@ -2059,7 +2059,7 @@ lokalt, null byte forlater enheten. Signalet finnes ALLEREDE: `BehaviorCounter`
 `open`/`expand`/`dismiss` per entitet OG per sport (`behavior|open|<entityId>` /
 `behavior|open|s:<sport>`, `MemoryModels.swift:154-187`). I dag KONSUMERES det bare
 passivt — vist i «Hva jeg vet om deg» (`WhatIKnowView`) og lett brukt av
-assistenten — men INGENTING ordner eller løfter feeden ut fra det. WP-134 lukker
+assistenten — men INGENTING ordner eller løfter feeden ut fra det. WP-138 lukker
 den løkka: observert atferd → en mild, deterministisk affinitets-vekt.
 **Innhold:** (1) AFFINITET (ny ren funksjon, testbar, `Feed/` el. `Profile/`):
 `affinity(entityId|sport) = w_open·open + w_expand·expand − w_dismiss·dismiss`,

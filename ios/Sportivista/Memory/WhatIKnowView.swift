@@ -123,7 +123,7 @@ struct WhatIKnowView: View {
     private var behaviorSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             sectionTitle("ATFERD (\(memory.behavior.count))")
-            // WP-134: make the adaptive signal explainable — the subject you engage
+            // WP-138: make the adaptive signal explainable — the subject you engage
             // with most. This is the same affinity used as a mild tie-break/lift;
             // showing it keeps the personalisation transparent, never a black box.
             if let top = topAffinitySubject {
@@ -206,7 +206,7 @@ struct WhatIKnowView: View {
         stat.isSport ? SportVocabulary.display(for: stat.token) : viewModel.entityName(stat.token)
     }
 
-    /// WP-134 — the strongest-affinity subject, resolved to a readable name, for
+    /// WP-138 — the strongest-affinity subject, resolved to a readable name, for
     /// the explainability line above. Nil when nothing has positive affinity yet.
     private var topAffinitySubject: String? {
         guard let first = Affinity(behavior: memory.behavior).topSubjects(limit: 1).first else { return nil }
