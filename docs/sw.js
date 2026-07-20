@@ -17,6 +17,7 @@ const SHELL_FILES = [
     '/js/shared-constants.js',
     '/js/lens.js',
     '/js/profile-sync.js',
+    '/js/assistant.js',
     '/js/theme.js',
     '/js/dashboard.js',
     '/js/live.js',

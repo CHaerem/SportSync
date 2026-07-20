@@ -59,6 +59,28 @@ Object.assign(window.Dashboard.prototype, {
 		this.render();
 	},
 
+	/** Wire the deterministic assistant input: type a question → grounded answer
+	 *  + the matching event rows, in a calm panel (no spinner, no model). */
+	bindAssistant() {
+		const input = document.getElementById('assistant-input');
+		const results = document.getElementById('assistant-results');
+		if (!input || !results || typeof ssAssistant !== 'function') return;
+		const run = () => {
+			const q = input.value.trim();
+			if (!q) { results.hidden = true; results.innerHTML = ''; return; }
+			const r = ssAssistant(q, { events: this.allEvents || [], interests: this.interests, config: this.lensConfig, nowMs: Date.now() });
+			const rows = (r.eventIds || [])
+				.map((id) => (this._eventById && this._eventById.get(id)) || (this.allEvents || []).find((e) => e.id === id))
+				.filter(Boolean);
+			const body = rows.length ? rows.map((e) => this.eventRow(e)).join('') : '';
+			results.innerHTML = `<p class="assistant-answer">${escapeHtml(r.text)}</p>${body}`;
+			results.hidden = false;
+		};
+		input.addEventListener('keydown', (evt) => { if (evt.key === 'Enter') { evt.preventDefault(); run(); } });
+		// Clearing the field hides the panel again.
+		input.addEventListener('input', () => { if (!input.value.trim()) { results.hidden = true; results.innerHTML = ''; } });
+	},
+
 	/** Recompute interests/covers from a profile state (mirrors loadData's branch). */
 	applyProfile(profile) {
 		this.profile = profile;

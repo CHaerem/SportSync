@@ -42,6 +42,7 @@ class Dashboard {
 		this.bindLive();
 		this.maybeShowInstallHint();
 		this.renderAppPromo();
+		if (typeof this.bindAssistant === 'function') this.bindAssistant();
 		document.addEventListener('visibilitychange', () => {
 			this._liveVisible = !document.hidden;
 			if (this._liveVisible) this.onResume();
