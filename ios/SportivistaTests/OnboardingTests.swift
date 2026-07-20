@@ -216,7 +216,7 @@ final class OnboardingTests: XCTestCase {
     func test_skip_leavesEmptyProfile_andEmptyBoard() {
         // Skipping adds nothing; with no followed entities a tennis-only event
         // set produces no sections (the agenda's empty state then points at the
-        // assistant capsule).
+        // assistant — WP-143: the header sparkles toolbar button).
         let now = AssistantTestSupport.iso("2026-07-14T09:00:00Z")
         let match = EventBuilder.make(
             sport: "tennis", title: "Casper Ruud – Carlos Alcaraz", time: "2026-07-14T18:00:00Z",

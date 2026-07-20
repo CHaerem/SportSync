@@ -2,9 +2,10 @@
 //  AssistantSheetView.swift
 //  Sportivista
 //
-//  WP-104 — THE SAMTALEARK. The Claude Design-handoff ("Intuitivt for alle")
-//  replaced the always-present inline command line with a bottom capsule BUTTON
-//  (AssistantCapsule) that opens THIS native sheet. The sheet is the whole
+//  WP-104 → WP-143 — THE SAMTALEARK. The Claude Design-handoff ("Intuitivt for
+//  alle") replaced the always-present inline command line; the entry point is now
+//  a header `sparkles` TOOLBAR BUTTON (ContentView `.toolbar`) that opens THIS
+//  native sheet (WP-143 retired the interim bottom capsule). The sheet is the whole
 //  conversation surface: writing, the tre trykkbare eksempelrader, the thinking
 //  marker, and — landing in the SAME ark — the result thread (your message as a
 //  bubble + the reused diff/answer/command cards). Full state spec in

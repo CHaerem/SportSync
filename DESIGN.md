@@ -148,13 +148,15 @@ Apple-system-farger + én amber-aksent. Ved rebrand endres KUN denne tabellen.
 - **Rotens to sider (Claude Design-handoff 19.07.2026):** en segmented med ORD
   under headeren — **«Uka | Nyheter»**. Begge dekker hele uka; skillet er hva
   som *skjer* (agendaen) vs. hva som er *nytt* (§ Nyheter). Ord, aldri ikoner.
-- **`gearshape` i nav-baren (trailing)** pusher **Deg**-skjermen (§ Deg).
+- **Nav-baren (trailing):** `sparkles`-knappen (assistenten) til VENSTRE for
+  `gearshape` (innstillinger, konvensjonelt lengst til høyre). `gearshape`
+  pusher **Deg**-skjermen (§ Deg); `sparkles` åpner samtalearket (§ Hjelperen).
 - **Detaljer** vises som native `.sheet` (detents) eller push i agendaens stakk.
 - **Ett navigasjonsmønster:** rad → detalj (push/sheet med ‹ tilbake); aldri
   gester som eneste vei.
-- **Hjelperen** er en kapsel-KNAPP nederst på agenda/Nyheter som åpner
-  samtalearket (§ Hjelperen) — ikke en fane, ikke et inline-felt. Bunnen
-  tilhører hjelperen alene.
+- **Hjelperen** er en verktøylinje-KNAPP (`sparkles`) i headeren som åpner
+  samtalearket (§ Hjelperen) — ikke en fane, ikke et inline-felt, ikke lenger
+  en bunn-kapsel (WP-143). Agendaen/Nyheter fyller HELE skjermen; ingen bunnflate.
 
 ## Agendaen (rot-skjermen)
 
@@ -198,25 +200,25 @@ Seksjoner: Arena · Om · **Hvor ser jeg det** (lenker) · **Funnet av AI**
 
 Visjonens kjerne, bygd som native mønstre — ikke en bespoke kontroll.
 
-Rev. 19.07.2026 (Claude Design-handoff «Intuitivt for alle»): inline-linja er
-erstattet av kapsel-knapp + samtaleark. Full tilstandsspec i
-`design/specs/assistent-nyheter-v0.md`.
+Rev. 20.07.2026 (WP-143, eier-beslutning «renest Apple»): bunn-kapselen er
+FJERNET. Den så ut som et søkefelt, men var en knapp — en falsk affordance.
+Assistent-INNGANGEN er nå en **header-verktøylinje-knapp** ved siden av
+tannhjulet; agendaen/Nyheter fyller HELE skjermen (ingen bunnflate). Full
+tilstandsspec i `design/specs/assistent-nyheter-v0.md`.
 
-- **Kapsel-knappen** nederst (flytende Liquid Glass-flate, `glassEffect` +
-  `safeAreaInset`; agendaen scroller under): ledende assistent-symbol + en
-  rolig linje som NAVNGIR en evne + `mic`, i EKTE `Capsule`-form. Hele flaten
-  er én knapp (button-rolle, ≥44 pt) som åpner samtalearket; mic hopper rett i
-  diktering. Ingen inline-skriving i roten. (Rev. 19.07 eier-funn: uten
-  ledende symbol leses linja som et dødt tekstfelt — Maps-mønsteret krever
-  ankersymbolet.)
-  - **I ro NAVNGIR kapselen en evne — kontekstuell per flate (WP-142)**, ikke
-    en blank «Spør, eller be om noe …»-placeholder (den leste som en
-    kommandolinje / et tomt inntastingsfelt). Aktiv stemme, klarspråk,
-    sentence case, ÉN linje, maks to konkrete evner som brukeren styrer:
-    Uka → «Følg et lag, eller spør om uka»; Nyheter → «Følg noe, eller spør om
-    nyhetene». Guidingen skjer ved ENGASJEMENT (arkets eksempelrader når du
-    åpner), ALDRI som en stående chips-vegg på agendaen — calm er ufravikelig
-    (én rolig, skannbar flate; ingen konkurrerende paneler).
+- **Verktøylinje-knappen** (`sparkles`, iOS 26 Apple-Intelligence-idiomet) i
+  headeren, til VENSTRE for tannhjulet (`gearshape`): en umiskjennelig HIG-knapp
+  (button-rolle, ≥44 pt, a11y «Assistent», id `assistant.toolbar`) som åpner
+  samtalearket. Ærlig affordance — et ikon som ÅPENBART er en knapp, ikke en flate
+  som later som den er et inntastingsfelt. Ingen inline-skriving i roten; skriving
+  OG diktering bor i arket (ikke lenger en `mic` på roten). (Rev. 20.07 eier-funn:
+  bunn-kapselen leste som et dødt søkefelt selv med ankersymbol og en evne-navngivende
+  linje (WP-142) — den reneste Apple-veien er en ærlig toolbar-knapp, ikke en bespoke
+  bunnflate.)
+  - **Guidingen skjer ved ENGASJEMENT** (arkets eksempelrader når du åpner),
+    ALDRI som en stående chips-vegg på agendaen — calm er ufravikelig (én rolig,
+    skannbar flate; ingen konkurrerende paneler). Knappen selv bærer ingen
+    hjelpetekst; ikonet + plasseringen sier «assistent».
 - **Samtalearket** (native sheet, grabber/dra-ned/tapp-utenfor): én setning
   («Skriv eller snakk — helt vanlig norsk.») + tre TRYKKBARE eksempelrader
   (følg-et-lag → Legg til-søket · spørsmål · kommando) + felt nederst.

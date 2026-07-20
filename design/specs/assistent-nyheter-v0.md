@@ -6,18 +6,28 @@ for alle», turn 2 bærer arkets indre tilstander og «For deg»-tavlas rad-DNA)
 Eier har godkjent FULL implementering inkl. Nyheter-v0 (WP-100s klientdel
 fremskyndet forbi G1 — eierbeslutning 19.07).
 
+> **Oppdatering 20.07 (WP-143, eier-beslutning «renest Apple»):** assistent-
+> INNGANGEN er flyttet fra bunn-kapselen til en **header-verktøylinje-knapp**
+> (`sparkles`) ved siden av tannhjulet. Bunn-kapselen ble opplevd som en falsk
+> affordance (så ut som et søkefelt, var en knapp); en ærlig HIG-toolbar-knapp er
+> den reneste Apple-veien. Kapselen + dens `mic` er fjernet; diktering bor nå i
+> arket alene. Alle «kapsel-knapp nederst»/«flytende Liquid Glass-flate»/«Spør,
+> eller be om noe»-formuleringer under er dermed historikk — SAMTALEARKET
+> (nedenfor) er uendret; kun inngangen flyttet.
+
 ## Fem prinsipper (turn 3 — bindende for alle pakkene)
 
 1. **Ord foran ikoner** — «Uka» og «Nyheter» som ord i segmented, aldri
    anonyme ikoner.
-2. **Assistenten er synlig og selvforklarende** — inngangen er en kapsel-KNAPP
-   nederst (ledende assistent-symbol + en rolig linje som NAVNGIR en evne +
-   mic, hele flaten trykkbar, ≥44 pt); skriving og diktering skjer i arket,
-   aldri inline. **WP-142:** i ro NAVNGIR kapselen en evne, kontekstuell per
-   flate (Uka → «Følg et lag, eller spør om uka»; Nyheter → «Følg noe, eller
-   spør om nyhetene») — ikke den blanke «Spør, eller be om noe …» som leste som
-   en kommandolinje. Guidingen skjer ved ENGASJEMENT (arkets eksempelrader),
-   ikke som chips på agendaen (calm).
+2. **Assistenten er synlig og selvforklarende** — inngangen er en verktøylinje-
+   KNAPP (`sparkles`) i headeren ved siden av tannhjulet (button-rolle, a11y
+   «Assistent», ≥44 pt); skriving og diktering skjer i arket, aldri inline.
+   **WP-143 (eier-beslutning «renest Apple»):** bunn-kapselen er fjernet — den så
+   ut som et søkefelt, men var en knapp (falsk affordance). En ærlig HIG-toolbar-
+   knapp er den reneste Apple-inngangen; ikonet + plasseringen sier «assistent»,
+   så knappen bærer ingen hjelpetekst. (Erstatter WP-142s kontekstuelle kapsel-
+   linje: uten kapsel finnes ingen hvile-linje å navngi en evne i.) Guidingen
+   skjer ved ENGASJEMENT (arkets eksempelrader), ikke som chips på agendaen (calm).
 3. **Ett navigasjonsmønster** — rad → detalj (push/sheet med ‹ tilbake);
    aldri gester som eneste vei.
 4. **Assistenten er en snarvei, aldri eneste vei** — alt den kan (følg,
@@ -30,10 +40,12 @@ fremskyndet forbi G1 — eierbeslutning 19.07).
 - Segmented med ORD under headeren: **«Uka | Nyheter»**. Begge sider dekker
   hele uka — skillet er hva som *skjer* (agendaen, som i dag) vs. hva som er
   *nytt* (Nyheter-tavla).
-- Assistent-kapselen nederst er en KNAPP (button-rolle, a11y «Assistent»):
-  tapp → samtaleark; mic-symbolet hopper rett i diktering. Ingen inline-
-  TextField i roten lenger.
-- Agendaen eier flaten og scroller til bunn; netto mindre krom enn i dag.
+- Assistent-inngangen er en verktøylinje-KNAPP (`sparkles`) i headeren ved siden
+  av tannhjulet (button-rolle, a11y «Assistent», id `assistant.toolbar`): tapp →
+  samtaleark. Diktering bor i arket (feltets tastatur-mic), ikke på roten. Ingen
+  inline-TextField i roten. (WP-143 fjernet bunn-kapselen + dens mic.)
+- Agendaen eier flaten og fyller HELE skjermen (ingen bunnflate); netto mindre
+  krom enn i dag.
 
 ## Samtalearket (2a — fem tilstander)
 
@@ -57,11 +69,12 @@ overlever i ark-form). Tittel ASSISTENT + Lukk.
    agendaen re-kompileres.
 5. **Tenke-tilstand:** dempet «tenker …» + Avbryt (DESIGN-regel, aldri spinner).
 
-Tokens: accent (send, dikterings-bølge, mic på kapselen — én per rad/flate),
+Tokens: accent (send, dikterings-bølge, feltets mic — én per rad/flate),
 cell/cell2, secondary-/tertiaryLabel, separator, groupHeader (PRØV/FORSLAG),
 radius.card. Ofring akseptert: ett tapp mer enn dagens linje; pedagogikken
-flytter inn i arkets eksempelrader (guiding ved engasjement), mens kapselen i
-ro NAVNGIR en evne kontekstuelt (WP-142) i stedet for en blank placeholder.
+flytter inn i arkets eksempelrader (guiding ved engasjement). (WP-143: inngangen
+er en header-toolbar-knapp uten hvile-linje — WP-142s kontekstuelle kapsel-tekst
+er dermed utgått.)
 
 ## 3b · Interesser uten assistent
 

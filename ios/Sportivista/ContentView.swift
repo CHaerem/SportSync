@@ -5,11 +5,13 @@
 //  WP-10 scaffold → WP-12 sync → WP-14 agenda → WP-16.4 assistant → WP-104 the
 //  Claude Design-handoff root. The screen is now: the brand header, a segmented
 //  ROOT control with ORDS («Uka | Nyheter»), and — per tab — either the
-//  day-grouped agenda (Uka) or the news board shell (Nyheter). Pinned to the
-//  bottom above the safe-area is the always-present assistant CAPSULE BUTTON
-//  (AssistantCapsule); tapping it opens the conversation sheet (AssistantSheetView),
-//  where writing, the example rows and the result thread all live. The inline
-//  command line (WP-16.4→WP-99) is retired: the capsule + sheet replace it.
+//  day-grouped agenda (Uka) or the news board shell (Nyheter). The assistant's
+//  ENTRY is a header TOOLBAR BUTTON (`sparkles`, beside the gearshape — WP-143);
+//  tapping it opens the conversation sheet (AssistantSheetView), where writing,
+//  the example rows and the result thread all live. The inline command line
+//  (WP-16.4→WP-99) is retired; the WP-104 bottom capsule that briefly replaced it
+//  is gone too (WP-143 — it read as a dead search field; the "renest Apple" entry
+//  is an honest toolbar button, and the agenda now fills the whole screen).
 //
 //  ContentView owns BOTH view models and hands them ONE shared ProfileStore, so
 //  a follow the assistant applies is the same profile the agenda recompiles
@@ -33,14 +35,6 @@ enum RootTab: String, CaseIterable, Identifiable {
         switch self {
         case .uka: return "Uka"
         case .nyheter: return "Nyheter"
-        }
-    }
-    /// WP-142 — which contextual resting label the assistant capsule shows on
-    /// this surface (the capsule NAMES a capability instead of a blank "Spør …").
-    var capsuleContext: AssistantViewModel.CapsuleContext {
-        switch self {
-        case .uka: return .uka
-        case .nyheter: return .nyheter
         }
     }
 }
@@ -69,13 +63,15 @@ struct ContentView: View {
     /// WP-104 — the root's two sides (Claude Design-handoff): a segmented with
     /// ORDS under the header — «Uka» (the agenda) vs «Nyheter» (the news board).
     @State private var rootTab: RootTab = .uka
-    /// WP-16.4 → WP-83 → WP-104 — the assistant CONVERSATION sheet is up. Opened
-    /// from the bottom capsule button (or raised when a follow is proposed from
-    /// an event detail). Presented as a native `.sheet` (detents + grabber) over
-    /// the root; the capsule stays put beneath it.
+    /// WP-16.4 → WP-83 → WP-104 → WP-143 — the assistant CONVERSATION sheet is up.
+    /// Opened from the header `sparkles` toolbar button (or raised when a follow is
+    /// proposed from an event detail). Presented as a native `.sheet` (detents +
+    /// grabber) over the root.
     @State private var sheetShown = false
-    /// WP-104 — the capsule's mic opens the sheet straight into diktering: the
-    /// field is focused on appear so the keyboard's native dictation mic is up.
+    /// WP-132 — the sheet opens straight into diktering (field focused on appear so
+    /// the keyboard's native dictation mic is up) when the onboarding assistant-intro
+    /// «Prøv nå» / a tapped example raises it. WP-143: the old bottom-capsule mic that
+    /// also set this is gone — diktering now lives inside the sheet only.
     @State private var sheetStartFocused = false
     /// WP-83 — the "Deg" screen is pushed (from the gearshape toolbar button).
     @State private var showDeg = false
@@ -251,21 +247,27 @@ struct ContentView: View {
                     NewsView(news: news, assistant: assistant)
                 }
             }
-            // Liquid Glass (iOS 26): the assistant capsule is the app's ONE custom
-            // control surface — it floats over the content as a glass capsule (the
-            // Safari bottom-bar pattern) instead of sitting as an opaque bar in the
-            // VStack. `safeAreaInset` keeps the List scrollable beneath it with the
-            // correct automatic bottom inset. It stays put on BOTH tabs (DESIGN
-            // § Navigasjon: "Bunnen tilhører hjelperen alene").
-            .safeAreaInset(edge: .bottom) {
-                // WP-142: the capsule's resting line NAMES a capability contextual
-                // to the current surface (Uka vs Nyheter), so it never reads as a
-                // blank command line. Guiding-by-engagement stays in the sheet.
-                AssistantCapsule(context: rootTab.capsuleContext, onOpen: openAssistant, onDictate: dictateToAssistant)
-            }
+            // WP-143: the WP-104 bottom capsule is GONE — the agenda / Nyheter now
+            // fill the whole screen (no bottom inset). The assistant's entry is a
+            // header toolbar button instead (see `.toolbar` below): the "renest
+            // Apple" affordance the owner chose, an honest HIG button rather than a
+            // glass flate that read as a dead search field.
             .background(SportivistaTokens.background.ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                // WP-143: the assistant's ENTRY — a header toolbar button (`sparkles`,
+                // the iOS 26 Apple-Intelligence idiom) that opens the conversation
+                // sheet. Declared BEFORE the gearshape so it sits to its LEFT
+                // (settings stays conventionally furthest to the trailing edge, HIG);
+                // the bar-button hit area is ≥44 pt automatically.
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: openAssistant) {
+                        Image(systemName: SportSymbol.assistant)
+                    }
+                    .tint(SportivistaTokens.accent)
+                    .accessibilityLabel("Assistent")
+                    .accessibilityIdentifier("assistant.toolbar")
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showDeg = true } label: {
                         Image(systemName: "gearshape")
@@ -284,9 +286,9 @@ struct ContentView: View {
                     publishedAppVersion: dataStore.loadAppVersion()
                 )
             }
-            // WP-104 — the assistant conversation sheet (detents + grabber),
-            // raised over the root; the capsule stays put beneath it. Reset the
-            // dictation flag when the sheet closes, so a plain tap next time
+            // WP-104 → WP-143 — the assistant conversation sheet (detents + grabber),
+            // raised over the root from the header `sparkles` button. Reset the
+            // dictation flag when the sheet closes, so a plain toolbar tap next time
             // opens it un-focused.
             .sheet(isPresented: $sheetShown, onDismiss: { sheetStartFocused = false }) {
                 AssistantSheetView(viewModel: assistant, dismiss: closeSheet, startFocused: sheetStartFocused)
@@ -657,16 +659,11 @@ struct ContentView: View {
         sheetShown = true
     }
 
-    /// The capsule's plain tap — open the conversation sheet (un-focused).
+    /// WP-143 — the header `sparkles` toolbar button — open the conversation sheet
+    /// (un-focused; diktering is a tap on the sheet field's keyboard mic). Onboarding
+    /// still opens it focused via `finishThenOpenAssistant` (`sheetStartFocused`).
     private func openAssistant() {
         sheetStartFocused = false
-        sheetShown = true
-    }
-
-    /// The capsule's mic — open the sheet straight into diktering (field focused,
-    /// so the keyboard's native dictation mic is one tap away).
-    private func dictateToAssistant() {
-        sheetStartFocused = true
         sheetShown = true
     }
 
@@ -752,13 +749,13 @@ struct ContentView: View {
 
     // MARK: - Header
 
-    // WP-83 — the brand header, stripped of the v2 header glyphs: the theme
-    // toggle (`◐`) moved to Deg › Utseende, and the `»_` assistant shortcut is
-    // gone (the always-present bottom command line IS the assistant). The
-    // amber-ticking clock is dropped too (DESIGN § Bevegelse: "Tid bor
-    // i raden + systemets statusbar"). Settings live behind the nav bar's
-    // gearshape (see `.toolbar`). Just the ensō brand mark, the wordmark and the
-    // date remain — one quiet masthead.
+    // WP-83 → WP-143 — the brand header, stripped of the v2 header glyphs: the
+    // theme toggle (`◐`) moved to Deg › Utseende, and the `»_` assistant shortcut
+    // gave way first to the bottom command line and then (WP-143) to the header
+    // `sparkles` toolbar button — the assistant's honest, unmistakable entry (see
+    // `.toolbar`). The amber-ticking clock is dropped too (DESIGN § Bevegelse: "Tid
+    // bor i raden + systemets statusbar"). Settings live behind the nav bar's
+    // gearshape. Just the wordmark and the date remain — one quiet masthead.
     private var header: some View {
         VStack(alignment: .leading, spacing: 5) {
             // The brand lock (designprofil rev 2, kandidat A «Kolonet»):
