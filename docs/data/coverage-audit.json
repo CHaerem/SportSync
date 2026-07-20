@@ -1,41 +1,68 @@
 {
-  "auditedAt": "2026-07-19T22:00:00Z",
+  "auditedAt": "2026-07-20T06:46:45Z",
   "horizonDays": 28,
   "gaps": [
     {
+      "interest": "Sykkel — Tour de France Femmes 2026 (Grand Tour, tier1 wholesale)",
+      "whatsMissing": "HELE Tour de France Femmes 2026 (1.–9. august, 9 etapper, Lausanne, Sveits → Nice; Mont Ventoux-debut etappe 7 den 7. aug) mangler fullstendig på tavla — ikke én etappe finnes. Sykkel er tier1 (dekkes wholesale) og en Grand Tour er kjernedekning; Uno-X Mobility (katalog-lag) har WorldTour-damelag med «guaranteed starts at every Grand Tour». Første etappe lør. 1. aug er ~12 dager unna, innenfor horisonten.",
+      "why": "Web-bekreftet mot tre uavhengige kilder (Wikipedia, offisiell letourfemmes.fr, justwomenssports). Norsk/europeisk visning via Eurosport/HBO Max + nasjonale kringkastere (samme rettighetshavere som herrenes ritt dekker damene). Dette er ikke en kildefeil men et reelt dekningshull: research har bygd hele herre-Touren etappe-for-etappe, men damenes Grand Tour er aldri lagt inn. En hel Grand Tour i en wholesale-dekket sport som mangler er nettopp recall-svikten dette auditet finnes for å fange.",
+      "corroboration": [
+        "https://en.wikipedia.org/wiki/2026_Tour_de_France_Femmes",
+        "https://www.letourfemmes.fr/en/overall-route",
+        "https://justwomenssports.com/reads/tour-de-france-femmes-2026-tv-coverage-dates/"
+      ],
+      "suggestedSource": "https://www.letourfemmes.fr/en/overall-route",
+      "severity": "high",
+      "firstSeen": "2026-07-20T06:46:45Z",
+      "recurrences": 0
+    },
+    {
+      "interest": "Sjakk — Grand Chess Tour, Saint Louis-leiren (Saint Louis Rapid & Blitz + Sinquefield Cup)",
+      "whatsMissing": "To katalog-turneringer i sjakk mangler på tavla, begge innenfor horisonten: Saint Louis Rapid & Blitz (2.–6. aug) og Sinquefield Cup (klassisk, 10.–20. aug), begge St. Louis, USA. Feltene rommer flere katalog-spillere: Fabiano Caruana, Wesley So, Vincent Keymer, Anish Giri, Praggnanandhaa, Levon Aronian (begge) + Alireza Firouzja (Sinquefield). Katalogen lister eksplisitt både «Grand Chess Tour» og «Sinquefield Cup» som tier2-turneringer, og sjakk-entity-gaten åpnes uansett av spillerne over.",
+      "why": "Web-bekreftet mot Wikipedia (Grand Chess Tour 2026) + grandchesstour.org. VIKTIG KORREKSJON: forrige audit (17.–19. juli) avfeide Sinquefield som «september» og utenfor horisont — det var FEIL. Sinquefield Cup er 10.–20. aug og Saint Louis Rapid & Blitz 2.–6. aug, begge innenfor ~4-ukers-horisonten. Carlsen spiller ikke disse (EWC-sjakk 11.–15. aug dekker Carlsen og ER på tavla), men turneringene er katalog-dekket via både turneringsnavn og elite-spillerne, så de hører hjemme på det katalog-brede brettet (per-bruker-linsen filtrerer for den enkelte).",
+      "corroboration": [
+        "https://en.wikipedia.org/wiki/Grand_Chess_Tour_2026",
+        "https://grandchesstour.org/news/grand-chess-tour-unveils-2026-wildcards-and-event-lineups-for-poland-romania-and-croatia/"
+      ],
+      "suggestedSource": "https://grandchesstour.org/",
+      "severity": "medium",
+      "firstSeen": "2026-07-20T06:46:45Z",
+      "recurrences": 0
+    },
+    {
       "interest": "F1 hele sesongen — kvalifisering + race",
-      "whatsMissing": "Ungarn GP-kvalifiseringen (lør. 25. juli 16.00 CEST / 14.00 UTC, Hungaroring, Viaplay) står ikke som eget event — tavla har kun selve løpet søndag 26. juli 13.00 UTC. Katalogen dekker F1 (tier1) og interessen nevner eksplisitt «kvalifisering + race», men board-mønsteret har konsekvent bare race-økten per GP.",
-      "why": "Ikke en kildefeil — et strukturelt board-valg (ett F1-event per helg = racet). Racet ER korrekt på tavla (søn. 26. juli 13.00 UTC = 15.00 CEST, web-bekreftet mot formula1.com som normal helg uten sprint; ingen ESPN-fredags-mis-datering). Kvalik-tiden lør. 25. juli 16.00 CEST også web-bekreftet (formula1.com/f1hungary). Samme lav-alvorlighets-observasjon som de to forrige auditene (17.–18. juli, Belgia-helgen) — nå Ungarn-helgen. Verdt at research/owner avgjør om kvalik bør legges til per GP-helg; ved recurrences >= 3 uadressert bumpes den low → medium.",
+      "whatsMissing": "Ungarn GP-kvalifiseringen (lør. 25. juli 16.00 CEST / 14.00 UTC, Hungaroring, Viaplay) står ikke som eget event — tavla har kun selve løpet søndag 26. juli 13.00 UTC. Konsekvent board-mønster: bare race-økten per GP, aldri kvalifiseringen, til tross for at F1 er tier1 (wholesale) og interessen nevner eksplisitt «kvalifisering + race».",
+      "why": "Ikke en kildefeil — et strukturelt board-valg (ett F1-event per helg = racet). Racet ER korrekt på tavla (søn. 26. juli 13.00 UTC = 15.00 CEST, web-bekreftet mot formula1.com + racingnews365 som NORMAL helg uten sprint; korrekt søndags-datert, INGEN ESPN-fredags-mis-datering, INGEN prematur FINAL — source-quirks-sjekk bestått). Kvalik lør. 25. juli 16.00 lokal (14.00 UTC) også web-bekreftet. NÅ FJERDE audit på rad (17.–20. juli): recurrences når 3 → per recall-exhaustion-regelen bumpes low → medium slik at et evigvarende lav-alvorlighets-hull ikke calcifierer. Fortsatt reelt denne kjøringen. Bump utløser IKKE eskalering (kun high gjør det); research/owner avgjør om kvalik bør legges til per GP-helg.",
       "corroboration": [
         "https://www.formula1.com/en/racing/2026/hungary",
-        "https://www.f1hungary.com/en/time-schedule-11"
+        "https://racingnews365.com/f1/races/hungarian-gp"
       ],
       "suggestedSource": "https://www.formula1.com/en/racing/2026/hungary",
-      "severity": "low",
+      "severity": "medium",
       "firstSeen": "2026-07-17T06:00:00Z",
-      "recurrences": 2
+      "recurrences": 3,
+      "severityBumpedFor": "recurred 3 runs unaddressed (17.–20. juli); low → medium per recall-exhaustion"
     }
   ],
   "sourceIssues": [],
   "coveredWell": [
-    "F1 — Ungarn GP Hungaroring søn. 26. juli 13.00 UTC (Viaplay) på tavla: web-verifisert mot formula1.com + f1hungary.com som NORMAL helg (INGEN sprint), race 15.00 CEST = tavlas 13.00 UTC, korrekt SØNDAGS-datert (ingen ESPN-fredags-mis-datering — source-quirks-sjekk bestått). Belgia GP kjørt i dag søn. 19. juli (Antonelli vant, bekreftet i RSS) — ferdig, korrekt ikke lenger på «kommende».",
-    "Sykkel — Tour de France: alle gjenstående etapper på tavla — etappe 16 (tempo Évian→Thonon, ITT) tir. 21. juli 11.00 UTC (web-bekreftet dato, hviledag man. 20. korrekt uten event), etappe 17 ons. 22., etappe 18 tor. 23., etappe 19 fre. 24. (Alpe d'Huez), etappe 20 lør. 25., etappe 21 Paris søn. 26. Alle TV 2 Play. Vingegaard-exiten (kravebensbrudd etappe 15) korrekt reflektert i GC-linja. Uno-X + øvrige norske ryttere dekket via etappene.",
-    "Fotball-VM — finalen i dag søn. 19. juli 19.00 UTC (NRK, Spania–Argentina) på tavla; bronsefinale (lør. 18.) ferdig. Norge ute (tapte kvartfinalen mot England). Sluttspillet dekket ut.",
-    "CS2 — BLAST Bounty S2 100 Thieves–Falcons (R32, Bo3) ons. 22. juli 17.30 UTC (rain på laget, BLAST.tv/Twitch gratis) på tavla, tid bekreftet (to kilder). Malta-LAN 30. juli–2. aug korrekt IKKE på tavla (betinget av avansement). EWC CS2 12.–23. aug Paris (Vitality/NAVI/FaZe/Falcons) på tavla.",
-    "Friidrett — NM Trondheim 23.–25. juli (NRK) + EM Birmingham 10.–16. aug (NRK, Warholm bekreftet mixed 4x400m) på tavla. Warholm vant DL London 18. juli (46,61); DL Silesia 23. aug korrekt utenfor horisont (etter EM).",
-    "Golf — 3M Open (Ventura i feltet, eneste nordmann) tor. 23.–søn. 26. juli (HBO Max/Eurosport) på tavla. The Open ferdig (Hovland misset cut, Reitan nr. 18). Hovland FedEx St. Jude 13.–16. aug ranking-gated (felt låses etter Wyndham ~2. aug) — korrekt dato-gated, ikke oversett hull.",
-    "Fotball — Lyn OBOS-kamper (Strømsgodset borte 25. juli 16.00 UTC → Kongsvinger borte 30. aug) på tavla, TV 2 Play; Barcelona treningskamp Birmingham 31. juli + La Liga-åpning (utsatt VM-semifinalister) mot Athletic 27. aug på tavla.",
-    "Sykkel (Uno-X etter Touren) — PostNord Danmark Rundt 29. juli–2. aug + Arctic Race of Norway 13.–16. aug på tavla.",
-    "Sjakk — Esports World Cup 11.–15. aug (Carlsen, Paris, Team Liquid) på tavla; ingen annen bekreftet Carlsen-turnering i vinduet (GCL/Sinquefield er september / kollisjon Carlsen står over). Tennis — Ruud ute av Gstaad; Montreal (ATP 1000, 1.–13. aug) korrekt dato-gated (trekning 31. juli)."
+    "Sykkel — herrenes Tour de France 2026: alle gjenstående etapper på tavla. Man. 20. juli = andre hviledag (korrekt uten event); etappe 16 (tempo Évian→Thonon, ITT) tir. 21. juli 11.00 UTC, etappe 17 ons. 22., etappe 18 tor. 23., etappe 19 fre. 24. (Alpe d'Huez), etappe 20 lør. 25., etappe 21 Paris søn. 26. Alle TV 2 Play. Vingegaard-exiten (kravebensbrudd etappe 15, styrtet ut søn. 19.) korrekt reflektert i GC-linja; alle seks nordmenn fortsatt med.",
+    "F1 — Ungarn GP Hungaroring søn. 26. juli 13.00 UTC (Viaplay) på tavla: web-verifisert mot formula1.com + racingnews365 som NORMAL helg (INGEN sprint), race 15.00 CEST lokal = tavlas 13.00 UTC, korrekt SØNDAGS-datert (source-quirks ESPN-blindsone SJEKKET OG REN). Belgia GP kjørt søn. 19. juli (Antonelli vant, RSS bekrefter) — ferdig, korrekt ikke på «kommende». Sommerpause etter Ungarn.",
+    "CS2/esports — rain (100 Thieves) DOBBELT dekket ons. 22. juli: StarSeries Fall EU-kvalik 100T–Ninjas in Pyjamas 13.00 UTC (Kick/Twitch, nylig lagt til av research) + BLAST Bounty S2 100T–Falcons (R32, Bo3) 17.30 UTC (BLAST.tv/Twitch gratis). EWC CS2 12.–23. aug Paris (Vitality/NAVI/FaZe/Falcons) på tavla. Malta-LAN 30. juli–2. aug korrekt betinget av avansement.",
+    "Friidrett — NM Trondheim 23.–25. juli (NRK) + EM Birmingham 10.–16. aug (NRK; Warholm bekreftet mixed 4x400m, Ingebrigtsen trolig ute pga. sykdom/akilles) på tavla. Warholm vant DL London 18. juli (46,61).",
+    "Golf — 3M Open (Ventura eneste nordmann i feltet, pgatour.com «Inside the Field» 19. juli) tor. 23.–søn. 26. juli (HBO Max/Eurosport) på tavla. Corales ferdig 16.–19. juli; The Open ferdig (Hovland misset cut, Reitan nr. 18). Hovland FedEx St. Jude 13.–16. aug ranking-gated (felt låses etter Wyndham ~2. aug) — korrekt dato-gated.",
+    "Fotball — Fotball-VM avsluttet (Spania slo Argentina i finalen søn. 19. juli, på tavla + i RSS). Lyn OBOS-kamper (Strømsgodset borte 25. juli → Sogndal 2. aug → Stabæk 8. → Odd 15. → Åsane 26. → Kongsvinger 30. aug) på tavla, TV 2 Play. Barcelona Birmingham-treningskamp 31. juli + La Liga-åpning mot Athletic 27. aug på tavla.",
+    "Sjakk — Esports World Cup 11.–15. aug (Carlsen, Paris, hurtigsjakk) på tavla. Tennis — Ruud ute av Gstaad (tapte KF mot Cerúndolo 17. juli); Montreal (ATP 1000, 1.–13. aug) korrekt dato-gated (trekning 31. juli).",
+    "Sykkel (Uno-X herrer etter Touren) — PostNord Danmark Rundt 29. juli–2. aug + Arctic Race of Norway 13.–16. aug på tavla."
   ],
-  "escalated": false,
+  "escalated": true,
   "notes": [
-    "Kjøring 2026-07-19 ~22:00Z (daglig recall-audit). Imminent-pass (neste ~4 dager, 19.–23. juli) kjørt først som prompten krever. Alt som skjer denne uka er på tavla med riktig tid og norsk kanal/strøm: VM-finalen i dag (NRK), TdF etappe 16 tempo tir. 21. (web-bekreftet dato + hviledag man. 20. korrekt tom), BLAST Bounty 100T–Falcons ons. 22., NM friidrett Trondheim tor. 23. (NRK), 3M Open m/Ventura tor. 23. (HBO Max/Eurosport). 0 high-severity hull → INGEN eskalering.",
-    "F1 ESPN-BLINDSONE (source-quirks) SJEKKET OG REN: Belgia GP kjørt i dag (Antonelli vant, RSS bekrefter helgen er over). NESTE helg = Ungarn GP web-verifisert mot formula1.com + f1hungary.com som NORMAL helg uten sprint: race søn. 26. juli 15.00 CEST lokal = 13.00 UTC = tavlas verdi, korrekt søndags-datert (INGEN mis-datering til fredag, INGEN prematur FINAL). Kvalik lør. 25. 16.00 CEST. Sommerpause etter Ungarn.",
-    "HORISONT (~4 uker, til ~16. aug) sjekket per tracked utøver/lag/turnering: alle har sin neste reelle konkurranse på tavla eller er korrekt dato-/ranking-gated. Hovland (misset cut The Open) — FedEx St. Jude 13.–16. aug ranking-gated (felt låses etter Wyndham ~2. aug), korrekt ikke lagt til; Ruud — Montreal 1.–13. aug dato-gated (trekning 31. juli); Barça Joan Gamper 19. aug venter offisiell avspark-tid (uansett utenfor horisont). 100T Malta-LAN 30. juli–2. aug betinget av avansement (korrekt holdt av tavla). Alle står som kjent oppfølging i tracked.json, ikke oversette hull.",
-    "MEKANISK ANOMALI (coverage-gaps.json 2026-07-19T21:49Z: 1 chess «dropped-in-build», severity high) RULET UT som KORREKT FRAVÆR: chess.json inneholder «Round 8 – XXVI Obert Internacional Sant Martí 2026» (Barcelona, 20. juli) med kun Johan-Sebastian Christiansen som deltaker. Sjakk er ENTITY-GATED i katalogen (kun elite-turneringer + navngitte spillere: Carlsen, Tari, Nakamura, Caruana, Nepo, Ding, Gukesh, Firouzja, Abdusattorov, Wei Yi). Christiansen står IKKE i catalog.json → build-events.js sin isCovered dropper eventet KORREKT. Anomali-detektoren teller «upcoming chess event i kildefil» uten å sjekke katalog-medlemskap, derav false positive. Ikke et dekningshull, ikke en kildefeil (Lichess-fetcheren henter bredt, build filtrerer riktig).",
-    "MEKANISKE ENTITY-GAPS (coverage-gaps.json): 5 entity-gaps, ALLE false positives fra nyhets-etterspill, ikke manglende imminent events — «Reitan/British Open» (The Open ferdig i dag, Reitan nr. 18, resultat-headline), «Fotball-VM» (finale/FIFA-headlines; finalen er på tavla), «Formel 1/Formel 1» (Belgia GP-resultat-headline «Antonelli … Hamilton kjørte på mekaniker»; Belgia kjørt, Ungarn på tavla), «Viktor Hovland» tracked-claim (tracked.json nevner FedEx St. Jude ~16. aug, men den er ranking-gated og ikke hevdet som board-event — reason sier eksplisitt «ikke lagt til ennå»). RSS ellers dominert av VM-etterspill, Vingegaard-exit (fanget i tracked), F1-etterspill og overganger — ingen imminent tracked-event i nyhetene som mangler på tavla.",
-    "Eneste registrerte gap er LOW: F1-kvalifiseringen mangler som eget event (kun racet vises per GP) til tross for at interessen nevner «kvalifisering + race». Konsekvent board-mønster, ikke kildefeil → low, ikke eskalert. Observert nå tredje audit på rad (17.–19. juli); recurrences=2, firstSeen 17. juli. Ved recurrences >= 3 uadressert bumpes low → medium per recall-exhaustion-regelen.",
-    "KORREKTE FRAVÆR (ikke hull): vinteridretter (av-sesong, juli); cricket/rugby/amr. fotball + cycling-klassikere utenom TdF (neverCover); Aryan Tari (ikke i Andorra-startlista); Carlsen (ingen turnering før EWC); Eliteserie (ikke fulgt — kun Lyn i OBOS); PL/La Liga sesongstart medio august (Liverpool-åpning borte mot Newcastle 23. aug utenfor horisont, PL dekkes statisk). Ingen sourceIssues observert — ingen tom/stale fetcher-fil, ingen feil tid/kanal på det som ble krysssjekket mot web; F1- og TdF-datoene web-bekreftet korrekte."
+    "Kjøring 2026-07-20 ~06:47Z (daglig recall-audit). Imminent-pass (neste ~4 dager, 20.–23. juli) kjørt først: ALT som skjer denne uka er på tavla med riktig tid + norsk kanal/strøm — man. 20. TdF-hviledag (korrekt tom), tir. 21. TdF etappe 16 (tempo), ons. 22. TdF etappe 17 + rain DOBBELT (StarSeries 13.00 + BLAST Bounty 17.30), tor. 23. TdF etappe 18 + NM friidrett Trondheim (NRK) + 3M Open m/Ventura. 0 imminent-hull.",
+    "HORISONT-PASS (~4 uker, til ~17. aug) avdekte ETT high-hull: HELE Tour de France Femmes 2026 (1.–9. aug) mangler på tavla. Sykkel er tier1 (wholesale), TdF Femmes er en Grand Tour, Uno-X (katalog-lag) har damelag med garantert Grand Tour-start. Web-bekreftet mot tre kilder. Dette er en klar recall-svikt: research bygde hele herre-Touren etappe-for-etappe men damenes Grand Tour ble aldri lagt inn. → high, ESKALERT (escalate.request = deep).",
+    "MEDIUM-HULL 1 (sjakk): Grand Chess Tour Saint Louis-leiren — Saint Louis Rapid & Blitz (2.–6. aug) + Sinquefield Cup (10.–20. aug), begge katalog-turneringer med flere katalog-spillere (Caruana/So/Keymer/Giri/Pragg/Aronian + Firouzja), begge innenfor horisont, ingen på tavla. KORRIGERER forrige audit som feilaktig avfeide Sinquefield som «september» — den er 10.–20. aug. Web-bekreftet (Wikipedia GCT 2026 + grandchesstour.org). Ikke eskalert (medium; TdF Femmes-eskaleringen bruker opp dagens ene eskalering uansett).",
+    "MEDIUM-HULL 2 (F1-kvalifisering, BUMPET fra low): Ungarn GP-kvalik lør. 25. juli 14.00 UTC står ikke som eget event (kun racet vises per GP). Fjerde audit på rad (17.–20. juli), recurrences=3 → recall-exhaustion-regelen bumper low → medium. Fortsatt reelt, web-bekreftet. Bump utløser ikke eskalering.",
+    "F1 ESPN-BLINDSONE (source-quirks) SJEKKET OG REN: Belgia GP kjørt søn. 19. (Antonelli vant, RSS). Ungarn GP web-verifisert mot formula1.com + racingnews365 som NORMAL helg uten sprint: race søn. 26. juli 15.00 CEST lokal = 13.00 UTC = tavlas verdi, korrekt søndags-datert (INGEN mis-datering til fredag, INGEN prematur FINAL). Kvalik lør. 25. 16.00 lokal.",
+    "MEKANISKE COVERAGE-GAPS (coverage-gaps.json 2026-07-19T23:17Z: 7 gaps, 0 anomalies) TRIAGERT — ALLE false positives fra nyhets-etterspill, ikke manglende imminent events: «Reitan/British Open» (The Open ferdig, Reitan nr. 18, resultat-headline), «Eliteserien/HamKam» (overgangsnyhet; Eliteserien ikke fulgt — kun Lyn i OBOS), «VM 2026» (finale-etterspill; finalen var på tavla), «Formel 1» (Belgia-resultat-headline «Antonelli … Hamilton»; Belgia kjørt, Ungarn på tavla), «Viktor Hovland» tracked-claim (FedEx St. Jude ~16. aug ranking-gated, ikke hevdet som board-event). Ingen imminent tracked-event i nyhetene som mangler på tavla.",
+    "KORREKTE FRAVÆR (ikke hull): vinteridretter (av-sesong, juli); håndball (av-sesong; REMA 1000-ligaen starter ~sept.); Ingebrigtsen (trolig ute pga. sykdom/akilles); Aryan Tari + øvrige klassiske sjakk-spillere utenom Saint Louis-feltet (ingen turnering i vinduet); Oliver Solberg (rally-VM, ikke i katalog); Martinius Stenshorne (F2, ikke dekket — kun F1); cricket/rugby/amr. fotball (neverCover); PL/La Liga sesongstart medio–sent august (Liverpool-åpning 23. aug utenfor horisont, PL dekkes statisk). Ingen sourceIssues observert på det som ble krysssjekket — F1- og TdF-datoene web-bekreftet korrekte, ingen tom/stale fetcher-fil, ingen feil tid/kanal."
   ]
 }
