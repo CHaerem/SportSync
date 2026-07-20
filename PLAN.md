@@ -149,7 +149,7 @@ CI/CD-reviewen (4 read-only agenter) ga 5/6 og en billig herdingspakke. Disjunkt
 
 | WP-138 | Pre-merge iOS-arkiv-/byggvalidering + permissions på testgatene + doc-forsoning (ci/ios-tests) | 0I+ | WP-137 | 🔬 |
 | WP-139 | merge-gate selvvern (PROTECTED_PATHS + protect-automation dekker merge-gate.js selv) | 0I+ | WP-40 | ⬜ |
-| WP-140 | ios-release tag-fotgever-fiks + koherenstest pinner jobbnavn/modell-tier + CLAUDE.md-forsoning | 0I+ | WP-137 | ⬜ |
+| WP-140 | ios-release tag-fotgever-fiks + koherenstest pinner jobbnavn/modell-tier + CLAUDE.md-forsoning | 0I+ | WP-137 | 🔬 |
 
 ---
 

@@ -6,6 +6,14 @@ import path from "path";
 
 const wf = (f) => fs.readFileSync(path.resolve(process.cwd(), ".github", "workflows", f), "utf-8");
 
+// The Claude models named on REAL `--model <model>` CLI lines, comments stripped —
+// so a model name that only appears in a comment can't satisfy a tier pin.
+const modelsOf = (f) =>
+	wf(f)
+		.split("\n")
+		.filter((l) => !l.trim().startsWith("#"))
+		.flatMap((l) => [...l.matchAll(/--model\s+(claude-[\w.-]+)/g)].map((m) => m[1]));
+
 describe("v2 workflows", () => {
 	it("exactly the expected agent workflows exist (old autopilot removed)", () => {
 		const dir = fs.readdirSync(path.resolve(".github", "workflows"));
@@ -107,5 +115,27 @@ describe("v2 workflows", () => {
 		const preview = wf("preview-deploy.yml");
 		expect(preview, "preview-deploy serialises on the pages group").toContain("pages-deploy");
 		expect(preview, "preview-deploy is callable by the static pipeline").toContain("workflow_call");
+	});
+
+	it("the two PR gates keep their required-check job names (a rename silently breaks the gate)", () => {
+		// merge-gate.js's `gh pr checks --watch` and any branch-protection ruleset
+		// key off these exact job/check names. Match the job declaration line (2-space
+		// indent under `jobs:`), never a comment or a `group:`/path reference.
+		expect(wf("ci.yml"), "ci.yml must define a job named web-tests").toMatch(/^ {2}web-tests:/m);
+		expect(wf("ios-tests.yml"), "ios-tests.yml must define a job named ios-tests").toMatch(/^ {2}ios-tests:/m);
+	});
+
+	it("agent model tiers are pinned (quota-drift guard on real --model lines)", () => {
+		// scout is the cheap hourly watchtower; visual-qa needs vision; everything
+		// else is the Opus workhorse, with research additionally reaching for Fable 5
+		// on the deep tier. A silent downgrade/upgrade here changes the budget.
+		expect(modelsOf("scout-agent.yml"), "scout runs on Haiku").toContain("claude-haiku-4-5");
+		expect(modelsOf("visual-qa-agent.yml"), "visual-qa runs on Sonnet").toContain("claude-sonnet-5");
+		const research = modelsOf("research-agent.yml");
+		expect(research, "research standard/fallback tier is Opus").toContain("claude-opus-4-8");
+		expect(research, "research deep tier reaches for Fable 5").toContain("claude-fable-5");
+		for (const f of ["editorial-agent.yml", "verify-agent.yml", "coverage-critic-agent.yml", "ui-fix-agent.yml", "self-repair-agent.yml", "improve-agent.yml"]) {
+			expect(modelsOf(f), `${f} runs on Opus`).toContain("claude-opus-4-8");
+		}
 	});
 });
