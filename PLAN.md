@@ -137,6 +137,8 @@ mennesket, aldri av en agent.
 | WP-130 | Pipeline-kvalitet: refaktor-auditens quick-wins | 0I | — | ✅ #338 merget 20.07 — containsName-memo, haystack-dedup ×3, én fillesing, configDirPath (+2 env-bugfiks), 2 døde eksporter, flattenStats, golf mergeEvents |
 | WP-131 | Interests-arv-sanering: eier-personlige flagg ut av publiserte artefakter | 0I | WP-96 | 🔬 |
 | WP-132 | Onboarding: quick-picks-først + generiske pakker + assistent-intro (dyp personalisering) | 0I | WP-129 | 🔬 quick-picks er første steg for alle (samtale = sekundær «…eller fortell med egne ord»); pakker generisert (norsk-fotball=landslaget, ny vintersport-pakke, CS2=EWC-major, dropp Lyn/100T/rain/Barcelona) og grunnfestet mot entities.json; nytt assistent-intro-steg med 3 trykkbare dyp-personaliserings-eksempler (linse/følg/spoiler) + «prøv nå»; eval-corpus-case `intro-01` + oppdaterte onboarding-UI-flyter |
+| WP-133 | Entitets-dekning: Eliteserien + Ingebrigtsen + Norge-dedup + pakke-repek | 0I | WP-132 | ⬜ |
+| WP-134 | Visningsbugs: tekst-forskyvning/feil størrelse (eier-dogfooding 20.07) | 0I | — | ⬜ |
 
 ---
 
