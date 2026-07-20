@@ -1,7 +1,7 @@
 {
 	"runAt": "2026-07-20T10:17:00Z",
 	"action": "opened-pr",
-	"pr": null,
+	"pr": "https://github.com/CHaerem/sportivista/pull/350",
 	"proposal": "Teach the research agent to cover F1 qualifying (and sprint/sprint-qualifying on sprint weekends) as its own event per GP weekend — not just the Sunday race. Added a sport-specific 'F1 weekends' rule to scripts/agents/research.md (modeled on the existing 'Stage races' rule), citing the interests.json 'kvalifisering + race' brief and instructing the agent to confirm session times against formula1.com (not ESPN, per source-quirks) and use Viaplay.",
 	"evidence": [
 		"coverage-audit.json (2026-07-20T06:46Z): the F1-qualifying gap ('Ungarn GP-kvalifiseringen ... står ikke som eget event — tavla har kun selve løpet') has now recurred FOUR audits in a row (17–20 July), recurrences=3, and was bumped low→medium per the recall-exhaustion rule so an evergreen low-severity hole would not calcify. The audit explicitly defers the call to research/owner: 'research/owner avgjør om kvalik bør legges til per GP-helg.'",
