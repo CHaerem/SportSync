@@ -278,22 +278,32 @@ struct SeriesRowView: View {
 }
 
 /// The layout scaffold shared by ordinary and series agenda rows. It owns the
-/// Dynamic Type response for the whole row (WP-134).
+/// Dynamic Type response for the whole row (WP-134) and the WP-141 clip fix.
 ///
-/// • **Standard sizes (xS–xxxL):** the original horizontal layout, PIXEL-IDENTICAL
-///   to the pre-WP-134 row — `[• dot] [tid] [⛳] [tittel …] [markører]`, with the
-///   time column holding `.layoutPriority(1)` so a multi-day window reserves its
-///   width first (the WP-99 behaviour, unchanged).
+/// • **Standard sizes (xS–xxxL):** the canonical horizontal row (DESIGN § Radens
+///   anatomi), `[• dot] [tid] [⛳] [tittel …] [markører]`, with the time column
+///   holding `.layoutPriority(1)` so a multi-day window reserves its width first
+///   (the WP-99 behaviour). The row is pinned to the cell width and LEADING-aligned
+///   (WP-141) so it can NEVER be centred — the mechanism behind the owner's clip:
+///   the row content used to grow WIDER than the cell (an unbounded `.fixedSize()`
+///   channel, see `RowBody.secondaryLine`), and the `Button(.plain)` then CENTRED
+///   that overflow, shoving the leading time column off the LEFT edge ("15:00" →
+///   ":00", owner report 20.07 — NOT curable by a fixed-width time column alone,
+///   WP-135). With the row content bounded (channel bounded + title flowing to as
+///   many lines as it needs, never truncated) and the row leading-pinned, the title
+///   simply WRAPS instead of the row overflowing, and the time keeps its column at
+///   every width/size. (A whole-row `ViewThatFits` reflow was tried first, per the
+///   WP-141 brief; empirically it reflowed EVERY row to the vertical layout at
+///   iPhone widths — `ViewThatFits` measures the title's single-line ideal, which
+///   never fits beside the fixed time column — restructuring the whole agenda, so
+///   the brief's stated alternative "sikre at Button-label aldri overstiger
+///   cellebredden" is used instead.)
 /// • **Accessibility sizes (AX1+, `dtSize.isAccessibilitySize`):** the row REFLOWS
-///   vertically. At AX the fixed-size time column and the sport glyph would win
-///   width negotiation and squeeze the flexible title to ~nothing, drawing OVER it
-///   (the reported bug — see the AX brudd-PNGs). So the time/window + sport symbol
-///   move onto their own line ABOVE the title, and the title takes the full row
-///   width — never truncated to a «…» (DESIGN § Radens anatomi).
-///
-/// The `dtSize.isAccessibilitySize` branch (rather than `ViewThatFits`) keeps the
-/// standard-size tree byte-for-byte the original one, so non-AX rows stay
-/// pixel-identical (the binding regression guard).
+///   vertically (WP-134). At AX the fixed-size time column and the sport glyph would
+///   win width negotiation and squeeze the flexible title to ~nothing, drawing OVER
+///   it. So the time/window + sport symbol move onto their own line ABOVE the title,
+///   and the title takes the full row width — never truncated to a «…» (DESIGN
+///   § Radens anatomi). This branch is byte-for-byte the WP-134 tree.
 private struct AgendaRowScaffold<RowBodyContent: View>: View {
     let isMustSee: Bool
     let timeLabel: String
@@ -307,40 +317,54 @@ private struct AgendaRowScaffold<RowBodyContent: View>: View {
     var body: some View {
         Group {
             if dtSize.isAccessibilitySize {
-                // AX reflow: tid/vindu + sport-symbol on their own line above the
-                // full-width title. The trailing markers (bell/info/chevron) stay
-                // on the right so the disclosure affordance keeps its place.
-                HStack(alignment: .top, spacing: 10) {
-                    MustSeeDot(on: isMustSee)
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack(alignment: .firstTextBaseline, spacing: 8) {
-                            TimeColumn(text: timeLabel)
-                            SportSymbolView(sport: sport)
-                        }
-                        rowBody()
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    TrailingMarkers(reminder: reminder, aiResearch: aiResearch)
-                }
+                // AX: the vertical reflow (WP-134), unchanged.
+                verticalLayout
             } else {
-                // Standard sizes: the original horizontal layout, unchanged.
-                // WP-99: the time column must win width negotiation — a multi-day
-                // WINDOW ("16.–19. juli") is far wider than a clock, and without a
-                // higher layout priority the flexible RowBody (maxWidth .infinity)
-                // squeezes the column below its intrinsic width — its fixed-size
-                // text then draws OVER the title. Priority makes the HStack reserve
-                // the column's full width first, RowBody takes the rest.
-                HStack(alignment: .top, spacing: 10) {
-                    MustSeeDot(on: isMustSee)
-                    TimeColumn(text: timeLabel)
-                        .layoutPriority(1)
-                    SportSymbolView(sport: sport)
-                    rowBody()
-                    TrailingMarkers(reminder: reminder, aiResearch: aiResearch)
-                }
+                // Standard sizes: the canonical horizontal row (WP-141: bounded +
+                // leading-pinned so the time column can never be clipped).
+                horizontalLayout
             }
         }
         .padding(.vertical, 4)
+    }
+
+    /// The canonical horizontal row. WP-99: the time column wins width negotiation
+    /// via `.layoutPriority(1)` so a multi-day WINDOW ("16.–19. juli") reserves its
+    /// full width first and the flexible RowBody (maxWidth .infinity) takes the rest.
+    /// WP-141: `.frame(maxWidth: .infinity, alignment: .leading)` pins the whole row
+    /// (the `Button(.plain)` label) to the cell width and leading edge, so should any
+    /// content ever exceed the cell the overflow spills off the TRAILING edge — the
+    /// leading time column is never pushed off the LEFT (never centred, never
+    /// clipped). With the bounded RowBody it doesn't overflow at all; this is the
+    /// belt-and-suspenders guarantee.
+    @ViewBuilder private var horizontalLayout: some View {
+        HStack(alignment: .top, spacing: 10) {
+            MustSeeDot(on: isMustSee)
+            TimeColumn(text: timeLabel)
+                .layoutPriority(1)
+            SportSymbolView(sport: sport)
+            rowBody()
+            TrailingMarkers(reminder: reminder, aiResearch: aiResearch)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    /// The reflowed row (WP-134 AX layout): tid/vindu + sport-symbol on their own
+    /// line above the full-width title. The trailing markers (bell/info/chevron)
+    /// stay on the right so the disclosure affordance keeps its place.
+    @ViewBuilder private var verticalLayout: some View {
+        HStack(alignment: .top, spacing: 10) {
+            MustSeeDot(on: isMustSee)
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                    TimeColumn(text: timeLabel)
+                    SportSymbolView(sport: sport)
+                }
+                rowBody()
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            TrailingMarkers(reminder: reminder, aiResearch: aiResearch)
+        }
     }
 }
 
@@ -354,7 +378,6 @@ private struct RowBody: View {
     let meta: String?
     let channel: String
     @Environment(\.horizontalSizeClass) private var sizeClass
-    @Environment(\.dynamicTypeSize) private var dtSize
 
     var body: some View {
         if sizeClass == .regular {
@@ -381,20 +404,36 @@ private struct RowBody: View {
         Text(title)
             .font(.sportivista(.body))
             .foregroundStyle(SportivistaTokens.label)
-            // WP-134: DESIGN says the title is NEVER truncated to a «…». At
-            // standard sizes it grows to ≤ 2 lines (the calm density). At
-            // Accessibility sizes even the full-width title can exceed 2 lines,
-            // so the cap is lifted entirely — the row grows tall rather than clip
-            // (accessibility beats density; the never-truncate invariant holds).
-            .lineLimit(dtSize.isAccessibilitySize ? nil : 2)
+            // DESIGN says the title is NEVER truncated to a «…» — that invariant
+            // beats the ≤2-line calm-density target (the same trade WP-134 made at
+            // AX sizes). WP-141: the cap is lifted at ALL sizes, so when the bounded
+            // horizontal title column can't hold the title in two lines (a wide
+            // matchup title on a narrow width, or a large content size) it grows a
+            // third/fourth line rather than clipping to «…» — the pre-existing
+            // truncation the clip fix would otherwise have left behind. Short and
+            // two-line titles are unaffected: `nil` only ADDS lines when the text
+            // would otherwise be cut, so they stay pixel-identical.
+            .lineLimit(nil)
             .fixedSize(horizontal: false, vertical: true) // grow vertically, never clip
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     /// The one dempet line under the title on a narrow screen. The channel
-    /// (the "hvor" answer) is never truncated; the meta is a "ved behov"
-    /// extra, so when "meta · kanal" doesn't fit, the meta is dropped WHOLE
-    /// (never shown as an "…"-clipped fragment) and only the channel remains.
+    /// (the "hvor" answer) is the priority; the meta is a "ved behov" extra, so
+    /// when "meta · kanal" doesn't fit, the meta is dropped WHOLE (never shown as
+    /// an "…"-clipped fragment) and only the channel remains.
+    ///
+    /// WP-141: the standalone channel is NOT `.fixedSize()` — that was the clip's
+    /// root cause. An unbounded secondary label could itself grow WIDER than the
+    /// cell (a long channel like "Kick (StarLadder, gratis offisiell strøm)"),
+    /// forcing the whole row past the cell edge; the `Button(.plain)` then centred
+    /// the overflow and shoved the LEADING time column off the left ("15:00" →
+    /// ":00"). Bounding it (flexible + `lineLimit(1)`) keeps the row within the
+    /// cell, so the flexible title WRAPS instead of the row overflowing and the
+    /// time keeps its column. The channel keeps priority over the meta but yields
+    /// to the title (the "what"): on a tight row it tails off with a quiet «…»
+    /// rather than push the row wide — the title is never truncated, the channel
+    /// may be.
     @ViewBuilder
     private var secondaryLine: some View {
         if let meta {
@@ -407,10 +446,10 @@ private struct RowBody: View {
                         .fixedSize()
                     ChannelLabel(text: channel).fixedSize()
                 }
-                ChannelLabel(text: channel).fixedSize()
+                ChannelLabel(text: channel)
             }
         } else {
-            ChannelLabel(text: channel).fixedSize()
+            ChannelLabel(text: channel)
         }
     }
 }
