@@ -1,17 +1,16 @@
 {
-  "checkedAt": "2026-07-19T21:55:19Z",
+  "checkedAt": "2026-07-20T00:00:00Z",
   "widths": [375, 393, 900],
   "verdict": "pass",
   "findings": [],
   "notes": [
-    "All three widths (375/393/900px) render a single quiet column with generous spacing — no horizontal scroll or clipped content at any width, including the tightest 375px shot.",
-    "No match names truncated; Norwegian team/athlete names (Strømsgodset, Casper Ruud, Håvard Nygaard, Kristoffer Ventura) fully visible.",
-    "Every event shows a 'where to watch' channel and all are Norwegian-available: TV 2 Play, NRK, BLAST.tv, HBO Max (Sport), Viaplay — no foreign broadcasters (no FOX/ESPN/Sky) seen.",
-    "Times and multi-day date ranges (e.g. '16.-19. juli', '23.-26. juli') are sensibly formatted; round/stage labels present where relevant (e.g. 'Finale', 'neste: Etappe 16').",
-    "Must-see accent dot used sparingly — only on a subset of rows (PGA Tour events, Swiss Open, VM-finalen, 100 Thieves match), not applied indiscriminately.",
-    "Header, 'Neste opp' block, day headings, 'Dette dekker vi' disclosure, and footer (usage/AI-budsjett line) all intact and aligned across all three widths.",
-    "Previously logged issues (2026-07-18: faint hatch pattern below footer at 393px, 'NRK / 1' orphan-wrap on the VM-finalen row at 393px) were NOT reproduced in this run — both areas look clean now.",
-    "No national flags or club crests appeared in this data snapshot; design uses plain monospace text throughout (Tekst-TV identity) so there was nothing to check for broken image icons.",
-    "No broken image icons or empty boxes observed anywhere in the three screenshots."
+    "All three widths (375/393/900px) render a single quiet column, Apple-native styling, no horizontal scroll or clipped content — including the tightest 375px shot.",
+    "No match/event names truncated in a way that hides key info: '100 Thieves – Ninjas in Pyjamas', 'Strømsgodset – Lyn', 'AWS Hungarian Grand Prix', 'NM friidrett 2026 (Trondheim)' all wrap cleanly and stay fully readable at every width.",
+    "Every visible event shows a 'where to watch' channel and all are Norwegian-available: TV 2 Play, Kick (StarLadder, gratis offisiell strøm), BLAST.tv (gratis offisiell strøm), NRK, HBO Max (Sport), Viaplay — no foreign broadcasters (no FOX/ESPN/Sky) seen.",
+    "Times sensibly formatted (13:00, 15:00, 18:00, 19:30); multi-day date ranges ('23.-25. juli', '23.-26. juli') and stage context ('neste: Etappe 16 · 6 etapper') read clearly.",
+    "Must-see accent dot used sparingly — only on the two 100 Thieves rows and the 3M Open row, not on every event.",
+    "Header (wordmark, date, theme toggle), day headings, 'Neste opp' block, 'Dette dekker vi' disclosure, and footer (usage/AI-budsjett line) all intact and aligned across all three widths.",
+    "No broken image icons or empty boxes observed; the design does not use flags/crests in the agenda rows, so there was nothing broken to flag there.",
+    "Only the default light theme was checked (screenshot.js defaults to light unless --dark is passed, matching the prompt's exact commands) — dark/true-black theme was not assessed this run."
   ]
 }
