@@ -1,13 +1,21 @@
 # iOS-testgaten: Swift-unit-suiten (hostless bundles via Sportivista-skjemaet,
-# inkl. golden-vektorene som pinner JS↔Swift bit-likt) på PR-er som rører ios/.
-# Offentlig repo ⇒ macOS-runnere er gratis. Sekretløs: simulator-tester
-# signerer ikke (CODE_SIGNING_ALLOWED=NO er prosjekt-default). UI-testene
-# kjøres IKKE her (lokale/agent-drevne mot det deterministiske harnesset).
+# inkl. golden-vektorene som pinner JS↔Swift bit-likt) + en usignert device-
+# byggvalidering (WP-138, se steget «Valider device-bygg» under) på PR-er som
+# rører ios/. Offentlig repo ⇒ macOS-runnere er gratis. Sekretløs: verken
+# simulator-testene eller device-byggvalideringen signerer (CODE_SIGNING_ALLOWED=NO).
+# UI-testene kjøres IKKE her (lokale/agent-drevne mot det deterministiske harnesset).
 #
-# Workflowen kjører på ALLE PR-er og hopper selv over macOS-jobben når ios/
-# er urørt: branch-beskyttelsen krever sjekken «ios-tests», og en workflow
-# med paths-filter rapporterer aldri på urelaterte PR-er (sjekken ville stått
-# evig «expected»). En skippet jobb tilfredsstiller required checks.
+# Workflowen kjører på ALLE PR-er og hopper selv over macOS-jobben når ios/ er
+# urørt via en billig detect-jobb. Hvorfor sjekken må RAPPORTERE en konklusjon
+# (skip teller som grønn) i stedet for å stå evig «expected»: det er IKKE
+# plattform-håndhevet branch-protection som krever den — rulesetet «main-gates»
+# har bare deletion + non_fast_forward, main har ingen klassisk branch-protection,
+# og det finnes ingen server-side required status checks. Men de tre selvhelings-
+# loopenes scripts/merge-gate.js venter på ALLE PR-ens checks
+# (`gh pr checks --watch --fail-fast`) før auto-merge; en sjekk som aldri
+# konkluderer ville hengt den gaten. Menneske-PR-er og direkte-push til main
+# forbigår CI. (Rettet WP-138: påstanden om «required checks branch protection»
+# her var faktisk feil.)
 name: iOS Tests
 
 on:
@@ -17,6 +25,13 @@ on:
     paths:
       - "ios/**"
       - ".github/workflows/ios-tests.yml"
+
+# Ren test-/byggvalideringsgate: begge jobbene leser bare ut koden (checkout +
+# git diff + xcodegen/xcodebuild, ingen signering). Ingenting skriver til repoet,
+# så minste privilegium er contents: read (WP-138). Utelatt tidligere, så
+# workflowen arvet repo-defaultens videre GITHUB_TOKEN-scope.
+permissions:
+  contents: read
 
 concurrency:
   group: ios-tests-${{ github.ref }}
@@ -104,3 +119,47 @@ jobs:
           SUMMARY=$(xcrun xcresulttool get test-results summary --path TestResults.xcresult)
           echo "$SUMMARY" | grep -E '"result"|"passedTests"|"failedTests"'
           echo "$SUMMARY" | grep -q '"result" : "Passed"'
+
+      # WP-138: pre-merge device-BYGGVALIDERING (usignert). Steget over bygger
+      # BARE `Sportivista`-skjemaet FOR SIMULATOR — det rører ALDRI
+      # `SportivistaDeviceDev`-targetet som release-lanen (ios-release.yml)
+      # faktisk arkiverer og laster til TestFlight. Uten dette steget fanges
+      # arkiv-formfeil først ETTER merge, i release-lanen, der «TestFlight
+      # slutter stille å oppdatere» (klassen som bet 18.07).
+      #
+      # Hva build-for-device HER fanger (build-time-delen av arkiv-klassen):
+      #   • device-only kompilering av CloudKit-stien bak `-D SPORTIVISTA_CLOUDKIT`
+      #     — Simulator-`Sportivista` har IKKE den flaggen og kompilerer den
+      #     ALDRI, så en brekt sync-sti er grønn i sim men feiler på TestFlight;
+      #   • den ekte arm64-enhets-slicen (iphoneos-SDK, ikke simulator-SDK);
+      #   • device-Info.plist prosesseres + bakes (UIDeviceFamily fra
+      #     TARGETED_DEVICE_FAMILY, MinimumOSVersion fra deployment target,
+      #     CFBundleVersion/-ShortVersionString via $(...)-referansene) — en
+      #     malformert plist eller brukket referanse feiler her;
+      #   • widget-appex-en embeddes + valideres (ValidateEmbeddedBinary) — brutt
+      #     target-medlemskap i widgeten faller ut her.
+      #
+      # Hvorfor `build` og IKKE et fullt `archive`: de RENE ASC-OPPLASTINGS-
+      # valideringene («1,2»-familiens iPad-orienteringskrav, encryption-
+      # compliance-spørsmålet) er submission-side — de krever et signert opplast
+      # og kan IKKE valideres før signering, så et usignert `archive` fanger dem
+      # ikke heller; det ville bare lagt Release-kompilering + arkiv-pakking på
+      # toppen uten ekstra dekning. build-for-device gir arkiv-FORMEN uten
+      # pakkingen. `CODE_SIGNING_ALLOWED/REQUIRED=NO` gjør steget signeringsfritt
+      # og dermed ikke-flaky: runneren har verken identitet, profil eller
+      # ASC-nøkkel. Gjenbruker samme `build/ci-derived-data` som testene
+      # (WP-107-cachen) → inkrementelt bygg, ikke kaldt hver gang.
+      - name: Valider device-bygg (usignert)
+        working-directory: ios
+        run: |
+          set -o pipefail
+          # Ingen «|| true»: pipefail lar xcodebuild-exit gate steget. «** BUILD
+          # SUCCEEDED **» matcher alltid på suksess (så grep bobler ikke opp en
+          # falsk feil), og en BUILD FAILED gir non-zero → steget feiler høylytt.
+          xcodebuild build \
+            -project Sportivista.xcodeproj \
+            -scheme SportivistaDeviceDev \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build/ci-derived-data \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            2>&1 | grep -E "error:|BUILD SUCCEEDED|BUILD FAILED|^\*\* "
