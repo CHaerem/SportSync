@@ -124,6 +124,78 @@ describe("buildEntityIndex", () => {
 		expect(team.aliases).toContain("Lyn"); // Lyn merged into the TEAM entity, not the league
 	});
 
+	// WP-125: nickname / initial-form consolidation (the 100T lens-miss class).
+	it("consolidates a nickname/initial-form team duplicate into ONE entity (100T ⇒ alias of 100 Thieves)", () => {
+		// The real source: sports-config lists BOTH spellings so the esports
+		// focus-team filter matches either; un-folded they became `100-thieves` +
+		// `100t`, so following one never matched events/news stamped with the other.
+		const fakeSportsConfig = {
+			esports: { sport: "esports", norwegian: { teams: ["100 Thieves", "100T"] } },
+		};
+		const entities = buildEntityIndex(tmpDir("ss-entities-nickname-"), fakeSportsConfig);
+		const esTeams = entities.filter((e) => e.sport === "esports" && e.type === "team");
+		expect(esTeams).toHaveLength(1); // one team, not two
+		expect(esTeams[0].id).toBe("100-thieves"); // the full name wins the id (registered first)
+		expect(esTeams[0].name).toBe("100 Thieves");
+		expect(esTeams[0].aliases).toContain("100T"); // the nickname folds in as an alias
+	});
+
+	it("does NOT over-merge two distinct multi-word teams (Real Madrid vs. Real Mallorca stay separate)", () => {
+		// Safety boundary: the initial-form rule compares a MULTI-word name against a
+		// SINGLE-token nickname only — two multi-word clubs are never abbreviated
+		// onto each other, so a shared leading word cannot collapse them.
+		const fakeSportsConfig = {
+			football: { sport: "football", norwegian: { teams: ["Real Madrid", "Real Mallorca"] } },
+		};
+		const entities = buildEntityIndex(tmpDir("ss-entities-no-overmerge-"), fakeSportsConfig);
+		const teams = entities.filter((e) => e.sport === "football" && e.type === "team");
+		expect(teams).toHaveLength(2);
+		expect(teams.map((e) => e.name).sort()).toEqual(["Real Madrid", "Real Mallorca"]);
+	});
+
+	it("guards the built index against same-type nickname/initial-form duplicates (normalized comparison)", () => {
+		// Independent (normalized) mirror of the relation the generator now folds,
+		// so this is a genuine regression guard, not a tautology: within any
+		// sport+type, no entity NAME may be the initial/nickname form of another's.
+		const normalize = (s) => (s || "").normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().trim();
+		const initialForm = (name) => {
+			const words = normalize(name).split(/\s+/).filter(Boolean);
+			if (words.length < 2) return null;
+			return words.map((w) => (/^\d/.test(w) ? w : Array.from(w)[0])).join("");
+		};
+		const isNickname = (a, b) => {
+			const na = normalize(a), nb = normalize(b);
+			if (!na || !nb) return false;
+			return (!/\s/.test(nb) && initialForm(na) === nb) || (!/\s/.test(na) && initialForm(nb) === na);
+		};
+		// Run over the REAL default config (docs/data/entities.json's source), so a
+		// production regression — e.g. a new 100T-style pair the generator fails to
+		// fold — trips this. The generator guarantees the invariant by construction.
+		const entities = buildEntityIndex();
+		const byGroup = new Map();
+		for (const e of entities) {
+			const key = `${normalize(e.sport)}|${e.type}`;
+			if (!byGroup.has(key)) byGroup.set(key, []);
+			byGroup.get(key).push(e);
+		}
+		const dupes = [];
+		for (const group of byGroup.values()) {
+			for (let i = 0; i < group.length; i++) {
+				for (let j = i + 1; j < group.length; j++) {
+					if (isNickname(group[i].name, group[j].name)) {
+						dupes.push(`${group[i].name} ⇄ ${group[j].name} (${group[i].sport}/${group[i].type})`);
+					}
+				}
+			}
+		}
+		expect(dupes).toEqual([]);
+		// Non-vacuous: the real esports team really is consolidated under one id.
+		const hundred = entities.filter((e) => e.id === "100-thieves");
+		expect(hundred).toHaveLength(1);
+		expect(hundred[0].aliases).toContain("100T");
+		expect(entities.find((e) => e.id === "100t")).toBeUndefined();
+	});
+
 	it("generates a stable, readable kebab-case slug for a free-text name with no existing id", () => {
 		const fakeSportsConfig = { cycling: { sport: "cycling", norwegian: { players: ["Søren Wærenskjold"] } } };
 		const entities = buildEntityIndex(tmpDir("ss-entities-slug-"), fakeSportsConfig);

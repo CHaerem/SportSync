@@ -233,9 +233,34 @@ struct FollowDetailView: View {
 
     private var upcoming: [FeedQueryEvent] { snapshot?.presenter.nextEvents(for: rule, limit: 3) ?? [] }
     private var news: [NewsItem] { snapshot?.presenter.newsItems(for: rule, limit: 3) ?? [] }
+    /// WP-125: this follow's name resolves to nothing we know — likely mistyped.
+    private var isUnresolved: Bool { snapshot?.presenter.matchState(for: rule) == .unresolved }
+    /// Nearest real names for an unresolved follow (reuses the index fuzzy).
+    private var nameSuggestions: [Entity] { snapshot?.presenter.nameSuggestions(for: rule) ?? [] }
 
     var body: some View {
         List {
+            if isUnresolved {
+                Section {
+                    Text("Vi finner ingen kamper eller nyheter for «\(rule.entityName)». Navnet stemmer kanskje ikke helt.")
+                        .font(.sportivista(.subheadline))
+                        .foregroundStyle(SportivistaTokens.label)
+                        .fixedSize(horizontal: false, vertical: true)
+                    ForEach(nameSuggestions, id: \.id) { suggestion in
+                        suggestionRow(suggestion)
+                    }
+                } header: {
+                    groupHeader("SJEKK NAVNET")
+                } footer: {
+                    Text(nameSuggestions.isEmpty
+                        ? "Prøv å legge til på nytt med et litt annet navn."
+                        : "Kanskje du mente ett av disse? Legg det til på nytt om navnet er feil.")
+                        .font(.sportivista(.footnote))
+                        .foregroundStyle(SportivistaTokens.secondaryLabel)
+                }
+                .listRowBackground(SportivistaTokens.cell)
+            }
+
             if !upcoming.isEmpty {
                 Section {
                     ForEach(upcoming, id: \.id) { event in
@@ -430,6 +455,31 @@ struct FollowDetailView: View {
     }
 
     // MARK: - Detail rows / helpers
+
+    // MARK: - SJEKK NAVNET row (WP-125 lens-miss suggestion)
+
+    /// One calm, informational nearest-name suggestion — the name + its sport.
+    /// Deliberately not a button: the honest read is "check the name"; correcting
+    /// it is done through the normal Legg til-søk, so nothing is changed by tap.
+    private func suggestionRow(_ entity: Entity) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: SportSymbol.name(for: entity.sport))
+                .font(.sportivista(.body))
+                .foregroundStyle(SportivistaTokens.tertiaryLabel)
+                .frame(width: 24)
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(entity.name)
+                    .font(.sportivista(.body))
+                    .foregroundStyle(SportivistaTokens.label)
+                Text(SportVocabulary.display(for: entity.sport))
+                    .font(.sportivista(.footnote))
+                    .foregroundStyle(SportivistaTokens.secondaryLabel)
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("followed.suggestion.\(entity.id)")
+    }
 
     private func detailInfoRow(_ label: String, _ value: String) -> some View {
         HStack {

@@ -135,16 +135,59 @@ struct FollowPresenter {
         return Array(matched.prefix(limit))
     }
 
+    // MARK: - Match state (the WP-125 lens-miss signal)
+
+    /// How a followed rule is currently doing against the board — the calm signal
+    /// that makes a silently-dead follow visible without any telemetry:
+    ///   • `.scheduled`  — ≥1 upcoming event → the «Neste: …» subtitle.
+    ///   • `.idle`       — a real follow that just has nothing right now (a known
+    ///                     entity, a whole-sport follow, or one still carrying
+    ///                     news): «Ikke satt opp ennå».
+    ///   • `.unresolved` — the followed NAME resolves to nothing we know AND has no
+    ///                     news either — most likely a wrong/mistyped name:
+    ///                     «Ingen treff — sjekk navnet», with nearest-name help in
+    ///                     the detail.
+    enum FollowMatchState: Equatable { case scheduled, idle, unresolved }
+
+    /// Classify a rule (see `FollowMatchState`). A whole-sport / category follow is
+    /// always a valid follow, so it is never `.unresolved`. Everything else is
+    /// `.unresolved` only when its entityId is absent from the index (an unknown
+    /// name) AND no lens-matched news carries it.
+    func matchState(for rule: InterestRule) -> FollowMatchState {
+        if !nextEvents(for: rule, limit: 1).isEmpty { return .scheduled }
+        switch group(for: rule) {
+        case .sport, .category:
+            return .idle
+        default:
+            let known = index.entity(id: rule.entityId) != nil
+            let hasNews = !newsItems(for: rule, limit: 1).isEmpty
+            return (known || hasNews) ? .idle : .unresolved
+        }
+    }
+
+    /// Nearest known names for an `.unresolved` follow — the index's OWN fuzzy
+    /// resolver (`nearestMatches`, no new matching), so a mistyped follow can be
+    /// checked against real entities. Empty for a resolved follow, or when nothing
+    /// is genuinely close (the honest answer). The rule's own id is filtered out.
+    func nameSuggestions(for rule: InterestRule, limit: Int = 3) -> [Entity] {
+        guard matchState(for: rule) == .unresolved else { return [] }
+        return index.nearestMatches(to: rule.entityName, limit: limit)
+            .filter { $0.id != rule.entityId }
+    }
+
     // MARK: - Row subtitle
 
     /// The calm per-entity subtitle: «Neste: lør 25. · Strømsgodset – Lyn · TV 2»
-    /// (day · what · where), or an honest «Ikke satt opp ennå» when nothing is
-    /// scheduled — replacing the old, identical-on-every-row «varsler på».
+    /// (day · what · where) when scheduled; an honest «Ikke satt opp ennå» when a
+    /// real follow is quiet; or «Ingen treff — sjekk navnet» when the name resolves
+    /// to nothing (the WP-125 lens-miss signal). No technical words ever.
     func rowSubtitle(for rule: InterestRule) -> String {
-        guard let next = nextEvents(for: rule, limit: 1).first else { return "Ikke satt opp ennå" }
-        var parts = ["Neste: \(shortDayLabel(dayKey: next.dayKey))", next.title]
-        if next.channelLabel != "–" { parts.append(next.channelLabel) }
-        return parts.joined(separator: " · ")
+        if let next = nextEvents(for: rule, limit: 1).first {
+            var parts = ["Neste: \(shortDayLabel(dayKey: next.dayKey))", next.title]
+            if next.channelLabel != "–" { parts.append(next.channelLabel) }
+            return parts.joined(separator: " · ")
+        }
+        return matchState(for: rule) == .unresolved ? "Ingen treff — sjekk navnet" : "Ikke satt opp ennå"
     }
 
     // MARK: - Helpers

@@ -38,12 +38,18 @@
  * On merge, only aliases are unioned — the first-registered entity keeps its
  * id/name/type/sport.
  *
- * Known, accepted limitation: dedup only fires when some (name|alias) pair
- * literally overlaps at a word boundary. Purely alternate spellings with no
- * shared token (e.g. "Norway" vs. "Norge", or "100 Thieves" vs. "100T") are
- * NOT folded together and end up as separate entities. Fine for this WP —
- * matching against event text still works either way, just under two ids
- * instead of one; true synonym-resolution is future work, not required here.
+ * WP-125: dedup ALSO fires when one term is a nickname / initial-form of
+ * another — the "100 Thieves" ⇄ "100T" class. sports-config lists both spellings
+ * of the same team so its focus-team filter matches either; left un-folded they
+ * became two entities (`100-thieves` + `100t`), so a fan following one never
+ * matched events/news stamped with the other (a real lens-miss). `isNicknameForm`
+ * (below) closes it: "100T" now folds in as an ALIAS of "100 Thieves", one id.
+ *
+ * Known, accepted limitation: dedup still needs a token overlap OR an
+ * initial-form match. Purely alternate spellings with no shared token AND no
+ * abbreviation relationship (e.g. "Norway" vs. "Norge") are NOT folded and end
+ * up as separate entities. Fine for this WP — matching against event text still
+ * works either way, just under two ids; true synonym-resolution is future work.
  *
  * NOTE ON TYPE ACCURACY: tracked.json files a few entries under its "leagues"
  * bucket that are really clubs (e.g. "fc-barcelona"), because tracked.json
@@ -232,12 +238,44 @@ function terms(e) {
 	return [e?.name, ...(e?.aliases || [])].filter(Boolean);
 }
 
-/** Do two term sets share a word-boundary match in either direction? */
+/**
+ * WP-125: the initial / nickname compaction of a MULTI-word name — each word
+ * reduced to its leading run (the whole token when it starts with a digit, so
+ * "100" stays "100"; else just its first letter). "100 thieves" → "100t";
+ * "tour de france" → "tdf". Returns null for a single-word name (nothing to
+ * abbreviate). Operates on already-normalizeText'd input.
+ */
+function initialForm(multiNorm) {
+	const words = multiNorm.split(/\s+/).filter(Boolean);
+	if (words.length < 2) return null;
+	return words.map((w) => (/^\d/.test(w) ? w : Array.from(w)[0])).join("");
+}
+
+/**
+ * WP-125: is one of these two terms a nickname / initial-form of the other —
+ * the "100 Thieves" ⇄ "100T" class? True only when a MULTI-word name compacts
+ * (initialForm) EXACTLY to the other, SINGLE-token name. Deliberately asymmetric
+ * in shape (multi ⇄ single) so two distinct multi-word teams are never compared
+ * this way ("Real Madrid" vs. "Real Mallorca" both survive) and a coincidental
+ * single word can't swallow an unrelated multi-word club ("brooklyn fc" → "bf" ≠
+ * "lyn"). Same-sport + same-type is already enforced by the caller (upsert).
+ */
+function isNicknameForm(a, b) {
+	const na = normalizeText(a).trim();
+	const nb = normalizeText(b).trim();
+	if (!na || !nb) return false;
+	if (!/\s/.test(nb) && initialForm(na) === nb) return true;
+	if (!/\s/.test(na) && initialForm(nb) === na) return true;
+	return false;
+}
+
+/** Do two term sets share a word-boundary or nickname/initial-form match? */
 function termsOverlap(aTerms, bTerms) {
 	for (const a of aTerms) {
 		for (const b of bTerms) {
 			if (normalizeText(a).trim() === normalizeText(b).trim()) return true;
 			if (containsName(a, b) || containsName(b, a)) return true;
+			if (isNicknameForm(a, b)) return true;
 		}
 	}
 	return false;
