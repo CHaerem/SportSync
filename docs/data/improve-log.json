@@ -1,12 +1,12 @@
 {
-	"runAt": "2026-07-13T10:40:00Z",
+	"runAt": "2026-07-20T10:17:00Z",
 	"action": "opened-pr",
-	"pr": "https://github.com/CHaerem/SportSync/pull/233",
-	"proposal": "Kill the recurring World Cup knockout duplicates at the source in build-events.js. ESPN re-emits knockout slots as bracket placeholders ('Semifinal 2 Winner at Semifinal 1 Winner') whose title shares zero words with the channel-confirmed ai-research events ('VM-finalen 2026'), so the sport|title|time key AND the title-only fuzzy check both missed them and both copies survived every rebuild. Added a venue-based fuzzy match (same sport + same venue + overlapping date range — for point-in-time events this collapses to an exact-kickoff match, so it can't collide unrelated fixtures) as a second match kind, and when a static event matches an ai-research one ONLY by venue (titles disagree entirely) the AI event wins and the placeholder is dropped — while the existing title-match path (golf/stage tournaments) still lets the authoritative static fetcher win. Adds 2 build-events tests (WC dedup keeps the AI copy; two different-venue same-time matches are NOT merged).",
+	"pr": null,
+	"proposal": "Teach the research agent to cover F1 qualifying (and sprint/sprint-qualifying on sprint weekends) as its own event per GP weekend — not just the Sunday race. Added a sport-specific 'F1 weekends' rule to scripts/agents/research.md (modeled on the existing 'Stage races' rule), citing the interests.json 'kvalifisering + race' brief and instructing the agent to confirm session times against formula1.com (not ESPN, per source-quirks) and use Viaplay.",
 	"evidence": [
-		"verify-log.json (2026-07-13): 'RECURRING build-events dedup gap: these tentative NRK/TV2 placeholders have now been removed 11, 12 and 13 Jul and keep returning because build-events dedupes on sport|title|time and the ESPN titles differ from the ai-research Norwegian titles. Permanent fix belongs in build-events ... verify can only whack-a-mole them daily.' — flagged three days running, explicitly handed to improve/self-repair.",
-		"verify removed 3 ESPN placeholders again 2026-07-13: 'Spain at France' (dup of 'VM-semifinale 1'), 'Semifinal 2 Loser at Semifinal 1 Loser' (dup of 'VM-bronsefinale'), 'Semifinal 2 Winner at Semifinal 1 Winner' (dup of 'VM-finalen 2026'); the ai copies carry the NTB-confirmed NRK/TV 2 channel, the placeholders a tentative guess + an unreadable title.",
-		"Real-data rebuild (docs/data copy in a temp dir) with the fix: all three ESPN placeholders are deduped away, the channel-confirmed ai-research events survive, and 'Argentina at England' (resolved SF2 with no AI counterpart) correctly stays — no other football event affected.",
-		"npm test: 263 passed incl. 2 new build-events cases (WC knockout dedup keeps the AI copy; different-venue same-time matches stay separate)."
+		"coverage-audit.json (2026-07-20T06:46Z): the F1-qualifying gap ('Ungarn GP-kvalifiseringen ... står ikke som eget event — tavla har kun selve løpet') has now recurred FOUR audits in a row (17–20 July), recurrences=3, and was bumped low→medium per the recall-exhaustion rule so an evergreen low-severity hole would not calcify. The audit explicitly defers the call to research/owner: 'research/owner avgjør om kvalik bør legges til per GP-helg.'",
+		"interests.json line 193 states the owner interest explicitly: 'F1 hele sesongen — kvalifisering + race'. Qualifying is a first-class wish, not an inference.",
+		"research.md had NO instruction to add F1 qualifying — grep for kvalif/qualif/sprint/session in the prompt returns only the generic 'schedule resumes' aside (line 61). The agent has consistently built one f1 event per weekend (the race), so this is a recurring coverage gap the prompt never told it to fill.",
+		"npm test: 753 passed (46 files), incl. the agent-prompts coherence test that scans research.md for valid skill references (source-quirks reference intact)."
 	]
 }
