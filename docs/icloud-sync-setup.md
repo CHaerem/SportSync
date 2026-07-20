@@ -17,7 +17,32 @@ iOS↔iOS-stien forblir E2E. **Konsekvens:** alt web kan lese er per definisjon 
 E2E — snapshot-feltet er klartekst i din egen private iCloud-DB (aldri delt, aldri
 vår server).
 
-## Steg (Development først, så Production)
+## Rask vei (cktool — skjemaet settes opp fra terminalen)
+
+Skjema-delen kan gjøres med Apples `cktool` (følger med Xcode) i stedet for å
+klikke i dashboardet. Da genererer du bare ETT token, og resten kjøres som
+kommandoer (`scripts/cloudkit-schema.ckdb` definerer `ProfileSnapshot` + den
+påkrevde `recordName`-indeksen):
+
+```bash
+# 1. Generer et MANAGEMENT-token i Console (API Access / Tokens) og lagre det
+#    lokalt (havner i DIN keychain — deles aldri):
+xcrun cktool save-token --type management
+
+# 2. Importer skjemaet til Development, deretter Production:
+xcrun cktool import-schema --team-id 9LVCB72DT8 \
+  --container-id iCloud.app.sportivista.ios --environment development \
+  --validate --file scripts/cloudkit-schema.ckdb
+xcrun cktool import-schema --team-id 9LVCB72DT8 \
+  --container-id iCloud.app.sportivista.ios --environment production \
+  --validate --file scripts/cloudkit-schema.ckdb
+```
+
+**Det cktool IKKE kan lage** er web-API-tokenet (med Allowed Origins) — det må
+genereres i dashboardet (steg 4 under). Så minimums-arbeidet ditt er: generer to
+tokens (management + web-API) i Console; alt annet er kommandoer/kode.
+
+## Full vei (dashboard — Development først, så Production)
 
 CloudKit Console → `icloud.developer.apple.com/dashboard` → container
 **`iCloud.app.sportivista.ios`** (under det betalte teamet `9LVCB72DT8`):
