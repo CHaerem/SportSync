@@ -247,21 +247,15 @@ struct EventRowView: View {
     let row: AgendaEventRow
 
     var body: some View {
-        HStack(alignment: .top, spacing: 10) {
-            MustSeeDot(on: row.isMustSee)
-            // WP-99: the time column must win width negotiation. A multi-day
-            // WINDOW ("16.–19. juli") is far wider than a clock, and without a
-            // higher layout priority the flexible RowBody (maxWidth .infinity)
-            // squeezes the column below its intrinsic width — its fixed-size text
-            // then draws OVER (and off the left of) the title. Priority makes the
-            // HStack reserve the column's full width first, RowBody takes the rest.
-            TimeColumn(text: row.timeLabel)
-                .layoutPriority(1)
-            SportSymbolView(sport: row.event.sport)
+        AgendaRowScaffold(
+            isMustSee: row.isMustSee,
+            timeLabel: row.timeLabel,
+            sport: row.event.sport,
+            reminder: row.mustWatch,
+            aiResearch: row.isAIResearch
+        ) {
             RowBody(title: row.title, meta: row.metaLabel, channel: row.channelLabel)
-            TrailingMarkers(reminder: row.mustWatch, aiResearch: row.isAIResearch)
         }
-        .padding(.vertical, 4)
     }
 }
 
@@ -271,13 +265,80 @@ struct SeriesRowView: View {
     let row: AgendaSeriesRow
 
     var body: some View {
-        HStack(alignment: .top, spacing: 10) {
-            MustSeeDot(on: false) // series rows are never visually accented (FeedCompiler.isMustSee)
-            TimeColumn(text: row.timeLabel) // WP-99: see EventRowView — priority so a wide window never draws over the title
-                .layoutPriority(1)
-            SportSymbolView(sport: row.nextStage.sport)
+        AgendaRowScaffold(
+            isMustSee: false, // series rows are never visually accented (FeedCompiler.isMustSee)
+            timeLabel: row.timeLabel,
+            sport: row.nextStage.sport,
+            reminder: row.mustWatch,
+            aiResearch: row.isAIResearch
+        ) {
             RowBody(title: row.summaryLabel, meta: nil, channel: row.channelLabel)
-            TrailingMarkers(reminder: row.mustWatch, aiResearch: row.isAIResearch)
+        }
+    }
+}
+
+/// The layout scaffold shared by ordinary and series agenda rows. It owns the
+/// Dynamic Type response for the whole row (WP-134).
+///
+/// • **Standard sizes (xS–xxxL):** the original horizontal layout, PIXEL-IDENTICAL
+///   to the pre-WP-134 row — `[• dot] [tid] [⛳] [tittel …] [markører]`, with the
+///   time column holding `.layoutPriority(1)` so a multi-day window reserves its
+///   width first (the WP-99 behaviour, unchanged).
+/// • **Accessibility sizes (AX1+, `dtSize.isAccessibilitySize`):** the row REFLOWS
+///   vertically. At AX the fixed-size time column and the sport glyph would win
+///   width negotiation and squeeze the flexible title to ~nothing, drawing OVER it
+///   (the reported bug — see the AX brudd-PNGs). So the time/window + sport symbol
+///   move onto their own line ABOVE the title, and the title takes the full row
+///   width — never truncated to a «…» (DESIGN § Radens anatomi).
+///
+/// The `dtSize.isAccessibilitySize` branch (rather than `ViewThatFits`) keeps the
+/// standard-size tree byte-for-byte the original one, so non-AX rows stay
+/// pixel-identical (the binding regression guard).
+private struct AgendaRowScaffold<RowBodyContent: View>: View {
+    let isMustSee: Bool
+    let timeLabel: String
+    let sport: String
+    let reminder: Bool
+    let aiResearch: Bool
+    @ViewBuilder var rowBody: () -> RowBodyContent
+
+    @Environment(\.dynamicTypeSize) private var dtSize
+
+    var body: some View {
+        Group {
+            if dtSize.isAccessibilitySize {
+                // AX reflow: tid/vindu + sport-symbol on their own line above the
+                // full-width title. The trailing markers (bell/info/chevron) stay
+                // on the right so the disclosure affordance keeps its place.
+                HStack(alignment: .top, spacing: 10) {
+                    MustSeeDot(on: isMustSee)
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack(alignment: .firstTextBaseline, spacing: 8) {
+                            TimeColumn(text: timeLabel)
+                            SportSymbolView(sport: sport)
+                        }
+                        rowBody()
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    TrailingMarkers(reminder: reminder, aiResearch: aiResearch)
+                }
+            } else {
+                // Standard sizes: the original horizontal layout, unchanged.
+                // WP-99: the time column must win width negotiation — a multi-day
+                // WINDOW ("16.–19. juli") is far wider than a clock, and without a
+                // higher layout priority the flexible RowBody (maxWidth .infinity)
+                // squeezes the column below its intrinsic width — its fixed-size
+                // text then draws OVER the title. Priority makes the HStack reserve
+                // the column's full width first, RowBody takes the rest.
+                HStack(alignment: .top, spacing: 10) {
+                    MustSeeDot(on: isMustSee)
+                    TimeColumn(text: timeLabel)
+                        .layoutPriority(1)
+                    SportSymbolView(sport: sport)
+                    rowBody()
+                    TrailingMarkers(reminder: reminder, aiResearch: aiResearch)
+                }
+            }
         }
         .padding(.vertical, 4)
     }
@@ -293,6 +354,7 @@ private struct RowBody: View {
     let meta: String?
     let channel: String
     @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(\.dynamicTypeSize) private var dtSize
 
     var body: some View {
         if sizeClass == .regular {
@@ -319,8 +381,13 @@ private struct RowBody: View {
         Text(title)
             .font(.sportivista(.body))
             .foregroundStyle(SportivistaTokens.label)
-            .lineLimit(2)
-            .fixedSize(horizontal: false, vertical: true) // grow to 2 lines, never clip
+            // WP-134: DESIGN says the title is NEVER truncated to a «…». At
+            // standard sizes it grows to ≤ 2 lines (the calm density). At
+            // Accessibility sizes even the full-width title can exceed 2 lines,
+            // so the cap is lifted entirely — the row grows tall rather than clip
+            // (accessibility beats density; the never-truncate invariant holds).
+            .lineLimit(dtSize.isAccessibilitySize ? nil : 2)
+            .fixedSize(horizontal: false, vertical: true) // grow vertically, never clip
             .frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -374,12 +441,17 @@ private struct MustSeeDot: View {
 /// (`SportSymbol`) shared with the detail sheet and the Nyheter rows.
 private struct SportSymbolView: View {
     let sport: String
+    // WP-134: the glyph column must scale WITH its `.subheadline` font. A fixed
+    // 20 pt frame stayed put while the symbol grew at Accessibility sizes, so the
+    // glyph overflowed its box and collided with the neighbours. `@ScaledMetric`
+    // grows the column in lock-step with the text style, keeping titles aligned.
+    @ScaledMetric(relativeTo: .subheadline) private var symbolWidth = 20
 
     var body: some View {
         Image(systemName: SportSymbol.name(for: sport))
             .font(.sportivista(.subheadline))
             .foregroundStyle(SportivistaTokens.tertiaryLabel)
-            .frame(width: 20, alignment: .center)
+            .frame(width: symbolWidth, alignment: .center)
             .padding(.top, 2)
             .accessibilityHidden(true)
     }
@@ -394,6 +466,8 @@ private struct SportSymbolView: View {
 private struct TimeColumn: View {
     let text: String
 
+    @Environment(\.dynamicTypeSize) private var dtSize
+
     /// A clock always carries ":"; a window ("13.–20. juli") or honest "–"
     /// never does.
     private var isClock: Bool { text.contains(":") }
@@ -402,9 +476,14 @@ private struct TimeColumn: View {
         Text(text)
             .font(isClock ? .sportivistaTabular(.body, weight: .semibold) : .sportivistaTabular(.footnote, weight: .medium))
             .foregroundStyle(SportivistaTokens.label)
-            .lineLimit(1)
-            .fixedSize(horizontal: true, vertical: false)
-            .frame(minWidth: 58, alignment: .leading)
+            // WP-134: at Accessibility sizes the column is on its own line (see
+            // AgendaRowScaffold), so it no longer needs to win width against the
+            // title — let a wide window WRAP instead of forcing its intrinsic
+            // width with `.fixedSize`, and drop the min-width alignment padding.
+            // At standard sizes the original behaviour is preserved exactly.
+            .lineLimit(dtSize.isAccessibilitySize ? 2 : 1)
+            .fixedSize(horizontal: !dtSize.isAccessibilitySize, vertical: false)
+            .frame(minWidth: dtSize.isAccessibilitySize ? nil : 58, alignment: .leading)
             .padding(.top, isClock ? 0 : 2)
     }
 }
