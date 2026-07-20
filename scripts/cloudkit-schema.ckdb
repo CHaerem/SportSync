@@ -1,0 +1,17 @@
+DEFINE SCHEMA
+
+// ProfileSnapshot — the web-readable channel (WP-138 / icloud-sync).
+// One plaintext record per device: `payload` = the ProfileShareCodec string of
+// that device's full merged profile. CloudKit JS reads these to sync the web.
+// The "___recordID REFERENCE QUERYABLE" line is the required index that lets the
+// browser enumerate the type (without it: BAD_REQUEST "recordName not queryable").
+RECORD TYPE ProfileSnapshot (
+    "___recordID"    REFERENCE QUERYABLE,
+    "___createTime"  TIMESTAMP QUERYABLE SORTABLE,
+    "___modTime"     TIMESTAMP QUERYABLE SORTABLE,
+    payload          STRING,
+    updatedAt        TIMESTAMP QUERYABLE SORTABLE,
+    GRANT WRITE TO "_creator",
+    GRANT CREATE TO "_icloud",
+    GRANT READ TO "_creator"
+);
