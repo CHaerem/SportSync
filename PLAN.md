@@ -1891,6 +1891,48 @@ golf-buggen 5×, fiksen var kode; WP-93: vaktene ble deterministiske sjekker)
 er kvote frigjort permanent. Prinsipp: en AI-løkke som gjentar samme funn ≥3×
 skal produsere en kode-/skjema-endring, ikke flere AI-kjøringer.
 
+## BRUKERDATA → PRODUKTFORBEDRING (eier-drøfting 20.07.2026) · dossier-tillegg
+
+Eier-instinkt: profil-data (hva folk følger/preferanser) er verdifullt for å
+forbedre appen når massen vokser; E2E på en sport-følgeliste er unødvendig. Begge
+deler stemmer — men de er ULIKE spørsmål, og ett teknisk faktum avgjør rammen:
+
+**Bærende faktum:** profilen ligger i brukerens EGEN private CloudKit-DB. Den er
+usynlig for oss som utvikler — uansett kryptering. Å fjerne E2E (gjort 20.07,
+`cleanup-profile-plaintext`) ga web-lesbarhet, IKKE utvikler-innsyn. «Bruk dataen»
+krever derfor en egen, bevisst innsamlingsvei; det er ikke en krypterings-spak.
+
+**To akser (vidt ulik kostnad):**
+
+- **A · Forbedre FOR den enkelte** (appen tilpasser seg deg) — allerede støttet
+  on-device: `BehaviorCounter` (G-counter i profilen) + `MemoryFact` +
+  assistentens minne. Null personvern-kost, ingen infra, ingen samtykke. **Den
+  umiddelbare gevinsten — utvid her først** (adaptive defaults, assistent-minne,
+  «du åpner alltid golf → løft det»). Alt beregnet lokalt, ett byte forlater aldri
+  enheten. Passer eksakt to-lags-arkitekturen (kost skalerer med dekning, ikke
+  brukere).
+
+- **B · Lære PÅ TVERS av brukere** (aggregat → bedre defaults/dekning/onboarding)
+  — krever innsamlingsvei siden privat-DB er usynlig. Rangert etter risiko:
+  1. **Mine follow-requestene** (`follow.yml` → GitHub-issues) — allerede
+     OFFENTLIGE. «Hva ber folk om å følge» er gratis, ikke-personlig, i dag.
+     Kobler til WP-23 gap-voting + WP-96 etterspørselsmodell.
+  2. **Opt-in anonymt aggregat via CloudKit PUBLIC database** — null-infra
+     (Apple hoster), utvikler-lesbar (ulikt privat-DB), gratis på denne skalaen,
+     blir i Apple-økosystemet. Bruker skriver frivillig «anon følger entitet X»;
+     vi spør public-DB om popularitet. Den elegante på-merket-veien når (1) ikke
+     rekker.
+  3. **Ekte telemetri/backend** — siste utvei; bryter null-infra + personvern-
+     posisjonen («dine data rører aldri serveren vår» er tillitskapital, brukes
+     opp én gang) + GDPR-plikter (samtykke, personvernerklæring, databehandler).
+
+**Anbefaling:** start med **A (on-device) + B.1 (offentlige follow-requests)** —
+null risiko, null infra, verdi i dag. **B.2** når tverr-bruker-signal faktisk
+trengs. **B.3** kun ved bevisst posisjons-skifte. Personvern-linjen, om noen, hold
+den på ASSISTENT-MINNET (litt mer personlig enn følge-lista), aldri på følges.
+Status: rammeverk besluttet; ingen innsamling bygget. NESTE når prioritert:
+skissere A-utvidelsen (adaptive defaults fra `BehaviorCounter`) som egen WP.
+
 ## FASE 1 · Norge-lansering (Q4 2026, dossier P400/P500) — skisse
 
 - **WP-20 · Kildemigrering til primærkilder** (P400 regel #1): erstatt tvkampen-scraperen

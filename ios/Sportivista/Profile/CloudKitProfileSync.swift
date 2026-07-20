@@ -6,9 +6,13 @@
 //  the profile syncs to the USER'S OWN private CloudKit database — inside THEIR
 //  iCloud quota, in THEIR private zone, NEVER our server. There is no Sportivista
 //  backend in this path at all; Apple moves the bytes between the user's own
-//  devices. The free-text fields (a rule's `reason`, a note's text) ride in
-//  `encryptedValues`, so they are end-to-end encrypted where CloudKit supports
-//  it (a custom zone in the private DB — which is exactly what we create).
+//  devices. The profile is stored as PLAINTEXT in that private DB — deliberately,
+//  not E2E. Rationale: a sports follow-list ("I follow Liverpool") is low
+//  sensitivity, E2E (`encryptedValues`) was over-engineering, and it is exactly
+//  what blocked web sync — CloudKit JS cannot decrypt E2E fields. Plaintext keeps
+//  the SAME privacy boundary that matters (the data lives ONLY in the user's own
+//  private DB, never our server) while making one clean channel readable by BOTH
+//  the app and the user's own web sign-in.
 //
 //  ONE record per rule (recordName = entityId), matching the server's
 //  `tracked.json` "one entry per entity" shape. Deletions replicate as tombstone
@@ -16,14 +20,11 @@
 //  deletions — so a peer holding a stale live copy cannot resurrect an
 //  unfollowed entity (the same tombstone discipline the merge enforces).
 //
-//  THE WEB CHANNEL (`ProfileSnapshot`): CloudKit JS in a browser CANNOT decrypt
-//  `encryptedValues`, so the per-record path above is invisible to the web. To
-//  sync with the web we ALSO publish one PLAINTEXT snapshot per device
-//  (`writeSnapshot` → a ProfileShareCodec payload in a `payload` field, recordName
-//  = this device) and fold every device's snapshot back in on `pull`. The native
-//  iOS↔iOS path stays E2E; the snapshot is the deliberately-plaintext bridge (its
-//  content is still ONLY in the user's own private DB — never shared, never our
-//  server). See docs/icloud-sync-setup.md.
+//  THE WEB CHANNEL (`ProfileSnapshot`): a browser can't page the per-record types,
+//  so we ALSO publish one plaintext snapshot per device (`writeSnapshot` → a
+//  ProfileShareCodec payload in a `payload` field, recordName = this device) and
+//  fold every device's snapshot back in on `pull`. Same private DB, same
+//  plaintext posture. See docs/icloud-sync-setup.md.
 //
 //  ACCOUNT CONSTRAINT (binding): the free personal team (DEVELOPMENT_TEAM
 //  9LVCB72DT8) cannot provision the CloudKit entitlement on a device build
@@ -52,10 +53,10 @@ final class CloudKitProfileSync: ProfileSyncBackend, @unchecked Sendable {
         static let rule = "ProfileRule"
         static let episodic = "EpisodicNote"
         static let counter = "Counter"
-        /// WP — the web-readable channel: one record per device, a single PLAINTEXT
+        /// WP — the web-readable channel: one record per device, a single
         /// `payload` field (a ProfileShareCodec string of the device's full merged
-        /// state). CloudKit JS can read this (it CANNOT read the encryptedValues on
-        /// the record types above), so this is how the browser learns the profile.
+        /// state). A browser can't page the per-record types above, so this one
+        /// record is how the browser learns the whole profile in a single read.
         static let snapshot = "ProfileSnapshot"
     }
 
@@ -66,8 +67,9 @@ final class CloudKitProfileSync: ProfileSyncBackend, @unchecked Sendable {
     private let snapshotDeviceID: String
 
     /// Defaults to the app's default container's PRIVATE database and a dedicated
-    /// custom zone (custom zones are what enable `encryptedValues`). A different
-    /// container id can be injected for a future multi-container setup.
+    /// custom zone (kept for record grouping + a future `fetchRecordZoneChanges`
+    /// delta sync). A different container id can be injected for a future
+    /// multi-container setup.
     init(container: CKContainer = .default(), zoneName: String = "SportivistaProfile") {
         self.database = container.privateCloudDatabase
         self.zoneID = CKRecordZone.ID(zoneName: zoneName, ownerName: CKCurrentUserDefaultName)
@@ -107,7 +109,7 @@ final class CloudKitProfileSync: ProfileSyncBackend, @unchecked Sendable {
     private func fetchRules() async throws -> [SyncedRule] {
         try await fetchAll(type: RecordType.rule).compactMap { record in
             guard
-                let json = record.encryptedValues["ruleJSON"] as? Data,
+                let json = record["ruleJSON"] as? Data,
                 let rule = try? Self.jsonDecoder.decode(InterestRule.self, from: json),
                 let modifiedAt = record["modifiedAt"] as? Date,
                 let deviceID = record["deviceID"] as? String
@@ -124,11 +126,11 @@ final class CloudKitProfileSync: ProfileSyncBackend, @unchecked Sendable {
                 let createdAt = record["createdAt"] as? Date
             else { return nil }
             var payload: [String: String] = [:]
-            if let data = record.encryptedValues["payloadJSON"] as? Data,
+            if let data = record["payloadJSON"] as? Data,
                let decoded = try? Self.jsonDecoder.decode([String: String].self, from: data) {
                 payload = decoded
             }
-            let note = record.encryptedValues["note"] as? String
+            let note = record["note"] as? String
             let resolvedAt = record["resolvedAt"] as? Date
             return EpisodicNote(id: record.recordID.recordName, kind: kind, createdAt: createdAt,
                                 payload: payload, note: note, resolvedAt: resolvedAt)
@@ -194,7 +196,7 @@ final class CloudKitProfileSync: ProfileSyncBackend, @unchecked Sendable {
     private func ruleRecord(_ r: SyncedRule) throws -> CKRecord {
         let record = CKRecord(recordType: RecordType.rule,
                               recordID: CKRecord.ID(recordName: r.entityId, zoneID: zoneID))
-        record.encryptedValues["ruleJSON"] = try Self.jsonEncoder.encode(r.rule) as CKRecordValue
+        record["ruleJSON"] = try Self.jsonEncoder.encode(r.rule) as CKRecordValue
         record["modifiedAt"] = r.modifiedAt as CKRecordValue
         record["deviceID"] = r.deviceID as CKRecordValue
         record["deleted"] = Int64(r.deleted ? 1 : 0) as CKRecordValue
@@ -206,8 +208,8 @@ final class CloudKitProfileSync: ProfileSyncBackend, @unchecked Sendable {
                               recordID: CKRecord.ID(recordName: n.id, zoneID: zoneID))
         record["kind"] = n.kind as CKRecordValue
         record["createdAt"] = n.createdAt as CKRecordValue
-        record.encryptedValues["payloadJSON"] = try Self.jsonEncoder.encode(n.payload) as CKRecordValue
-        if let note = n.note { record.encryptedValues["note"] = note as CKRecordValue }
+        record["payloadJSON"] = try Self.jsonEncoder.encode(n.payload) as CKRecordValue
+        if let note = n.note { record["note"] = note as CKRecordValue }
         if let resolvedAt = n.resolvedAt { record["resolvedAt"] = resolvedAt as CKRecordValue }
         return record
     }
