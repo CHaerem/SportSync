@@ -203,12 +203,20 @@ erstattet av kapsel-knapp + samtaleark. Full tilstandsspec i
 `design/specs/assistent-nyheter-v0.md`.
 
 - **Kapsel-knappen** nederst (flytende Liquid Glass-flate, `glassEffect` +
-  `safeAreaInset`; agendaen scroller under): ledende assistent-symbol +
-  «Spør, eller be om noe …» + `mic`, i EKTE `Capsule`-form. Hele flaten er én
-  knapp (button-rolle, ≥44 pt) som åpner samtalearket; mic hopper rett i
+  `safeAreaInset`; agendaen scroller under): ledende assistent-symbol + en
+  rolig linje som NAVNGIR en evne + `mic`, i EKTE `Capsule`-form. Hele flaten
+  er én knapp (button-rolle, ≥44 pt) som åpner samtalearket; mic hopper rett i
   diktering. Ingen inline-skriving i roten. (Rev. 19.07 eier-funn: uten
-  ledende symbol leses den grå teksten som et dødt tekstfelt — Maps-mønsteret
-  krever ankersymbolet.)
+  ledende symbol leses linja som et dødt tekstfelt — Maps-mønsteret krever
+  ankersymbolet.)
+  - **I ro NAVNGIR kapselen en evne — kontekstuell per flate (WP-142)**, ikke
+    en blank «Spør, eller be om noe …»-placeholder (den leste som en
+    kommandolinje / et tomt inntastingsfelt). Aktiv stemme, klarspråk,
+    sentence case, ÉN linje, maks to konkrete evner som brukeren styrer:
+    Uka → «Følg et lag, eller spør om uka»; Nyheter → «Følg noe, eller spør om
+    nyhetene». Guidingen skjer ved ENGASJEMENT (arkets eksempelrader når du
+    åpner), ALDRI som en stående chips-vegg på agendaen — calm er ufravikelig
+    (én rolig, skannbar flate; ingen konkurrerende paneler).
 - **Samtalearket** (native sheet, grabber/dra-ned/tapp-utenfor): én setning
   («Skriv eller snakk — helt vanlig norsk.») + tre TRYKKBARE eksempelrader
   (følg-et-lag → Legg til-søket · spørsmål · kommando) + felt nederst.

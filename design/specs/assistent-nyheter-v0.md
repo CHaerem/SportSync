@@ -11,8 +11,13 @@ fremskyndet forbi G1 — eierbeslutning 19.07).
 1. **Ord foran ikoner** — «Uka» og «Nyheter» som ord i segmented, aldri
    anonyme ikoner.
 2. **Assistenten er synlig og selvforklarende** — inngangen er en kapsel-KNAPP
-   nederst («Spør, eller be om noe …» + mic, hele flaten trykkbar, ≥44 pt);
-   skriving og diktering skjer i arket, aldri inline.
+   nederst (ledende assistent-symbol + en rolig linje som NAVNGIR en evne +
+   mic, hele flaten trykkbar, ≥44 pt); skriving og diktering skjer i arket,
+   aldri inline. **WP-142:** i ro NAVNGIR kapselen en evne, kontekstuell per
+   flate (Uka → «Følg et lag, eller spør om uka»; Nyheter → «Følg noe, eller
+   spør om nyhetene») — ikke den blanke «Spør, eller be om noe …» som leste som
+   en kommandolinje. Guidingen skjer ved ENGASJEMENT (arkets eksempelrader),
+   ikke som chips på agendaen (calm).
 3. **Ett navigasjonsmønster** — rad → detalj (push/sheet med ‹ tilbake);
    aldri gester som eneste vei.
 4. **Assistenten er en snarvei, aldri eneste vei** — alt den kan (følg,
@@ -54,8 +59,9 @@ overlever i ark-form). Tittel ASSISTENT + Lukk.
 
 Tokens: accent (send, dikterings-bølge, mic på kapselen — én per rad/flate),
 cell/cell2, secondary-/tertiaryLabel, separator, groupHeader (PRØV/FORSLAG),
-radius.card. Ofring akseptert: ett tapp mer enn dagens linje; placeholder-
-pedagogikken flytter inn i arkets eksempelrader.
+radius.card. Ofring akseptert: ett tapp mer enn dagens linje; pedagogikken
+flytter inn i arkets eksempelrader (guiding ved engasjement), mens kapselen i
+ro NAVNGIR en evne kontekstuelt (WP-142) i stedet for en blank placeholder.
 
 ## 3b · Interesser uten assistent
 
