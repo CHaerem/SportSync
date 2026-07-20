@@ -22,6 +22,7 @@ const SHELL_FILES = [
     '/js/live.js',
     '/js/detail.js',
     '/js/followed.js',
+    '/js/profile-ui.js',
     '/js/chrome.js',
     '/rediger.html',
     '/js/edit.js',

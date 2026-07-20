@@ -140,9 +140,12 @@ Object.assign(window.Dashboard.prototype, {
 		}
 		let html = rows.join('');
 		const acts = [];
+		// Follow/unfollow the teams/athletes on this card (personal profile) — the
+		// primary personalisation affordance. Empty when profile-sync isn't loaded.
+		if (typeof this.followButtonsHtml === 'function') acts.push(this.followButtonsHtml(e));
 		if (typeof navigator !== 'undefined' && navigator.share) acts.push(`<button type="button" class="ev-act ev-share" data-event-id="${escapeHtml(e.id)}">Del</button>`);
 		acts.push(`<button type="button" class="ev-act ev-report" data-event-id="${escapeHtml(e.id)}">Meld feil</button>`);
-		html += `<div class="d-actions">${acts.join('')}</div>`;
+		html += `<div class="d-actions">${acts.filter(Boolean).join('')}</div>`;
 		return html;
 	},
 
@@ -150,6 +153,12 @@ Object.assign(window.Dashboard.prototype, {
 	 *  WP-96: the web board is catalog-wide, so this explains what Sportivista
 	 *  COVERS (this.covers), not one person's follows. */
 	whyShown(e) {
+		// When YOU have a personal profile, explain it in the personal voice
+		// ("Fordi Hovland spiller … · varsler deg før start") via the shipped lens
+		// twin — same wording as iOS FeedCompiler.whyShown. Catalog-wide otherwise.
+		if (this.hasProfile && typeof ssWhyShown === 'function') {
+			return escapeHtml(ssWhyShown(e, this.interests, this.lensConfig));
+		}
 		const at = this.covers?.alwaysTrack || {};
 		const hay = [e.title, e.tournament, e.homeTeam, e.awayTeam,
 			...(e.norwegianPlayers || []).map((p) => p.name || p), ...(e.participants || []).map((p) => p.name || p)].filter(Boolean).join(' ');
