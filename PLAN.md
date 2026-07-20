@@ -135,6 +135,8 @@ mennesket, aldri av en agent.
 | WP-128 | Web-agenda: fortids-dag-fiks + ekspandert-tilstand over live-poll + klokke-avstemming | 0I | WP-117 | ✅ #336 merget 20.07 |
 | WP-129 | Onboarding-klarhet: formål i klarspråk + kapsel-copy + stale kommentarer | 0I | WP-117 | ✅ #342 merget 20.07 |
 | WP-130 | Pipeline-kvalitet: refaktor-auditens quick-wins | 0I | — | ✅ #338 merget 20.07 — containsName-memo, haystack-dedup ×3, én fillesing, configDirPath (+2 env-bugfiks), 2 døde eksporter, flattenStats, golf mergeEvents |
+| WP-131 | Interests-arv-sanering: eier-personlige flagg ut av publiserte artefakter | 0I | WP-96 | ⬜ |
+| WP-132 | Onboarding: quick-picks-først + generiske pakker + assistent-intro (dyp personalisering) | 0I | WP-129 | ⬜ |
 
 ---
 
@@ -1908,4 +1910,50 @@ Land-playbook (Sverige først), Android (zero-knowledge profil-blob), ev. B2B.
 ---
 
 *Opprettet 13.07.2026 fra kommersialiserings-dossieret v3 + kontraktkartlegging av repoet.
-Vedlikeholdes av agentene som jobber på pakkene (regel 6).*
+Vedlikeholdes av agentene som jobber på pakkene (regel 6).*### WP-131 · Interests-arv-sanering (eierbestilling 20.07 morgen)
+**Mål:** siden WP-96 lever personlig presisjon på hver enkelt enhet — men eierens
+private interesser lekker fortsatt inn i GLOBALT publiserte artefakter. Verifisert:
+`mustWatch` stemples i publiserte events.json (35 events i dag) fra eierens
+interests. **Innhold:** (1) `scripts/build-events.js`: slutt å stemple
+`mustWatch` i publiserte events.json — ICS-bygget (eier-artefaktet) beregner det
+selv fra interests ved byggetid (`mustWatchEntity` finnes alt i build-ics.js:133
+som fallback — gjør den til eneste vei); verifiser at INGEN klient (docs/js,
+iOS FeedCompiler/NotificationPlanner) leser `mustWatch`-feltet — hver klients
+must-see/varsler skal komme fra brukerens egen profil/linse; (2) full lekkasje-
+audit av øvrige publiserte filer: `isFavorite`/favoritter-først-sortering i
+recent-results (WP-44-komparatoren — eierens favoritter?), fetch/football.js-
+interests-bruk, andre eier-flagg i docs/data — fjern eller flytt til
+eier-artefakter; (3) docs/js: rydd de døde `this.interests`-grenene i
+dashboard.js (permanent null siden WP-96 — auditfunn) og evt. mustWatch-lesing;
+(4) dokumentér i CLAUDE.md hvilke artefakter som ER bevisst eier-scopet
+(events.ics + interests.json som katalog-frø) — og at ALT annet publisert skal
+være bruker-nøytralt. **Ikke-mål:** ingen endring i interests.json selv,
+follow-request-flyten eller katalog-mekanismen. **Aksept:** publisert events.json
+uten mustWatch (sandbox-diff), ICS byte-ekvivalent (samme VALARM-sett),
+vitest + golden-vektorer (re-frys IKKE forventet — verifiser), skjermer urørt.
+
+### WP-132 · Onboarding: quick-picks-først + generiske pakker + assistent-intro
+**Mål (eierbestilling 20.07 morgen):** enklest mulig onboarding — quick-picks
+som gir mening for ALLE norske sportsinteresserte (ikke eierens personlige valg)
++ en god innføring i hvordan assistenten hjelper deg; den store verdien —
+**dyp personalisering** — skal komme tydelig frem. **Innhold:** (1) INNGANGSSTEG-
+FLIPP (WP-129s flaggede valg, nå besluttet): quick-picks er første steg for alle;
+samtale-veien er en tydelig men sekundær «eller fortell med egne ord»-inngang
+(Apple Intelligence-gatet som i dag); (2) PAKKE-KURATERING (StarterPacks.swift):
+erstatt eier-spesifikke valg med bredt meningsfulle — «Norsk fotball» =
+Eliteserien + landslagene (IKKE Lyn); golf = Hovland + majors (nasjonalt
+meningsfull — behold); sjakk = Carlsen; sykkel = TdF + norske ryttere; friidrett
+= Warholm/Ingebrigtsen; tennis = Ruud + Grand Slams; CS2-pakken generaliseres
+(store turneringer, ikke 100T/rain) eller merkes nisje; vintersport-pakke INN
+(sesongstart nov — skiskyting/langrenn/alpint/hopp); (3) ASSISTENT-INTRO etter
+quick-picks: ett rolig steg/øyeblikk som VISER dyp personalisering med 2–3
+konkrete eksempler i klarspråk («Si: 'bare de norske i Tour de France'», «'ikke
+vis resultater før jeg har sett kampen'», «'følg alt Warholm gjør'») + trykkbar
+prøv-nå som åpner assistenten. Progressive disclosure: den ikke-tekniske kan
+hoppe over alt og ha en fungerende app; entusiasten ser dybden. **Ikke-mål:**
+ingen endring i assistent-armene/FM-prompter; ingen serverendring. **Aksept:**
+onboarding-UI-flyt grønn (quick-picks-først), pakkene grunnfester mot
+entities.json-id-er som finnes, eval-corpus-case for ett intro-eksempel
+(0E-regelen), full unit-suite + 4 schemes + vektorer, skjermbilder begge temaer.
+
+
