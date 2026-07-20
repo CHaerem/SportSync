@@ -647,6 +647,90 @@ describe("agenda day grouping: no past-day heading above «I dag» (WP-128)", ()
 	});
 });
 
+// WP-124: horizon consistency. The agenda hard-caps at 14 days; the new "Fremover"
+// disclosure owns 14–42 days as quiet date · what · tournament rows (no channel), so
+// web + iOS partition the horizon identically (iOS Uka caps at 14 d, Nyheter-FREMOVER
+// owns beyond). Tested on the pure selection (forwardWindow) + row string, plus the
+// render's hide-when-empty via a stubbed #fremover element.
+describe("Fremover: the 14–42-day forward look (WP-124)", () => {
+	const days = (n) => new Date(Date.now() + n * 86400000).toISOString();
+
+	it("forwardWindow keeps only events beyond 14 days and within ~42 days", () => {
+		dash.allEvents = [
+			{ id: "near", sport: "football", title: "Nær", time: days(5) },    // < 14d → the agenda owns it
+			{ id: "edge", sport: "football", title: "Innafor", time: days(20) }, // 14–42d
+			{ id: "far", sport: "football", title: "Fjern", time: days(30) },   // 14–42d
+			{ id: "beyond", sport: "football", title: "For langt", time: days(60) }, // > 42d
+		];
+		const ids = dash.forwardWindow().map((e) => e.id);
+		expect(ids).toContain("edge");
+		expect(ids).toContain("far");
+		expect(ids).not.toContain("near");
+		expect(ids).not.toContain("beyond");
+	});
+
+	it("forwardWindow is sorted earliest-first", () => {
+		dash.allEvents = [
+			{ id: "b", sport: "football", title: "B", time: days(30) },
+			{ id: "a", sport: "football", title: "A", time: days(20) },
+		];
+		expect(dash.forwardWindow().map((e) => e.id)).toEqual(["a", "b"]);
+	});
+
+	it("keeps a multi-day event that overlaps the window (isEventInWindow, never a manual time>= filter)", () => {
+		dash.allEvents = [
+			// Starts in 10 days (< 14d) but runs to day 25 — overlaps [14d, 42d].
+			{ id: "grand-tour", sport: "cycling", title: "Rundtur", time: days(10), endTime: days(25) },
+		];
+		expect(dash.forwardWindow().map((e) => e.id)).toContain("grand-tour");
+	});
+
+	it("forwardRow shows date + title + tournament, and NEVER a channel this far out", () => {
+		const html = dash.forwardRow({
+			id: "x", sport: "football", title: "Sesongstart",
+			tournament: "Eliteserien", time: days(20),
+			streaming: [{ platform: "TV 2 Play", url: "https://tv2.no" }],
+		});
+		expect(html).toContain("Sesongstart");
+		expect(html).toContain("Eliteserien");
+		expect(html).toContain("fwd-date");
+		// No viewing option is rendered at this horizon — a heads-up, not "watch here".
+		expect(html).not.toContain("TV 2 Play");
+		expect(html).not.toContain("ev-where");
+	});
+
+	it("forwardDateLabel gives a bare date (no clock) for single-day and a span for multi-day", () => {
+		const single = dash.forwardDateLabel({ time: "2026-08-20T18:00:00Z" });
+		expect(single).toContain("20.");
+		expect(single).not.toContain(":"); // a date, never a clock
+		const span = dash.forwardDateLabel({ time: "2026-08-20T10:00:00Z", endTime: "2026-08-27T20:00:00Z" });
+		expect(span).toContain("–");
+	});
+
+	it("renderFremover hides the section entirely when nothing is booked beyond 14 days", () => {
+		dash.allEvents = [{ id: "near", sport: "football", title: "Nær", time: days(5) }];
+		const el = { hidden: false, innerHTML: "stale" };
+		const prev = win.document.getElementById;
+		win.document.getElementById = (id) => (id === "fremover" ? el : null);
+		dash.renderFremover();
+		win.document.getElementById = prev;
+		expect(el.hidden).toBe(true);
+		expect(el.innerHTML).toBe("");
+	});
+
+	it("renderFremover fills and shows the section when forvarsler exist", () => {
+		dash.allEvents = [{ id: "far", sport: "football", title: "Sesongstart", tournament: "Eliteserien", time: days(20) }];
+		const el = { hidden: true, innerHTML: "" };
+		const prev = win.document.getElementById;
+		win.document.getElementById = (id) => (id === "fremover" ? el : null);
+		dash.renderFremover();
+		win.document.getElementById = prev;
+		expect(el.hidden).toBe(false);
+		expect(el.innerHTML).toContain("Fremover");
+		expect(el.innerHTML).toContain("Sesongstart");
+	});
+});
+
 // WP-128: the live poller re-renders the whole agenda (innerHTML rebuild) every 60s,
 // which used to collapse whatever row the reader had expanded. eventRow now reads the
 // remembered-open set (this._agendaOpen) and bakes the open state back into the HTML,

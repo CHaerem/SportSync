@@ -206,6 +206,52 @@ final class AgendaViewModelTests: XCTestCase {
         XCTAssertFalse(row.title.contains("juli"), "no date text may leak into the title")
     }
 
+    // MARK: - WP-124: the 14-day forward display cap (mirrors the web maxHorizon)
+
+    func testBuildSections_capsForwardHorizonAt14Days() {
+        // events.json runs ~42 days; the agenda («Uka») shows only the next 14,
+        // mirroring the web (dashboard.js `maxHorizon = now + 14 * MS_PER_DAY`).
+        // Beyond it, Nyheter-FREMOVER owns the horizon. A pure DISPLAY window —
+        // relevance is unchanged (all three events are followed football), only
+        // what the board paints changes.
+        let now = iso("2026-07-14T10:00:00Z")
+        let events = [
+            EventBuilder.make(sport: "football", title: "Innenfor", time: "2026-07-20T18:00:00Z"),   // +6 d → shown
+            EventBuilder.make(sport: "football", title: "På grensen", time: "2026-07-27T18:00:00Z"), // +13 d → shown
+            EventBuilder.make(sport: "football", title: "Utenfor", time: "2026-08-05T18:00:00Z"),    // +22 d → capped
+        ]
+        let interests = Interests(followBroadly: ["football"])
+
+        let sections = AgendaViewModel.buildSections(events: events, interests: interests, now: now)
+        let titles = allItems(sections).compactMap { item -> String? in
+            if case .event(let row) = item { return row.title }
+            return nil
+        }
+        XCTAssertTrue(titles.contains("Innenfor"))
+        XCTAssertTrue(titles.contains("På grensen"))
+        XCTAssertFalse(titles.contains("Utenfor"), "an event past the 14-day horizon must not appear in Uka")
+    }
+
+    func testBuildSections_ongoingMultiDayEventBeyond14Days_stillShownUnderToday() {
+        // The cap keys off the START (like isEventInWindow's upper bound), so a
+        // multi-day event that STARTED before today and runs past day 14 keeps its
+        // past start (< the horizon) and stays — under I DAG, never dropped.
+        let now = iso("2026-07-14T10:00:00Z")
+        let event = EventBuilder.make(
+            sport: "golf", title: "Lang turnering",
+            time: "2026-07-12T08:00:00Z", endTime: "2026-08-10T20:00:00Z"  // started −2 d, ends +27 d
+        )
+        let interests = Interests(followBroadly: ["golf"])
+
+        let sections = AgendaViewModel.buildSections(events: [event], interests: interests, now: now)
+        XCTAssertEqual(sections.first?.label, "I DAG")
+        let titles = allItems(sections).compactMap { item -> String? in
+            if case .event(let row) = item { return row.title }
+            return nil
+        }
+        XCTAssertTrue(titles.contains("Lang turnering"), "an ongoing multi-day event past day 14 stays under I DAG")
+    }
+
     // MARK: - WP-112: head-to-head participant display (the "VM-finale" hole)
 
     func testBuildSections_headToHeadParticipants_showsMatchupAndKeepsGenericTitleAsMeta() {
@@ -337,6 +383,11 @@ final class AgendaViewModelTests: XCTestCase {
     func testBuildSections_realFixtures_tourDeFranceCollapsesAndLynIsMustWatch() throws {
         let events = try SportivistaJSON.decoder.decode([Event].self, from: Fixture.data("events"))
         let interests = try SportivistaJSON.decoder.decode(Interests.self, from: Fixture.data("interests"))
+        // Anchored 13 Jul: the Tour de France (4–26 Jul) sits inside FeedCompiler's
+        // 14-day retention (now − 14 d = 29 Jun) so all 21 stages survive, and the
+        // in-window Lyn match (25 Jul) is inside the WP-124 14-day display cap
+        // (now + 14 d = 27 Jul). The two fixture matches that fall PAST the cap are
+        // asserted excluded below.
         let now = iso("2026-07-13T12:00:00Z")
 
         let sections = AgendaViewModel.buildSections(events: events, interests: interests, now: now)
@@ -354,14 +405,18 @@ final class AgendaViewModelTests: XCTestCase {
             if case .event(let row) = item { return row }
             return nil
         }
-        let lynSogndal = try XCTUnwrap(eventRows.first { $0.event.id == "e75db0882adf" }) // "Lyn – Sogndal", see EventDecodingTests
-        XCTAssertTrue(lynSogndal.mustWatch, "Lyn is a tracked, notify-by-default team")
-        XCTAssertEqual(lynSogndal.channelLabel, "TV 2 Play")
-        XCTAssertEqual(lynSogndal.title, "Lyn – Sogndal")
+        // "Strømsgodset – Lyn" (25 Jul) is inside the 14-day window; Lyn is a
+        // tracked, notify-by-default team → must-watch, with its real channel.
+        let stromsgodsetLyn = try XCTUnwrap(eventRows.first { $0.event.id == "c1c0bf4ab5cd" })
+        XCTAssertTrue(stromsgodsetLyn.mustWatch, "Lyn is a tracked, notify-by-default team")
+        XCTAssertEqual(stromsgodsetLyn.channelLabel, "TV 2 Play")
+        XCTAssertEqual(stromsgodsetLyn.title, "Strømsgodset – Lyn")
 
-        // "Birmingham City – Barcelona" has an empty `streaming` array in the
-        // fixture — the honest "–" fallback must hold on real data too.
-        let noChannelEvent = try XCTUnwrap(eventRows.first { $0.event.title == "Birmingham City – Barcelona" })
-        XCTAssertEqual(noChannelEvent.channelLabel, "–")
+        // WP-124 — the 14-day forward cap on REAL data: two followed matches that
+        // start past 27 Jul must NOT appear on the board (Nyheter-FREMOVER owns
+        // them). "Birmingham City – Barcelona" (31 Jul) and "Lyn – Sogndal"
+        // (e75db0882adf, 2 Aug) were on the pre-WP-124 board and are now capped out.
+        XCTAssertFalse(eventRows.contains { $0.event.id == "e75db0882adf" }, "a match 20 days out is past the 14-day cap")
+        XCTAssertFalse(eventRows.contains { $0.event.title == "Birmingham City – Barcelona" }, "a match 18 days out is past the 14-day cap")
     }
 }

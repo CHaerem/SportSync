@@ -92,16 +92,20 @@ final class NewsBoardTests: XCTestCase {
 	// MARK: - Section 4 (FREMOVER)
 
 	func testFremover_excludesNearHorizon_keepsFarFollowed() {
-		let near = EventBuilder.make(sport: "cross-country", title: "Nær langrenn", time: iso(3), id: "near")       // < 7d
-		let far = EventBuilder.make(sport: "cross-country", title: "Fjern langrenn", time: iso(30), id: "far")      // > 7d, followed
-		let farUnfollowed = EventBuilder.make(sport: "tennis", title: "Fjern tennis", time: iso(30), id: "tennis")  // > 7d, NOT followed
+		// WP-124: the near-horizon floor is now 14 d (forwardHorizonDays), aligned
+		// with Uka's 14-day display cap so the two views partition the horizon.
+		let near = EventBuilder.make(sport: "cross-country", title: "Nær langrenn", time: iso(3), id: "near")       // < 14d → Uka owns it
+		let far = EventBuilder.make(sport: "cross-country", title: "Fjern langrenn", time: iso(30), id: "far")      // > 14d, followed
+		let farUnfollowed = EventBuilder.make(sport: "tennis", title: "Fjern tennis", time: iso(30), id: "tennis")  // > 14d, NOT followed
 		let board = NewsBoard.build(news: [], featured: nil, results: RecentResults(), events: [near, far, farUnfollowed], entities: [lynTeam, langrenn], profile: followProfile, shield: SpoilerShield(), now: now)
 
 		XCTAssertEqual(board.forward.map(\.id), ["far"], "only the far-future FOLLOWED event is a forvarsel")
 	}
 
 	func testFremover_sortedByStart_andCapped() {
-		let events = (1...12).map { EventBuilder.make(sport: "cross-country", title: "E\($0)", time: iso(Double(10 + $0)), id: "e\($0)") }
+		// WP-124: fixture anchored beyond the 14-day floor (days 16–27) so all
+		// events are genuinely forvarsler — the test still proves sort + cap.
+		let events = (1...12).map { EventBuilder.make(sport: "cross-country", title: "E\($0)", time: iso(Double(15 + $0)), id: "e\($0)") }
 		let board = NewsBoard.build(news: [], featured: nil, results: RecentResults(), events: events, entities: [langrenn], profile: followProfile, shield: SpoilerShield(), now: now, maxForward: 8)
 		XCTAssertEqual(board.forward.count, 8)
 		XCTAssertEqual(board.forward.first?.id, "e1", "earliest first")

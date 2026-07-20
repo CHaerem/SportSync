@@ -417,15 +417,26 @@ final class AgendaViewModel {
         }
 
         LaunchTrace.mark("compile/rows (n=\(placed.count))", since: _tr)
-        // Re-group by day, drop passed days (DESIGN.md "Agendaens semantikk" §1:
-        // I DAG first, never a passed day — FeedCompiler already re-homed a
-        // still-running multi-day event onto today), order days ascending, and
-        // sort within a day by the (effective) time. With an empty/default-lens
-        // profile every placed row keeps its FeedCompiler day + event time, so
-        // this reproduces the old per-day map exactly.
+        // WP-124 — cap the display window at 14 days forward, mirroring the web
+        // agenda 1:1 (dashboard.js `agendaDayGroups`: `maxHorizon = now + 14 *
+        // MS_PER_DAY`, `isEventInWindow(e, start, maxHorizon)`). events.json runs
+        // ~42 days; the web board hard-caps at 14 d and iOS Uka never did — so a
+        // long tail could bloat Uka and duplicate Nyheter-FREMOVER. Both surfaces
+        // now PARTITION the horizon: Uka ≤ 14 d, Nyheter-FREMOVER owns beyond
+        // (NewsBoard.forwardHorizonDays = 14; owner decision 20.07). This is a
+        // pure DISPLAY window — the five predicates / FeedCompiler / golden vectors
+        // are untouched (FeedVectorTests still passes bit-for-bit; it exercises the
+        // predicates, not this grouping). isEventInWindow's UPPER bound depends
+        // only on the start (`e.time < maxHorizon`), so a `sortTime` cut mirrors it
+        // exactly: a still-running multi-day event keeps its past start time (< the
+        // horizon) and stays; a future event starting past day 14 drops out here
+        // and reappears under Nyheter-FREMOVER. sortTime == nil never happens for
+        // relevant events (FeedCompiler requires a time) — kept, since it groups
+        // under today, well inside the window.
+        let maxHorizon = now.addingTimeInterval(14 * 24 * 60 * 60)
         var order: [String] = []
         var byDay: [String: [Placed]] = [:]
-        for p in placed where p.dayKey >= todayKey {
+        for p in placed where p.dayKey >= todayKey && (p.sortTime.map { $0 < maxHorizon } ?? true) {
             if byDay[p.dayKey] == nil { order.append(p.dayKey) }
             byDay[p.dayKey, default: []].append(p)
         }

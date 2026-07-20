@@ -27,9 +27,15 @@ struct NewsBoard: Equatable {
 
 	static let empty = NewsBoard(headline: nil, news: [], results: [], forward: [])
 
-	/// Events starting sooner than this many days ahead belong to the agenda
-	/// («Uka»); FREMOVER previews what's beyond it (draws, season starts).
-	static let forwardHorizonDays: Double = 7
+	/// Events within this many days ahead belong to the agenda («Uka»); FREMOVER
+	/// previews what's beyond it (draws, season starts). WP-124: raised 7 → 14 so
+	/// the handoff aligns EXACTLY with Uka's 14-day display cap
+	/// (AgendaViewModel.buildSections' `maxHorizon`) — the two views now partition
+	/// the horizon with no systematic [7 d, 14 d] overlap (events in that week used
+	/// to show in BOTH Uka and FREMOVER) and no gap (Uka's cap and this floor are
+	/// the same boundary). Mirrors the web split (dashboard.js agenda 14 d + the
+	/// «Fremover» disclosure ≥ 14 d). Owner decision 20.07.
+	static let forwardHorizonDays: Double = 14
 
 	static func build(
 		news: [NewsItem],

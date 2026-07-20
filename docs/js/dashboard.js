@@ -103,6 +103,7 @@ class Dashboard {
 		// in the window (this._agendaShownIds) so renderNextUp can dedupe a glance row
 		// that already has its own agenda row (WP-128).
 		this.renderAgenda();
+		this.renderFremover();
 		this.renderNextUp();
 		this.renderFollowed();
 		this.renderFooter();
@@ -330,6 +331,67 @@ class Dashboard {
 		// re-render (which would re-flash the whole agenda each minute).
 		if (!this._revealed) { el.classList.add('reveal'); this._revealed = true; }
 		else { el.classList.remove('reveal'); }
+	}
+
+	// ── "Fremover": the 14–42-day forward look (WP-124 horizon consistency) ───
+	/** The events beyond the agenda's 14-day horizon but within ~42 days — the
+	 *  quiet "forvarsler" (season starts, draws, majors booked far out). The
+	 *  agenda hard-caps at `now + 14d` (agendaDayGroups' maxHorizon); this owns
+	 *  the rest of what events.json carries (~42 d), so the two views PARTITION
+	 *  the horizon and mirror the iOS split (Uka caps at 14 d, Nyheter-FREMOVER
+	 *  owns beyond — NewsBoard.forwardHorizonDays = 14). fwStart is the SAME
+	 *  `now + 14d` boundary the agenda stops at, so the handoff is seamless: an
+	 *  event exactly on the boundary lands here (agenda's `time < maxHorizon` is
+	 *  strict), never in both, never in neither. isEventInWindow (never a manual
+	 *  `time >= x`) so a multi-day event overlapping the window survives. */
+	forwardWindow() {
+		const now = Date.now();
+		const fwStart = now + 14 * SS_CONSTANTS.MS_PER_DAY;
+		const fwEnd = now + 42 * SS_CONSTANTS.MS_PER_DAY;
+		return this.collapseSeries(
+			this.allEvents.filter((e) => isEventInWindow(e, fwStart, fwEnd)),
+			now
+		).sort((a, b) => new Date(a.time) - new Date(b.time));
+	}
+
+	/** A forvarsel's DATE label — never a clock (a major weeks out is answered by
+	 *  the day, not the minute; mirrors iOS NewsBoard.forwardDateLabel). A
+	 *  multi-day span reads "20.–27. juli". */
+	forwardDateLabel(e) {
+		const start = new Date(e.time);
+		const dayMon = (d) => d.toLocaleDateString('nb-NO', { day: 'numeric', month: 'short', timeZone: 'Europe/Oslo' });
+		if (e.endTime) {
+			const end = new Date(e.endTime);
+			if (this.osloDayKey(end) > this.osloDayKey(start)) {
+				const dayOnly = (d) => d.toLocaleDateString('nb-NO', { day: 'numeric', timeZone: 'Europe/Oslo' }).replace(/\.$/, '');
+				return `${dayOnly(start)}.–${dayMon(end)}`;
+			}
+		}
+		return dayMon(start);
+	}
+
+	/** One quiet forward row: date · title · tournament. NO channel — a viewing
+	 *  option this far out is unreliable (typically AI-research with wide margin),
+	 *  and the row is a heads-up, not a "watch here" (DESIGN calm: honest, minimal). */
+	forwardRow(e) {
+		const title = this.eventTitle(e);
+		const hasMatchup = !!(e.homeTeam && e.awayTeam) || !!this.participantMatchup(e);
+		// Show the tournament as the quiet context, unless it already IS the title.
+		const tour = e.tournament && (hasMatchup || e.tournament !== e.title)
+			? `<span class="fwd-tour">${escapeHtml(e.tournament)}</span>` : '';
+		return `<div class="fwd-row"><span class="fwd-date">${escapeHtml(this.forwardDateLabel(e))}</span><span class="fwd-main"><span class="fwd-title">${title}</span>${tour}</span></div>`;
+	}
+
+	/** The "Fremover" disclosure — one calm, collapsed section under the agenda.
+	 *  Hidden entirely when nothing is booked beyond 14 days (no empty flate). */
+	renderFremover() {
+		const el = document.getElementById('fremover');
+		if (!el) return;
+		const items = this.forwardWindow();
+		if (!items.length) { el.hidden = true; el.innerHTML = ''; return; }
+		el.innerHTML = `<summary><span class="fwd-label">Fremover</span><span class="fwd-count">${items.length}</span></summary>`
+			+ `<div class="fwd-body">${items.map((e) => this.forwardRow(e)).join('')}</div>`;
+		el.hidden = false;
 	}
 
 	/** Is this row currently expanded? Read by eventRow/seriesRow so a re-render
