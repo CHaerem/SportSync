@@ -2040,4 +2040,40 @@ full iOS unit-suite + 4 schemes + gylne vektorer bit-like etter fixture-refrys
 (`test_starterPacks_areGroundedAndUnique` fortsatt grønn — pakkene grunnfester mot
 de nye id-ene).
 
+### WP-134 · Adaptiv personalisering on-device (akse A — «forbedre FOR brukeren»)
+**Bakgrunn (data-strategi 20.07, seksjonen «BRUKERDATA → PRODUKTFORBEDRING»):**
+akse A er den umiddelbare, personvern-frie gevinsten — appen tilpasser seg DEG
+lokalt, null byte forlater enheten. Signalet finnes ALLEREDE: `BehaviorCounter`
+(G-counter i profilen, synkes E2E-fritt via CloudKit-snapshot) sporer
+`open`/`expand`/`dismiss` per entitet OG per sport (`behavior|open|<entityId>` /
+`behavior|open|s:<sport>`, `MemoryModels.swift:154-187`). I dag KONSUMERES det bare
+passivt — vist i «Hva jeg vet om deg» (`WhatIKnowView`) og lett brukt av
+assistenten — men INGENTING ordner eller løfter feeden ut fra det. WP-134 lukker
+den løkka: observert atferd → en mild, deterministisk affinitets-vekt.
+**Innhold:** (1) AFFINITET (ny ren funksjon, testbar, `Feed/` el. `Profile/`):
+`affinity(entityId|sport) = w_open·open + w_expand·expand − w_dismiss·dismiss`,
+mettet/normalisert (unngå at én tung bruker-dag dominerer); bygd fra
+`MemoryState.behavior`. Ren verdi-funksjon → golden-testbar. (2) BRUK — bevisst
+LAV-MÆLT (ro-løftet): IKKE en re-sortering av agendaen (kronologien er hellig),
+men et **tie-break/løft-signal** der rekkefølge ellers er vilkårlig — must-see-
+kandidater innen samme dag, «Neste opp»-utvalget, quick-pick-rekkefølgen i
+onboarding (WP-132), og assistent-defaults («du åpner alltid golf» → golf først når
+et spørsmål er tvetydig). Aldri skjule noe, aldri overstyre eksplisitte føl/-
+importance-signaler. (3) FORKLARBARHET: affiniteten er synlig i `WhatIKnowView`
+(«du åpner golf oftest») så tilpasningen er gjennomsiktig, aldri en svart boks.
+(4) GJENBRUK PÅ WEB (valgfritt, senere): samme signal finnes i den web-syncede
+profilen (counters) → `docs/js` kan speile affiniteten med samme formel (ny
+`ss`-funksjon, feed-vektor-mønsteret) om ønskelig. **Ikke-mål:** ingen ny
+datainnsamling, ingen server, ingen aggregering på tvers av brukere (det er akse
+B, separat); ingen endring i `isRelevant`/`mustWatch`-semantikken (affinitet er et
+tillegg PÅ toppen, ikke en ny relevans-gate — feed-vektorene skal forbli bit-like);
+ingen re-sortering av den kronologiske agendaen. **Aksept:** ren `affinity`-funksjon
+med unit-tester (monotoni, metning, dismiss-dominans); feed-vektorer bit-like
+(affinitet endrer ikke relevans/bell/must-see-SETTENE, kun tie-break-rekkefølge
+innen et sett — pin med en egen ordnings-test); `WhatIKnowView` viser topp-
+affinitet; full iOS-suite + 4 schemes; eval-corpus-case hvis assistent-default
+endres (0E-regelen). **Avhengighet:** ingen (signalet er allerede der); komplementær
+til WP-132 (quick-pick-rekkefølge) og WP-30 (minne-sync). Akse B (offentlige
+follow-requests → opt-in public-DB) er egen, senere WP når brukermassen finnes.
+
 
