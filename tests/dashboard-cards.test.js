@@ -8,6 +8,7 @@ let win;
 beforeAll(() => {
 	const sandbox = createClientSandbox();
 	loadClientScript(sandbox, "shared-constants.js");
+	loadClientScript(sandbox, "lens.js");
 	loadClientScript(sandbox, "dashboard.js");
 	loadClientScript(sandbox, "live.js");
 	loadClientScript(sandbox, "detail.js");
@@ -588,6 +589,7 @@ describe("loadData: stable id from the server, index fallback for old payloads",
 	function sandboxWithEvents(events) {
 		const sandbox = createClientSandbox();
 		loadClientScript(sandbox, "shared-constants.js");
+		loadClientScript(sandbox, "lens.js");
 		loadClientScript(sandbox, "dashboard.js");
 		loadClientScript(sandbox, "live.js");
 		loadClientScript(sandbox, "detail.js");

@@ -106,13 +106,21 @@ function lensRelevant(event, interests, nowMs) {
 // --- Client reference: shared sandbox ----------------------------------------
 let dash; // docs/js/dashboard.js Dashboard instance
 let clientInWindow; // docs/js/shared-constants.js isEventInWindow
+// The SHIPPED lens (docs/js/lens.js) — the code users actually run. Asserting
+// these against the SAME vectors the Swift FeedCompiler replays closes the drift
+// hole: the reference is no longer test-only, it's the production lens.
+let ssIsRelevantFn, ssMustWatchFn, ssIsMustSeeFn;
 
 beforeAll(() => {
 	const sandbox = createClientSandbox();
 	loadClientScript(sandbox, "shared-constants.js");
+	loadClientScript(sandbox, "lens.js"); // before dashboard.js — isMustSee delegates to it
 	loadClientScript(sandbox, "dashboard.js");
 	dash = sandbox.window.dashboard;
 	clientInWindow = sandbox.window.isEventInWindow;
+	ssIsRelevantFn = sandbox.window.ssIsRelevant;
+	ssMustWatchFn = sandbox.window.ssMustWatch;
+	ssIsMustSeeFn = sandbox.window.ssIsMustSee;
 });
 
 // --- Comparison helpers ------------------------------------------------------
@@ -170,20 +178,28 @@ for (const v of VECTORS) {
 
 		if (v.expected.relevant) {
 			it("lens: relevant events match (personal lens == FeedCompiler.isRelevant + 14d cutoff)", () => {
+				// The inline reference (kept as a second witness)…
 				expect(idsWhere(events, (e) => lensRelevant(e, interests, nowMs))).toEqual(sortIds(v.expected.relevant));
+				// …AND the SHIPPED lens (docs/js/lens.js) — the code users run.
+				expect(idsWhere(events, (e) => ssIsRelevantFn(e, interests, nowMs))).toEqual(sortIds(v.expected.relevant));
 			});
 		}
 
 		if (v.expected.mustWatch) {
-			it("server: must-watch (bell) events match (helpers.js mustWatchEntity)", () => {
+			it("must-watch (bell) events match — server helpers.js AND shipped lens.js agree", () => {
 				expect(idsWhere(events, (e) => mustWatchEntity(e, interests) != null)).toEqual(sortIds(v.expected.mustWatch));
+				// The web twin (lens.js ssMustWatch) must equal the server bell.
+				expect(idsWhere(events, (e) => ssMustWatchFn(e, interests))).toEqual(sortIds(v.expected.mustWatch));
 			});
 		}
 
 		if (v.expected.mustSee) {
-			it("client: must-see (accent) events match (dashboard.js isMustSee)", () => {
+			it("client: must-see (accent) events match (dashboard.js isMustSee == shipped lens.js)", () => {
 				dash.interests = interests;
+				// dash.isMustSee now delegates to lens.js; assert both the method and
+				// the lens function directly (proves the extraction changed nothing).
 				expect(idsWhere(events, (e) => dash.isMustSee(e))).toEqual(sortIds(v.expected.mustSee));
+				expect(idsWhere(events, (e) => ssIsMustSeeFn(e, interests))).toEqual(sortIds(v.expected.mustSee));
 			});
 		}
 

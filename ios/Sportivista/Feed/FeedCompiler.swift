@@ -40,17 +40,18 @@ enum FeedCompiler {
     /// only through named entities (elite chess / 100 Thieves), so they are
     /// entity-gated (see `entityGatedSports` + `isRelevantIgnoringTime`), not
     /// admitted wholesale. Mirrors build-events.js's default list.
-    static let defaultFollowBroadly: [String] = [
-        "football", "golf", "f1", "cycling",
-        "biathlon", "cross-country", "alpine", "nordic", "ski jumping",
-    ]
+    /// WP-XX: now sourced from the shared `lens-config.json` (see LensConfig) so
+    /// the value stays byte-identical to the web lens. Same type, same API — no
+    /// consumer changes; only the LITERAL moved to config.
+    static let defaultFollowBroadly: [String] = LensConfig.shared.followBroadlyDefault
 
     /// WP-92 · the relevance gate. Sports the user tracks ONLY through named
     /// entities, never wholesale. For these, `isRelevant` requires a SPORT-SCOPED
     /// tracked-entity match — no norwegian/favorite/importance/ai-research
     /// blanket. `followBroadly` still wins first, so an owner who explicitly
     /// followBroadly-s "chess" gets it wholesale again. Mirrors build-events.js.
-    static let entityGatedSports: Set<String> = ["chess", "esports"]
+    /// Sourced from `lens-config.json` (LensConfig).
+    static let entityGatedSports: Set<String> = Set(LensConfig.shared.entityGatedSports)
 
     private static let msPerDay: TimeInterval = 86_400 // seconds
     static let osloTimeZone = TimeZone(identifier: "Europe/Oslo")!
@@ -108,7 +109,7 @@ enum FeedCompiler {
         if entityGatedSports.contains(sport) {                          // (2)
             return matchInterest(serverHaystack(e), tracked, sport: e.sport) != nil
         }
-        if e.norwegian || e.isFavorite || (e.importance ?? 0) >= 4 { return true } // (3)
+        if e.norwegian || e.isFavorite || (e.importance ?? 0) >= LensConfig.shared.mustSeeImportance { return true } // (3)
         return matchInterest(serverHaystack(e), tracked) != nil         // (4) unscoped
     }
 
@@ -120,7 +121,7 @@ enum FeedCompiler {
     static func isRelevant(_ e: FeedEvent, interests: Interests, now: Date) -> Bool {
         guard let time = e.time else { return false }
         let relevantTime = e.endTime ?? time
-        let cutoff = now.addingTimeInterval(-14 * msPerDay)
+        let cutoff = now.addingTimeInterval(-Double(LensConfig.shared.retentionDays) * msPerDay)
         if relevantTime < cutoff { return false }
         return isRelevantIgnoringTime(e, interests: interests)
     }
@@ -177,7 +178,7 @@ enum FeedCompiler {
     ///     term (substring; reads title + players, NOT participants, NOT
     ///     tournament).
     static func isMustSee(_ e: FeedEvent, interests: Interests) -> Bool {
-        if e.isFavorite || (e.importance ?? 0) >= 4 || (e.norwegian && !e.norwegianPlayers.isEmpty) {
+        if e.isFavorite || (e.importance ?? 0) >= LensConfig.shared.mustSeeImportance || (e.norwegian && !e.norwegianPlayers.isEmpty) {
             return true
         }
         let teams = [e.homeTeam ?? "", e.awayTeam ?? ""].map { $0.lowercased() }
@@ -207,15 +208,9 @@ enum FeedCompiler {
     /// local (not `SportVocabulary`, which lives in the Assistant module the
     /// widget target does NOT compile) so FeedCompiler stays buildable in every
     /// target that includes Feed/.
-    private static let sportNb: [String: String] = [
-        "football": "fotball", "golf": "golf", "f1": "Formel 1", "cycling": "sykkel",
-        "tennis": "tennis", "chess": "sjakk", "esports": "esport", "athletics": "friidrett",
-        "biathlon": "skiskyting", "cross-country": "langrenn", "alpine": "alpint",
-    ]
+    private static let sportNb: [String: String] = LensConfig.shared.sportNb
 
-    private static let enduranceSports: Set<String> = [
-        "cycling", "athletics", "biathlon", "cross-country", "alpine", "nordic", "ski jumping",
-    ]
+    private static let enduranceSports: Set<String> = Set(LensConfig.shared.enduranceSports)
 
     /// The deterministic "why is this on my board" reason (WP-16.4 context
     /// action «Hvorfor vises denne?»). A faithful port of dashboard.js

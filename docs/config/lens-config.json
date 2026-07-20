@@ -1,0 +1,43 @@
+{
+	"_readme": "SHARED lens tunables — the single source of truth for the personalisation lens, read by BOTH the web (docs/js/lens.js via fetch) and iOS (Feed/LensConfig.swift via a bundled resource; project.yml references ../docs/config/lens-config.json into the app + widget + test targets). Change a value HERE and both platforms follow. The lens ALGORITHM stays twinned in FeedCompiler.swift <-> lens.js and is frozen by tests/fixtures/feed-vectors; only these PARAMETERS live here. Regexes are deliberately NOT config (ICU vs ECMAScript dialect drift) — they are stable, vector-covered logic. Keep values byte-identical to what FeedCompiler.swift and tests/feed-vectors.test.js pinned before extraction.",
+	"version": 1,
+	"followBroadlyDefault": [
+		"football",
+		"golf",
+		"f1",
+		"cycling",
+		"biathlon",
+		"cross-country",
+		"alpine",
+		"nordic",
+		"ski jumping"
+	],
+	"entityGatedSports": [
+		"chess",
+		"esports"
+	],
+	"retentionDays": 14,
+	"mustSeeImportance": 4,
+	"enduranceSports": [
+		"cycling",
+		"athletics",
+		"biathlon",
+		"cross-country",
+		"alpine",
+		"nordic",
+		"ski jumping"
+	],
+	"sportNb": {
+		"football": "fotball",
+		"golf": "golf",
+		"f1": "Formel 1",
+		"cycling": "sykkel",
+		"tennis": "tennis",
+		"chess": "sjakk",
+		"esports": "esport",
+		"athletics": "friidrett",
+		"biathlon": "skiskyting",
+		"cross-country": "langrenn",
+		"alpine": "alpint"
+	}
+}

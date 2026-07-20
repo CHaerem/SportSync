@@ -61,6 +61,11 @@ targets:
       # target deliberately does NOT list it (no eval code in the widget).
       - path: SportivistaTests/Fixtures/eval-corpus.json
         buildPhase: resources
+      # The SHARED lens tunables — the SAME file the web serves at
+      # docs/config/lens-config.json. LensConfig.swift decodes it from the bundle
+      # (Feed/); change a value in that one file and both platforms follow.
+      - path: ../docs/config/lens-config.json
+        buildPhase: resources
     info:
       path: Sportivista/Info.plist
       properties:
@@ -130,6 +135,10 @@ targets:
       # tiny Codable + pure check, no networking, so it stays widget-safe.
       - path: Sportivista/Sync/AppVersion.swift
       - path: Sportivista/Widget/WidgetTimelineBuilder.swift
+      # Shared lens tunables — LensConfig (in Feed/) reads it from the widget
+      # bundle too; a ~1KB decode, well inside the WidgetKit memory budget.
+      - path: ../docs/config/lens-config.json
+        buildPhase: resources
     info:
       path: SportivistaWidget/Info.plist
       properties:
@@ -279,6 +288,12 @@ targets:
       - path: ../tests/fixtures/feed-vectors
         buildPhase: resources
         type: folder
+      # Shared lens tunables (docs/config/lens-config.json) — bundled so
+      # LensConfig (Feed/) resolves it in the test bundle exactly as in the app,
+      # and FeedVectorTests prove the extraction is byte-identical to the old
+      # hard-coded constants.
+      - path: ../docs/config/lens-config.json
+        buildPhase: resources
     resources:
       - path: SportivistaTests/Fixtures
     info:

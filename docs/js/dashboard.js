@@ -168,18 +168,13 @@ class Dashboard {
 	// ── Helpers ─────────────────────────────────────────────────────────────
 	osloTime(d) { return d.toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Oslo' }); }
 	osloDayKey(d) { return d.toLocaleDateString('en-CA', { timeZone: 'Europe/Oslo' }); }
+	// The quiet visual accent. Delegates to the ONE shipped lens (lens.js,
+	// loaded before this file) so the web and the golden feed-vectors run the
+	// SAME code — see lens.js header. `this.interests` is null (catalog-wide) or
+	// the personal profile; `this.lensConfig` is the shared lens-config.json
+	// (undefined → baked-in defaults, byte-identical to the old inline logic).
 	isMustSee(e) {
-		if (e.isSeries) return false;
-		if (e.isFavorite || (e.importance || 0) >= 4 || (e.norwegian && e.norwegianPlayers?.length)) return true;
-		// Your people playing is the whole point: Norway national team, a tracked
-		// club, or a tracked athlete on the card → give it the accent.
-		const teams = [e.homeTeam || '', e.awayTeam || ''].map((t) => t.toLowerCase());
-		if (teams.some((t) => /\bnorway\b|\bnorge\b/.test(t))) return true;
-		const tracked = trackedTerms(this.interests?.alwaysTrack?.teams).map((t) => t.toLowerCase());
-		if (teams.some((t) => t && tracked.some((tt) => t.includes(tt)))) return true;
-		const hay = `${e.title || ''} ${(e.norwegianPlayers || []).map((p) => p.name || p).join(' ')}`.toLowerCase();
-		const athletes = trackedTerms(this.interests?.alwaysTrack?.athletes).map((a) => a.toLowerCase());
-		return athletes.some((a) => a && hay.includes(a));
+		return ssIsMustSee(e, this.interests, this.lensConfig);
 	}
 
 	/** The time cell: a HH:MM for a single-day event, or a date window
