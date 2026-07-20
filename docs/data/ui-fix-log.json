@@ -1,11 +1,11 @@
 {
-	"runAt": "2026-07-18T11:20:00Z",
+	"runAt": "2026-07-20T00:00:00Z",
 	"action": "none",
 	"pr": null,
 	"fixed": [],
 	"notes": [
-		"visual-qa-log.json verdict is 'issues', but both findings are severity 'low' — there are no high/medium findings, so per the ui-fix contract (act only on high/medium) this run is a clean no-op. No branch, no PR.",
-		"Deferred low finding 1 (393px, footer/page background): faint diagonal hatch below the footer on narrow widths suggests the page background colour doesn't fill the full scrollable height (background painted on a wrapper shorter than the viewport rather than html/body). Real but cosmetic and below the action threshold; left for a future medium-or-higher escalation.",
-		"Deferred low finding 2 (393px, VM-finalen row): 'NRK / 1' channel label wraps with an orphaned '1' at 393px only (fits on one line at 375 and 900). Narrow-range wrapping quirk, low severity; not fixed this run."
+		"visual-qa-log.json verdict is 'pass' with an empty findings[] — nothing to fix. Per the ui-fix contract (act only on high/medium findings), this run is a clean no-op: no branch, no PR.",
+		"Latest visual review (2026-07-20) confirmed all three widths (375/393/900px) render a single quiet column, Apple-native styling, no horizontal scroll or clipped content, Norwegian-only channels, and intact header/agenda/footer.",
+		"Note from the QA run: only the default light theme was screenshotted; dark/true-black was not assessed this pass. Not actionable here (no reported finding)."
 	]
 }
