@@ -870,9 +870,9 @@ final class AssistantViewModel {
 
     // WP-143: `CapsuleContext` + `capsulePrompt(for:)` (WP-142's contextual resting
     // label for the bottom capsule) are removed — the capsule is gone, the assistant
-    // is opened from the header `sparkles` toolbar button, which carries no resting
-    // line (the icon + placement say «assistent»; guiding-by-engagement lives in the
-    // sheet's example rows below).
+    // is opened from the floating bottom `AssistantButton` (WP-144), which carries no
+    // resting placeholder (its `sparkles` + «Spør assistenten» label say «assistent»;
+    // guiding-by-engagement lives in the sheet's example rows below).
 
     /// The one hjelpesetning shown at the top of the freshly-opened sheet.
     static let sheetIntro = "Skriv eller snakk — helt vanlig norsk."

@@ -199,8 +199,9 @@ struct AgendaView: View {
     /// honest "nothing right now" — `lastSync == nil` is DataStore's own
     /// "never synced" flag (see DataStore.swift), not just "zero events".
     /// WP-31: when the board is empty AND the follow-profile is empty (onboarding
-    /// skipped), point at the assistant (WP-143: the header `sparkles` toolbar
-    /// button) instead of reading as "nothing on".
+    /// skipped), point at the assistant (WP-144: the floating bottom «Spør
+    /// assistenten» button) instead of reading as "nothing on". The copy NAMES the
+    /// button rather than a direction, so it survives future placement churn.
     @ViewBuilder
     private var emptyRow: some View {
         if viewModel.filter != nil {
@@ -218,7 +219,7 @@ struct AgendaView: View {
                         .font(.sportivista(.callout, weight: .semibold))
                         .foregroundStyle(SportivistaTokens.secondaryLabel)
                         .accessibilityHidden(true)
-                    Text("Trykk assistenten øverst.")
+                    Text("Trykk Spør assistenten.")
                         .font(.sportivista(.footnote))
                         .foregroundStyle(SportivistaTokens.secondaryLabel.opacity(0.8))
                 }

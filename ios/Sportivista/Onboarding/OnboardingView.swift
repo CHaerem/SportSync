@@ -23,9 +23,9 @@
 //                    Norwegian starter packs as ≥44pt tap targets. This alone
 //                    gives full value on a cold start with no Apple Intelligence,
 //                    and needs no understanding of the assistant.
-//    4. landing    — the quiet finish: it points at the assistant (WP-143: the
-//                    header `sparkles` toolbar button — "du kan alltid si mer til
-//                    Sportivista") and drops the user into an agenda that ALREADY
+//    4. landing    — the quiet finish: it points at the assistant (WP-144: the
+//                    floating bottom «Spør assistenten» button — "du kan alltid si
+//                    mer til Sportivista") and drops the user into an agenda that ALREADY
 //                    reflects the choices, because every confirm/tap recompiled it
 //                    live via onProfileChanged.
 //
@@ -465,7 +465,7 @@ struct OnboardingView: View {
             }
 
             if assistant.profile.isEmpty {
-                Text("Du følger ingenting ennå — det er helt greit. Trykk assistenten øverst når du vil legge til noe.")
+                Text("Du følger ingenting ennå — det er helt greit. Trykk Spør assistenten når du vil legge til noe.")
                     .font(.sportivistaTabular(.subheadline, weight: .regular))
                     .foregroundStyle(SportivistaTokens.label.opacity(0.85))
                     .fixedSize(horizontal: false, vertical: true)

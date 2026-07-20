@@ -6,12 +6,13 @@
 //  Claude Design-handoff root. The screen is now: the brand header, a segmented
 //  ROOT control with ORDS («Uka | Nyheter»), and — per tab — either the
 //  day-grouped agenda (Uka) or the news board shell (Nyheter). The assistant's
-//  ENTRY is a header TOOLBAR BUTTON (`sparkles`, beside the gearshape — WP-143);
-//  tapping it opens the conversation sheet (AssistantSheetView), where writing,
-//  the example rows and the result thread all live. The inline command line
-//  (WP-16.4→WP-99) is retired; the WP-104 bottom capsule that briefly replaced it
-//  is gone too (WP-143 — it read as a dead search field; the "renest Apple" entry
-//  is an honest toolbar button, and the agenda now fills the whole screen).
+//  ENTRY is a COMPACT floating BOTTOM BUTTON (`AssistantButton`: `sparkles` +
+//  «Spør assistenten», in the thumb-reachable zone — WP-144); tapping it opens the
+//  conversation sheet (AssistantSheetView), where writing, the example rows and the
+//  result thread all live. The inline command line (WP-16.4→WP-99) is retired; so is
+//  the WP-104 bottom capsule (a false search-field affordance) and WP-143's header
+//  `sparkles` toolbar button (honest but unreachable one-handed) — WP-144 lands the
+//  entry as a bottom button that BOTH is reachable AND reads plainly as a button.
 //
 //  ContentView owns BOTH view models and hands them ONE shared ProfileStore, so
 //  a follow the assistant applies is the same profile the agenda recompiles
@@ -63,10 +64,10 @@ struct ContentView: View {
     /// WP-104 — the root's two sides (Claude Design-handoff): a segmented with
     /// ORDS under the header — «Uka» (the agenda) vs «Nyheter» (the news board).
     @State private var rootTab: RootTab = .uka
-    /// WP-16.4 → WP-83 → WP-104 → WP-143 — the assistant CONVERSATION sheet is up.
-    /// Opened from the header `sparkles` toolbar button (or raised when a follow is
-    /// proposed from an event detail). Presented as a native `.sheet` (detents +
-    /// grabber) over the root.
+    /// WP-16.4 → WP-83 → WP-104 → WP-143 → WP-144 — the assistant CONVERSATION sheet
+    /// is up. Opened from the floating bottom `AssistantButton` (or raised when a
+    /// follow is proposed from an event detail). Presented as a native `.sheet`
+    /// (detents + grabber) over the root.
     @State private var sheetShown = false
     /// WP-132 — the sheet opens straight into diktering (field focused on appear so
     /// the keyboard's native dictation mic is up) when the onboarding assistant-intro
@@ -247,27 +248,24 @@ struct ContentView: View {
                     NewsView(news: news, assistant: assistant)
                 }
             }
-            // WP-143: the WP-104 bottom capsule is GONE — the agenda / Nyheter now
-            // fill the whole screen (no bottom inset). The assistant's entry is a
-            // header toolbar button instead (see `.toolbar` below): the "renest
-            // Apple" affordance the owner chose, an honest HIG button rather than a
-            // glass flate that read as a dead search field.
+            // WP-144: the assistant's ENTRY is a COMPACT floating button pinned to
+            // the BOTTOM (the thumb-reachable zone) via `safeAreaInset(.bottom)` —
+            // the same scroll-under idiom the old WP-104 capsule used, but as a pill
+            // that HUGS its content and reads unmistakably as a BUTTON (not the false
+            // search-field affordance the capsule had). The agenda / Nyheter scroll
+            // calmly beneath it. Supersedes WP-143's header toolbar button (honest,
+            // but the owner found it unreachable one-handed on a tall iPhone).
+            .safeAreaInset(edge: .bottom) {
+                AssistantButton(onOpen: openAssistant)
+                    .frame(maxWidth: .infinity, alignment: .center)
+            }
             .background(SportivistaTokens.background.ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                // WP-143: the assistant's ENTRY — a header toolbar button (`sparkles`,
-                // the iOS 26 Apple-Intelligence idiom) that opens the conversation
-                // sheet. Declared BEFORE the gearshape so it sits to its LEFT
-                // (settings stays conventionally furthest to the trailing edge, HIG);
-                // the bar-button hit area is ≥44 pt automatically.
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: openAssistant) {
-                        Image(systemName: SportSymbol.assistant)
-                    }
-                    .tint(SportivistaTokens.accent)
-                    .accessibilityLabel("Assistent")
-                    .accessibilityIdentifier("assistant.toolbar")
-                }
+                // WP-144 removed the WP-143 `sparkles` toolbar item; the assistant
+                // now enters from the bottom button above. The gearshape stays the
+                // sole header toolbar button (settings → Deg, conventionally furthest
+                // to the trailing edge).
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showDeg = true } label: {
                         Image(systemName: "gearshape")
@@ -286,10 +284,10 @@ struct ContentView: View {
                     publishedAppVersion: dataStore.loadAppVersion()
                 )
             }
-            // WP-104 → WP-143 — the assistant conversation sheet (detents + grabber),
-            // raised over the root from the header `sparkles` button. Reset the
-            // dictation flag when the sheet closes, so a plain toolbar tap next time
-            // opens it un-focused.
+            // WP-104 → WP-143 → WP-144 — the assistant conversation sheet (detents +
+            // grabber), raised over the root from the floating bottom button. Reset
+            // the dictation flag when the sheet closes, so a plain button tap next
+            // time opens it un-focused.
             .sheet(isPresented: $sheetShown, onDismiss: { sheetStartFocused = false }) {
                 AssistantSheetView(viewModel: assistant, dismiss: closeSheet, startFocused: sheetStartFocused)
                     .presentationDetents([.medium, .large])
@@ -659,7 +657,7 @@ struct ContentView: View {
         sheetShown = true
     }
 
-    /// WP-143 — the header `sparkles` toolbar button — open the conversation sheet
+    /// WP-144 — the floating bottom `AssistantButton` — open the conversation sheet
     /// (un-focused; diktering is a tap on the sheet field's keyboard mic). Onboarding
     /// still opens it focused via `finishThenOpenAssistant` (`sheetStartFocused`).
     private func openAssistant() {
@@ -749,13 +747,14 @@ struct ContentView: View {
 
     // MARK: - Header
 
-    // WP-83 → WP-143 — the brand header, stripped of the v2 header glyphs: the
-    // theme toggle (`◐`) moved to Deg › Utseende, and the `»_` assistant shortcut
-    // gave way first to the bottom command line and then (WP-143) to the header
-    // `sparkles` toolbar button — the assistant's honest, unmistakable entry (see
-    // `.toolbar`). The amber-ticking clock is dropped too (DESIGN § Bevegelse: "Tid
-    // bor i raden + systemets statusbar"). Settings live behind the nav bar's
-    // gearshape. Just the wordmark and the date remain — one quiet masthead.
+    // WP-83 → WP-143 → WP-144 — the brand header, stripped of the v2 header glyphs:
+    // the theme toggle (`◐`) moved to Deg › Utseende, and the `»_` assistant shortcut
+    // gave way first to the bottom command line, then (WP-143) to a header `sparkles`
+    // toolbar button, and now (WP-144) to the floating bottom `AssistantButton` — the
+    // assistant's honest, reachable entry (see `safeAreaInset(.bottom)`). The
+    // amber-ticking clock is dropped too (DESIGN § Bevegelse: "Tid bor i raden +
+    // systemets statusbar"). Settings live behind the nav bar's gearshape. Just the
+    // wordmark and the date remain — one quiet masthead.
     private var header: some View {
         VStack(alignment: .leading, spacing: 5) {
             // The brand lock (designprofil rev 2, kandidat A «Kolonet»):

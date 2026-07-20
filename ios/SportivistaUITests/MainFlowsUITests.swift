@@ -7,12 +7,12 @@
 //  cache, no network). Each test is short and asserts BEHAVIOUR through stable
 //  accessibility identifiers / seeded fixture strings, never pixels.
 //
-//  WP-104 retired the always-present inline command line and WP-143 retired the
-//  bottom capsule that briefly replaced it: the assistant is now opened from a
-//  header TOOLBAR BUTTON (`assistant.toolbar`, `sparkles`, beside the gearshape)
-//  that opens the conversation SHEET (AssistantSheetView — field `assistant.field`,
-//  send `assistant.send`, the three example rows `assistant.example.*`, close
-//  `assistant.close`). The "we're back on the root" tell is therefore the toolbar
+//  WP-104 retired the always-present inline command line, WP-143 retired the bottom
+//  capsule that briefly replaced it, and WP-144 landed the entry as a COMPACT floating
+//  BOTTOM BUTTON (`assistant.button`, `sparkles` + «Spør assistenten», in the
+//  thumb-reachable zone) that opens the conversation SHEET (AssistantSheetView — field
+//  `assistant.field`, send `assistant.send`, the three example rows `assistant.example.*`,
+//  close `assistant.close`). The "we're back on the root" tell is therefore the bottom
 //  button, not a text field. The old WP-99 keyboard-dismiss flows are rewritten to
 //  sheet open/close semantics (drag / tap-outside / Lukk), and the WP-82 inline
 //  discovery flows are gone with the line they tested.
@@ -54,12 +54,12 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		assertExists(app.staticTexts[UITestFixture.biathlonEntityName], "the confirmed follow should show under «Følger nå»")
 
 		// Continue → the assistant-intro finish (which SHOWS the deep
-		// personalisation) → into the agenda (the toolbar button is the tell we left).
+		// personalisation) → into the agenda (the bottom button is the tell we left).
 		app.buttons["onboarding.continue"].tap()
 		assertExists(app.staticTexts["Gjør Sportivista til din"], "should reach the assistant-intro step")
 		assertExists(app.buttons["onboarding.example.norske-tdf"], "the intro shows tappable deep-personalisation examples")
 		app.buttons["onboarding.toAgenda"].tap()
-		assertExists(app.buttons["assistant.toolbar"], "finishing onboarding should drop into the agenda")
+		assertExists(app.buttons["assistant.button"], "finishing onboarding should drop into the agenda")
 	}
 
 	// MARK: - Flow 2 · Follow via the conversation sheet
@@ -85,9 +85,9 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		confirm.tap()
 
 		// Bekreft ⇒ arket lukkes ⇒ agendaen re-kompileres: the biathlon row now
-		// appears on the recompiled board, and the toolbar button is back.
+		// appears on the recompiled board, and the bottom button is back.
 		assertExists(agendaRow(UITestFixture.biathlonTitle, in: app), "confirming the follow should surface the biathlon row")
-		assertExists(app.buttons["assistant.toolbar"], "confirming closes the sheet and returns to the agenda")
+		assertExists(app.buttons["assistant.button"], "confirming closes the sheet and returns to the agenda")
 	}
 
 	// MARK: - Flow 3 · Rapid starter-pack toggles (guards WP-60 coalescing)
@@ -144,7 +144,7 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		assertExists(reason, "expanding it should show the deterministic reason")
 
 		app.buttons["Lukk"].tap()
-		assertExists(app.buttons["assistant.toolbar"], "closing the sheet returns to the agenda")
+		assertExists(app.buttons["assistant.button"], "closing the sheet returns to the agenda")
 	}
 
 	// MARK: - Flow 5 · Theme cycle (WP-83 — moved from the header to Deg › Utseende)
@@ -235,26 +235,26 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		XCTAssertFalse(app.staticTexts["agenda.filter.label"].exists, "the filter line is gone after reset")
 	}
 
-	// MARK: - Flow 8 · The toolbar button opens the conversation sheet; Lukk closes it (WP-104 → WP-143)
+	// MARK: - Flow 8 · The bottom button opens the conversation sheet; Lukk closes it (WP-104 → WP-143 → WP-144)
 
-	func testToolbarButtonOpensSheetAndLukkCloses() {
+	func testAssistantButtonOpensSheetAndLukkCloses() {
 		let app = launchApp(state: "agenda")
 
-		// At rest, the sheet's field is NOT present — only the header toolbar button is.
+		// At rest, the sheet's field is NOT present — only the floating bottom button is.
 		XCTAssertFalse(app.textFields["assistant.field"].exists, "the field lives in the sheet, not the root")
-		let entry = app.buttons["assistant.toolbar"]
-		assertExists(entry, "the assistant toolbar button should be in the header")
+		let entry = app.buttons["assistant.button"]
+		assertExists(entry, "the assistant button should be at the bottom")
 		entry.tap()
 
 		// The sheet is up: its header + the opened-state intro + the field.
-		assertExists(app.staticTexts["ASSISTENT"], "tapping the toolbar button opens the conversation sheet")
+		assertExists(app.staticTexts["ASSISTENT"], "tapping the bottom button opens the conversation sheet")
 		assertExists(app.staticTexts["assistant.intro"], "the opened sheet shows one hjelpesetning")
 		assertExists(app.textFields["assistant.field"], "the opened sheet carries the field")
 
-		// Lukk returns to the agenda; the field is gone, the toolbar button is back.
+		// Lukk returns to the agenda; the field is gone, the bottom button is back.
 		app.buttons["assistant.close"].tap()
 		assertVanishes(app.textFields["assistant.field"], "Lukk should dismiss the sheet")
-		assertExists(app.buttons["assistant.toolbar"], "closing the sheet returns to the agenda")
+		assertExists(app.buttons["assistant.button"], "closing the sheet returns to the agenda")
 	}
 
 	// MARK: - Flow 9 · Drag-down dismisses the sheet (WP-104 — tapp-utenfor/dra)
@@ -262,20 +262,20 @@ final class MainFlowsUITests: SportivistaUITestCase {
 	func testSheetDismissedByDragDown() {
 		let app = launchApp(state: "agenda")
 
-		app.buttons["assistant.toolbar"].tap()
+		app.buttons["assistant.button"].tap()
 		let field = app.textFields["assistant.field"]
-		assertExists(field, "the sheet should open from the toolbar button")
+		assertExists(field, "the sheet should open from the bottom button")
 
 		// Swipe the sheet down from its header (the grabber region) to dismiss it —
 		// the native sheet's drag-to-dismiss, one of the WP-99 close paths in ark
-		// form. The toolbar button returning is the tell we're back on the agenda.
+		// form. The bottom button returning is the tell we're back on the agenda.
 		let header = app.staticTexts["ASSISTENT"]
 		let start = header.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
 		let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 1.5))
 		start.press(forDuration: 0.05, thenDragTo: end)
 
 		assertVanishes(field, "dragging the sheet down should dismiss it")
-		assertExists(app.buttons["assistant.toolbar"], "dismissing the sheet returns to the agenda")
+		assertExists(app.buttons["assistant.button"], "dismissing the sheet returns to the agenda")
 	}
 
 	// MARK: - Flow 10 · Navigation — open Deg via the gearshape, then back-swipe (WP-83)
@@ -291,11 +291,11 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		assertExists(app.buttons["deg.follows"], "Deg should re-home «Hva jeg følger»")
 
 		// The native interactive pop gesture (tilbake-swipe) from the left edge
-		// returns to the agenda — the header assistant toolbar button is the tell.
+		// returns to the agenda — the floating bottom assistant button is the tell.
 		let edge = app.coordinate(withNormalizedOffset: CGVector(dx: 0.0, dy: 0.5))
 		let target = app.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5))
 		edge.press(forDuration: 0.05, thenDragTo: target)
-		assertExists(app.buttons["assistant.toolbar"], "back-swiping Deg returns to the agenda")
+		assertExists(app.buttons["assistant.button"], "back-swiping Deg returns to the agenda")
 	}
 
 	// MARK: - Flow 11 · An example row runs and answers in the thread (WP-104)
@@ -372,9 +372,9 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		assertExists(app.buttons["news.followedLink"], "the Nyheter board offers the «Det du følger» link")
 		XCTAssertFalse(agendaRow(UITestFixture.footballTitle, in: app).exists, "the agenda is not shown on the Nyheter side")
 
-		// The header assistant toolbar button is present on both sides (WP-143 — it
-		// lives in the shared nav bar, so it stays across a root-segment switch).
-		assertExists(app.buttons["assistant.toolbar"], "the assistant toolbar button stays on the Nyheter side too")
+		// The floating bottom assistant button is present on both sides (WP-144 — it
+		// lives in the shared root safeAreaInset, so it stays across a segment switch).
+		assertExists(app.buttons["assistant.button"], "the assistant button stays on the Nyheter side too")
 
 		// Back to Uka restores the agenda.
 		app.buttons["Uka"].tap()

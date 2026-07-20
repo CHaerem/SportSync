@@ -127,8 +127,8 @@ Apple-system-farger + én amber-aksent. Ved rebrand endres KUN denne tabellen.
 - **Liquid Glass (iOS 26 — BINDENDE presisering):** plattformens kontroll-materiale
   er *native*, ikke dekor. Standard-komponenter arver det automatisk (bygg mot
   iOS 26-SDK, aldri `UIDesignRequiresCompatibility`-opt-out); appens egne
-  kontroll-flater (kommandolinja) adopterer `glassEffect` og flyter over innholdet
-  (`safeAreaInset`). Glass hører KUN til kontroll-laget — innhold (agenda-rader,
+  kontroll-flater (den flytende assistent-bunn-knappen) adopterer `glassEffect` og
+  flyter over innholdet (`safeAreaInset`). Glass hører KUN til kontroll-laget — innhold (agenda-rader,
   detaljark-innhold) glasses ALDRI. Egenlaget blur/glassmorfisme er fortsatt
   forbudt; det historiske forbudet gjaldt DIY-dekor, ikke systemmaterialet.
 - **Hjelperens resultat:** native `.sheet` med `.presentationDetents`
@@ -148,15 +148,17 @@ Apple-system-farger + én amber-aksent. Ved rebrand endres KUN denne tabellen.
 - **Rotens to sider (Claude Design-handoff 19.07.2026):** en segmented med ORD
   under headeren — **«Uka | Nyheter»**. Begge dekker hele uka; skillet er hva
   som *skjer* (agendaen) vs. hva som er *nytt* (§ Nyheter). Ord, aldri ikoner.
-- **Nav-baren (trailing):** `sparkles`-knappen (assistenten) til VENSTRE for
-  `gearshape` (innstillinger, konvensjonelt lengst til høyre). `gearshape`
-  pusher **Deg**-skjermen (§ Deg); `sparkles` åpner samtalearket (§ Hjelperen).
+- **Nav-baren (trailing):** kun `gearshape` (innstillinger). `gearshape` pusher
+  **Deg**-skjermen (§ Deg). Assistent-inngangen bor IKKE i nav-baren lenger (WP-144
+  flyttet den til en flytende bunn-knapp — se § Hjelperen).
 - **Detaljer** vises som native `.sheet` (detents) eller push i agendaens stakk.
 - **Ett navigasjonsmønster:** rad → detalj (push/sheet med ‹ tilbake); aldri
   gester som eneste vei.
-- **Hjelperen** er en verktøylinje-KNAPP (`sparkles`) i headeren som åpner
-  samtalearket (§ Hjelperen) — ikke en fane, ikke et inline-felt, ikke lenger
-  en bunn-kapsel (WP-143). Agendaen/Nyheter fyller HELE skjermen; ingen bunnflate.
+- **Hjelperen** er en kompakt flytende BUNN-KNAPP (`sparkles` + «Spør assistenten»)
+  i tommelens nåbare sone som åpner samtalearket (§ Hjelperen) — ikke en fane, ikke
+  et inline-felt, ikke en header-verktøylinje-knapp (WP-143→WP-144), og ikke den gamle
+  bunn-kapselen (falskt søkefelt). Den flyter over innholdet (`safeAreaInset(.bottom)`);
+  agendaen/Nyheter scroller rolig UNDER den.
 
 ## Agendaen (rot-skjermen)
 
@@ -200,25 +202,28 @@ Seksjoner: Arena · Om · **Hvor ser jeg det** (lenker) · **Funnet av AI**
 
 Visjonens kjerne, bygd som native mønstre — ikke en bespoke kontroll.
 
-Rev. 20.07.2026 (WP-143, eier-beslutning «renest Apple»): bunn-kapselen er
-FJERNET. Den så ut som et søkefelt, men var en knapp — en falsk affordance.
-Assistent-INNGANGEN er nå en **header-verktøylinje-knapp** ved siden av
-tannhjulet; agendaen/Nyheter fyller HELE skjermen (ingen bunnflate). Full
+Rev. 20.07.2026 (WP-144, eier-beslutning — iterasjonens endestasjon): assistent-
+INNGANGEN er en **kompakt flytende BUNN-KNAPP** i tommelens nåbare sone. Den
+avslutter en iterasjon: (a) WP-104s bunn-KAPSEL var en falsk affordance (så ut som
+et søkefelt, var en knapp); (b) WP-143 flyttet inngangen til en ærlig header-
+verktøylinje-knapp, men den var **uråkelig med én hånd** på toppen av en høy iPhone.
+WP-144 forener begge kravene: en TYDELIG KNAPP (ikke det gamle felt-metafor-feltet) i
+den NÅBARE sonen — det sanksjonerte iOS 26 flytende Liquid Glass-mønsteret. Full
 tilstandsspec i `design/specs/assistent-nyheter-v0.md`.
 
-- **Verktøylinje-knappen** (`sparkles`, iOS 26 Apple-Intelligence-idiomet) i
-  headeren, til VENSTRE for tannhjulet (`gearshape`): en umiskjennelig HIG-knapp
-  (button-rolle, ≥44 pt, a11y «Assistent», id `assistant.toolbar`) som åpner
-  samtalearket. Ærlig affordance — et ikon som ÅPENBART er en knapp, ikke en flate
-  som later som den er et inntastingsfelt. Ingen inline-skriving i roten; skriving
-  OG diktering bor i arket (ikke lenger en `mic` på roten). (Rev. 20.07 eier-funn:
-  bunn-kapselen leste som et dødt søkefelt selv med ankersymbol og en evne-navngivende
-  linje (WP-142) — den reneste Apple-veien er en ærlig toolbar-knapp, ikke en bespoke
-  bunnflate.)
+- **Bunn-knappen** (`AssistantButton`: `sparkles` + etikett «Spør assistenten»,
+  iOS 26 Apple-Intelligence-idiomet) flyter nederst, sentrert over safe area
+  (`safeAreaInset(.bottom)`): en umiskjennelig HIG-knapp (button-rolle, ≥44 pt,
+  a11y «Assistent», id `assistant.button`) som åpner samtalearket. **Nåbar sone +
+  ærlig affordance** — den bor der tommelen når, OG den leser umiskjennelig som en
+  KNAPP: en KOMPAKT glass-pille som HUGGER innholdet sitt (ikke full bredde, ikke en
+  flate), med `sparkles` i amber + en aktiv etikett som NAVNGIR handlingen. INGEN
+  placeholder-grå «skriv her»-tekst (det var kapselens falske felt-affordance), INGEN
+  `mic` inni (diktering bor i arket alene). Skriving OG diktering bor i arket.
   - **Guidingen skjer ved ENGASJEMENT** (arkets eksempelrader når du åpner),
     ALDRI som en stående chips-vegg på agendaen — calm er ufravikelig (én rolig,
-    skannbar flate; ingen konkurrerende paneler). Knappen selv bærer ingen
-    hjelpetekst; ikonet + plasseringen sier «assistent».
+    skannbar flate; ingen konkurrerende paneler). ÉN kompakt knapp, aldri chips.
+    Agendaen/Nyheter scroller rolig UNDER knappen.
 - **Samtalearket** (native sheet, grabber/dra-ned/tapp-utenfor): én setning
   («Skriv eller snakk — helt vanlig norsk.») + tre TRYKKBARE eksempelrader
   (følg-et-lag → Legg til-søket · spørsmål · kommando) + felt nederst.
