@@ -123,6 +123,15 @@ struct WhatIKnowView: View {
     private var behaviorSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             sectionTitle("ATFERD (\(memory.behavior.count))")
+            // WP-134: make the adaptive signal explainable — the subject you engage
+            // with most. This is the same affinity used as a mild tie-break/lift;
+            // showing it keeps the personalisation transparent, never a black box.
+            if let top = topAffinitySubject {
+                Text("Sterkest tilknytning: \(top) — jeg løfter dette litt når rekkefølgen ellers er lik.")
+                    .font(.sportivistaTabular(.caption, weight: .regular))
+                    .foregroundStyle(SportivistaTokens.label.opacity(0.6))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             ForEach(memory.behavior) { stat in
                 HStack(alignment: .firstTextBaseline) {
                     Text("\(stat.kind.label) \(behaviorSubject(stat))")
@@ -195,6 +204,13 @@ struct WhatIKnowView: View {
 
     private func behaviorSubject(_ stat: BehaviorStat) -> String {
         stat.isSport ? SportVocabulary.display(for: stat.token) : viewModel.entityName(stat.token)
+    }
+
+    /// WP-134 — the strongest-affinity subject, resolved to a readable name, for
+    /// the explainability line above. Nil when nothing has positive affinity yet.
+    private var topAffinitySubject: String? {
+        guard let first = Affinity(behavior: memory.behavior).topSubjects(limit: 1).first else { return nil }
+        return first.isSport ? SportVocabulary.display(for: first.token) : viewModel.entityName(first.token)
     }
 
     private func dateLabel(_ date: Date) -> String {
