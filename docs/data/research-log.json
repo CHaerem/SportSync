@@ -1,22 +1,23 @@
 {
-  "runAt": "2026-07-20T15:00:00Z",
-  "eventsAdded": 0,
-  "eventsRemoved": 0,
-  "eventsAmended": 0,
-  "trackedDelta": "Added 1 tracked entry: bodo-glimt-cl-qualifying-2026-27 (Bodø/Glimt vs Union Saint-Gilloise, Champions League 3rd qualifying round 2026/27). Documented but deliberately HELD OFF THE BOARD — UEFA has not yet published the exact match day (4 vs 5 Aug first leg / 11 vs 12 Aug second leg) or kickoff time (draw was today). lastUpdated bumped 11:25Z -> 15:00Z. 26 tracked entries now (was 25).",
-  "quality": {
-    "pass": true,
-    "score": 93,
-    "failures": [
-      "Minor (addressed): the TV 2 Play evidence URL initially pointed to a stale specific-match page (bodoe-glimt-sturm-graz) rather than the tie's own page; corrected to the generic 'UEFA Champions League, kvalifisering' section URL, since the 2026/27 Union SG tie has no dedicated TV 2 Play page yet (never invent a URL). Streaming claim (TV 2 Play holds Glimt's CL-qualifying) stands."
-    ]
-  },
-  "notes": [
-    "Standard-tier Opus, Monday late afternoon (17:00 CEST), ~3.6h after the 11:25Z run (F1 Hungary qualifying) and ~7h after the large 07:45Z broad fan-out (TdF Femmes + Grand Chess Tour). Not a fresh full scout fleet — the board was rebuilt/re-verified only hours earlier — this run targeted the ONE fresh signal from the 14:30Z coverage-gaps.json.",
-    "PRIMARY VALUE — a real next-fixture recall gap for a catalog-covered entity, TRACKED (not boarded): BODØ/GLIMT in Champions League qualifying 2026/27. coverage-gaps.json (14:30Z) flagged it (NRK headline 'Bodø/Glimt møter Union Saint-Gilloise i Champions League-kvalifiseringen', matchCount 4) but the hourly scout had dismissed it as 'not a tracked high-priority team' — outdated reasoning, since WP-116 widened catalog.json to cover the Norwegian top clubs (Bodø/Glimt, Brann, Molde, Rosenborg) wholesale as tier2.teams. The board carried nothing for Glimt, so this was a genuine gap.",
-    "RESEARCH FINDINGS (own web search, multi-source): Draw held Mon 20 Jul (2026/27 CL third qualifying round, League Path). Bodø/Glimt (NOR) drawn vs R. Union Saint-Gilloise (BEL). Bodø/Glimt plays the FIRST leg AWAY (Brussels), second leg HOME (Aspmyra) — leg order confirmed by two independent sources (AP via dailygazette.com + sporten.com). Match window per the published UEFA calendar: first legs 4-5 Aug, second legs 11-12 Aug 2026. Norwegian rights CONFIRMED: TV 2 Play (TV 2 holds CL-qualifying rights; dedicated 'UEFA Champions League, kvalifisering: Bodø/Glimt' section on play.tv2.no) + local Avisa Nordland/Direktesport.",
-    "DELIBERATE HOLD (why no board event): UEFA has NOT published the exact match day (4 vs 5 / 11 vs 12 Aug) or kickoff time yet — the draw was only today. Guessing a specific day/time for a high-profile, easily-checked Champions League fixture is exactly the wrong-time risk the prompt warns against ('a missing event is better than a wrong one'). This is consistent with the board's established discipline of holding date/time-unconfirmed football matches (Barça Joan Gamper, Ruud Montreal). The tie is fully documented in tracked.json with provenance + TV rights; verify (daily) and the next research run will pin the exact day+kickoff the moment UEFA publishes it and board both legs then.",
-    "OTHER catalog Norwegian clubs (Brann/Molde/Rosenborg — also tier2.teams) may have 2026/27 European qualifiers too, but the fresh RSS signal surfaced only Bodø/Glimt's tie; their gap-headlines (contracts/incidents) were not fixtures, and web search for the current season returned mostly stale 2025/26 results. Flagged for a future broad sweep, not deep-dived this run (budget/time discipline).",
-    "REST OF BOARD unchanged and current (built/verified within the last 7h): TdF men finishing (etappe 16 tempo Tue 21 Jul -> Paris Sun 26 Jul), F1 Hungary quali+race, CS2 (both 100 Thieves matches Wed 22 Jul), golf 3M Open, TdF Femmes 9 stages (1-9 Aug), Grand Chess Tour Saint Louis, athletics NM Trondheim + EM Birmingham, Lyn OBOS fixtures, Barcelona. scout-log 'quiet' (post-World-Cup wrap-up, past-tense results, transfer gossip). No board events added -> events.json untouched; validate-events.js: 58 events, 0 errors (2 benign multi-day chess timezone-bleed warnings)."
+ "runAt": "2026-07-20T18:20:00Z",
+ "eventsAdded": 0,
+ "eventsRemoved": 0,
+ "eventsAmended": 0,
+ "trackedDelta": "No new tracked entries (26 total, unchanged). Updated bodo-glimt-cl-qualifying-2026-27 with an 18:20Z web re-check: UEFA has STILL not published the exact match day (4 vs 5 Aug first leg / 11 vs 12 Aug second leg) or kickoff time — only the window — plus a new note that the Brussels venue is unconfirmed (Union's own Stade Joseph Marien does not meet UCL standard, so leg 1 likely moves to a larger UEFA-approved ground; Aspmyra confirmed for the home leg). Tie deliberately kept OFF THE BOARD (a missing event beats a wrong high-profile CL date). TV 2 Play viewing re-confirmed + play.tv2.no/sport/bodoe-glimt hub added to evidence. lastUpdated bumped 15:00Z -> 18:20Z.",
+ "quality": {
+  "pass": true,
+  "score": 95,
+  "failures": [
+   "Minor (not a hard fail): two summaries name a viewing channel absent from streaming[] as an additive 'ogsa gratis' option — Wimbledon finals summary mentions WBD free-channel 'REX' (streaming[]=Max/Eurosport) and the BLAST Bounty summary mentions 'YouTube' (streaming[]=BLAST.tv/Twitch). Both are supplementary same-rightsholder simulcasts with the primary platform present, so no viewer contradiction; tidy by adding the channel to streaming[] or dropping it from the prose.",
+   "Minor: coverage-gaps.json still surfaces imminent:false entity noise for other tier2 Norwegian clubs (Brann/Molde/Liverpool). Correctly dismissed as non-fixtures (contract/incident/obituary headlines) and deferred — worth a dedicated European-qualifier check for Brann/Molde/Rosenborg soon since they share Bodo/Glimt's tier2 coverage.",
+   "Bodo/Glimt CL-qualifying tie correctly HELD off the board pending UEFA's exact day/time; ensure the next run or daily verify boards both legs the moment UEFA publishes so the hold does not silently persist past the 4-5/11-12 Aug windows."
   ]
+ },
+ "notes": [
+  "Standard-tier Opus run, man. 20. juli kveld (~3,3t etter forrige run 15:00Z). Board no-op (57 events, validate-events.js green). Two parallel web scouts + one independent grader.",
+  "PRIMARY re-check — the one open signal, still correctly OFF THE BOARD: Bodo/Glimt vs Union Saint-Gilloise (Champions League 3rd qualifying round). coverage-gaps.json 17:59Z flagged the imminent tracked-claim, but the football scout confirmed UEFA has still not published the exact day (4 vs 5 / 11 vs 12 Aug) or kickoff — only the window (FOX fixture 'kickoff TBA' + nettavisen/sporten 'the 4th or 5th of August'). New nuance recorded: Brussels venue unconfirmed (Joseph Marien sub-UCL-standard -> likely a larger UEFA-approved ground). Guessing a high-profile CL date/time is exactly the wrong-event risk the prompt warns against, so held; tracked reason updated + TV 2 Play re-confirmed. Verify/next research will board both legs once UEFA schedules them.",
+  "Lyn away vs Stromsgodset (OBOS r15) Sat 25 July 18:00 CEST (16:00 UTC) Marienlyst re-confirmed (godset.no + FOX), TV 2 Play.",
+  "BROAD VERIFY SWEEP — everything on the board CONFIRMED unchanged: (a) TdF stage 16 ITT Evian->Thonon Tue 21 July start 11:00 UTC (cyclingstage/cyclingnews); GC after stage 15 unchanged (Pogacar yellow, Evenepoel +5:00, del Toro +5:58 white, Seixas +6:23, Lipowitz +6:48; Tobias HJ outside top 10 ~13th-14th, exact place unverifiable — PCS 403; green Pedersen 417 pts); no new NORWEGIAN withdrawals (Charmig OTL stage 15 is DANISH). (b) CS2 both 100 Thieves matches Wed 22 July confirmed vs Liquipedia (StarSeries vs NIP 13:00 UTC / BLAST Bounty vs Falcons 17:30 UTC). (c) Golf 3M Open Thu 23-Sun 26 July, Ventura confirmed in field (pgatour.com); R1 tee times not yet published. (d) F1 Hungarian GP race Sun 26 July 13:00 UTC + quali Sat 25 July 14:00 UTC confirmed vs formula1.com (normal weekend, no sprint), Viaplay.",
+  "No fresh broad fan-out beyond the above: the 07:45Z run built the full broad sweep ~10.5h ago and coverage-audit 06:47Z covered imminent + the ~4-week horizon (its three gaps — TdF Femmes, Grand Chess Tour Saint Louis, F1 Hungary quali — were all resolved in earlier runs today). Remaining coverage-gaps.json entries are imminent:false RSS entity noise (Brann/Molde/Liverpool contract/incident/obituary headlines), dismissed."
+ ]
 }
