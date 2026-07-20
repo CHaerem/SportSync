@@ -120,6 +120,42 @@ final class FollowPresenterTests: XCTestCase {
         )
     }
 
+    // MARK: - Lens-miss signal (WP-125)
+
+    func test_matchState_scheduledWhenEventsExist() {
+        XCTAssertEqual(presenter().matchState(for: rule("fk-lyn-oslo", "Lyn", "football")), .scheduled)
+    }
+
+    func test_matchState_knownEntityNothingScheduled_isIdle() {
+        // Casper Ruud IS a known entity, just with nothing on the board right now.
+        let p = presenter()
+        XCTAssertEqual(p.matchState(for: rule("casper-ruud", "Casper Ruud", "tennis")), .idle)
+        XCTAssertTrue(p.nameSuggestions(for: rule("casper-ruud", "Casper Ruud", "tennis")).isEmpty)
+    }
+
+    func test_matchState_wholeSportRuleNeverUnresolved() {
+        // A whole-sport follow with nothing scheduled is idle, never «sjekk navnet».
+        XCTAssertEqual(presenter().matchState(for: rule("sport-golf", "Golf", "golf")), .idle)
+    }
+
+    func test_matchState_unknownNameWithNews_staysIdle() {
+        // An entity absent from the index but WITH matching news is a real follow,
+        // just quiet on the agenda — «Ikke satt opp ennå», not «sjekk navnet».
+        let news = [NewsItem(id: "n", title: "Nytt", link: "https://x/n", source: "nrk", sport: "esports", entityIds: ["mystery-x"])]
+        let p = presenter(news: news)
+        XCTAssertEqual(p.matchState(for: rule("mystery-x", "Mystery", "esports")), .idle)
+    }
+
+    func test_matchState_unknownName_isUnresolvedWithNearestNameSuggestion() {
+        // A mistyped follow: the id resolves to nothing, no events, no news.
+        let p = presenter()
+        let typo = rule("caspar-ruud-typo", "Caspar Ruud", "tennis")
+        XCTAssertEqual(p.matchState(for: typo), .unresolved)
+        XCTAssertEqual(p.rowSubtitle(for: typo), "Ingen treff — sjekk navnet")
+        // The suggestion reuses the index fuzzy (no new matching) → real Casper Ruud.
+        XCTAssertEqual(p.nameSuggestions(for: typo).map(\.name), ["Casper Ruud"])
+    }
+
     // MARK: - News (SISTE NYTT)
 
     func test_newsItems_matchByEntityIdAndSport() {
