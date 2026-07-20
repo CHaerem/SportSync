@@ -15,19 +15,21 @@
 
 import Foundation
 
-/// The steps of the calm first-run flow. `welcome` is always first; the build
-/// step is `converse` (the say-what-you-follow conversation) when Apple
-/// Intelligence is available, else `quickPicks` (the tap-to-follow path that
-/// works for everyone, no assistant understanding needed); `landing` is the
-/// quiet finish that points at the always-present assistant capsule.
+/// The steps of the calm first-run flow (WP-132). `welcome` is always first,
+/// then `quickPicks` — the tap-to-follow path that works for EVERYONE, now the
+/// first build step for all users (the flip WP-129 flagged). `converse` (the
+/// say-what-you-follow conversation) is a clearly-secondary, Apple-Intelligence-
+/// gated entry off the quick-picks step. `assistantIntro` is the calm finish
+/// that SHOWS the deep-personalisation the assistant unlocks (a few tappable
+/// examples + «prøv nå») and drops the user into the already-filled agenda.
 enum OnboardingStep: Equatable, Sendable {
     case welcome
-    case converse
     case quickPicks
-    case landing
+    case converse
+    case assistantIntro
 }
 
-/// Pure show-decision + navigation helpers for onboarding.
+/// Pure show-decision helper for onboarding.
 enum OnboardingGate {
     /// `@AppStorage` key for the persistent "onboarding done" flag. A single
     /// value, applied at the app root — no per-screen wiring (same convention
@@ -41,13 +43,5 @@ enum OnboardingGate {
     /// (`restart`, below), never automatic.
     static func shouldShow(completed: Bool, profileIsEmpty: Bool) -> Bool {
         !completed && profileIsEmpty
-    }
-
-    /// The build-profile step to enter after the welcome. Conversation-first
-    /// when the on-device model can be used; quick-picks otherwise — so a
-    /// cold start without Apple Intelligence still lands on a fully useful
-    /// step rather than a dead conversation box.
-    static func buildStep(aiAvailable: Bool) -> OnboardingStep {
-        aiAvailable ? .converse : .quickPicks
     }
 }

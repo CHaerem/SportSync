@@ -196,9 +196,10 @@ struct ContentView: View {
         #if DEBUG
         switch ProcessInfo.processInfo.environment["SPORTIVISTA_DEMO"] {
         case "onboarding-welcome": return .welcome
-        case "onboarding-converse": return .converse
         case "onboarding-quickpicks": return .quickPicks
-        case "onboarding-landing": return .landing
+        case "onboarding-converse": return .converse
+        // WP-132: the assistant-intro step is the calm finish (was «landing»).
+        case "onboarding-assistantintro", "onboarding-landing": return .assistantIntro
         default: return nil
         }
         #else
@@ -301,6 +302,7 @@ struct ContentView: View {
                 assistant: assistant,
                 onFinish: finishOnboarding,
                 onSkip: finishOnboarding,
+                onTryAssistant: finishThenOpenAssistant,
                 initialStep: onboardingInitialStep
             )
             .transition(.opacity)
@@ -405,7 +407,7 @@ struct ContentView: View {
                         if let golf = StarterPacks.all.first(where: { $0.id == "norske-golfere" }) {
                             assistant.toggleStarterPack(golf)
                         }
-                    case "onboarding-landing", "onboarding-landed":
+                    case "onboarding-assistantintro", "onboarding-landing", "onboarding-landed":
                         // WP-99: seed a deterministic golf board (two multi-day
                         // tournaments spanning today) so the post-onboarding
                         // agenda renders OFFLINE — the multi-day WINDOW rows this
@@ -611,6 +613,18 @@ struct ContentView: View {
         } else {
             withAnimation(.easeOut(duration: 0.15)) { showOnboarding = true }
         }
+    }
+
+    /// WP-132 — «Prøv nå» / a tapped example from the onboarding assistant-intro
+    /// step: finish onboarding, then open the assistant sheet (focused, so the
+    /// keyboard is ready) — optionally pre-filling the field with `prefill` so
+    /// the user sees exactly how the phrase is said. The confirmed follow lands
+    /// on the SAME profile the packs did.
+    private func finishThenOpenAssistant(_ prefill: String?) {
+        if let prefill { assistant.utterance = prefill }
+        finishOnboarding()
+        sheetStartFocused = true
+        sheetShown = true
     }
 
     /// The capsule's plain tap — open the conversation sheet (un-focused).
