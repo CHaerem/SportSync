@@ -346,6 +346,15 @@ struct ContentView: View {
                     agenda.reloadFromCache(now: Date())
                     agenda.applyFilter(AgendaFilter(sports: ["golf"]))
                 }
+                // WP-135: the agenda ROW-WIDTH bug class — a wide matchup title
+                // ("100 Thieves – Ninjas in Pyjamas") that pushed the fixed-size
+                // time column off the left edge. Seeds a wide-title clock row +
+                // a short-title control + a multi-day WINDOW row so the fix can
+                // be verified (time whole, title wrapped, window intact) offline.
+                if mode == "agenda-width" {
+                    AgendaWidthDemoSeed.seed(profileStore: profileStore)
+                    agenda.reloadFromCache(now: Date())
+                }
                 // WP-19/WP-83: seed a small profile so the share panel shows a
                 // real QR + link (the export needs a non-empty profile). Rendered
                 // full-screen via demoOverlay (a `.sheet` is a no-op in the launch
