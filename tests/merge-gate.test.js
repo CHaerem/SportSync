@@ -21,16 +21,17 @@ function fakeIo({ prs = [], files = [] } = {}) {
 }
 
 describe("findProtectedPaths", () => {
-	it("blocks all five protected paths", () => {
+	it("blocks all six protected paths", () => {
 		const blocked = [
 			".github/workflows/static-pipeline.yml",
 			".github/actions/setup/action.yml",
 			"scripts/hooks/protect-interests.js",
 			"scripts/config/interests.json",
 			".claude/settings.json",
+			"scripts/merge-gate.js", // the enforcer itself — guards against self-weakening
 		];
 		expect(findProtectedPaths(blocked)).toEqual(blocked);
-		expect(PROTECTED_PATHS.length).toBe(5);
+		expect(PROTECTED_PATHS.length).toBe(6);
 	});
 
 	it("does not block safe paths, including near-misses", () => {
@@ -43,6 +44,7 @@ describe("findProtectedPaths", () => {
 				".claude/skills/norwegian-rights/SKILL.md", // skills are agent-editable
 				"tests/interests-schema.test.js",
 				"package.json",
+				"tests/merge-gate.test.js", // the gate's OWN test is deliberately NOT protected (loops may extend coverage)
 			]),
 		).toEqual([]);
 	});
@@ -82,6 +84,20 @@ describe("runMergeGate", () => {
 		expect(io.calls.labels).toEqual([[42, "needs-review"]]);
 		expect(io.calls.merged).toEqual([]);
 		expect(io.calls.runs).toEqual([]); // not even test-gated — it simply waits for a human
+		expect(io.calls.outputs.merged).toBe("false");
+	});
+
+	it("a PR that refactors the gate itself stays OPEN with needs-review (never merged)", () => {
+		// WP-139: the enforcer must be at least as protected as what it guards — a loop
+		// "refactoring" merge-gate.js must NOT auto-merge (that could weaken PROTECTED_PATHS).
+		const io = fakeIo({ prs: pr, files: ["scripts/merge-gate.js", "tests/merge-gate.test.js"] });
+		const res = runMergeGate({ prefix: "self-repair/" }, io);
+		expect(res.merged).toBe(false);
+		expect(res.reason).toBe("protected-path");
+		expect(res.blocked).toEqual(["scripts/merge-gate.js"]); // the test file is deliberately NOT protected
+		expect(io.calls.labels).toEqual([[42, "needs-review"]]);
+		expect(io.calls.merged).toEqual([]);
+		expect(io.calls.runs).toEqual([]);
 		expect(io.calls.outputs.merged).toBe("false");
 	});
 

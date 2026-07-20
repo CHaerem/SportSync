@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 // PreToolUse hook: blocks the AUTONOMOUS CI agents from mutating the automation's
 // OWN protected paths — the workflow definitions, composite actions, safety hooks,
-// and the harness settings that wire them. These are four of the five
-// never-auto-merged paths (see CLAUDE.md "Autonomy model" / scripts/merge-gate.js).
+// the harness settings that wire them, and the merge gate that enforces the whole
+// protected-path invariant. These are five of the six never-auto-merged paths
+// (see CLAUDE.md "Autonomy model" / scripts/merge-gate.js).
 //
 // Why a hook and not just merge-gate.js: merge-gate stops a PR-based self-fixing
 // loop's protected-path change from AUTO-merging, but the five DIRECT-PUSHING
@@ -20,7 +21,7 @@
 // automation, so the hook exits 0 and stays out of the way. Exit 2 blocks the tool
 // call and feeds stderr back to the agent.
 //
-// (interests.json is the fifth protected path; it keeps its own dedicated,
+// (interests.json — the user-owned protected path — keeps its own dedicated,
 // user-owned message in protect-interests.js and is intentionally not repeated
 // here.)
 
@@ -28,14 +29,15 @@ const IN_CI = process.env.GITHUB_ACTIONS === "true" || process.env.CI === "true"
 
 // True when `raw` (however rooted: absolute, repo-relative, or bare-relative)
 // names a protected automation FILE. The three directory classes require a file
-// under them; the harness settings is the one exact file.
+// under them; the harness settings and the merge gate are the two exact files.
 function isProtectedPath(raw) {
 	const s = String(raw || "").replace(/\\/g, "/");
 	return (
 		/(^|\/)\.github\/workflows\/[^/]/.test(s) ||
 		/(^|\/)\.github\/actions\/[^/]/.test(s) ||
 		/(^|\/)scripts\/hooks\/[^/]/.test(s) ||
-		/(^|\/)\.claude\/settings\.json$/.test(s)
+		/(^|\/)\.claude\/settings\.json$/.test(s) ||
+		/(^|\/)scripts\/merge-gate\.js$/.test(s) // the enforcer itself (never self-weaken)
 	);
 }
 
@@ -44,7 +46,7 @@ function isProtectedPath(raw) {
 // redirect, tee, in-place editors, node fs writes) — reads/greps pass. This is
 // defense-in-depth, not a sandbox; the Write/Edit path above is the real channel.
 function bashMutatesProtected(cmd) {
-	const frag = String.raw`(?:\.github\/(?:workflows|actions)\/|scripts\/hooks\/|\.claude\/settings\.json)`;
+	const frag = String.raw`(?:\.github\/(?:workflows|actions)\/|scripts\/hooks\/|scripts\/merge-gate\.js|\.claude\/settings\.json)`;
 	const redirectsInto = new RegExp(String.raw`>>?\s*[^\s;&|<>]*${frag}`).test(cmd);
 	const pipesInto = new RegExp(String.raw`\btee\b[^;&|]*${frag}`).test(cmd);
 	const mutatesInPlace = new RegExp(String.raw`\b(?:sed\s+-i|mv|cp|rm|truncate|dd)\b[^;&|]*${frag}`).test(cmd);
@@ -76,9 +78,10 @@ process.stdin.on("end", () => {
 	if (touches) {
 		console.error(
 			"BLOCKED by hook: that path is a protected automation path (.github/workflows/**, " +
-			".github/actions/**, scripts/hooks/**, or .claude/settings.json). An unattended CI agent " +
-			"must not rewrite the workflows, composite actions, safety hooks, or harness settings that " +
-			"gate the automation itself. A human must author changes to these files."
+			".github/actions/**, scripts/hooks/**, .claude/settings.json, or scripts/merge-gate.js). " +
+			"An unattended CI agent must not rewrite the workflows, composite actions, safety hooks, " +
+			"harness settings, or the merge gate that gate the automation itself. A human must author " +
+			"changes to these files."
 		);
 		process.exit(2);
 	}
