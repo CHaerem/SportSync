@@ -8,10 +8,12 @@
 //
 //    • CloudKitProfileSync   the real thing — the USER'S OWN private CloudKit
 //                            database (their iCloud quota, never our server),
-//                            record-per-rule, `encryptedValues` on the free-text
-//                            fields. Compiles on the Simulator + in CI (the
-//                            CloudKit SDK is present) but only RUNS where a paid
-//                            account + the iCloud entitlement exist (WP-17).
+//                            record-per-rule, PLAINTEXT (not E2E — a sports
+//                            follow-list is low sensitivity, and plaintext is what
+//                            lets the user's own web sign-in read it too). Compiles
+//                            on the Simulator + in CI (the CloudKit SDK is present)
+//                            but only RUNS where a paid account + the iCloud
+//                            entitlement exist (WP-17).
 //    • LocalOnlyProfileSync  a no-op fallback — what the free-account
 //                            `SportivistaDeviceDev` build uses (no CloudKit entitlement
 //                            on a free personal team), so the phone install keeps
@@ -40,11 +42,10 @@ protocol ProfileSyncBackend: Sendable {
     /// record deletions, so a peer can't resurrect an unfollowed entity.
     func push(_ pushSet: PushSet) async throws
 
-    /// Publish this device's FULL merged state as a single PLAINTEXT snapshot the
-    /// WEB can read. CloudKit JS cannot decrypt the per-record `encryptedValues`
-    /// the E2E path uses, so `push` alone is invisible to a browser; the snapshot
-    /// is the web-readable channel (a ProfileShareCodec payload in one record,
-    /// recordName = this device). The CRDT guarantees the two channels converge.
+    /// Publish this device's FULL merged state as a single snapshot the WEB reads
+    /// in one shot (a browser can't easily page the per-record types), a
+    /// ProfileShareCodec payload in one record, recordName = this device. The CRDT
+    /// guarantees the per-record and snapshot channels converge.
     /// Default: no-op — only CloudKitProfileSync overrides it.
     func writeSnapshot(_ state: ProfileSyncState) async throws
 }
