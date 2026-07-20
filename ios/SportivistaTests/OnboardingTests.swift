@@ -134,11 +134,11 @@ final class OnboardingTests: XCTestCase {
                        "the winter pack follows the four sport-level entities (WP-64/116) — off-season, so it matches nothing yet, but the follows are real")
     }
 
-    func test_footballPack_isTheNationalTeam_notTheOwnersClub() {
+    func test_footballPack_isEliteserienAndTheNationalTeam_notTheOwnersClub() {
         let vm = makeVM()
         vm.toggleStarterPack(pack("norsk-fotball"))
-        XCTAssertEqual(vm.profile.rules.map(\.entityId), ["norge"],
-                       "«Norsk fotball» follows the national team, not the owner's club (WP-132 de-personalisation)")
+        XCTAssertEqual(vm.profile.rules.map(\.entityId), ["eliteserien-2026", "norge"],
+                       "«Norsk fotball» follows Eliteserien + the national team, not the owner's club (WP-132 de-personalisation, WP-133 grounds Eliteserien)")
     }
 
     func test_cs2Pack_isGeneralised_notTheOwnersTeam() {

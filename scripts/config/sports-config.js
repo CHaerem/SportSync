@@ -33,7 +33,12 @@ export const sportsConfig = {
 			custom: true
 		},
 		norwegian: {
-			teams: ["FK Lyn Oslo", "Lyn", "Norway", "Norge"],
+			// WP-133: "Norge" before "Norway" so the consolidated national-team
+			// entity is `norge` (the Norwegian display name); build-entities folds
+			// "Norway" in as an alias via the curated known-alias table. Order is
+			// registration priority only — fetcher relevance filtering treats this
+			// list as a set, so the reorder is behaviourally inert there.
+			teams: ["FK Lyn Oslo", "Lyn", "Norge", "Norway"],
 			filterMode: "focused"
 		},
 		streaming: {

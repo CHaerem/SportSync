@@ -153,6 +153,46 @@ describe("buildEntityIndex", () => {
 		expect(teams.map((e) => e.name).sort()).toEqual(["Real Madrid", "Real Mallorca"]);
 	});
 
+	// WP-133: cross-language national-team consolidation (the Norway/Norge lens-miss class).
+	it("consolidates a cross-language national-team duplicate into ONE entity (Norway ⇒ alias of Norge)", () => {
+		// The real source: sports-config lists BOTH "Norge" and "Norway" so the
+		// football relevance filter matches either spelling; un-folded they became
+		// `norge` + `norway`, so following one never matched events stamped with the
+		// other. The two share no token and are not initial-forms, so only the curated
+		// known-alias table folds them. "Norge" is listed first → wins the id.
+		const fakeSportsConfig = {
+			football: { sport: "football", norwegian: { teams: ["Norge", "Norway"] } },
+		};
+		const entities = buildEntityIndex(tmpDir("ss-entities-national-"), fakeSportsConfig);
+		const teams = entities.filter((e) => e.sport === "football" && e.type === "team");
+		expect(teams).toHaveLength(1); // one national team, not two
+		expect(teams[0].id).toBe("norge"); // Norwegian display name wins the id
+		expect(teams[0].name).toBe("Norge");
+		expect(teams[0].aliases).toContain("Norway"); // the other spelling folds in as an alias
+	});
+
+	it("known-alias folding is surgical — two unrelated single-word teams stay separate", () => {
+		// The curated table only folds the exact listed spellings; a country NOT
+		// grouped with another (e.g. "Norway" vs "Denmark") must remain two entities.
+		const fakeSportsConfig = {
+			football: { sport: "football", norwegian: { teams: ["Norway", "Denmark"] } },
+		};
+		const entities = buildEntityIndex(tmpDir("ss-entities-national-safe-"), fakeSportsConfig);
+		const teams = entities.filter((e) => e.sport === "football" && e.type === "team");
+		expect(teams).toHaveLength(2);
+		expect(teams.map((e) => e.name).sort()).toEqual(["Denmark", "Norway"]);
+	});
+
+	it("folds the real sports-config Norway/Norge pair into a single `norge` entity (production guard)", () => {
+		// Non-vacuous: build against the REAL default config (which lists both
+		// spellings) and assert the pair is consolidated with no stray `norway`.
+		const entities = buildEntityIndex();
+		const national = entities.filter((e) => e.sport === "football" && (e.id === "norge" || e.id === "norway"));
+		expect(national.map((e) => e.id)).toEqual(["norge"]);
+		expect(entities.find((e) => e.id === "norge").aliases).toContain("Norway");
+		expect(entities.find((e) => e.id === "norway")).toBeUndefined();
+	});
+
 	it("guards the built index against same-type nickname/initial-form duplicates (normalized comparison)", () => {
 		// Independent (normalized) mirror of the relation the generator now folds,
 		// so this is a genuine regression guard, not a tautology: within any
