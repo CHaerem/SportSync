@@ -103,15 +103,15 @@ class SportivistaUITestCase: XCTestCase {
 		app.buttons.matching(NSPredicate(format: "label CONTAINS %@", title)).firstMatch
 	}
 
-	/// WP-104 → WP-143 — open the assistant conversation sheet from the header
-	/// `sparkles` toolbar button, waiting for the sheet's field to appear before
-	/// returning.
+	/// WP-104 → WP-143 → WP-144 — open the assistant conversation sheet from the
+	/// floating bottom `assistant.button`, waiting for the sheet's field to appear
+	/// before returning.
 	func openAssistantSheet(in app: XCUIApplication, file: StaticString = #filePath, line: UInt = #line) {
-		let entry = app.buttons["assistant.toolbar"]
-		XCTAssertTrue(entry.waitForExistence(timeout: timeout), "the assistant toolbar button should be present", file: file, line: line)
+		let entry = app.buttons["assistant.button"]
+		XCTAssertTrue(entry.waitForExistence(timeout: timeout), "the assistant button should be present", file: file, line: line)
 		entry.tap()
 		XCTAssertTrue(app.textFields["assistant.field"].waitForExistence(timeout: timeout),
-		              "tapping the assistant toolbar button should open the conversation sheet", file: file, line: line)
+		              "tapping the assistant button should open the conversation sheet", file: file, line: line)
 	}
 
 	/// Scroll the app up until `element` is hittable (or a bounded number of
