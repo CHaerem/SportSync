@@ -101,6 +101,111 @@ describe("protect-interests hook (CI-gated: blocks autonomous agents, allows loc
 	});
 });
 
+describe("protect-automation hook (CI-gated: blocks agents from mutating protected automation paths)", () => {
+	const hook = "scripts/hooks/protect-automation.js";
+	const CI = { GITHUB_ACTIONS: "true" }; // simulate the claude-code-action environment
+
+	// One case per protected path class, incl. absolute AND bare-relative rooting.
+	const protectedFiles = [
+		["workflow (absolute)", "/repo/.github/workflows/research-agent.yml"],
+		["workflow (bare-relative)", ".github/workflows/research-agent.yml"],
+		["composite action (bare-relative)", ".github/actions/setup/action.yml"],
+		["safety hook (absolute)", "/repo/scripts/hooks/protect-interests.js"],
+		["safety hook (bare-relative)", "scripts/hooks/validate-after-write.js"],
+		["harness settings (absolute)", "/repo/.claude/settings.json"],
+		["harness settings (bare-relative)", ".claude/settings.json"],
+	];
+	for (const [label, file_path] of protectedFiles) {
+		it(`blocks Write to ${label} in CI with exit 2`, () => {
+			const r = runHook(hook, { tool_name: "Write", tool_input: { file_path, content: "x" } }, CI);
+			expect(r.status, file_path).toBe(2);
+			expect(r.stderr).toContain("protected automation path");
+		});
+		it(`blocks Edit to ${label} in CI`, () => {
+			const r = runHook(hook, { tool_name: "Edit", tool_input: { file_path, old_string: "a", new_string: "b" } }, CI);
+			expect(r.status, file_path).toBe(2);
+		});
+	}
+
+	it("blocks Bash redirect into a workflow file in CI", () => {
+		const r = runHook(hook, {
+			tool_name: "Bash",
+			tool_input: { command: "echo 'x' > .github/workflows/research-agent.yml" },
+		}, CI);
+		expect(r.status).toBe(2);
+	});
+
+	it("blocks Bash tee into settings.json in CI", () => {
+		const r = runHook(hook, {
+			tool_name: "Bash",
+			tool_input: { command: "echo '{}' | tee .claude/settings.json" },
+		}, CI);
+		expect(r.status).toBe(2);
+	});
+
+	it("blocks sed -i / mv targeting a safety hook or composite action in CI", () => {
+		for (const command of [
+			"sed -i '' 's/2/0/' scripts/hooks/protect-interests.js",
+			"mv /tmp/evil.yml .github/actions/setup/action.yml",
+		]) {
+			expect(runHook(hook, { tool_name: "Bash", tool_input: { command } }, CI).status, command).toBe(2);
+		}
+	});
+
+	it("blocks node -e writeFileSync targeting a workflow in CI", () => {
+		const r = runHook(hook, {
+			tool_name: "Bash",
+			tool_input: { command: `node -e "fs.writeFileSync('.github/workflows/x.yml','')"` },
+		}, CI);
+		expect(r.status).toBe(2);
+	});
+
+	it("ALLOWS a local operator (no CI) to edit a protected automation file", () => {
+		const r = spawnSync("node", [hook], {
+			input: JSON.stringify({ tool_name: "Write", tool_input: { file_path: "/repo/.github/workflows/research-agent.yml", content: "x" } }),
+			encoding: "utf-8",
+			env: { ...process.env, GITHUB_ACTIONS: "", CI: "" },
+		});
+		expect(r.status).toBe(0);
+	});
+
+	it("allows Bash reads of protected paths (even in CI)", () => {
+		for (const command of [
+			"cat .github/workflows/research-agent.yml",
+			"grep -rn matcher .claude/settings.json",
+			"ls scripts/hooks/",
+		]) {
+			expect(runHook(hook, { tool_name: "Bash", tool_input: { command } }, CI).status, command).toBe(0);
+		}
+	});
+
+	it("allows writes to non-protected files in CI (agents' contracted outputs)", () => {
+		for (const file_path of [
+			"/repo/docs/data/events.json",
+			"scripts/config/tracked.json",
+			"scripts/config/catalog.json",
+			"scripts/fetch/index.js",
+			"scripts/agents/research.md",
+			".claude/skills/norwegian-rights/SKILL.md",
+		]) {
+			expect(runHook(hook, { tool_name: "Write", tool_input: { file_path, content: "{}" } }, CI).status, file_path).toBe(0);
+		}
+	});
+
+	it("does not block a settings.json outside .claude/ in CI (only the harness one is protected)", () => {
+		const r = runHook(hook, {
+			tool_name: "Write",
+			tool_input: { file_path: "docs/settings.json", content: "{}" },
+		}, CI);
+		expect(r.status).toBe(0);
+	});
+
+	it("survives malformed input without blocking", () => {
+		const r = spawnSync("node", [hook], { input: "not json", encoding: "utf-8", env: { ...process.env, GITHUB_ACTIONS: "true" } });
+		expect(r.status).toBe(0);
+	});
+});
+
 describe("validate-after-write hook", () => {
 	const hook = "scripts/hooks/validate-after-write.js";
 
