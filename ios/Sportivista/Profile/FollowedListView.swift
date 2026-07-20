@@ -39,6 +39,9 @@ struct FollowedListView: View {
     @State private var confirmingStop: InterestRule?
     /// The just-removed follow, shown as a calm undo snackbar for a few seconds.
     @State private var undo: UndoState?
+    /// WP-134: the leading sport-symbol column scales WITH its `.body` font — a
+    /// fixed 24 pt frame stayed put while the glyph grew at Accessibility sizes.
+    @ScaledMetric(relativeTo: .body) private var symbolWidth = 24
 
     private var rules: [InterestRule] { viewModel.profile.rules }
 
@@ -141,7 +144,7 @@ struct FollowedListView: View {
             Image(systemName: SportSymbol.name(for: rule.sport))
                 .font(.sportivista(.body))
                 .foregroundStyle(SportivistaTokens.tertiaryLabel)
-                .frame(width: 24)
+                .frame(width: symbolWidth)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Text(rule.entityName)
@@ -237,6 +240,9 @@ struct FollowDetailView: View {
     private var isUnresolved: Bool { snapshot?.presenter.matchState(for: rule) == .unresolved }
     /// Nearest real names for an unresolved follow (reuses the index fuzzy).
     private var nameSuggestions: [Entity] { snapshot?.presenter.nameSuggestions(for: rule) ?? [] }
+    /// WP-134: the leading sport-symbol column scales WITH its `.body` font
+    /// (kommende + suggestion rows), so the glyph never overflows at AX sizes.
+    @ScaledMetric(relativeTo: .body) private var symbolWidth = 24
 
     var body: some View {
         List {
@@ -384,7 +390,7 @@ struct FollowDetailView: View {
             Image(systemName: SportSymbol.name(for: event.sport))
                 .font(.sportivista(.body))
                 .foregroundStyle(SportivistaTokens.tertiaryLabel)
-                .frame(width: 24)
+                .frame(width: symbolWidth)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Text(event.title)
@@ -466,7 +472,7 @@ struct FollowDetailView: View {
             Image(systemName: SportSymbol.name(for: entity.sport))
                 .font(.sportivista(.body))
                 .foregroundStyle(SportivistaTokens.tertiaryLabel)
-                .frame(width: 24)
+                .frame(width: symbolWidth)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
                 Text(entity.name)

@@ -54,6 +54,10 @@ struct OnboardingView: View {
     @State private var step: OnboardingStep = .welcome
     @FocusState private var inputFocused: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// WP-134: the leading marker glyph column («+»/«•» in packRow, «»» in
+    /// exampleRow) scales WITH its `.callout` font — a fixed 14 pt frame stayed
+    /// put while the glyph grew at Accessibility sizes, clipping the marker.
+    @ScaledMetric(relativeTo: .callout) private var markerWidth = 14
 
     private var trimmed: String {
         assistant.utterance.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -391,7 +395,7 @@ struct OnboardingView: View {
                 Text(applied ? "•" : "+")
                     .font(.sportivistaTabular(.callout, weight: .bold))
                     .foregroundStyle(applied ? SportivistaTokens.accent : SportivistaTokens.secondaryLabel)
-                    .frame(width: 14, alignment: .leading)
+                    .frame(width: markerWidth, alignment: .leading)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(pack.title)
                         .font(.sportivistaTabular(.subheadline, weight: .bold))
@@ -497,7 +501,7 @@ struct OnboardingView: View {
                 Text("»")
                     .font(.sportivistaTabular(.callout, weight: .bold))
                     .foregroundStyle(SportivistaTokens.accent)
-                    .frame(width: 14, alignment: .leading)
+                    .frame(width: markerWidth, alignment: .leading)
                     .accessibilityHidden(true)
                 Text("«\(utterance)»")
                     .font(.sportivistaTabular(.subheadline, weight: .regular))
