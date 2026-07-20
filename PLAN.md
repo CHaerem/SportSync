@@ -143,6 +143,14 @@ mennesket, aldri av en agent.
 | WP-136 | Ferskhets-herding: brief dag-vakt (iOS+web) + re-evaluer ved foregrunn/dagskifte | 0I | WP-121 | ✅ #352 merget 20.07 — brief dag-vakt (samme Oslo-dag) på iOS+web, foregrunn-re-eval av-main (WP-107-koalescering, ingen jank); web-vakt 20t→samme-dag|
 | WP-137 | Auto-TestFlight på iOS-endringer (lukk enhets-løkka) — BESKYTTET STI, eier merger | 0I | WP-17 | ✅ #353 merget 20.07 (eier) — HENDELSESDREVET CD: push på ios/** → TestFlight umiddelbart + time-plan-sikkerhetsnett for GITHUB_TOKEN-merges + detect-vakt. Eieren dogfooder alltid HEAD |
 
+## FASE 0I+ · CI/CD-herding (fra 20.07-reviewen, karakter 5/6) — BESKYTTEDE STIER, eier merger
+
+CI/CD-reviewen (4 read-only agenter) ga 5/6 og en billig herdingspakke. Disjunkte filer per WP så tre parallelle PR-er ikke kolliderer.
+
+| WP-138 | Pre-merge iOS-arkiv-/byggvalidering + permissions på testgatene + doc-forsoning (ci/ios-tests) | 0I+ | WP-137 | ⬜ |
+| WP-139 | merge-gate selvvern (PROTECTED_PATHS + protect-automation dekker merge-gate.js selv) | 0I+ | WP-40 | ⬜ |
+| WP-140 | ios-release tag-fotgever-fiks + koherenstest pinner jobbnavn/modell-tier + CLAUDE.md-forsoning | 0I+ | WP-137 | ⬜ |
+
 ---
 
 ## FASE 0I · 19.07-gjennomgangen: fikser + dekning/design-løft — 🔬 påbegynt 19.07.2026
