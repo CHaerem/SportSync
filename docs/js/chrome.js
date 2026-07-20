@@ -53,6 +53,24 @@ Object.assign(window.Dashboard.prototype, {
 
 	/** On iOS Safari (not yet installed), a quiet, dismissible install hint —
 	 *  installing unlocks calendar reminders + offline. Can't auto-prompt on iOS. */
+	// The web is the SECONDARY, desktop-primary surface; the iPhone app is the
+	// primary product (notifications, widget, on-device assistant). Point desktop
+	// visitors to it — calmly, one quiet footer link, dismissible. Gated on a
+	// configured URL so we never ship a dead link: set SS_APP_STORE_URL once the
+	// app is public (App Store id URL) or to a public TestFlight beta link.
+	renderAppPromo() {
+		// TODO(owner): set to the live App Store URL when public, e.g.
+		// 'https://apps.apple.com/no/app/id6792373768'. Empty = the promo stays hidden.
+		const SS_APP_STORE_URL = '';
+		const el = document.getElementById('app-promo-link');
+		if (!el || !SS_APP_STORE_URL) return;
+		let dismissed = false;
+		try { dismissed = localStorage.getItem('ss-app-promo') === 'off'; } catch { /* ignore */ }
+		if (dismissed) return;
+		el.href = SS_APP_STORE_URL;
+		el.hidden = false;
+	},
+
 	maybeShowInstallHint() {
 		const el = document.getElementById('install-hint');
 		if (!el || typeof navigator === 'undefined') return;

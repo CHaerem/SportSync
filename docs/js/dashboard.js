@@ -41,6 +41,8 @@ class Dashboard {
 		this.bindFollowed();
 		this.bindLive();
 		this.maybeShowInstallHint();
+		this.renderAppPromo();
+		if (typeof this.bindAssistant === 'function') this.bindAssistant();
 		document.addEventListener('visibilitychange', () => {
 			this._liveVisible = !document.hidden;
 			if (this._liveVisible) this.onResume();
@@ -86,12 +88,27 @@ class Dashboard {
 		this.recentResults = results;
 		this.tracked = tracked;
 		this.catalog = catalog;
-		// WP-96: no personal profile on the web board. Expose the catalog's tier2 in
-		// an alwaysTrack-shaped view so the "Dette dekker vi" surface (followed.js)
-		// and the "next up" glance render from what we COVER. `this.interests`
-		// itself stays null — isMustSee/emphasize then use only intrinsic signals.
-		this.covers = catalog && catalog.tier2 ? { alwaysTrack: catalog.tier2 } : null;
-		this.interests = null;
+		// The SHARED lens tunables (docs/config/lens-config.json) — the SAME file
+		// iOS bundles. Passed to lens.js; a fetch failure → lens.js's baked-in
+		// defaults (byte-identical), so the board never breaks on a missing config.
+		this.lensConfig = await fetch('config/lens-config.json').then((r) => (r.ok ? r.json() : null)).catch(() => null);
+		// The personal profile makes the board YOURS: a stored follow list
+		// (localStorage, synced via QR/iCloud) drives the accents, "dine lag og
+		// utøvere", and why-shown. An EMPTY profile == today's catalog-wide board,
+		// byte-for-byte (feed-vectors prove the equivalence). The web thus has NO
+		// account requirement — it personalises only once you follow something.
+		const profile = (typeof ssProfileLoad === 'function') ? ssProfileLoad() : null;
+		this.profile = profile;
+		this.hasProfile = !!(profile && typeof ssStateIsEmpty === 'function' && !ssStateIsEmpty(profile));
+		if (this.hasProfile) {
+			this.interests = ssProfileToInterests(profile);
+			this.covers = { alwaysTrack: this.interests.alwaysTrack };
+		} else {
+			// WP-96 fallback: catalog-wide "Dette dekker vi" from what we COVER;
+			// interests null → isMustSee/emphasize use only event-intrinsic signals.
+			this.covers = catalog && catalog.tier2 ? { alwaysTrack: catalog.tier2 } : null;
+			this.interests = null;
+		}
 		this.meta = meta;
 		this.usage = usage;
 	}
@@ -168,18 +185,13 @@ class Dashboard {
 	// ── Helpers ─────────────────────────────────────────────────────────────
 	osloTime(d) { return d.toLocaleTimeString('nb-NO', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Oslo' }); }
 	osloDayKey(d) { return d.toLocaleDateString('en-CA', { timeZone: 'Europe/Oslo' }); }
+	// The quiet visual accent. Delegates to the ONE shipped lens (lens.js,
+	// loaded before this file) so the web and the golden feed-vectors run the
+	// SAME code — see lens.js header. `this.interests` is null (catalog-wide) or
+	// the personal profile; `this.lensConfig` is the shared lens-config.json
+	// (undefined → baked-in defaults, byte-identical to the old inline logic).
 	isMustSee(e) {
-		if (e.isSeries) return false;
-		if (e.isFavorite || (e.importance || 0) >= 4 || (e.norwegian && e.norwegianPlayers?.length)) return true;
-		// Your people playing is the whole point: Norway national team, a tracked
-		// club, or a tracked athlete on the card → give it the accent.
-		const teams = [e.homeTeam || '', e.awayTeam || ''].map((t) => t.toLowerCase());
-		if (teams.some((t) => /\bnorway\b|\bnorge\b/.test(t))) return true;
-		const tracked = trackedTerms(this.interests?.alwaysTrack?.teams).map((t) => t.toLowerCase());
-		if (teams.some((t) => t && tracked.some((tt) => t.includes(tt)))) return true;
-		const hay = `${e.title || ''} ${(e.norwegianPlayers || []).map((p) => p.name || p).join(' ')}`.toLowerCase();
-		const athletes = trackedTerms(this.interests?.alwaysTrack?.athletes).map((a) => a.toLowerCase());
-		return athletes.some((a) => a && hay.includes(a));
+		return ssIsMustSee(e, this.interests, this.lensConfig);
 	}
 
 	/** The time cell: a HH:MM for a single-day event, or a date window
@@ -578,6 +590,8 @@ class Dashboard {
 			if (share) { this.shareEvent(this._eventById?.get(share.dataset.eventId)); return; }
 			const report = evt.target.closest('.ev-report');
 			if (report) { this.reportEvent(this._eventById?.get(report.dataset.eventId)); return; }
+			const follow = evt.target.closest('.ev-follow');
+			if (follow) { this.toggleFollow(follow); return; }
 			if (evt.target.closest('.agenda-more')) { this._fullHorizon = true; this.renderAgenda(); return; }
 			const row = evt.target.closest('.ev.expandable');
 			if (row) toggle(row);

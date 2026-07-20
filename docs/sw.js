@@ -1,5 +1,5 @@
 // Sportivista v2 Service Worker — fresh data always, network-first shell
-const CACHE_NAME = 'sportivista-v1-6';
+const CACHE_NAME = 'sportivista-v1-7';
 const DATA_PATH_FRAGMENT = '/data/';
 
 const SHELL_FILES = [
@@ -15,14 +15,20 @@ const SHELL_FILES = [
     '/css/layout.css',
     '/css/cards.css',
     '/js/shared-constants.js',
+    '/js/lens.js',
+    '/js/profile-sync.js',
+    '/js/assistant.js',
     '/js/theme.js',
     '/js/dashboard.js',
     '/js/live.js',
     '/js/detail.js',
     '/js/followed.js',
+    '/js/profile-ui.js',
     '/js/chrome.js',
     '/rediger.html',
     '/js/edit.js',
+    '/js/icloud-config.js',
+    '/js/icloud-sync.js',
     '/activity.html',
     '/styleguide.html'
 ];
@@ -45,6 +51,13 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
+
+    // CloudKit JS + Apple sign-in: never intercept, cache, or clone these — the
+    // auth redirect and the api.apple-cloudkit.com calls must go straight to the
+    // network, and the cloudkit.js library must always come fresh from Apple's CDN.
+    if (url.hostname.endsWith('apple-cloudkit.com') || url.hostname.endsWith('apple.com')) {
+        return; // fall through to the browser's default handling
+    }
 
     // Data files: fresh from network when online; cache the last-good copy and
     // fall back to it offline so the agenda still opens with no signal. Keyed

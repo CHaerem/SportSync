@@ -280,3 +280,17 @@
 	.ev-title { font-size: 15.5px; }
 	.ev-meta { font-size: 13px; }
 }
+
+/* ── Assistant (deterministic Q&A over your feed) ───────────────────────────
+   Calm: one field, one amber focus ring, no spinner, no chrome. The answer is a
+   quiet line; matching events render as ordinary agenda rows below it. */
+.assistant { margin: 0 0 28px; }
+.assistant-input {
+	width: 100%; box-sizing: border-box; font: inherit; font-size: 15px;
+	padding: 11px 14px; border: 1px solid var(--line); border-radius: 10px;
+	background: var(--surface); color: var(--fg);
+}
+.assistant-input::placeholder { color: var(--fg-3); }
+.assistant-input:focus { outline: none; border-color: var(--accent); }
+.assistant-results { margin-top: 14px; }
+.assistant-answer { font-size: 14px; color: var(--fg-2); margin: 0 0 10px; line-height: 1.5; }

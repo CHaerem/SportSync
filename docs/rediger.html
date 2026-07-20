@@ -78,13 +78,79 @@
 			<div id="add-suggestions" class="add-suggestions"></div>
 		</section>
 
+		<details class="add-box import-box" id="import-box">
+			<summary><h2 style="display:inline">Importer fra telefonen</h2></summary>
+			<p class="muted">Åpne appen din, del profilen som QR-kode eller lenke, og lim inn lenken her. Da får denne nettleseren de samme lagene og utøverne du følger — bare på din enhet, aldri via vår server.</p>
+			<textarea id="import-payload" class="add-search" rows="3" placeholder="Lim inn sportivista://profile?… eller lenken fra appen" style="width:100%;resize:vertical;font-family:inherit"></textarea>
+			<button type="button" id="import-run" class="btn">Slå sammen</button>
+			<p class="muted" id="import-status" hidden></p>
+		</details>
+
+		<details class="add-box icloud-box" id="icloud-box" hidden>
+			<summary><h2 style="display:inline">Synk med iCloud</h2></summary>
+			<p class="muted">Logg inn med Apple-ID-en din, så synker profilen automatisk begge veier med iPhone-appen — via din egen private iCloud, aldri via vår server.</p>
+			<div id="apple-sign-in-button"></div>
+			<div id="apple-sign-out-button"></div>
+			<p class="muted" id="icloud-status" hidden></p>
+		</details>
+
 		<div class="edit-foot">
 			<p class="muted">Endringer vises her når siden er bygd om (~et par minutter etter innsending). Vil du endre alt for hånd (aliaser, varsel-tid m.m.)? <a href="https://github.dev/CHaerem/sportivista/blob/main/scripts/config/interests.json" target="_blank" rel="noopener">Rediger fila direkte</a>.</p>
 		</div>
 	</main>
 
 	<script src="js/shared-constants.js"></script>
+	<script src="js/lens.js"></script>
+	<script src="js/profile-sync.js"></script>
 	<script src="js/theme.js"></script>
 	<script src="js/edit.js"></script>
+	<!-- iCloud sync (optional): CloudKit JS from Apple's CDN + the public token.
+	     Both are inert until icloud-config.js carries a token — no dead network. -->
+	<script src="js/icloud-config.js"></script>
+	<script src="https://cdn.apple-cloudkit.com/ck/2/cloudkit.js" async></script>
+	<script src="js/icloud-sync.js"></script>
+	<script>
+		// Personal-profile import: paste an app QR/link (or arrive with a
+		// #profile=… / ?d=… fast-path from the phone's share sheet) and MERGE it
+		// into this device's local profile. No login, no server — the same codec
+		// the app uses. Calm status line, no spinner (DESIGN.md).
+		(function () {
+			const box = document.getElementById('import-box');
+			if (!box || typeof ssProfileImport !== 'function') return;
+			const field = document.getElementById('import-payload');
+			const btn = document.getElementById('import-run');
+			const status = document.getElementById('import-status');
+			const say = (msg) => { status.textContent = msg; status.hidden = false; };
+			async function run(payload) {
+				try {
+					const res = await ssProfileImport(payload);
+					say(`Lagt til: ${res.added} · fjernet: ${res.removed}. Åpne oversikten for å se dem.`);
+					field.value = '';
+				} catch (e) {
+					say(e && e.message === 'empty' ? 'Fant ingenting å importere i den lenken.'
+						: 'Kunne ikke lese lenken — sjekk at du limte inn hele.');
+				}
+			}
+			btn?.addEventListener('click', () => { if (field.value.trim()) run(field.value.trim()); });
+			// Fast-path: a share link like https://sportivista.com/rediger.html#profile=<payload>.
+			try {
+				const hash = (location.hash || '').replace(/^#/, '');
+				const q = new URLSearchParams(hash || location.search.replace(/^\?/, ''));
+				const payload = q.get('profile') || q.get('d');
+				if (payload) { box.open = true; field.value = payload; run(payload); }
+			} catch { /* ignore */ }
+		})();
+
+		// iCloud sync init — only when a token is configured (icloud-config.js).
+		// CloudKit JS loads async, so wait for it briefly; give up quietly after ~10s.
+		(function () {
+			if (!window.ssICloud || !window.SPORTIVISTA_ICLOUD || !window.SPORTIVISTA_ICLOUD.apiToken) return;
+			let tries = 0;
+			const t = setInterval(() => {
+				if (typeof CloudKit !== 'undefined') { clearInterval(t); window.ssICloud.init({ onSynced: () => {} }); }
+				else if (++tries > 40) clearInterval(t);
+			}, 250);
+		})();
+	</script>
 </body>
 </html>

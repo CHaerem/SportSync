@@ -39,6 +39,21 @@ protocol ProfileSyncBackend: Sendable {
     /// tombstones included — deletions replicate as records, never as CloudKit
     /// record deletions, so a peer can't resurrect an unfollowed entity.
     func push(_ pushSet: PushSet) async throws
+
+    /// Publish this device's FULL merged state as a single PLAINTEXT snapshot the
+    /// WEB can read. CloudKit JS cannot decrypt the per-record `encryptedValues`
+    /// the E2E path uses, so `push` alone is invisible to a browser; the snapshot
+    /// is the web-readable channel (a ProfileShareCodec payload in one record,
+    /// recordName = this device). The CRDT guarantees the two channels converge.
+    /// Default: no-op — only CloudKitProfileSync overrides it.
+    func writeSnapshot(_ state: ProfileSyncState) async throws
+}
+
+extension ProfileSyncBackend {
+    /// Backends that don't sync (LocalOnly) or don't need a web-readable channel
+    /// (the test mock, unless it opts in) get a no-op — the coordinator can call
+    /// it unconditionally.
+    func writeSnapshot(_ state: ProfileSyncState) async throws { /* no-op */ }
 }
 
 /// The no-op fallback. Cross-device sync is off; the profile stays purely local

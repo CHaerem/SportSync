@@ -37,6 +37,10 @@
 			<h1 class="hero-headline" id="hero-headline"></h1>
 		</section>
 		<p class="install-hint" id="install-hint" hidden></p>
+		<section class="assistant" id="assistant">
+			<input type="text" id="assistant-input" class="assistant-input" autocomplete="off" placeholder="Spør: hva skjer i kveld? · vis golf · når spiller Liverpool?">
+			<div class="assistant-results" id="assistant-results" hidden></div>
+		</section>
 		<div class="live-now" id="live-now" hidden></div>
 		<section class="next-up" id="next-up" hidden></section>
 		<div id="agenda"></div>
@@ -52,16 +56,21 @@
 		<a href="webcal://sportivista.com/data/events.ics" title="Abonner — native påminnelser på mobil før varsel-eventene (ett trykk på iOS/Android)">Abonner i kalender</a>
 		<a href="data/events.ics" download class="footer-alt" title="Last ned .ics (engangsimport, f.eks. på desktop)">last ned</a>
 		<a href="activity.html" class="footer-alt" title="Hva automatikken har gjort — forbedringer og endringer">Aktivitet</a>
+		<a id="app-promo-link" class="footer-alt footer-app" href="#" hidden title="Sportivista som iPhone-app — varsler, widget og assistent på lomma">Få iPhone-appen</a>
 		<span id="footer-stale" class="footer-stale" hidden></span>
 		<span id="footer-usage" class="footer-usage" hidden></span>
 	</footer>
 
 	<script src="js/shared-constants.js"></script>
+	<script src="js/lens.js"></script>
+	<script src="js/profile-sync.js"></script>
+	<script src="js/assistant.js"></script>
 	<script src="js/theme.js"></script>
 	<script src="js/dashboard.js"></script>
 	<script src="js/live.js"></script>
 	<script src="js/detail.js"></script>
 	<script src="js/followed.js"></script>
+	<script src="js/profile-ui.js"></script>
 	<script src="js/chrome.js"></script>
 	<script>
 		if ('serviceWorker' in navigator) {

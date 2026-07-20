@@ -20,6 +20,7 @@ actor MockProfileSyncBackend: ProfileSyncBackend {
     private let failPull: Bool
     private(set) var pullCount = 0
     private(set) var pushes: [PushSet] = []
+    private(set) var snapshots: [ProfileSyncState] = []
 
     init(remote: ProfileSyncState = ProfileSyncState(), isEnabled: Bool = true, failPull: Bool = false) {
         self.remote = remote
@@ -35,12 +36,20 @@ actor MockProfileSyncBackend: ProfileSyncBackend {
 
     func push(_ pushSet: PushSet) async throws {
         pushes.append(pushSet)
-        let incoming = ProfileSyncState(rules: pushSet.rules, episodic: pushSet.episodic, counters: pushSet.counters)
+        let incoming = ProfileSyncState(rules: pushSet.rules, episodic: pushSet.episodic,
+                                        counters: pushSet.counters, facts: pushSet.facts)
         remote = ProfileMerge.merge(local: remote, remote: incoming).merged
+    }
+
+    /// Record the web-readable snapshot the coordinator publishes (the mock opts in
+    /// so the snapshot wiring is unit-tested without CloudKit).
+    func writeSnapshot(_ state: ProfileSyncState) async throws {
+        snapshots.append(state)
     }
 
     // Test accessors (actor-isolated → awaited from the tests).
     func recordedPushes() -> [PushSet] { pushes }
+    func recordedSnapshots() -> [ProfileSyncState] { snapshots }
     func currentRemote() -> ProfileSyncState { remote }
     func pulls() -> Int { pullCount }
 }

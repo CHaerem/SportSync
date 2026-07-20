@@ -1,0 +1,66 @@
+# iCloud-synk mellom web og app — oppsett (eier, engangs)
+
+Web-versjonen kan synke «hva du følger» to veier med iPhone-appen via **CloudKit
+JS + Sign in with Apple** — helt uten vår egen server. Koden er ferdig; det som
+gjenstår er noen manuelle steg i **CloudKit Console** (bare eieren kan gjøre dem,
+krever den betalte Apple-kontoen). Til de er gjort holder web seg til den lokale
+profilen + QR/lenke-import — ingenting brekker.
+
+## Hvorfor et «ProfileSnapshot»
+
+Appen synker profilen per-record **ende-til-ende-kryptert** (`encryptedValues`).
+CloudKit JS **kan ikke dekryptere E2E-felter**, så nettleseren ville bare sett
+metadata. Derfor publiserer appen i tillegg ett **klartekst-snapshot per enhet**
+(`ProfileSnapshot`, ett `payload`-felt = hele den flettede staten som
+`ProfileShareCodec`-payload). Web leser/fletter/skriver kun snapshots; den native
+iOS↔iOS-stien forblir E2E. **Konsekvens:** alt web kan lese er per definisjon ikke
+E2E — snapshot-feltet er klartekst i din egen private iCloud-DB (aldri delt, aldri
+vår server).
+
+## Steg (Development først, så Production)
+
+CloudKit Console → `icloud.developer.apple.com/dashboard` → container
+**`iCloud.app.sportivista.ios`** (under det betalte teamet `9LVCB72DT8`):
+
+1. **Bekreft containeren** ligger under det betalte teamet (ikke grået ut).
+2. **Definer record-typen `ProfileSnapshot`** (Schema → Record Types → New):
+   - felt **`payload`** — type **String**
+   - felt **`updatedAt`** — type **Date/Time**
+   - (recordName er systemfeltet; én record per enhet.)
+   Tips: kjør `SportivistaDeviceDev`-bygget på iPhone og følg noe én gang — appen
+   auto-oppretter typen i Development. Indeksene + Production-deploy er manuelt.
+3. **Legg til en Queryable-indeks på systemfeltet `recordName`** for
+   `ProfileSnapshot` (Indexes → Add). *Uten den feiler alle web-spørringer med
+   `BAD_REQUEST: field recordName is not marked queryable` — den vanligste feilen.*
+4. **Generer en CloudKit JS API-token** (Security & API Access → API Tokens →
+   New Token). Sett **Allowed Origins** nøyaktig til:
+   - `https://sportivista.com`
+   - `https://chaerem.github.io`
+   Kopier tokenet.
+5. **Lim tokenet inn i [`docs/js/icloud-config.js`](js/icloud-config.js)**
+   (`apiToken: '<tokenet>'`) og commit. Tokenet er **offentlig og origin-låst —
+   trygt å committe** (det gir ingenting fra en annen origin, og hver bruker
+   logger inn med sin egen Apple-ID og ser bare sin egen private DB).
+6. **Deploy Schema to Production** (Deploy Schema Changes). Sett `environment` i
+   `icloud-config.js` til å matche appbygget som kjører: Debug-device →
+   `development`, TestFlight/Release → `production`. Generer token for samme miljø.
+
+## Verifisering
+
+- **På enhet (dev):** følg noe i appen → bekreft at en `ProfileSnapshot` dukker
+  opp som klartekst i Development-DB-en i zonen `SportivistaProfile`.
+- **På web:** åpne `sportivista.com/rediger.html` → seksjonen **«Synk med iCloud»**
+  vises når tokenet er satt → logg inn med Apple-ID → lista skal matche telefonen.
+  Følg noe på web → dukker opp på telefonen etter neste bakgrunnssynk.
+
+## Feilsøking
+
+| Symptom | Årsak | Fiks |
+|---|---|---|
+| «Synk med iCloud» vises ikke | tomt `apiToken` | lim inn tokenet (steg 5) |
+| `BAD_REQUEST … recordName not queryable` | manglende indeks | steg 3 |
+| `AUTHENTICATION_FAILED` / origin | origin-mismatch | eksakt scheme+host (steg 4) |
+| Web viser tom/feil profil | miljø-mismatch | hold device-bygg + token på samme `environment` (steg 6) |
+
+Kodesiden: [`icloud-sync.js`](js/icloud-sync.js) (web-klient), `CloudKitProfileSync.swift`
+(appens `writeSnapshot`/snapshot-lesing), `sw.js` (slipper CloudKit-kall forbi cachen).
