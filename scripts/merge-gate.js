@@ -6,9 +6,9 @@
  * ONE place enforces the invariant "protected paths are never auto-merged".
  * Finds the newest open PR whose head branch starts with <branch-prefix> and:
  *   1. If it touches a protected path → leave it OPEN, label `needs-review`.
- *      Protected: the workflows (the automation's own defs + this gate), the
+ *      Protected: the workflows (the automation's own defs + gates), the
  *      composite actions, the safety hooks, the hook wiring (.claude/settings.json),
- *      and the user-owned interests.json.
+ *      the user-owned interests.json, and THIS enforcer script itself.
  *   2. Otherwise re-run the tests ourselves as a deterministic hard gate
  *      (npm ci + npm test, plus validate-events for self-repair) and auto-merge.
  *      A failing gate command throws → the workflow step fails loudly and the
@@ -22,12 +22,18 @@ import { pathToFileURL } from "url";
 
 // Paths that must never ship unattended. Kept in sync with CLAUDE.md
 // ("Protected paths — never auto-merged") and the agent prompts.
+// The last entry protects THIS file: the enforcer must be at least as protected
+// as the paths it guards. merge-gate.js lives in scripts/ (not scripts/hooks/),
+// so without an explicit anchor a self-fixing loop could "refactor" the gate —
+// weakening or disabling PROTECTED_PATHS — and auto-merge it once tests are green
+// (its own test being auto-mergeable too). Guarding it here forces human review.
 export const PROTECTED_PATHS = [
 	/^\.github\/workflows\//, // the automation's own definitions and gates
 	/^\.github\/actions\//, // composite actions the workflows invoke
 	/^scripts\/hooks\//, // the safety hooks (interests protection, post-write validate)
 	/^scripts\/config\/interests\.json$/, // user-owned; AI never writes here
 	/^\.claude\/settings\.json$/, // wires the safety hooks into the harness
+	/^scripts\/merge-gate\.js$/, // the enforcer itself — guards against self-weakening
 ];
 
 export function findProtectedPaths(files) {

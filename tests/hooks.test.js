@@ -114,6 +114,8 @@ describe("protect-automation hook (CI-gated: blocks agents from mutating protect
 		["safety hook (bare-relative)", "scripts/hooks/validate-after-write.js"],
 		["harness settings (absolute)", "/repo/.claude/settings.json"],
 		["harness settings (bare-relative)", ".claude/settings.json"],
+		["merge gate (absolute)", "/repo/scripts/merge-gate.js"], // WP-139: the enforcer itself
+		["merge gate (bare-relative)", "scripts/merge-gate.js"],
 	];
 	for (const [label, file_path] of protectedFiles) {
 		it(`blocks Write to ${label} in CI with exit 2`, () => {
@@ -160,6 +162,15 @@ describe("protect-automation hook (CI-gated: blocks agents from mutating protect
 		expect(r.status).toBe(2);
 	});
 
+	it("blocks sed -i / redirect targeting the merge gate in CI (WP-139)", () => {
+		for (const command of [
+			"sed -i '' 's/6/0/' scripts/merge-gate.js",
+			"echo 'x' > scripts/merge-gate.js",
+		]) {
+			expect(runHook(hook, { tool_name: "Bash", tool_input: { command } }, CI).status, command).toBe(2);
+		}
+	});
+
 	it("ALLOWS a local operator (no CI) to edit a protected automation file", () => {
 		const r = spawnSync("node", [hook], {
 			input: JSON.stringify({ tool_name: "Write", tool_input: { file_path: "/repo/.github/workflows/research-agent.yml", content: "x" } }),
@@ -187,6 +198,7 @@ describe("protect-automation hook (CI-gated: blocks agents from mutating protect
 			"scripts/fetch/index.js",
 			"scripts/agents/research.md",
 			".claude/skills/norwegian-rights/SKILL.md",
+			"tests/merge-gate.test.js", // WP-139: the gate's OWN test is deliberately NOT protected
 		]) {
 			expect(runHook(hook, { tool_name: "Write", tool_input: { file_path, content: "{}" } }, CI).status, file_path).toBe(0);
 		}
