@@ -1,8 +1,15 @@
-# Den universelle PR-gaten: npm-suiten (~620 tester, sekunder) kjører på HVER
-# PR uansett hva den rører — dette er sjekken branch-beskyttelsen krever
-# («web-tests»). Før denne fantes gatet testene bare selvhelings-loopene
-# (som re-kjører dem selv i merge-gate.js); PR-er fra mennesker/hovedløkka
-# hadde ingen maskinell gate i det hele tatt.
+# Web-testgaten: npm-suiten (~620 tester, sekunder) kjører på HVER PR og på
+# push til main som rører scripts/tests/docs-js/package/vitest.
+#
+# «Required»-nyansen (rettet WP-138): sjekken «web-tests» er IKKE plattform-
+# håndhevet. Repo-rulesetet «main-gates» har bare deletion + non_fast_forward,
+# og main har ingen klassisk branch-protection — altså INGEN server-side
+# required status checks. Den REELLE gaten er script-side: de tre selvhelings-
+# loopene (ui-fix/self-repair/improve) kjører scripts/merge-gate.js, som venter
+# på grønn CI (`gh pr checks --watch --fail-fast`) før de auto-merger. Menneske-
+# PR-er og direkte-push til main forbigår dermed CI — den gater loopenes auto-
+# merge, ikke main. (Før ci.yml fantes gatet ingenting menneske-/hovedløkke-PR-er
+# maskinelt; loopene re-kjørte testene selv inne i merge-gate.js.)
 name: CI
 
 on:
@@ -15,6 +22,12 @@ on:
       - "docs/js/**"
       - "package*.json"
       - "vitest.config.js"
+
+# Ren test-gate: leser bare ut koden (checkout). Ingen jobb her skriver til
+# repoet, så minste privilegium er contents: read (WP-138). Utelatt tidligere,
+# så workflowen arvet repo-defaultens videre GITHUB_TOKEN-scope.
+permissions:
+  contents: read
 
 concurrency:
   group: ci-${{ github.ref }}
