@@ -59,11 +59,32 @@ struct NewsBoard: Equatable {
 			.prefix(maxNews)
 
 		return NewsBoard(
-			headline: featured?.headline,
+			headline: freshHeadline(featured, now: now),
 			news: Array(matchedNews),
 			results: footballResultRows(results.football, lens: lens, index: index, shield: shield),
 			forward: forwardRows(events, lens: lens, index: index, now: now, max: maxForward)
 		)
+	}
+
+	// MARK: - Section 1 day-gate (brief freshness, WP-136)
+
+	/// The editorial brief's headline, but ONLY while it is from the CURRENT Oslo
+	/// calendar day. The brief's language is day-relative ("i kveld"/"i morgen"),
+	/// so a brief that outlives its Oslo day is a factual error (19.07: yesterday's
+	/// "VM-finalen i kveld" showed the day after the final). The exact guard the web
+	/// hero uses (dashboard.js `featuredIsFresh`): a pure Oslo calendar-day compare
+	/// via `FeedCompiler.osloDayKey` — no "N hours" heuristic, so the brief never
+	/// survives its own day. A brief with no `generatedAt` is undateable ⇒ hidden
+	/// (we won't stand behind a brief we can't date). Re-checked on EVERY board build
+	/// with the caller's `now`, so a return to the foreground / a day rollover
+	/// (ContentView rebuilds the board with a fresh `now`) drops yesterday's brief
+	/// without any new download — a cheap date compare, no work on the main thread.
+	private static func freshHeadline(_ featured: FeaturedBrief?, now: Date) -> String? {
+		guard let featured, let headline = featured.headline,
+		      let generatedAt = featured.generatedAt,
+		      FeedCompiler.osloDayKey(generatedAt) == FeedCompiler.osloDayKey(now)
+		else { return nil }
+		return headline
 	}
 
 	// MARK: - RESULTAT (followed teams)

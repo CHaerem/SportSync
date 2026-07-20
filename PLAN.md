@@ -140,7 +140,7 @@ mennesket, aldri av en agent.
 | WP-133 | Entitets-dekning: Eliteserien + Ingebrigtsen + Norge-dedup + pakke-repek | 0I | WP-132 | ✅ #348 merget 20.07 |
 | WP-134 | Visningsbugs: tekst-forskyvning/feil størrelse (eier-dogfooding 20.07) | 0I | — | ✅ #349 merget 20.07 |
 | WP-135 | Agenda-tid klippes av bred deltaker-tittel (standard str., eier-skjermbilde 20.07) | 0I | WP-112 | ✅ #351 merget 20.07 — TimeColumn definert ScaledMetric-bredde (fjernet fixedSize-forgiftning) + agenda-width demo-seed; AX-reflow urørt, korte rader pikselidentiske|
-| WP-136 | Ferskhets-herding: brief dag-vakt (iOS+web) + re-evaluer ved foregrunn/dagskifte | 0I | WP-121 | ⬜ |
+| WP-136 | Ferskhets-herding: brief dag-vakt (iOS+web) + re-evaluer ved foregrunn/dagskifte | 0I | WP-121 | 🔬 |
 
 ---
 

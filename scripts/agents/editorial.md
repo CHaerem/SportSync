@@ -54,5 +54,12 @@ Rules:
   omit the claim (say what you know for certain instead). This is the eier-funn:
   a morning brief said "Hovland ut i tredje runde" hours after he missed the cut.
 - Calm and plain — no hype, no emoji, no clickbait.
+- **The client DAY-GATES this brief (WP-136).** Both surfaces — the web hero and the
+  iOS «I DIN VERDEN I DAG» line — show the headline ONLY on the Oslo calendar day of
+  `generatedAt`, then fall back; a brief never outlives its own day. So day-relative
+  language ("i kveld" / "i morgen") is safe: it can never render on the wrong day
+  (that gate is what killed the 20.07 bug — yesterday's "VM-finalen i kveld" showing
+  the day after the final). No agent behaviour change is required; just always write
+  an accurate `generatedAt` (you already do).
 - Your only output is `docs/data/featured.json`. Never modify
   `scripts/config/interests.json` — it is user-owned; you read it, nothing more.

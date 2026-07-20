@@ -164,30 +164,50 @@ describe("detail title (share/report) names the participants", () => {
 	});
 });
 
-// WP-111: editorial (featured.json) is a "nice extra" that can be quota-skipped for
-// a day. A stale brief is a factual error on the hero (19.07: yesterday's "finalen
-// venter i morgen" stayed up all through finale day). Discard anything > ~20h old.
-describe("editorial freshness guard on the hero headline", () => {
-	const HOUR = 3600000;
-	const brief = (ageHours) => ({
-		generatedAt: new Date(Date.now() - ageHours * HOUR).toISOString(),
+// WP-136: the editorial brief is DAY-GATED — shown only on the Oslo calendar day
+// it was generated. Its language is day-relative ("i kveld"/"i morgen"), so a brief
+// that outlives its Oslo day is a factual error (20.07: yesterday's "VM-finalen i
+// kveld" stayed up the day after the final). A pure Oslo calendar-day compare, `now`
+// injected so the midnight boundary is deterministic. Supersedes the WP-111 "~20h"
+// window, which still showed a 15:00 evening brief the next morning. Oslo is UTC+2 in
+// July (CEST): Oslo midnight 2026-07-20 = 2026-07-19T22:00:00Z.
+describe("editorial brief day-gate on the hero headline (WP-136)", () => {
+	const briefAt = (iso) => ({
+		generatedAt: iso,
 		blocks: [{ type: "headline", text: "Finalen venter i kveld." }],
 	});
 
-	it("uses a fresh editorial headline (generatedAt within ~20h)", () => {
-		dash.featured = brief(3);
-		expect(dash.featuredIsFresh()).toBe(true);
-		expect(dash.heroHeadline()).toContain("Finalen venter");
+	it("shows a brief generated earlier TODAY (same Oslo day)", () => {
+		const now = Date.parse("2026-07-20T06:00:00Z");   // Oslo 08:00, 20 July
+		dash.featured = briefAt("2026-07-20T03:00:00Z");  // Oslo 05:00, 20 July — today
+		expect(dash.featuredIsFresh(now)).toBe(true);
+		expect(dash.heroHeadline(now)).toContain("Finalen venter");
 	});
 
-	it("discards a stale headline (> 20h) and falls back to the calm default", () => {
-		dash.featured = brief(30);
-		expect(dash.featuredIsFresh()).toBe(false);
-		expect(dash.heroHeadline()).toBe(dash.heroFallback());
-		expect(dash.heroHeadline()).not.toContain("Finalen venter");
+	it("hides YESTERDAY's evening brief the next morning (the 20.07 bug)", () => {
+		const now = Date.parse("2026-07-20T06:00:00Z");   // Oslo 08:00, 20 July
+		dash.featured = briefAt("2026-07-19T13:00:00Z");  // Oslo 15:00, 19 July — evening brief, yesterday
+		expect(dash.featuredIsFresh(now)).toBe(false);
+		expect(dash.heroHeadline(now)).toBe(dash.heroFallback());
+		expect(dash.heroHeadline(now)).not.toContain("Finalen venter");
 	});
 
-	it("treats a featured brief with no generatedAt as untrustworthy (fall back)", () => {
+	it("drops the brief the instant the Oslo day rolls (midnight boundary)", () => {
+		// `now` just after Oslo midnight into 20 July; the brief is 1h old but from 19 July.
+		const now = Date.parse("2026-07-19T22:30:00Z");   // Oslo 00:30, 20 July
+		dash.featured = briefAt("2026-07-19T21:30:00Z");  // Oslo 23:30, 19 July — yesterday
+		expect(dash.featuredIsFresh(now)).toBe(false);
+		expect(dash.heroHeadline(now)).toBe(dash.heroFallback());
+	});
+
+	it("keeps a brief generated just AFTER Oslo midnight (same new day)", () => {
+		const now = Date.parse("2026-07-19T22:30:00Z");   // Oslo 00:30, 20 July
+		dash.featured = briefAt("2026-07-19T22:15:00Z");  // Oslo 00:15, 20 July — today
+		expect(dash.featuredIsFresh(now)).toBe(true);
+		expect(dash.heroHeadline(now)).toContain("Finalen venter");
+	});
+
+	it("treats a brief with no generatedAt as untrustworthy (fall back)", () => {
 		dash.featured = { blocks: [{ type: "headline", text: "Udatert." }] };
 		expect(dash.featuredIsFresh()).toBe(false);
 		expect(dash.heroHeadline()).toBe(dash.heroFallback());
