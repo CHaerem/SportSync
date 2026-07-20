@@ -87,6 +87,25 @@ final class FollowPresenterTests: XCTestCase {
         XCTAssertEqual(sections.map(\.group.header), ["UTØVERE", "LAG", "SPORTER"])
     }
 
+    // WP-138 — the affinity lift within a group (safe: not feed-vector-covered).
+    func test_sections_affinityLiftsEngagedEntity_emptyKeepsOriginalOrder() {
+        let idx = EntityIndex([
+            Entity(id: "a-1", name: "Aaa", sport: "tennis", type: "athlete"),
+            Entity(id: "a-2", name: "Bbb", sport: "tennis", type: "athlete"),
+            Entity(id: "a-3", name: "Ccc", sport: "tennis", type: "athlete"),
+        ])
+        let p = FollowPresenter(feed: feed(), index: idx, now: now)
+        let rules = [rule("a-1", "Aaa", "tennis"), rule("a-2", "Bbb", "tennis"), rule("a-3", "Ccc", "tennis")]
+
+        // Empty affinity → original order preserved byte-for-byte (stable tie-break).
+        XCTAssertEqual(p.sections(for: rules).first?.rules.map(\.entityId), ["a-1", "a-2", "a-3"])
+
+        // Engagement with a-3 (opened 5×) lifts it to the top; the rest keep order.
+        let behavior = [BehaviorStat(key: "behavior|open|e:a-3", kind: .open, token: "a-3", isSport: false, total: 5)]
+        let lifted = p.sections(for: rules, affinity: Affinity(behavior: behavior)).first?.rules.map(\.entityId)
+        XCTAssertEqual(lifted, ["a-3", "a-1", "a-2"])
+    }
+
     // MARK: - Next events (KOMMENDE + subtitle)
 
     func test_nextEvents_forTournament_matchesByHaystack() {

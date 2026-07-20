@@ -62,7 +62,7 @@ struct FollowedListView: View {
                 }
                 .listRowBackground(SportivistaTokens.cell)
             } else if let snap = snapshot {
-                ForEach(snap.presenter.sections(for: rules)) { section in
+                ForEach(snap.presenter.sections(for: rules, affinity: Affinity(behavior: viewModel.memory.behavior))) { section in
                     Section {
                         ForEach(section.rules) { rule in
                             NavigationLink {
