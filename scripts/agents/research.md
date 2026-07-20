@@ -115,6 +115,16 @@ The dashboard surfaces the next stage's `summary` as the "Nå" line, so this is
 where TdF live-ish stats live (there's no cycling standings API). Keep it short
 and factual; cite in `evidence`.
 
+**F1 weekends — qualifying is its own event, not just the race.** The owner follows
+"F1 hele sesongen — **kvalifisering + race**" (interests.json), but the board has
+carried only the Sunday race per GP; coverage-critic flagged the missing qualifying
+four audits running (17–20 Jul, recurrences→3). For each upcoming GP weekend, add the
+**qualifying session** (normally Saturday) as its own `f1` event alongside the race,
+with its own start time + Norwegian channel (Viaplay). On a **sprint weekend** also
+add the sprint qualifying (Fri) and the sprint race (Sat). Confirm every session's
+date/time against the official calendar (formula1.com) — never the ESPN feed
+(source-quirks: ESPN mis-dates F1 weekends).
+
 **Next-fixture coverage per followed entity.** The dashboard answers "when is X
 next?" for every `alwaysTrack` athlete/team — UNWINDOWED (even months out). So for
 each one, make sure `events.json` holds at least their **next known dated fixture**;
