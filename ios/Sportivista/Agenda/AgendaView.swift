@@ -461,30 +461,60 @@ private struct SportSymbolView: View {
 /// multi-day window ("13.–20. juli") reads a notch quieter (`.footnote`) so a
 /// week-long range stays compact and doesn't shove the title off the row — it is
 /// a date span, not a clock. Either way it lives in the SAME left column (never
-/// merged into the title). `.fixedSize` lets it take exactly the width it needs;
-/// the min width keeps "HH:mm" rows aligned.
+/// merged into the title).
+///
+/// WP-135 — the standard-size CLOCK reserves a DEFINITE (Dynamic-Type-scaled)
+/// column width rather than `.fixedSize(horizontal: true)`. A fixed-size intrinsic
+/// column let the enclosing HStack COUPLE the clock's width to the title's
+/// single-line intrinsic width during ideal-size negotiation: at certain widths a
+/// wide matchup title ("100 Thieves – Ninjas in Pyjamas") kept the row on one
+/// line and pushed the whole HStack past the cell, so the leading clock clipped
+/// ("15:00" → ":00") instead of the title wrapping (owner report 20.07, standard
+/// text size). A definite reserved width breaks that coupling — the clock ALWAYS
+/// gets its column and the flexible title takes the residual and wraps. `58` at
+/// the default content size is byte-identical to the old `minWidth: 58`, and
+/// `@ScaledMetric` grows the column in lock-step with the `.body` clock text so a
+/// large "23:59" still fits. A multi-day WINDOW keeps `.fixedSize` — it genuinely
+/// needs its full intrinsic width reserved (WP-99), and its rarer title-truncation
+/// edge is the accepted trade for that (a date span must never itself wrap/clip).
 private struct TimeColumn: View {
     let text: String
 
     @Environment(\.dynamicTypeSize) private var dtSize
+    /// The reserved clock column width — `58` at the default content size (the old
+    /// `minWidth`), scaled up with Dynamic Type so a big clock stays whole. Only
+    /// applied to the standard-size clock case (see `body`).
+    @ScaledMetric(relativeTo: .body) private var clockColumnWidth = 58
 
     /// A clock always carries ":"; a window ("13.–20. juli") or honest "–"
     /// never does.
     private var isClock: Bool { text.contains(":") }
+    private var isAX: Bool { dtSize.isAccessibilitySize }
 
     var body: some View {
-        Text(text)
+        let label = Text(text)
             .font(isClock ? .sportivistaTabular(.body, weight: .semibold) : .sportivistaTabular(.footnote, weight: .medium))
             .foregroundStyle(SportivistaTokens.label)
             // WP-134: at Accessibility sizes the column is on its own line (see
-            // AgendaRowScaffold), so it no longer needs to win width against the
-            // title — let a wide window WRAP instead of forcing its intrinsic
-            // width with `.fixedSize`, and drop the min-width alignment padding.
-            // At standard sizes the original behaviour is preserved exactly.
-            .lineLimit(dtSize.isAccessibilitySize ? 2 : 1)
-            .fixedSize(horizontal: !dtSize.isAccessibilitySize, vertical: false)
-            .frame(minWidth: dtSize.isAccessibilitySize ? nil : 58, alignment: .leading)
-            .padding(.top, isClock ? 0 : 2)
+            // AgendaRowScaffold), so a wide window may WRAP to two lines.
+            .lineLimit(isAX ? 2 : 1)
+
+        Group {
+            if !isAX && isClock {
+                // Standard CLOCK — a DEFINITE, Dynamic-Type-scaled column (no
+                // `.fixedSize` intrinsic coupling; see the type's doc comment).
+                label
+                    .frame(width: clockColumnWidth, alignment: .leading)
+            } else {
+                // Standard WINDOW keeps `.fixedSize` to reserve its full intrinsic
+                // width (WP-99); `minWidth: 58` is its unchanged alignment floor.
+                // AX puts the column on its own line, so it reserves nothing.
+                label
+                    .fixedSize(horizontal: !isAX, vertical: false)
+                    .frame(minWidth: isAX ? nil : 58, alignment: .leading)
+            }
+        }
+        .padding(.top, isClock ? 0 : 2)
     }
 }
 
