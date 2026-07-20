@@ -172,12 +172,6 @@ class Dashboard {
 		return athletes.some((a) => a && hay.includes(a));
 	}
 
-	/** Reminder lead time (min) from interests.notify — the VALARM offset. */
-	notifyLead() {
-		const m = Number(this.interests?.notify?.leadMinutes);
-		return m > 0 ? Math.round(m) : 30;
-	}
-
 	/** The time cell: a HH:MM for a single-day event, or a date window
 	 *  ("13.–20. juli") that REPLACES the clock for a multi-day event — never
 	 *  both, and never duplicated in the title. */

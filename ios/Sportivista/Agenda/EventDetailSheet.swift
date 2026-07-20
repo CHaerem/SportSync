@@ -78,7 +78,13 @@ struct EventDetailSheet: View {
                 // control — a user-set per-event override would be a new
                 // feature, out of WP-14.1 scope.
                 Section {
-                    NotifyStatusRow(on: event.mustWatch)
+                    // WP-131: read the reminder state from the RECOMPUTED row flag
+                    // (AgendaViewModel derives it via FeedCompiler.mustWatch against
+                    // THIS device's effective interests), not the server event field.
+                    // The published events.json is user-neutral and no longer carries
+                    // a mustWatch stamp, so `event.mustWatch` would be false for
+                    // everyone; `row.mustWatch` is this user's own bell state.
+                    NotifyStatusRow(on: row.mustWatch)
                 } header: {
                     header("VARSEL")
                 }
