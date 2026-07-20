@@ -119,22 +119,22 @@ mennesket, aldri av en agent.
 | WP-112 | iOS: perf-port-robusthet + deltaker-visning i agendaraden | 0I | — | ✅ #330 merget 20.07 — interleavede small/large-målinger + 3-forsøks ratio-port (2,13–2,15× lokalt ×3, O(n²)-vakt bevart); AgendaFormat.matchupTitle i rad/live/detalj/widget-kallsteder; 582 iOS-tester, vektorer bit-like, 4 schemes |
 | WP-113 | Sikkerhet: preview-deploy-injeksjon + CI-skrivevakt (BESKYTTEDE STIER — eier merger) | 0I | — | 🔬 PR #327 ÅPEN (needs-review) — execFileSync + refs/pull/N/head + SAFE_REF-regex + fork-PR-skip; ny protect-automation.js-hook (CI-only) + wiring + tester; 651 tester grønne. VENTER PÅ EIER-MERGE. Review-punkter: fork-PR-er mister preview (bevisst); hooken gjelder også PR-løkkene (workflow-fikser må forfattes av menneske) |
 | WP-114 | Dok-resynk etter 19.07-gjennomgangen | 0I | — | ✅ #331 merget 20.07 — CLAUDE.md (web-identitet Apple-native, testtall 44/648, +9 testfiler, build-alert, 4 workflows dokumentert), workflows-test ×4, ios/README (News/-seksjon, LaunchTrace, 61 testfiler/573), PLAN-metadata restaurert mot git-historikk |
-| WP-115 | iOS: in-app nyhetsbrowser (SFSafariViewController) | 0I | WP-106 | 🔬 bølge 2 |
-| WP-116 | Dekningsbredde: katalog-utvidelse + deltaker-/«Om»-kontrakter i research/verify | 0I | WP-110 | 🔬 bølge 2 — PR åpen (katalog: tier1 +håndball/friidrett, tier2-langhale 55→130 entiteter; research horisont-scan + verify deltaker-/«Om»-kontrakter) |
+| WP-115 | iOS: in-app nyhetsbrowser (SFSafariViewController) | 0I | WP-106 | ✅ #333 merget 20.07 |
+| WP-116 | Dekningsbredde: katalog-utvidelse + deltaker-/«Om»-kontrakter i research/verify | 0I | WP-110 | ✅ #334 merget 20.07 — PR åpen (katalog: tier1 +håndball/friidrett, tier2-langhale 55→130 entiteter; research horisont-scan + verify deltaker-/«Om»-kontrakter) |
 | WP-117 | Design-review av alle flater (read-only rapport) | 0I | — | ✅ rapport levert 20.07 — bekreftet alle tre eier-svakheter + W1 fortids-daggruppe over «I DAG», W2 live-poll kollapser åpne rader, rediger-amber-overload, onboarding-copy «kommandolinjen», RESULTAT-seksjon feilplassert, DESIGN.md selvmotsigelse om web-klokka, stale skjermkatalog → WP-120/126–129 |
 | WP-118 | Kjernefunksjonalitet-audit (read-only rapport) | 0I | — | ✅ rapport levert 20.07 — 🔴 varsel-reconcile kun ved kald oppstart; 🔴 widget-timeline aldri invalidert ved sync; 🟡 ingen foregrunn-sync, horisont-divergens (web 14d-cap/iOS ingen/data 42d), ICS uten DTEND, 100T-entitetsdublett + intet lens-miss-signal → WP-121–125 |
-| WP-119 | Portmåling-artefakt (port-report fra verify/coverage/build-alert) | 0I | — | 🔬 PR åpen — `scripts/build-port-report.js` (kjøres fra build-events før writeManifest, ingen workflow-endring) → `docs/data/port-report.json`; fire porter (coverage/amendRate/silentStops/participantStatus) grønn/gul/rød + ærlig `basis` (manglende kilde ⇒ «ukjent», aldri stille grønn); .gitignore-whitelist + manifest auto-inkluderer; nye tester (grønn/gul/rød/ukjent + integrasjon) |
-| WP-120 | «Det du følger»: visning + håndtering (fra WP-117-funn) | 0I | WP-117 | 🔬 bølge 3 — verdi per rad + type-gruppering + trygg håndtering + web-paritet |
-| WP-121 | iOS leverings-ferskhet: varsel-reconcile + widget-reload + foregrunn-sync | 0I | WP-118 | 🔬 bølge 2 — reconcile på alle sync-veier (SyncFreshness) + WidgetCenter-reload + foregrunn-gate; SyncFreshnessTests |
+| WP-119 | Portmåling-artefakt (port-report fra verify/coverage/build-alert) | 0I | — | ✅ #332 merget 20.07 — `scripts/build-port-report.js` (kjøres fra build-events før writeManifest, ingen workflow-endring) → `docs/data/port-report.json`; fire porter (coverage/amendRate/silentStops/participantStatus) grønn/gul/rød + ærlig `basis` (manglende kilde ⇒ «ukjent», aldri stille grønn); .gitignore-whitelist + manifest auto-inkluderer; nye tester (grønn/gul/rød/ukjent + integrasjon) |
+| WP-120 | «Det du følger»: visning + håndtering (fra WP-117-funn) | 0I | WP-117 | ✅ #340 merget 20.07 — verdi per rad + type-gruppering + trygg håndtering + web-paritet |
+| WP-121 | iOS leverings-ferskhet: varsel-reconcile + widget-reload + foregrunn-sync | 0I | WP-118 | ✅ #337 merget 20.07 — reconcile på alle sync-veier (SyncFreshness) + WidgetCenter-reload + foregrunn-gate; SyncFreshnessTests |
 | WP-122 | ~~Deltaker widget/detalj~~ → slått inn i WP-127 | 0I | — | — |
-| WP-123 | ICS: DTEND fra endTime (flerdagsevents) | 0I | — | 🔬 bølge 3 |
-| WP-124 | Horisont-konsistens: web «Fremover» (14–42 d) + iOS Uka-cap (EIERBESLUTNING) | 0I | WP-118 | 🔬 bølge 4 — iOS Uka cappes 14 d (buildSections `maxHorizon`, speiler web `agendaDayGroups`); web «Fremover»-disclosure (14–42 d, ingen kanal); NewsBoard forwardHorizonDays 7→14 (null [7,14]-overlap/gap); vektorene urørt (predikater, ikke vindu) |
-| WP-125 | Entitets-konsolidering (100T-alias) + lens-miss-signal | 0I | WP-118 | 🔬 bølge 4 |
-| WP-126 | Live-koherens: ett delt live-begrep på alle flater (eierbestilling 20.07) | 0I | WP-121 | 🔬 bølge 3 — ssLiveState (web) + AgendaViewModel.liveState (iOS-speil): 'direkte'/'pågår'/null; «Direkte nå» viser TdF/sjakk/CS2 (ESPN beriker); iOS minutt-tikk (TimelineView.everyMinute); followed.js relDay bruker delt def. Widget: WP-127 eier fila (urørt) |
-| WP-127 | Detalj & widget: «Om»-avsnitt iOS + deltaker-titler + RESULTAT sist + prosa-bredde web | 0I | WP-112 | 🔬 bølge 3 |
-| WP-128 | Web-agenda: fortids-dag-fiks + ekspandert-tilstand over live-poll + klokke-avstemming | 0I | WP-117 | 🔬 bølge 3 |
-| WP-129 | Onboarding-klarhet: formål i klarspråk + kapsel-copy + stale kommentarer | 0I | WP-117 | 🔬 bølge 4 |
-| WP-130 | Pipeline-kvalitet: refaktor-auditens quick-wins | 0I | — | 🔬 PR åpen — containsName-memo, haystack-dedup ×3, én fillesing, configDirPath (+2 env-bugfiks), 2 døde eksporter, flattenStats, golf mergeEvents |
+| WP-123 | ICS: DTEND fra endTime (flerdagsevents) | 0I | — | ✅ #335 merget 20.07 |
+| WP-124 | Horisont-konsistens: web «Fremover» (14–42 d) + iOS Uka-cap (EIERBESLUTNING) | 0I | WP-118 | ✅ #344 merget 20.07 — iOS Uka cappes 14 d (buildSections `maxHorizon`, speiler web `agendaDayGroups`); web «Fremover»-disclosure (14–42 d, ingen kanal); NewsBoard forwardHorizonDays 7→14 (null [7,14]-overlap/gap); vektorene urørt (predikater, ikke vindu) |
+| WP-125 | Entitets-konsolidering (100T-alias) + lens-miss-signal | 0I | WP-118 | ✅ #343 merget 20.07 |
+| WP-126 | Live-koherens: ett delt live-begrep på alle flater (eierbestilling 20.07) | 0I | WP-121 | ✅ #341 merget 20.07 — ssLiveState (web) + AgendaViewModel.liveState (iOS-speil): 'direkte'/'pågår'/null; «Direkte nå» viser TdF/sjakk/CS2 (ESPN beriker); iOS minutt-tikk (TimelineView.everyMinute); followed.js relDay bruker delt def. Widget: WP-127 eier fila (urørt) |
+| WP-127 | Detalj & widget: «Om»-avsnitt iOS + deltaker-titler + RESULTAT sist + prosa-bredde web | 0I | WP-112 | ✅ #339 merget 20.07 |
+| WP-128 | Web-agenda: fortids-dag-fiks + ekspandert-tilstand over live-poll + klokke-avstemming | 0I | WP-117 | ✅ #336 merget 20.07 |
+| WP-129 | Onboarding-klarhet: formål i klarspråk + kapsel-copy + stale kommentarer | 0I | WP-117 | ✅ #342 merget 20.07 |
+| WP-130 | Pipeline-kvalitet: refaktor-auditens quick-wins | 0I | — | ✅ #338 merget 20.07 — containsName-memo, haystack-dedup ×3, én fillesing, configDirPath (+2 env-bugfiks), 2 døde eksporter, flattenStats, golf mergeEvents |
 
 ---
 
@@ -158,15 +158,14 @@ Bølge 1 (✅ komplett 20.07, ~2,5 t): WP-110 #329, WP-111 #328, WP-112 #330,
 WP-114 #331 merget; WP-113 #327 ÅPEN (venter eier); WP-117/118-rapportene levert
 og omsatt til WP-120–129. Samlet verifisering: 648 JS-tester + build/validate +
 screenshot grønt; iOS-gaten grønn på main.
-Bølge 2 (disjunkte filer): WP-115 (News/), WP-116 (server: katalog + prompter),
-WP-119 (server: port-report), WP-121 (iOS: Sync/ContentView/AgendaViewModel).
-Bølge 3 (etter bølge 2): WP-120 (Profile/ + web followed/edit), WP-123 (ICS),
-WP-126 (live: live.js/shared-constants + iOS live-linja), WP-127 (detalj/widget),
-WP-128 (web-agenda) — WP-126/127/128 deler IKKE filer: 126 eier live.js +
-liveNow-stien, 127 eier detail.js/EventDetailSheet/widget, 128 eier
-renderAgenda/dag-gruppering; ved tvil eier lavest WP-nummer fila.
-Bølge 4: WP-124 (horisont — eierbeslutning først), WP-125 (entiteter),
-WP-129 (onboarding-copy/katalog).
+Bølge 2 (✅ komplett 20.07 natt): WP-115 #333, WP-116 #334, WP-119 #332, WP-121 #337.
+Bølge 3 (✅ komplett 20.07 natt): WP-120 #340, WP-123 #335, WP-126 #341,
+WP-127 #339, WP-128 #336. Bølge 4 (✅ komplett 20.07 natt): WP-124 #344,
+WP-125 #343, WP-129 #342 + WP-130 #338 (refaktor-audit-quick-wins).
+Nattskiftet 20.07 tok også: 9,7 MB utdaterte bevis-PNG-er slettet (regel 8),
+.claude/worktrees/ gitignored, git gc, designbeslutninger på delegert
+eiermyndighet (web-klokka fjernet for paritet; iOS Uka-cap 14 d).
+GJENSTÅR i fasen: kun WP-113 (#327, beskyttede stier — eier reviewer/merger).
 
 ### WP-110 · Pipeline-vakter: sjakk-falsk-positiv + kontrakter
 **Mål:** fjern den kroniske HIGH-falsk-positiven og tett tre småkontrakter.
