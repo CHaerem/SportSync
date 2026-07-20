@@ -1,7 +1,12 @@
 # TestFlight-release-lanen (WP-17 CI/CD): arkiverer, cloud-signerer og laster
 # opp appen fra en ren checkout — uavhengig av eierens Mac og den flakete
-# Xcode-GUI-sesjonen. Trigges manuelt (gh workflow run ios-release.yml) eller
-# med en `ios-v*`-tag.
+# Xcode-GUI-sesjonen. Trigges manuelt (gh workflow run ios-release.yml), med en
+# `ios-v*`-tag, ELLER automatisk på en time-plan som bygger BARE når ios/ har
+# endret seg siden forrige TestFlight-opplasting (WP-137 — lukker enhets-løkka:
+# eieren dogfooder alltid siste versjon, i stedet for et bygg som henger døgn bak
+# fiksene på main). `detect`-jobben (billig ubuntu) selv-skipper macos-bygget når
+# ios/ er uendret, så planen koster ~ingenting de timene ingenting endret seg;
+# en byge av iOS-merges kollapser til ÉTT bygg på neste time-tikk.
 #
 # Krever tre repo-secrets fra en ASC-nøkkel med ADMIN-rolle (App Manager kan
 # ikke cloud-signere — lærdom fra første opplasting): ASC_KEY_ID,
@@ -16,6 +21,10 @@ name: iOS Release
 
 on:
   workflow_dispatch:
+  schedule:
+    # Hver time i aktive timer (offset fra static-pipeline `0 5-21`). `detect`
+    # bygger kun når ios/ endret seg siden siste opplasting — ellers gratis skip.
+    - cron: "35 6-22 * * *"
   push:
     tags: ["ios-v*"]
 
@@ -28,7 +37,43 @@ permissions:
   actions: write # kicke static-pipeline etter registrering
 
 jobs:
+  # Billig ubuntu-vakt: på schedule bygger vi KUN når ios/ har endret seg siden
+  # forrige TestFlight-opplasting (stampen i scripts/config/testflight.json).
+  # Manuell dispatch og ios-v*-tag bygger alltid. Selv-skip → macos-jobben under
+  # kjører ikke de timene ingenting endret seg (samme mønster som ios-tests.yml).
+  detect:
+    runs-on: ubuntu-latest
+    outputs:
+      should_build: ${{ steps.check.outputs.should_build }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0 # trenger historikk for rev-list mot stampen
+      - id: check
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+            echo "event=${{ github.event_name }} → bygg alltid (manuell/tag)"
+            exit 0
+          fi
+          STAMP=$(node -e "try{process.stdout.write(String(require('./scripts/config/testflight.json').stamp||''))}catch(e){process.stdout.write('')}")
+          if [ -z "$STAMP" ] || ! git cat-file -e "${STAMP}^{commit}" 2>/dev/null; then
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+            echo "ingen/ukjent TF-stamp ('$STAMP') → bygg for sikkerhets skyld"
+            exit 0
+          fi
+          if [ -n "$(git rev-list "${STAMP}..HEAD" -- ios/ | head -1)" ]; then
+            echo "should_build=true" >> "$GITHUB_OUTPUT"
+            echo "ios/ endret siden bygg (stamp $STAMP) → bygg"
+          else
+            echo "should_build=false" >> "$GITHUB_OUTPUT"
+            echo "ios/ uendret siden bygg (stamp $STAMP) → hopp over (gratis)"
+          fi
+
   release:
+    needs: detect
+    if: needs.detect.outputs.should_build == 'true'
     runs-on: macos-26
     timeout-minutes: 50
     steps:

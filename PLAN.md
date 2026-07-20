@@ -141,6 +141,7 @@ mennesket, aldri av en agent.
 | WP-134 | Visningsbugs: tekst-forskyvning/feil størrelse (eier-dogfooding 20.07) | 0I | — | ✅ #349 merget 20.07 |
 | WP-135 | Agenda-tid klippes av bred deltaker-tittel (standard str., eier-skjermbilde 20.07) | 0I | WP-112 | ✅ #351 merget 20.07 — TimeColumn definert ScaledMetric-bredde (fjernet fixedSize-forgiftning) + agenda-width demo-seed; AX-reflow urørt, korte rader pikselidentiske|
 | WP-136 | Ferskhets-herding: brief dag-vakt (iOS+web) + re-evaluer ved foregrunn/dagskifte | 0I | WP-121 | ✅ #352 merget 20.07 — brief dag-vakt (samme Oslo-dag) på iOS+web, foregrunn-re-eval av-main (WP-107-koalescering, ingen jank); web-vakt 20t→samme-dag|
+| WP-137 | Auto-TestFlight på iOS-endringer (lukk enhets-løkka) — BESKYTTET STI, eier merger | 0I | WP-17 | 🔬 PR — time-plan på ios-release.yml + billig detect-vakt (bygg kun når ios/ endret siden siste opplasting); eieren dogfooder alltid HEAD |
 
 ---
 
