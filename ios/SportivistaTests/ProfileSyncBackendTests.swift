@@ -23,6 +23,22 @@ final class ProfileSyncBackendTests: XCTestCase {
 
     // MARK: - LocalOnly / disabled
 
+    // The factory must NEVER crash and NEVER attempt CloudKit where the container
+    // isn't provisioned (iOS-app-on-Mac). In the Simulator/CI build (no
+    // `-D SPORTIVISTA_CLOUDKIT`) it is always LocalOnly; the guard for the CloudKit
+    // build is asserted structurally: on Mac the factory must return a disabled
+    // (local) backend rather than construct CloudKitProfileSync (which raises at
+    // launch on the un-provisioned Mac run — the 20.07 DeviceDev-on-Mac crash-loop).
+    func test_factory_neverCrashes_andIsLocalWhenSyncUnavailable() {
+        let backend = ProfileSyncBackendFactory.make()
+        if ProcessInfo.processInfo.isiOSAppOnMac {
+            XCTAssertFalse(backend.isEnabled, "iOS-app-on-Mac must fall back to local-only, never CloudKit")
+        }
+        #if !SPORTIVISTA_CLOUDKIT
+        XCTAssertFalse(backend.isEnabled, "the Simulator/CI build is always local-only")
+        #endif
+    }
+
     func test_localOnly_isNoop() async {
         let coordinator = ProfileSyncCoordinator(backend: LocalOnlyProfileSync())
         let local = ProfileSyncState(rules: [synced("a", at: 10, device: "A")])
