@@ -40,9 +40,57 @@ final class NewsBoardTests: XCTestCase {
 	// MARK: - Section 1 (headline)
 
 	func testHeadline_fromFeatured() {
-		let brief = FeaturedBrief(mode: "morning", blocks: [FeaturedBrief.Block(type: "headline", text: "Hei")])
+		// WP-136: the brief now carries a `generatedAt` on the CURRENT Oslo day
+		// (else it is day-gated out — see the day-gate tests below).
+		let brief = FeaturedBrief(generatedAt: now, mode: "morning", blocks: [FeaturedBrief.Block(type: "headline", text: "Hei")])
 		let board = NewsBoard.build(news: [], featured: brief, results: RecentResults(), events: [], entities: [], profile: followProfile, shield: SpoilerShield(), now: now)
 		XCTAssertEqual(board.headline, "Hei")
+	}
+
+	// MARK: - Section 1 day-gate (WP-136)
+	// The brief is shown ONLY on the Oslo calendar day of its `generatedAt`. Its
+	// language is day-relative ("i kveld"/"i morgen"), so a brief that outlives its
+	// Oslo day is a factual error (20.07: yesterday's "VM-finalen i kveld" still
+	// showed the day after the final). `now` injected so the midnight boundary is
+	// deterministic. Oslo is UTC+2 in July (CEST): Oslo midnight 2026-07-20 =
+	// 2026-07-19T22:00:00Z.
+
+	private func date(_ iso: String) -> Date { ISO8601DateFormatter().date(from: iso)! }
+
+	private func headline(generatedAt iso: String?, now: Date) -> String? {
+		let brief = FeaturedBrief(
+			generatedAt: iso.map { date($0) }, mode: "morning",
+			blocks: [FeaturedBrief.Block(type: "headline", text: "Finalen venter i kveld.")])
+		return NewsBoard.build(news: [], featured: brief, results: RecentResults(), events: [], entities: [], profile: followProfile, shield: SpoilerShield(), now: now).headline
+	}
+
+	func testBrief_shownWhenGeneratedSameOsloDay() {
+		let now = date("2026-07-20T06:00:00Z")                               // Oslo 08:00, 20 July
+		XCTAssertEqual(headline(generatedAt: "2026-07-20T03:00:00Z", now: now), // Oslo 05:00, 20 July — today
+		               "Finalen venter i kveld.")
+	}
+
+	func testBrief_hiddenWhenGeneratedYesterdayOslo() {
+		let now = date("2026-07-20T06:00:00Z")                               // Oslo 08:00, 20 July
+		// Yesterday's 15:00 evening brief, still cached the next morning — the 20.07 bug.
+		XCTAssertNil(headline(generatedAt: "2026-07-19T13:00:00Z", now: now))  // Oslo 15:00, 19 July
+	}
+
+	func testBrief_droppedTheInstantOsloDayRolls() {
+		// `now` just after Oslo midnight into 20 July; the brief is 1h old but from 19 July.
+		let now = date("2026-07-19T22:30:00Z")                               // Oslo 00:30, 20 July
+		XCTAssertNil(headline(generatedAt: "2026-07-19T21:30:00Z", now: now))  // Oslo 23:30, 19 July
+	}
+
+	func testBrief_keptWhenGeneratedJustAfterOsloMidnight() {
+		let now = date("2026-07-19T22:30:00Z")                               // Oslo 00:30, 20 July
+		XCTAssertEqual(headline(generatedAt: "2026-07-19T22:15:00Z", now: now), // Oslo 00:15, 20 July — today
+		               "Finalen venter i kveld.")
+	}
+
+	func testBrief_hiddenWhenUndateable() {
+		// No `generatedAt` — we won't stand behind a brief we can't date.
+		XCTAssertNil(headline(generatedAt: nil, now: date("2026-07-20T06:00:00Z")))
 	}
 
 	// MARK: - Section 2 (NYTT)

@@ -118,23 +118,33 @@ class Dashboard {
 		el.innerHTML = this.emphasize(escapeHtml(this.heroHeadline()));
 	}
 
-	/** The editorial headline when it's fresh, else the calm fallback. */
-	heroHeadline() {
-		const headline = this.featuredIsFresh()
+	/** The editorial headline when it's fresh, else the calm fallback. `now`
+	 *  injectable so a foreground/day-rollover re-render (and the tests) can prove
+	 *  the day-gate at a chosen instant. */
+	heroHeadline(now = Date.now()) {
+		const headline = this.featuredIsFresh(now)
 			? this.featured?.blocks?.find((b) => b.type === 'headline')?.text
 			: null;
 		return headline || this.heroFallback();
 	}
 
-	/** featured.json is trustworthy only while it's recent (~20h). A quota-skipped
-	 *  editorial run leaves yesterday's brief in place; showing it on, say, finale
-	 *  day ("finalen venter i morgen") is a factual error. No/undateable generatedAt
-	 *  ⇒ not fresh (fall back) — we won't stand behind a brief we can't date. */
-	featuredIsFresh() {
+	/** The editorial brief is trustworthy only on the Oslo calendar DAY it was
+	 *  generated. Its language is day-relative ("i kveld"/"i morgen"), so a brief
+	 *  that outlives its Oslo day is a factual error: a quota-skipped editorial run
+	 *  that leaves yesterday's brief up — or a 15:00 evening brief still cached the
+	 *  next morning — reads wrong the instant the Oslo day rolls (19.07: yesterday's
+	 *  "finalen venter i kveld" stayed up through finale day; WP-136). Show it ONLY
+	 *  while `generatedAt` is TODAY in Oslo — a pure calendar-day compare
+	 *  (osloDayKey), no "N hours" heuristic, so the brief never survives its own day.
+	 *  No/undateable generatedAt ⇒ not fresh (fall back) — we won't stand behind a
+	 *  brief we can't date. (Supersedes the WP-111 ~20h window, which still showed an
+	 *  evening brief the next morning.) */
+	featuredIsFresh(now = Date.now()) {
 		const ts = this.featured?.generatedAt;
 		if (!ts) return false;
-		const age = Date.now() - new Date(ts).getTime();
-		return Number.isFinite(age) && age < 20 * SS_CONSTANTS.MS_PER_HOUR;
+		const gen = new Date(ts);
+		if (Number.isNaN(gen.getTime())) return false;
+		return this.osloDayKey(gen) === this.osloDayKey(new Date(now));
 	}
 
 	/** Calm fallback when the editorial agent hasn't written a headline yet. */

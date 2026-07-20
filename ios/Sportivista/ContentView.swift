@@ -524,6 +524,16 @@ struct ContentView: View {
             guard phase == .active else { return }
             Task { await assistant.runBackgroundSync(using: profileSync) }
             guard oldPhase == .background else { return }
+            // WP-136: re-evaluate the DAY-GATED Nyheter brief with a fresh `now` on
+            // EVERY return from background — independent of the 15-min data-freshness
+            // gate below and of whether the sync changes anything. A brief that was
+            // «i dag» when the app was backgrounded must disappear once the Oslo day
+            // has rolled (overnight reopen), WITHOUT waiting for a new download. This
+            // reuses the WP-107 off-main coalescing build (NewsModel.rebuild →
+            // nonisolated computeBoard, lazy EntityIndex), so foreground stays
+            // instant — the board just re-lenses a moment later off the main thread;
+            // no decode/matching on main, no timer.
+            news.rebuild()
             if !foregroundRefreshInFlight,
                ForegroundSyncGate.shouldRefresh(lastSync: dataStore.lastSync, now: Date()) {
                 foregroundRefreshInFlight = true

@@ -94,6 +94,33 @@ final class NewsModelTests: XCTestCase {
 		XCTAssertLessThanOrEqual(model.buildCount, 2, "a burst coalesces to at most two builds")
 	}
 
+	// MARK: - WP-136 — day-gated brief re-evaluates on a fresh-`now` rebuild
+
+	/// The foreground / day-rollover path (ContentView calls `news.rebuild()` on a
+	/// return from background): the SAME cached brief must disappear once the Oslo
+	/// day has rolled — a fresh-`now` rebuild re-checks the day-gate, no new sync,
+	/// and the whole build stays on the WP-107 off-main coalescing path.
+	func test_rebuild_reEvaluatesBriefDayGate_onNewNow() async throws {
+		let cache = CacheStore(rootDirectory: FileManager.default.temporaryDirectory
+			.appendingPathComponent("sportivista-wp136-\(UUID().uuidString)", isDirectory: true))
+		// A brief generated 05:00 Oslo on 20 July (2026-07-20T03:00:00Z, CEST = UTC+2).
+		let featured = #"{"generatedAt":"2026-07-20T03:00:00Z","mode":"morning","blocks":[{"type":"headline","text":"Dagens brief."}]}"#
+		try cache.write(Data(featured.utf8), filename: "featured.json")
+		let model = makeModel(cache: cache, profileStore: tempProfileStore())
+		let iso = ISO8601DateFormatter()
+
+		// Opened the SAME Oslo day (08:00, 20 July) → the brief shows.
+		model.rebuild(now: iso.date(from: "2026-07-20T06:00:00Z")!)
+		await model.awaitQuiescent()
+		XCTAssertEqual(model.board.headline, "Dagens brief.", "shown on its own Oslo day")
+
+		// Reopened the NEXT Oslo day (08:00, 21 July) with the SAME cached brief —
+		// a fresh-`now` rebuild (the foreground path) must drop it, no re-sync.
+		model.rebuild(now: iso.date(from: "2026-07-21T06:00:00Z")!)
+		await model.awaitQuiescent()
+		XCTAssertNil(model.board.headline, "the brief disappears once the Oslo day has rolled")
+	}
+
 	// MARK: - Off-main guarantee
 
 	func test_guard_tripsWhenBuildRunsOnMainThread() throws {
