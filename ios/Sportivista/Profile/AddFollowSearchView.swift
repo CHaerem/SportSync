@@ -112,30 +112,34 @@ struct AddFollowSearchView: View {
 
     /// The calm follow-anyway affordance: one quiet action + one honest line
     /// about what it means. Already soft-followed → a muted read-out instead.
-    @ViewBuilder
+    /// WP-165: either way, a quiet «meld inn ønsket» tap lets the user signal the
+    /// demand so the server learns this is wanted — the follow isn't a dead end.
     private func softFollowRow(_ name: String) -> some View {
-        if viewModel.isFollowing(InterestRule.softFollowId(for: name)) {
-            Text("Du følger «\(name)» — venter på dekning.")
-                .font(.sportivista(.subheadline))
-                .foregroundStyle(SportivistaTokens.secondaryLabel)
-                .accessibilityIdentifier("addfollow.softfollowing")
-        } else {
-            VStack(alignment: .leading, spacing: 4) {
-                Button("Følg «\(name)» likevel") {
-                    viewModel.softFollow(name: name)
-                }
-                .font(.sportivista(.subheadline, weight: .semibold))
-                .foregroundStyle(SportivistaTokens.accent)
-                .buttonStyle(.borderless)
-                .sportivistaTapTarget()
-                .accessibilityIdentifier("addfollow.softfollow")
-                Text("Vi kjenner ikke navnet ennå. Raden i Det du følger venter til dekningen kommer.")
-                    .font(.sportivista(.footnote))
+        VStack(alignment: .leading, spacing: 8) {
+            if viewModel.isFollowing(InterestRule.softFollowId(for: name)) {
+                Text("Du følger «\(name)» — venter på dekning.")
+                    .font(.sportivista(.subheadline))
                     .foregroundStyle(SportivistaTokens.secondaryLabel)
-                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("addfollow.softfollowing")
+            } else {
+                VStack(alignment: .leading, spacing: 4) {
+                    Button("Følg «\(name)» likevel") {
+                        viewModel.softFollow(name: name)
+                    }
+                    .font(.sportivista(.subheadline, weight: .semibold))
+                    .foregroundStyle(SportivistaTokens.accent)
+                    .buttonStyle(.borderless)
+                    .sportivistaTapTarget()
+                    .accessibilityIdentifier("addfollow.softfollow")
+                    Text("Vi kjenner ikke navnet ennå. Raden i Det du følger venter til dekningen kommer.")
+                        .font(.sportivista(.footnote))
+                        .foregroundStyle(SportivistaTokens.secondaryLabel)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
-            .padding(.vertical, 2)
+            CoverageRequestLink(name: name)
         }
+        .padding(.vertical, 2)
     }
 
     @ViewBuilder

@@ -24,6 +24,7 @@ import fs from "fs";
 import path from "path";
 import { pathToFileURL } from "url";
 import { readJsonIfExists, rootDataPath, configDirPath, writeJsonPretty, iso, MS_PER_DAY, containsName, coverageHaystack, normalizeText, normalizeEntity, entityTerms, isEventInWindow, makeCoverageGate } from "./lib/helpers.js";
+import { collectDemand } from "./lib/demand.js";
 
 // Re-export so existing importers (tests) keep resolving containsName from here.
 export { containsName };
@@ -410,16 +411,22 @@ function main() {
 	const trackedClaims = detectTrackedClaims({ tracked, events });
 	const allGaps = [...gaps, ...trackedClaims];
 	const anomalies = detectSourceAnomalies({ sources, events, isCovered });
-	writeJsonPretty(path.join(dataDir, "coverage-gaps.json"), {
+	// WP-165: fold the public, anonymous `coverage-request` demand signal in. Fail-soft
+	// — collectDemand returns null when `gh` is unavailable/unauthorised, and we simply
+	// omit the `demand` field then (never fail the pipeline over a missing signal).
+	const demand = collectDemand({ now: Date.now() });
+	const out = {
 		generatedAt: iso(),
 		gapCount: allGaps.length,
 		anomalyCount: anomalies.length,
 		gaps: allGaps,
 		anomalies,
-		note: "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board (kind entity/sport), or a tracked.json reason that claims an upcoming event the board lacks (kind tracked-claim, RSS-independent). anomalies: a fetcher's own data looks unreliable.",
-	});
+		note: "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board (kind entity/sport), or a tracked.json reason that claims an upcoming event the board lacks (kind tracked-claim, RSS-independent). anomalies: a fetcher's own data looks unreliable. demand: distinct entities users publicly asked us to cover (open coverage-request issues), anonymous name+sport only — the research agent prioritises these when widening the catalog.",
+	};
+	if (demand != null) out.demand = demand;
+	writeJsonPretty(path.join(dataDir, "coverage-gaps.json"), out);
 	console.log(
-		`Coverage gaps: ${allGaps.length} (${allGaps.filter((g) => g.imminent).length} imminent, ${trackedClaims.length} tracked-claim); source anomalies: ${anomalies.length}`
+		`Coverage gaps: ${allGaps.length} (${allGaps.filter((g) => g.imminent).length} imminent, ${trackedClaims.length} tracked-claim); source anomalies: ${anomalies.length}; demand: ${demand == null ? "n/a" : demand.length}`
 	);
 }
 

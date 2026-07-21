@@ -251,6 +251,31 @@ Object.assign(window.Dashboard.prototype, {
 		}
 	},
 
+	// ── Coverage-request demand signal (WP-165) ──────────────────────────────
+	/** Build the PRE-FILLED, public GitHub issue URL for a coverage request. A miss
+	 *  in search (something outside the catalog/register) offers ONE calm optional tap
+	 *  that opens this — the user reviews and sends it themselves (no auto-post,
+	 *  privacy-honest). The issue carries ONLY the entity name + optional sport (never
+	 *  a profile/device), and its `### Entitet` / `### Sport` body + `coverage-request`
+	 *  label are what scripts/lib/demand.js aggregates into coverage-gaps.json.demand[].
+	 *  The body shape mirrors the iOS builder (CoverageRequest.swift) and the issue
+	 *  form (coverage-request.yml) so all three parse identically. */
+	coverageRequestUrl(name, sport) {
+		const nm = (name || '').trim();
+		const sp = (sport || '').trim() || '(ikke satt)';
+		const body = [
+			'Offentlig, anonymt ønske om dekning fra Sportivista — kun navn + sport, ingen profil- eller enhetsdata.',
+			`### Entitet\n\n${nm}`,
+			`### Sport\n\n${sp}`,
+		].join('\n\n');
+		const p = new URLSearchParams({
+			labels: 'coverage-request',
+			title: `[dekning] ${nm}`,
+			body,
+		});
+		return `https://github.com/${SS_REPO}/issues/new?${p.toString()}`;
+	},
+
 	// ── Search-and-follow (WP-163) ───────────────────────────────────────────
 	/** Wire the search box inside the "Dette dekker vi" disclosure: type a name →
 	 *  matching entities from entities.json → tap to follow directly (ssProfileFollow)
@@ -267,8 +292,14 @@ Object.assign(window.Dashboard.prototype, {
 			if (q.length < 2) { results.hidden = true; results.innerHTML = ''; return; }
 			const hits = this.searchEntities(q);
 			if (!hits.length) {
+				// WP-165: a miss is not a dead end — offer to signal the demand. One calm
+				// optional tap opens a pre-filled, public coverage-request issue (name +
+				// sport only); the user sends it themselves. The server folds open requests
+				// into coverage-gaps.json.demand[] and research widens the catalog from there.
+				const url = this.coverageRequestUrl(q);
 				results.innerHTML = `<p class="fs-empty">Ingen treff på «${escapeHtml(q)}».`
-					+ ` <a href="rediger.html">Be om dekning →</a></p>`;
+					+ ` <a class="fs-request" href="${escapeHtml(url)}" target="_blank" rel="noopener">Meld inn ønsket →</a></p>`
+					+ `<p class="fs-request-note">Sender et offentlig, anonymt ønske (kun navn + sport). Du ser og sender det selv.</p>`;
 				results.hidden = false;
 				return;
 			}

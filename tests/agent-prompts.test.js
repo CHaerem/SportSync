@@ -28,6 +28,10 @@ describe("agent prompts", () => {
 		expect(p).toContain("norwegian-rights");
 		expect(p).toContain("fact-check");
 		expect(p).toContain("rubrics/research-rubric.md");
+		// WP-165: the demand signal (public coverage-request issues) must be a
+		// documented input the horizon scan prioritises — but never auto-adds.
+		expect(p).toContain("demand");
+		expect(p).toContain("coverage-request");
 		expect(fs.existsSync(path.resolve("scripts", "agents", "rubrics", "research-rubric.md"))).toBe(true);
 	});
 

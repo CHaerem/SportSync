@@ -173,6 +173,31 @@ describe("handleFollowIntent — the assistant EXECUTES the follow (WP-163)", ()
 	});
 });
 
+describe("coverageRequestUrl — the WP-165 demand signal (search miss)", () => {
+	it("builds a pre-filled public coverage-request issue URL (name + sport only)", () => {
+		const url = W.dashboard.coverageRequestUrl("Liverpool", "football");
+		expect(url.startsWith(`https://github.com/${W.SS_REPO}/issues/new?`)).toBe(true);
+		const params = new URL(url).searchParams;
+		expect(params.get("labels")).toBe("coverage-request");
+		expect(params.get("title")).toBe("[dekning] Liverpool");
+		// The body sections are the parse contract shared with scripts/lib/demand.js.
+		const body = params.get("body");
+		expect(body).toContain("### Entitet\n\nLiverpool");
+		expect(body).toContain("### Sport\n\nfootball");
+	});
+	it("writes the (ikke satt) placeholder when no sport is known", () => {
+		const body = new URL(W.dashboard.coverageRequestUrl("Vipers Kristiansand")).searchParams.get("body");
+		expect(body).toContain("### Sport\n\n(ikke satt)");
+	});
+	it("carries no profile/device data — only the searched name + sport", () => {
+		const body = new URL(W.dashboard.coverageRequestUrl("Brann", "football")).searchParams.get("body");
+		expect(body.toLowerCase()).toContain("anonym");
+		// The disclaimer says «ingen profil- eller enhetsdata»; what must NOT appear is
+		// any actual transported identifier (a device/profile id, an entity id, storage keys).
+		expect(body).not.toMatch(/ss-device|ss-profile|entityId|localStorage/i);
+	});
+});
+
 describe("layered covers — following never collapses the catalog (WP-163)", () => {
 	beforeEach(() => {
 		W.dashboard.catalog = { tier2: {

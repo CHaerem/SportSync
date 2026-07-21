@@ -1,0 +1,42 @@
+name: Meld inn ønsket dekning
+description: Be Sportivista dekke et lag, en utøver, turnering eller sport vi ikke har ennå. Et offentlig, anonymt etterspørselssignal — ingen profil- eller enhetsdata.
+title: "[dekning] "
+labels: ["coverage-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Dette er et **offentlig, anonymt** ønske om dekning. Det inneholder
+        **KUN navnet du fyller inn og (valgfritt) sporten** — ingen profil, ingen
+        følgeliste, ingen enhets- eller kontodata. Serveren teller åpne ønsker for
+        å prioritere hva research-agenten utvider dekningen med. Ingenting sendes
+        automatisk — du ser og sender denne selv.
+  - type: input
+    id: entity
+    attributes:
+      label: Entitet
+      description: Navnet på laget, utøveren, turneringen eller sporten du vil ha dekket.
+      placeholder: f.eks. Liverpool
+    validations:
+      required: true
+  - type: dropdown
+    id: sport
+    attributes:
+      label: Sport
+      description: Valgfritt, men hjelper oss å plassere ønsket riktig.
+      options:
+        - (ikke satt)
+        - football
+        - golf
+        - tennis
+        - f1
+        - cycling
+        - chess
+        - esports
+        - handball
+        - athletics
+        - biathlon
+        - cross-country
+        - alpine
+        - nordic
+        - ski jumping
