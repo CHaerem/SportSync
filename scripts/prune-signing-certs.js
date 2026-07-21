@@ -13,6 +13,14 @@
 // FAIL-SOFT: en list-feil eller en enkelt DELETE-feil LOGGES og svelges (exit 0) — prune
 // skal ALDRI felle en ellers gyldig bygg-kjøring; poenget er å HINDRE cap-en, ikke å blokkere.
 //
+// WP-153: lanen importerer nå en FAST CI-signeringsidentitet (secret SIGNING_CERT_P12) i
+// nøkkelringen FØR arkivering, så `-allowProvisioningUpdates` skal gjenbruke den i stedet
+// for å minte et nytt cert per kjøring — det stopper churn-en (og «Certificate Has Been
+// Revoked»-mailene tilbakekallingene utløste). Prune blir da et SIKKERHETSNETT snarere enn
+// et navn: den beskytter CI-identiteten via KEEP_CERT_IDS (den bærer også displayName
+// «Created via API» og ville ellers blitt tilbakekalt av sin egen prune) og rydder kun
+// evt. gjenværende/stale churn. Når verifisert at mintingen har stoppet, kan steget fjernes.
+//
 // Env: ASC_KEY_ID, ASC_ISSUER_ID, ASC_PRIVATE_KEY (innholdet i .p8-filen) — samme
 // mønster som scripts/next-testflight-build.js.
 import { pathToFileURL } from "url";
@@ -37,12 +45,21 @@ function recency(cert) {
 }
 
 // Pure seleksjon: gitt hele sertifikatlisten, returner de API-mintede sertifikatene som
-// skal tilbakekalles — dvs. hvert «Created via API»-cert UNNTATT de nyeste `keepRecent`.
-// Navngitte sertifikater (enhver annen displayName) returneres ALDRI. Tåler tom/manglende
-// input og et ikke-heltalls/negativt `keepRecent`.
-export function certsToRevoke(certs, { keepRecent = KEEP_RECENT } = {}) {
+// skal tilbakekalles — dvs. hvert «Created via API»-cert UNNTATT de nyeste `keepRecent`
+// OG unntatt enhver id i `keepIds`. Navngitte sertifikater (enhver annen displayName)
+// returneres ALDRI. `keepIds` (WP-153) beskytter den FASTE CI-signeringsidentiteten som
+// nå importeres i nøkkelringen før arkivering: den bærer også displayName «Created via
+// API» (ASC stempler alle API-opprettede certer likt), men er IKKE churn — den skal
+// overleve for alltid, ellers ryker signeringen. Tåler tom/manglende input og et
+// ikke-heltalls/negativt `keepRecent`.
+export function certsToRevoke(certs, { keepRecent = KEEP_RECENT, keepIds = [] } = {}) {
+	const protectedIds = new Set((keepIds || []).filter(Boolean));
 	const apiMinted = (certs || []).filter(
-		(c) => c && c.attributes && c.attributes.displayName === API_DISPLAY_NAME,
+		(c) =>
+			c &&
+			c.attributes &&
+			c.attributes.displayName === API_DISPLAY_NAME &&
+			!protectedIds.has(c.id), // beskyttede id-er (CI-identiteten) er aldri kandidat
 	);
 	const keep = Math.max(0, Math.floor(Number.isFinite(keepRecent) ? keepRecent : KEEP_RECENT));
 	return apiMinted
@@ -58,6 +75,7 @@ export async function pruneSigningCerts({
 	auth,
 	request = ascRequest,
 	keepRecent = KEEP_RECENT,
+	keepIds = [],
 	log = console,
 } = {}) {
 	const summary = { found: 0, named: 0, apiMinted: 0, kept: 0, revoked: 0, failed: 0 };
@@ -77,7 +95,7 @@ export async function pruneSigningCerts({
 	).length;
 	summary.named = summary.found - summary.apiMinted;
 
-	const toRevoke = certsToRevoke(certs, { keepRecent });
+	const toRevoke = certsToRevoke(certs, { keepRecent, keepIds });
 	summary.kept = summary.found - toRevoke.length;
 
 	for (const cert of toRevoke) {
@@ -90,8 +108,12 @@ export async function pruneSigningCerts({
 		}
 	}
 
+	const protectedCount = new Set((keepIds || []).filter(Boolean)).size
+		? certs.filter((c) => c && new Set((keepIds || []).filter(Boolean)).has(c.id)).length
+		: 0;
 	log.log(
-		`[prune-certs] fant ${summary.found} sertifikater (${summary.named} navngitte, ${summary.apiMinted} «${API_DISPLAY_NAME}»); ` +
+		`[prune-certs] fant ${summary.found} sertifikater (${summary.named} navngitte, ${summary.apiMinted} «${API_DISPLAY_NAME}»` +
+			`${protectedCount ? `, ${protectedCount} beskyttet (CI-identitet)` : ""}); ` +
 			`beholdt ${summary.kept}, tilbakekalte ${summary.revoked}${summary.failed ? `, ${summary.failed} feilet` : ""}.`,
 	);
 	return summary;
@@ -107,6 +129,12 @@ if (import.meta.url === pathToFileURL(process.argv[1] || "").href) {
 		process.exit(0);
 	}
 	const auth = { keyId: ASC_KEY_ID, issuerId: ASC_ISSUER_ID, privateKey: ASC_PRIVATE_KEY };
-	await pruneSigningCerts({ auth });
+	// KEEP_CERT_IDS (kommaseparert) beskytter den faste CI-signeringsidentiteten (WP-153)
+	// mot å bli tilbakekalt av sin egen prune — den bærer displayName «Created via API».
+	const keepIds = (process.env.KEEP_CERT_IDS || "")
+		.split(",")
+		.map((s) => s.trim())
+		.filter(Boolean);
+	await pruneSigningCerts({ auth, keepIds });
 	process.exit(0);
 }

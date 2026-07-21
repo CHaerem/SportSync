@@ -67,6 +67,28 @@ describe("certsToRevoke", () => {
 		expect(revoke.map((c) => c.id)).toContain("API_NODATE");
 		expect(revoke.map((c) => c.id)).not.toContain("API_NEWEST");
 	});
+
+	it("keepIds beskytter CI-identiteten selv om den er ELDST og keepRecent 0 (WP-153)", () => {
+		// API_OLDEST er den faste CI-identiteten: aldri tilbakekalt, tross eldst + keepRecent 0.
+		const revoke = certsToRevoke([named, ...api], { keepRecent: 0, keepIds: ["API_OLDEST"] });
+		const ids = revoke.map((c) => c.id);
+		expect(ids).not.toContain("API_OLDEST"); // beskyttet
+		expect(ids).not.toContain("NAMED1"); // navngitt, aldri
+		// resten av API-certene tilbakekalles fortsatt
+		expect(ids.slice().sort()).toEqual(["API_NEW", "API_NEWEST", "API_OLD"]);
+	});
+
+	it("keepIds er utenfor keepRecent-regnskapet — beskyttet cert teller ikke som «nyeste»", () => {
+		// Beskytt API_NEWEST; keepRecent 1 skal da skåne den NYESTE av de GJENVÆRENDE (API_NEW).
+		const revoke = certsToRevoke([...api], { keepRecent: 1, keepIds: ["API_NEWEST"] });
+		const ids = revoke.map((c) => c.id).sort();
+		expect(ids).toEqual(["API_OLD", "API_OLDEST"]); // API_NEWEST beskyttet, API_NEW skånet av keepRecent
+	});
+
+	it("tom/uggyldig keepIds oppfører seg som før (ingen beskyttelse)", () => {
+		expect(certsToRevoke([...api], { keepRecent: 2, keepIds: [] }).map((c) => c.id).sort()).toEqual(["API_OLD", "API_OLDEST"]);
+		expect(certsToRevoke([...api], { keepRecent: 2, keepIds: ["", null] }).map((c) => c.id).sort()).toEqual(["API_OLD", "API_OLDEST"]);
+	});
 });
 
 describe("pruneSigningCerts", () => {
@@ -116,5 +138,22 @@ describe("pruneSigningCerts", () => {
 		const summary = await pruneSigningCerts({ auth, request, log: silent });
 		expect(summary).toEqual({ found: 1, named: 1, apiMinted: 0, kept: 1, revoked: 0, failed: 0 });
 		expect(request).toHaveBeenCalledTimes(1); // kun GET
+	});
+
+	it("keepIds beskytter CI-identiteten mot dens egen prune (WP-153)", async () => {
+		const deleted = [];
+		const request = vi.fn(async (_auth, method, path) => {
+			if (method === "GET") return { data: [named, ...api] };
+			if (method === "DELETE") { deleted.push(path); return null; }
+		});
+		// API_NEWEST er CI-identiteten. keepRecent 0 ⇒ alle andre API-certer ryddes, men den beskyttede overlever.
+		const summary = await pruneSigningCerts({ auth, request, keepRecent: 0, keepIds: ["API_NEWEST"], log: silent });
+		expect(deleted).not.toContain("/v1/certificates/API_NEWEST"); // aldri CI-identiteten
+		expect(deleted.slice().sort()).toEqual([
+			"/v1/certificates/API_NEW",
+			"/v1/certificates/API_OLD",
+			"/v1/certificates/API_OLDEST",
+		]);
+		expect(summary).toEqual({ found: 5, named: 1, apiMinted: 4, kept: 2, revoked: 3, failed: 0 });
 	});
 });
