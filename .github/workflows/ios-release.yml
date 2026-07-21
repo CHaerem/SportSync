@@ -135,6 +135,18 @@ jobs:
         working-directory: ios
         run: xcodegen generate
 
+      # Rydd FØR arkiveringen: cloud-signering på en fersk runner minter et nytt
+      # «Apple Development»-cert per kjøring, som med auto-CD hoper seg opp til Apples
+      # cert-tak og feller arkiveringen. Prune tilbakekaller de døde API-mintede certene
+      # (beholder eierens navngitte + de nyeste par) FØR arkivering — så en cap-et konto
+      # selv-heler i denne kjøringen. FAIL-SOFT: prune feller aldri bygget (exit 0).
+      - name: Rydd gamle signeringssertifikater
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
+        run: node scripts/prune-signing-certs.js
+
       - name: Arkiver (Release, cloud-signert)
         working-directory: ios
         run: |
