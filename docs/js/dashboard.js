@@ -608,4 +608,10 @@ class Dashboard {
 window.Dashboard = Dashboard;
 const dashboard = new Dashboard();
 window.dashboard = dashboard;
-document.addEventListener('DOMContentLoaded', () => dashboard.init());
+document.addEventListener('DOMContentLoaded', () => {
+	// Whole-web-behind-login: the board renders only after Sign in with Apple.
+	// index.html defines ssBootGate, which waits for CloudKit JS + auth, then calls
+	// dashboard.init(). If no gate is wired (dev / test / stripped build), init now.
+	if (typeof window.ssBootGate === 'function') window.ssBootGate(dashboard);
+	else dashboard.init();
+});
