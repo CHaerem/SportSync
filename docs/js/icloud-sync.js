@@ -140,5 +140,33 @@ window.ssICloud = (function () {
 		}
 	}
 
-	return { enabled, init, sync, mergeSnapshots, recordPayload, snapshotRecord, webRecordName };
+	/** Whole-web-behind-login gate: the page shows NOTHING until the user signs in
+	 *  with Apple. Reveals the board (after a first iCloud sync) on auth; re-shows
+	 *  the gate on sign-out. Never leaves a blank page — a missing token / failed
+	 *  CloudKit JS load shows a calm error in the gate, not emptiness.
+	 *  Elements (in index.html): #auth-gate (overlay), #apple-sign-in-button (CloudKit
+	 *  populates it), #auth-error (message), and body.gated (CSS hides the content). */
+	function gate(opts) {
+		const onAuthed = (opts && opts.onAuthed) || (() => {});
+		const gateEl = () => document.getElementById('auth-gate');
+		const errEl = () => document.getElementById('auth-error');
+		const showGate = () => { const g = gateEl(); if (g) g.hidden = false; if (document.body) document.body.classList.add('gated'); };
+		const showError = (m) => { showGate(); const e = errEl(); if (e) { e.textContent = m; e.hidden = false; } };
+		const reveal = async () => {
+			const e = errEl(); if (e) e.hidden = true;
+			try { await sync(); } catch { /* offline-first: reveal on the local profile anyway */ }
+			onAuthed();
+			if (document.body) document.body.classList.remove('gated');
+			const g = gateEl(); if (g) g.hidden = true;
+		};
+		if (typeof CloudKit === 'undefined') { showError('Kunne ikke laste iCloud-innlogging. Sjekk nettforbindelsen og last siden på nytt.'); return; }
+		if (!cfg.apiToken) { showError('iCloud-innlogging er ikke konfigurert.'); return; }
+		if (!configure()) { showError('iCloud-innlogging er utilgjengelig akkurat nå.'); return; }
+		showGate();
+		container.setUpAuth().then((userIdentity) => { if (userIdentity) reveal(); }).catch(() => showError('Kunne ikke starte Apple-innlogging. Last siden på nytt — og sjekk at du åpner sportivista.com.'));
+		container.whenUserSignsIn().then(reveal).catch(() => {});
+		container.whenUserSignsOut().then(showGate).catch(() => {});
+	}
+
+	return { enabled, init, gate, sync, mergeSnapshots, recordPayload, snapshotRecord, webRecordName };
 })();
