@@ -43,6 +43,7 @@ class Dashboard {
 		this.maybeShowInstallHint();
 		this.renderAppPromo();
 		if (typeof this.bindAssistant === 'function') this.bindAssistant();
+		if (typeof this.bindRootTabs === 'function') this.bindRootTabs();
 		document.addEventListener('visibilitychange', () => {
 			this._liveVisible = !document.hidden;
 			if (this._liveVisible) this.onResume();
@@ -72,10 +73,15 @@ class Dashboard {
 		// catalog.json — NOT a personal interests.json (that is no longer published;
 		// the owner's personal view is the iOS app). `this.interests` stays null, so
 		// the personal accents/lens degrade to event-intrinsic signals only.
-		const [events, featured, standings, results, tracked, catalog, meta, usage] = await Promise.all([
+		const [events, featured, standings, results, tracked, catalog, meta, usage, news] = await Promise.all([
 			load('events.json'), load('featured.json'), load('standings.json'), load('recent-results.json'), load('tracked.json'), load('catalog.json'), load('meta.json'), load('usage-state.json'),
+			// news.json — lens-ready pointers (id/title/link/source/sport/entityIds/
+			// publishedAt, never article text). Feeds the Nyheter board's NYTT section.
+			load('news.json'),
 		]);
 		this.allEvents = Array.isArray(events) ? events : [];
+		// news.json may be a bare array or {items:[…]} — normalise to an array.
+		this.news = Array.isArray(news) ? news : (news && Array.isArray(news.items) ? news.items : []);
 		// Prefer the server's stable id (build-events.js, WP-02) — a hash of
 		// sport|title|time that survives re-renders/reorders. Fall back to the
 		// old array-index synthesis only for a payload from before this field
@@ -126,6 +132,7 @@ class Dashboard {
 		this.renderFremover();
 		this.renderNextUp();
 		this.renderFollowed();
+		if (typeof this.renderNyheter === 'function') this.renderNyheter();
 		this.renderFooter();
 		this.renderUsage();
 	}
@@ -497,12 +504,30 @@ class Dashboard {
 	 *  column so titles stay aligned. The dot is the whole must-see language. */
 	dotCell(on) { return on ? '<span class="ev-dot" aria-hidden="true"></span>' : '<span></span>'; }
 
-	/** The ⓘ provenance glyph — mono, dempet, ONLY on AI-research rows. Every
-	 *  other row keeps an empty cell (tappability is signalled by rhythm). */
+	/** The ⓘ provenance glyph — dempet, ONLY on AI-research rows; else nothing. */
 	infoCell(e) {
 		return e.source === 'ai-research'
 			? '<span class="ev-info" aria-label="Funnet av AI — trykk for kilder">ⓘ</span>'
-			: '<span></span>';
+			: '';
+	}
+
+	/** The per-sport row glyph (app-parity, WP-154). Guarded so a row still renders
+	 *  if sport-icons.js is absent (e.g. the vm-sandbox unit tests). */
+	sportIconCell(sport) { return typeof ssSportIcon === 'function' ? ssSportIcon(sport) : ''; }
+
+	/** A quiet disclosure chevron (app-parity, WP-154) — shown on expandable rows,
+	 *  rotated 90° when open. Decorative; the row's role="button"/aria-expanded
+	 *  carries the affordance for assistive tech. */
+	chevronCell(expandable, open) {
+		return expandable
+			? `<svg class="ev-chevron${open ? ' open' : ''}" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+			: '';
+	}
+
+	/** The trailing cell: the AI ⓘ (if any) then the disclosure chevron (if
+	 *  expandable), grouped so the grid keeps one trailing column. */
+	trailCell(e, expandable, open) {
+		return `<span class="ev-trail">${this.infoCell(e)}${this.chevronCell(expandable, open)}</span>`;
 	}
 
 	eventRow(e) {
@@ -523,8 +548,9 @@ class Dashboard {
 		return `<div class="ev-wrap"><div class="ev${this.isMustSee(e) ? ' must' : ''}${status ? ' cancelled' : ''}${done ? ' done' : ''}${expandable ? ' expandable' : ''}"${attrs}>
 			${this.dotCell(this.isMustSee(e))}
 			<span class="ev-time">${escapeHtml(this.timeLabel(e))}</span>
+			${this.sportIconCell(e.sport)}
 			<span class="ev-main"><span class="ev-title">${this.eventTitle(e)}</span>${this.eventMeta(e, trailing)}</span>
-			${this.infoCell(e)}
+			${this.trailCell(e, expandable, open)}
 		</div><div class="ev-detail"${open ? '' : ' hidden'}>${open ? this.eventDetail(e) : ''}</div></div>`;
 	}
 
@@ -538,8 +564,9 @@ class Dashboard {
 		return `<div class="ev-wrap"><div class="ev expandable series" role="button" tabindex="0" aria-expanded="${open}" data-event-id="${escapeHtml(s.id)}">
 			${this.dotCell(false)}
 			<span class="ev-time">${escapeHtml(this.osloTime(date))}</span>
+			${this.sportIconCell(s.nextStage.sport)}
 			<span class="ev-main"><span class="ev-title">${escapeHtml(s.tournament)}</span><span class="ev-meta">${meta}</span></span>
-			<span></span>
+			${this.trailCell(s.nextStage, true, open)}
 		</div><div class="ev-detail"${open ? '' : ' hidden'}>${open ? this.eventDetail(s) : ''}</div></div>`;
 	}
 

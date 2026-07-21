@@ -1,7 +1,9 @@
 /* Sportivista — the agenda. One quiet list, grouped by day. The flat row language of
    DESIGN.md: hairlines, one amber dot for must-see. No cards, no washes, no
-   left-stripes, no chips, no chevrons, no emoji in the chrome. Each row answers
-   only: when · what · where to watch. */
+   left-stripes, no chips, no emoji in the chrome. Each row answers only: when ·
+   what · where to watch — plus, since WP-154 (owner ask, app-parity), a quiet
+   per-sport glyph and a disclosure chevron on expandable rows (both tertiaryLabel,
+   never amber; the app's AgendaView row anatomy, ported to web SVGs). */
 
 /* ── Live now: a quiet line at the very top, only when something is on ─────── */
 .live-now { margin: 18px 0 4px; }
@@ -61,15 +63,25 @@
 /* Row wrapper — the hairline lives here, below every row (incl. the day's last). */
 .ev-wrap { border-bottom: 1px solid var(--line); }
 
-/* Event row — [dot] [time] [what + meta] [ⓘ]. Flat. Scanned by rhythm, not boxes.
-   The whole row is tappable; that's signalled by rhythm + hover, never a chevron. */
+/* Event row — [dot] [time] [sport glyph] [what + meta] [ⓘ + chevron]. Flat,
+   scanned by rhythm. App-parity (WP-154): a quiet per-sport glyph names the sport
+   at a glance (iOS SportSymbol), and expandable rows carry a disclosure chevron. */
 .ev {
 	display: grid;
-	grid-template-columns: 14px var(--time-col) 1fr auto;
+	grid-template-columns: 14px var(--time-col) 18px 1fr auto;
 	column-gap: 12px;
 	align-items: start;
 	padding: 12px 0;
 }
+/* The per-sport glyph — quiet tertiaryLabel, NEVER coloured (the amber dot stays
+   the row's only accent). Fixed 18px box so every title aligns. */
+.ev-sport { width: 18px; height: 18px; color: var(--fg-3); margin-top: 1px; }
+/* Trailing group: the AI ⓘ then the disclosure chevron. */
+.ev-trail { display: inline-flex; align-items: center; gap: 6px; justify-self: end; margin-top: 1px; }
+.ev-chevron { width: 15px; height: 15px; color: var(--fg-3); transition: transform 0.15s ease; }
+.ev[aria-expanded="true"] .ev-chevron, .ev-chevron.open { transform: rotate(90deg); }
+.ev.expandable:hover .ev-chevron { color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { .ev-chevron { transition: none; } }
 .ev.expandable { cursor: pointer; }
 .ev.expandable:hover { background: color-mix(in srgb, var(--fg) 5%, transparent); }
 .ev.expandable:hover .ev-title { color: var(--accent); }
@@ -113,13 +125,12 @@
 .ev-sep { color: var(--fg-3); }
 .ev-round { color: var(--fg-2); }
 
-/* ⓘ — mono, dempet, ONLY on AI-research rows; opens provenance in the detail. */
+/* ⓘ — dempet, ONLY on AI-research rows; opens provenance in the detail. Sits
+   inside .ev-trail (flex) now, so no grid justify-self. */
 .ev-info {
 	color: var(--fg-3);
 	font-size: 15px;
-	line-height: 1.35;
-	margin-top: 1px;
-	justify-self: end;
+	line-height: 1.2;
 }
 .ev.expandable:hover .ev-info { color: var(--accent); }
 
@@ -146,7 +157,8 @@
 /* Expanded detail — the "nice extra", quiet, only on demand. Indented under the
    title column; same flat row language, no card-in-a-card. */
 .ev-detail {
-	padding: 4px 0 16px calc(14px + 12px + var(--time-col) + 12px);
+	/* Indent to the title column: dot(14) + gap(12) + time + gap(12) + sport(18) + gap(12). */
+	padding: 4px 0 16px calc(14px + 12px + var(--time-col) + 12px + 18px + 12px);
 	display: grid;
 	grid-template-columns: minmax(0, 1fr);   /* one column, fills the width so .d-prose can break out cleanly */
 	gap: 6px;
@@ -160,8 +172,8 @@
    whole card, not a ~130px strip (WP-127). Short facts (Arena/Runde/Se på) keep
    key/value. The label sits on its own line above the paragraphs. */
 .ev-detail .d-prose {
-	margin-left: calc(-38px - var(--time-col));   /* = -(14 + 12 + time-col + 12), cancels .ev-detail's indent */
-	width: calc(100% + 38px + var(--time-col));
+	margin-left: calc(-68px - var(--time-col));   /* = -(14+12+time-col+12+18+12), cancels .ev-detail's indent */
+	width: calc(100% + 68px + var(--time-col));
 }
 .ev-detail .d-prose .d-k { display: block; min-width: 0; margin-bottom: 4px; }
 .ev-detail .d-prose .d-p { color: var(--fg-2); margin: 0 0 6px; line-height: 1.5; overflow-wrap: break-word; }
@@ -285,15 +297,129 @@
 }
 
 /* ── Assistant (deterministic Q&A over your feed) ───────────────────────────
-   Calm: one field, one amber focus ring, no spinner, no chrome. The answer is a
-   quiet line; matching events render as ordinary agenda rows below it. */
-.assistant { margin: 0 0 28px; }
+   App-parity (WP-154): a compact floating bottom-trailing BUTTON (never a dead
+   field) that opens a conversation sheet — mirrors the iOS AssistantButton +
+   AssistantSheetView. Calm: one amber accent (the glyph), no spinner, no chrome.
+   The answer is a quiet line; matching events render as ordinary agenda rows. */
+
+/* The floating entry — hugs its content, pinned bottom-right, above the board.
+   Amber glyph = the ONE accent and the tell that this pill IS a control. */
+.assistant-fab {
+	position: fixed; right: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+	z-index: 60; display: inline-flex; align-items: center; gap: 8px;
+	padding: 12px 20px; min-height: 48px; border-radius: 999px; cursor: pointer;
+	font: inherit; font-size: 15px; font-weight: 600; color: var(--fg);
+	background: color-mix(in srgb, var(--accent) 12%, var(--cell));
+	border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--line));
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28); backdrop-filter: blur(12px);
+	transition: padding 0.2s ease, gap 0.2s ease;
+}
+.assistant-fab:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--line)); }
+.assistant-fab .fab-glyph { width: 18px; height: 18px; fill: var(--accent); flex-shrink: 0; }
+.assistant-fab .fab-label { white-space: nowrap; }
+/* Collapsed (while scrolling): the bare glyph, near-circular — the iOS idiom. */
+.assistant-fab.collapsed { padding: 12px; gap: 0; }
+.assistant-fab.collapsed .fab-label {
+	max-width: 0; opacity: 0; overflow: hidden;
+	transition: max-width 0.2s ease, opacity 0.15s ease;
+}
+.assistant-fab .fab-label { max-width: 8em; opacity: 1; transition: max-width 0.2s ease, opacity 0.2s ease; }
+
+/* The conversation sheet — a bottom sheet with a backdrop, mirroring the iOS
+   .sheet(detents). Calm: rounded top, a grabber, no spinner. */
+.assistant-sheet { position: fixed; inset: 0; z-index: 70; }
+.assistant-sheet[hidden] { display: none; }
+.assistant-sheet .sheet-backdrop {
+	position: absolute; inset: 0; background: rgba(0, 0, 0, 0.45);
+	animation: ss-fade 0.18s ease;
+}
+.assistant-sheet .sheet-panel {
+	position: absolute; left: 0; right: 0; bottom: 0;
+	max-width: 640px; margin: 0 auto; box-sizing: border-box;
+	max-height: 80vh; overflow-y: auto; padding: 8px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+	background: var(--bg); border-top-left-radius: 18px; border-top-right-radius: 18px;
+	border-top: 1px solid var(--line); box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.4);
+	animation: ss-rise 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes ss-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ss-rise { from { transform: translateY(24px); opacity: 0.6; } to { transform: translateY(0); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+	.assistant-sheet .sheet-backdrop, .assistant-sheet .sheet-panel { animation: none; }
+}
+.sheet-grabber { width: 36px; height: 5px; border-radius: 3px; background: var(--fg-3); opacity: 0.5; margin: 6px auto 12px; }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.sheet-title { font-size: 17px; font-weight: 700; color: var(--fg); }
+.sheet-close { font: inherit; font-size: 15px; color: var(--accent); background: none; border: none; cursor: pointer; padding: 4px; }
 .assistant-input {
-	width: 100%; box-sizing: border-box; font: inherit; font-size: 15px;
-	padding: 11px 14px; border: 1px solid var(--line); border-radius: 10px;
-	background: var(--surface); color: var(--fg);
+	width: 100%; box-sizing: border-box; font: inherit; font-size: 16px;
+	padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px;
+	background: var(--cell); color: var(--fg);
 }
 .assistant-input::placeholder { color: var(--fg-3); }
 .assistant-input:focus { outline: none; border-color: var(--accent); }
+/* Example prompts (shown until the first answer) — quiet tappable rows, mirroring
+   the iOS sheet's example thread. */
+.assistant-examples { margin-top: 14px; }
+.assistant-examples[hidden] { display: none; }
+.ex-lead { font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--fg-3); margin: 0 0 6px; }
+.ex-row {
+	display: block; width: 100%; text-align: left; font: inherit; font-size: 15px;
+	color: var(--fg-2); background: none; border: none; border-bottom: 1px solid var(--line);
+	padding: 12px 0; cursor: pointer;
+}
+.ex-row:hover { color: var(--accent); }
 .assistant-results { margin-top: 14px; }
-.assistant-answer { font-size: 14px; color: var(--fg-2); margin: 0 0 10px; line-height: 1.5; }
+.assistant-results[hidden] { display: none; }
+.assistant-answer { font-size: 15px; color: var(--fg); margin: 0 0 10px; line-height: 1.5; }
+
+/* ── Root segmented — «Uka | Nyheter» (app-parity, WP-154) ───────────────────
+   A quiet native-style segmented control mirroring the iOS ContentView picker.
+   One amber accent on the selected segment; calm, no shadow. */
+.root-tabs {
+	display: inline-flex; align-self: stretch; width: 100%; box-sizing: border-box;
+	margin: 4px 0 20px; padding: 3px; gap: 3px;
+	background: var(--cell); border: 1px solid var(--line); border-radius: 12px;
+}
+.root-tab {
+	flex: 1; font: inherit; font-size: 14px; font-weight: 600; color: var(--fg-2);
+	padding: 8px 12px; border: none; border-radius: 9px; background: none; cursor: pointer;
+	transition: background 0.15s ease, color 0.15s ease;
+}
+.root-tab:hover { color: var(--fg); }
+.root-tab.is-active {
+	color: var(--fg); background: var(--bg);
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.22);
+}
+.root-view[hidden] { display: none; }
+/* Clear the floating assistant button so the last row / footer is never occluded
+   (the iOS safeAreaInset equivalent). */
+main.wrap { padding-bottom: 88px; }
+
+/* ── Nyheter board (twin of iOS NewsView) — NYTT + RESULTAT sections ──────────
+   Flat, hairline-separated rows in the agenda's language; no cards, one amber
+   accent (the source ↗ link). FREMOVER is the existing disclosure below. */
+.nw-section { margin: 0 0 26px; }
+.nw-head {
+	font-size: 13px; font-weight: 700; color: var(--fg-2);
+	letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 10px;
+}
+.nw-empty { color: var(--fg-3); font-size: 14px; margin: 0; }
+/* NYTT pointer row — the whole row is the link; title then a quiet meta line. */
+.nw-row {
+	display: block; padding: 12px 0; border-bottom: 1px solid var(--line);
+	color: inherit; text-decoration: none;
+}
+.nw-row:last-child { border-bottom: none; }
+.nw-title { display: block; font-size: 15px; color: var(--fg); line-height: 1.35; overflow-wrap: break-word; }
+.nw-row:hover .nw-title { color: var(--accent); }
+.nw-meta { display: block; margin-top: 3px; font-size: 13px; color: var(--fg-2); }
+.nw-sep { color: var(--fg-3); }
+.nw-source { color: var(--accent); }
+.nw-time, .nw-sport { color: var(--fg-2); }
+/* RESULTAT row — team – team on the left, the score (tabular) on the right. */
+.rs-row { display: flex; align-items: baseline; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.rs-row:last-child { border-bottom: none; }
+.rs-main { min-width: 0; flex: 1; }
+.rs-title { display: block; font-size: 15px; color: var(--fg); overflow-wrap: break-word; }
+.rs-meta { display: block; margin-top: 3px; font-size: 13px; color: var(--fg-2); }
+.rs-score { font-size: 15px; font-weight: 600; color: var(--fg); font-variant-numeric: tabular-nums; white-space: nowrap; }

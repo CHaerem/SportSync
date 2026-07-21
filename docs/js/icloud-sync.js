@@ -166,7 +166,23 @@ window.ssICloud = (function () {
 		// a fresh sign-in — without this they'd each run a sync and race a 409).
 		// Reset on sign-out so a re-sign-in reveals again.
 		let revealed = false;
-		const showGate = () => { revealed = false; const g = gateEl(); if (g) g.hidden = false; if (document.body) document.body.classList.add('gated'); };
+		const signOutLink = () => document.getElementById('signout-link');
+		// Drive our own calm «Logg ut» footer link by forwarding its click to
+		// CloudKit's hidden sign-out control. Shown only when signed in (reveal),
+		// hidden again when the gate re-shows. No-op on pages without the link.
+		let signOutWired = false;
+		const wireSignOut = () => {
+			const link = signOutLink();
+			if (!link) return;
+			link.hidden = false;
+			if (signOutWired) return;
+			signOutWired = true;
+			link.addEventListener('click', () => {
+				const el = document.querySelector('#apple-sign-out-button a, #apple-sign-out-button button, #apple-sign-out-button [role="button"], #apple-sign-out-button [tabindex]');
+				if (el && typeof el.click === 'function') el.click();
+			});
+		};
+		const showGate = () => { revealed = false; const g = gateEl(); if (g) g.hidden = false; if (document.body) document.body.classList.add('gated'); const l = signOutLink(); if (l) l.hidden = true; };
 		const showError = (m) => { showGate(); const e = errEl(); if (e) { e.textContent = m; e.hidden = false; } };
 		const reveal = async () => {
 			if (revealed) return;
@@ -176,6 +192,7 @@ window.ssICloud = (function () {
 			onAuthed();
 			if (document.body) document.body.classList.remove('gated');
 			const g = gateEl(); if (g) g.hidden = true;
+			wireSignOut();
 			wireForegroundResync();
 		};
 
