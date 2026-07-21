@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-07-21T07:31:07.517Z",
+  "generatedAt": "2026-07-21T08:54:36.827Z",
   "windowDays": 14,
   "ports": {
     "coverage": "green",
-    "amendRate": "green",
+    "amendRate": "red",
     "silentStops": "yellow",
     "participantStatus": "green"
   },
@@ -32,14 +32,14 @@
     "gaps": []
   },
   "amendRate": {
-    "nearTermRate": 0,
-    "nearTermChecked": 2,
-    "nearTermAmended": 0,
-    "verifyRunAt": "2026-07-20T08:22:52.000Z",
-    "windowRate": 0.22,
-    "windowChecks": 55,
+    "nearTermRate": 0.6,
+    "nearTermChecked": 5,
+    "nearTermAmended": 3,
+    "verifyRunAt": "2026-07-21T07:47:58.000Z",
+    "windowRate": 0.2,
+    "windowChecks": 60,
     "windowAmendments": 12,
-    "windowCorrections": 0,
+    "windowCorrections": 2,
     "byDay": [
       {
         "date": "2026-07-08",
@@ -131,31 +131,38 @@
         "amendments": 0,
         "corrections": 0,
         "rate": 0
+      },
+      {
+        "date": "2026-07-21",
+        "checks": 5,
+        "amendments": 0,
+        "corrections": 2,
+        "rate": 0
       }
     ]
   },
   "silentStops": {
     "buildOk": true,
-    "buildCheckedAt": "2026-07-21T07:31:07.443Z",
+    "buildCheckedAt": "2026-07-21T08:54:36.752Z",
     "buildAgeHours": 0,
-    "manifestGeneratedAt": "2026-07-20T22:35:50.732Z",
-    "manifestAgeHours": 8.92,
+    "manifestGeneratedAt": "2026-07-21T07:31:08.791Z",
+    "manifestAgeHours": 1.39,
     "staleFiles": [
       {
         "file": "football.json",
         "sourceLastUpdated": "2026-07-19T17:56:30.377Z",
-        "ageHours": 37.58
+        "ageHours": 38.97
       },
       {
         "file": "golf.json",
         "sourceLastUpdated": "2026-07-19T17:56:23.192Z",
-        "ageHours": 37.58
+        "ageHours": 38.97
       }
     ]
   },
   "participantStatus": {
-    "checkedAt": "2026-07-20T08:22:52.000Z",
-    "verifyAgeHours": 23.14,
+    "checkedAt": "2026-07-21T07:47:58.000Z",
+    "verifyAgeHours": 1.11,
     "corrections": 0,
     "unresolved": 0,
     "signals": []
