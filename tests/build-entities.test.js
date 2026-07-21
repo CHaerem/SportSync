@@ -191,7 +191,7 @@ describe("buildEntityIndex", () => {
 		expect(national.map((e) => e.id)).toEqual(["norge"]);
 		expect(entities.find((e) => e.id === "norge").aliases).toContain("Norway");
 		expect(entities.find((e) => e.id === "norway")).toBeUndefined();
-	});
+	}, 30_000); // real-config build at world-registry scale: ~3s locally, >10s on a cold CI runner
 
 	it("guards the built index against same-type nickname/initial-form duplicates (normalized comparison)", () => {
 		// Independent (normalized) mirror of the relation the generator now folds,
@@ -241,7 +241,7 @@ describe("buildEntityIndex", () => {
 		expect(hundred).toHaveLength(1);
 		expect(hundred[0].aliases).toContain("100T");
 		expect(entities.find((e) => e.id === "100t")).toBeUndefined();
-	});
+	}, 30_000); // real-config build at world-registry scale (see the production guard above)
 
 	it("generates a stable, readable kebab-case slug for a free-text name with no existing id", () => {
 		const fakeSportsConfig = { cycling: { sport: "cycling", norwegian: { players: ["Søren Wærenskjold"] } } };
