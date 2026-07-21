@@ -56,9 +56,16 @@ describe("cross-platform codec golden (Swift → JS)", () => {
 		expect(r.modifiedAt).toBe(r.rule.addedAt);
 	});
 
-	it("re-encoding the decoded state reproduces the Swift bytes (JS → Swift-compatible)", async () => {
+	it("a JS re-encode round-trips SEMANTICALLY (DEFLATE bytes aren't canonical across impls)", async () => {
 		const state = await W.ssProfileDecode(swiftPayload);
 		const reencoded = await W.ssProfileEncode(state);
-		expect(reencoded).toBe(swiftPayload); // byte-identical round trip across platforms
+		// The compressed BYTES differ between Swift's zlib and Node's deflate-raw
+		// (both valid raw-DEFLATE, different encoders) — so byte-identity is NOT a
+		// cross-platform guarantee. What the sync actually needs is that each side
+		// can DECODE the other's payloads: the decode test above proves JS reads
+		// Swift's bytes; here we prove a JS re-encode still decodes to the same
+		// state (so iOS, using the same inflate, reads JS's bytes too).
+		const roundTripped = await W.ssProfileDecode(reencoded);
+		expect(W.ssStableStringify(roundTripped)).toBe(W.ssStableStringify(state));
 	});
 });
