@@ -43,18 +43,16 @@ struct AssistantResultThread: View {
 
     private func unavailableBanner(_ message: String) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("APPLE INTELLIGENCE")
-                .font(.sportivista(.caption2, weight: .bold))
-                .foregroundStyle(SportivistaTokens.accent.opacity(0.8))
-                .tracking(1.5)
+            sectionTitle("APPLE INTELLIGENCE")
             Text(message)
                 .font(.sportivista(.footnote))
                 .foregroundStyle(SportivistaTokens.label.opacity(0.8))
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(SportivistaTokens.accent.opacity(0.10))
-        .overlay(Rectangle().stroke(SportivistaTokens.accent.opacity(0.35), lineWidth: 1))
+        // Rounded amber-tint notice (was a sharp amber-stroke box) — the tint
+        // still marks it as an availability note, the header is now native grey.
+        .background(SportivistaTokens.accent.opacity(0.10), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 
     private func errorRow(_ error: String) -> some View {
@@ -68,22 +66,20 @@ struct AssistantResultThread: View {
     /// A question's calm reply: the prose, then the referenced rows as quiet
     /// when · what · where lines — the same shape an agenda row answers.
     private func answerSection(_ answer: AssistantAnswerResult) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            sectionTitle("SVAR")
-            Text(answer.text)
-                .font(.sportivista(.subheadline))
-                .foregroundStyle(SportivistaTokens.label)
-                .fixedSize(horizontal: false, vertical: true)
-            if !answer.rows.isEmpty {
-                VStack(alignment: .leading, spacing: 8) {
-                    ForEach(answer.rows) { row in answerRow(row) }
+        neutralCard {
+            VStack(alignment: .leading, spacing: 10) {
+                sectionTitle("SVAR")
+                Text(answer.text)
+                    .font(.sportivista(.subheadline))
+                    .foregroundStyle(SportivistaTokens.label)
+                    .fixedSize(horizontal: false, vertical: true)
+                if !answer.rows.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        ForEach(answer.rows) { row in answerRow(row) }
+                    }
                 }
             }
         }
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(SportivistaTokens.label.opacity(0.04))
-        .overlay(Rectangle().stroke(SportivistaTokens.label.opacity(0.15), lineWidth: 1))
     }
 
     private func answerRow(_ row: AnswerRow) -> some View {
@@ -92,7 +88,6 @@ struct AssistantResultThread: View {
                 Text(row.dayLabel)
                     .font(.sportivista(.caption2, weight: .semibold))
                     .foregroundStyle(SportivistaTokens.secondaryLabel)
-                    .tracking(1)
                 Text(row.timeLabel)
                     .font(.sportivistaTabular(.footnote, weight: .semibold))
                     .foregroundStyle(SportivistaTokens.label)
@@ -117,17 +112,15 @@ struct AssistantResultThread: View {
     /// clause was handled — the "aldri stille ledd-dropp" guarantee made visible.
     /// The detail (Bekreft/Avvis, «mente du …?») still lives in the sections below.
     private func tallySection(_ tally: MutationTally) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            sectionTitle("REGNSKAP")
-            Text(tally.summary)
-                .font(.sportivista(.footnote))
-                .foregroundStyle(SportivistaTokens.label.opacity(0.85))
-                .fixedSize(horizontal: false, vertical: true)
+        neutralCard {
+            VStack(alignment: .leading, spacing: 6) {
+                sectionTitle("REGNSKAP")
+                Text(tally.summary)
+                    .font(.sportivista(.footnote))
+                    .foregroundStyle(SportivistaTokens.label.opacity(0.85))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(SportivistaTokens.label.opacity(0.04))
-        .overlay(Rectangle().stroke(SportivistaTokens.label.opacity(0.15), lineWidth: 1))
     }
 
     // MARK: - Command arm (WP-66)
@@ -142,7 +135,11 @@ struct AssistantResultThread: View {
                 .font(.sportivista(.caption))
                 .foregroundStyle(SportivistaTokens.label.opacity(0.85))
                 .fixedSize(horizontal: false, vertical: true)
-            HStack(spacing: 10) {
+            // Destructive confirm — the app's flat destructive pattern (same as
+            // Deg › Nullstill): a red hairline Bekreft + a muted Avbryt. The one
+            // prominent-filled language (amber capsule) is reserved for the
+            // affirmative primary; a destructive action is never amber.
+            HStack(spacing: 12) {
                 Button("Bekreft") { viewModel.confirmCommand(); dismissIfDone() }
                     .font(.sportivista(.footnote, weight: .bold))
                     .foregroundStyle(SportivistaTokens.destructive)
@@ -150,54 +147,53 @@ struct AssistantResultThread: View {
                     .accessibilityIdentifier("command.confirm")
                 Button("Avbryt") { viewModel.cancelCommand(); dismissIfDone() }
                     .font(.sportivista(.footnote))
-                    .foregroundStyle(SportivistaTokens.label.opacity(0.6))
+                    .foregroundStyle(SportivistaTokens.secondaryLabel)
                     .buttonStyle(SportivistaActionButtonStyle(tint: SportivistaTokens.label))
                     .accessibilityIdentifier("command.cancel")
             }
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(SportivistaTokens.destructive.opacity(0.06))
-        .overlay(Rectangle().stroke(SportivistaTokens.destructive.opacity(0.3), lineWidth: 1))
+        .background(SportivistaTokens.destructive.opacity(0.06), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 
     /// A calm one-line receipt after a harmless command executed ("Tema: mørkt.",
     /// "Åpner Brann–X.") — the "rolig kvittering" the brief asks for.
     private func commandReceiptSection(_ receipt: String) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            sectionTitle("UTFØRT")
-            Text(receipt)
-                .font(.sportivista(.footnote))
-                .foregroundStyle(SportivistaTokens.label.opacity(0.85))
-                .fixedSize(horizontal: false, vertical: true)
+        neutralCard {
+            VStack(alignment: .leading, spacing: 6) {
+                sectionTitle("UTFØRT")
+                Text(receipt)
+                    .font(.sportivista(.footnote))
+                    .foregroundStyle(SportivistaTokens.label.opacity(0.85))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(SportivistaTokens.accent.opacity(0.08))
-        .overlay(Rectangle().stroke(SportivistaTokens.accent.opacity(0.3), lineWidth: 1))
     }
 
     // MARK: - Proposals (the DIFF)
 
     private var proposalsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                sectionTitle("FORESLÅTTE ENDRINGER")
-                Spacer()
-                if viewModel.pending.count > 1 {
-                    // WP-14.3: an action, not chrome — real button comfort.
-                    Button("Bekreft alle") { viewModel.confirmAll(); dismissIfDone() }
-                        .font(.sportivista(.caption, weight: .bold))
-                        .foregroundStyle(SportivistaTokens.live)
-                        .buttonStyle(SportivistaActionButtonStyle(tint: SportivistaTokens.live))
-                }
+            sectionTitle("FORESLÅTTE ENDRINGER")
+            // The sheet's ONE prominent primary is the shared amber capsule
+            // (`SportivistaPrimaryButtonStyle`, the app-wide primary language —
+            // onboarding's CTA uses the same). Single diff: the sole row's Bekreft
+            // IS that capsule. Multi diff: «Bekreft alle» is the one capsule and
+            // each row's Bekreft drops to flat — never two capsules on one screen.
+            if viewModel.pending.count > 1 {
+                Button("Bekreft alle") { viewModel.confirmAll(); dismissIfDone() }
+                    .buttonStyle(SportivistaPrimaryButtonStyle())
+                    .accessibilityIdentifier("assistant.confirmAll")
             }
-            ForEach(viewModel.pending) { mutation in proposalRow(mutation) }
+            ForEach(viewModel.pending) { mutation in
+                proposalRow(mutation, prominent: viewModel.pending.count == 1)
+            }
         }
     }
 
-    private func proposalRow(_ mutation: GroundedMutation) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
+    private func proposalRow(_ mutation: GroundedMutation, prominent: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text(sign(for: mutation.kind))
                     .font(.sportivista(.callout, weight: .bold))
@@ -213,27 +209,46 @@ struct AssistantResultThread: View {
             Text(mutation.reason)
                 .font(.sportivista(.caption))
                 .foregroundStyle(SportivistaTokens.label.opacity(0.75))
-            // WP-14.3: Bekreft/Avvis ARE the action, never glyph-small — a
-            // real, comfortable button (min 44pt tall, roomy padding, a
-            // hairline box in the action's own colour, never a filled pill).
-            HStack(spacing: 10) {
-                Button("Bekreft") { viewModel.confirm(mutation); dismissIfDone() }
-                    .font(.sportivista(.footnote, weight: .bold))
-                    .foregroundStyle(SportivistaTokens.live)
-                    .buttonStyle(SportivistaActionButtonStyle(tint: SportivistaTokens.live))
-                    // WP-70: stable handle for the follow-via-command-line flow's
-                    // Bekreft (the test uses .firstMatch — a single-mutation diff).
-                    .accessibilityIdentifier("assistant.confirm")
-                Button("Avvis") { viewModel.reject(mutation); dismissIfDone() }
-                    .font(.sportivista(.footnote))
-                    .foregroundStyle(SportivistaTokens.label.opacity(0.6))
-                    .buttonStyle(SportivistaActionButtonStyle(tint: SportivistaTokens.label))
+            if prominent {
+                // The sole proposal IS the sheet's one primary: Bekreft as the
+                // shared amber capsule; Avvis flat/muted below it.
+                VStack(spacing: 8) {
+                    Button("Bekreft") { viewModel.confirm(mutation); dismissIfDone() }
+                        .buttonStyle(SportivistaPrimaryButtonStyle())
+                        // WP-70: stable handle for the follow-via-command-line
+                        // flow's Bekreft (the test uses .firstMatch — single diff).
+                        .accessibilityIdentifier("assistant.confirm")
+                    Button("Avvis") { viewModel.reject(mutation); dismissIfDone() }
+                        .font(.sportivista(.subheadline))
+                        .buttonStyle(.borderless)
+                        .foregroundStyle(SportivistaTokens.secondaryLabel)
+                        .sportivistaTapTarget()
+                }
+            } else {
+                // Multi-mutation: «Bekreft alle» above is the one amber primary,
+                // so the per-row confirm is flat (green), Avvis flat/muted.
+                HStack(spacing: 12) {
+                    Button("Bekreft") { viewModel.confirm(mutation); dismissIfDone() }
+                        .font(.sportivista(.footnote, weight: .semibold))
+                        .foregroundStyle(SportivistaTokens.live)
+                        .buttonStyle(SportivistaActionButtonStyle(tint: SportivistaTokens.live))
+                        .accessibilityIdentifier("assistant.confirm")
+                    Button("Avvis") { viewModel.reject(mutation); dismissIfDone() }
+                        .font(.sportivista(.footnote))
+                        .buttonStyle(.borderless)
+                        .foregroundStyle(SportivistaTokens.secondaryLabel)
+                        .sportivistaTapTarget()
+                }
             }
         }
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(color(for: mutation.kind).opacity(0.08))
-        .overlay(Rectangle().stroke(color(for: mutation.kind).opacity(0.4), lineWidth: 1))
+        // NEUTRAL native cell (not a kind-tinted card): amber is the only colour
+        // that works for BOTH add (green +) and remove (red −), and an amber
+        // capsule reads muddily on an amber-tinted card. So add/update/remove
+        // semantics ride on the coloured +/±/− marker; the card stays neutral so
+        // the amber Bekreft reads cleanly (coordinator-directed, 21.07).
+        .background(SportivistaTokens.cell, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 
     private func subtitle(for mutation: GroundedMutation) -> String {
@@ -261,20 +276,29 @@ struct AssistantResultThread: View {
                         Text("Trykk for å foreslå endringen:")
                             .font(.sportivista(.caption2))
                             .foregroundStyle(SportivistaTokens.label.opacity(0.5))
-                        VStack(alignment: .leading, spacing: 4) {
+                        VStack(alignment: .leading, spacing: 0) {
                             ForEach(rejection.suggestions, id: \.id) { suggestion in
-                                // WP-14.3: a «mente du»-forslag IS the action
-                                // (it re-grounds the whole utterance and re-
-                                // proposes a diff) — comfortable button, not
-                                // a glyph-small link.
+                                // A «mente du»-forslag IS the action (re-grounds the
+                                // whole utterance, re-proposes a diff) — a flat
+                                // native row (was a full-width amber pill box):
+                                // amber label + a trailing chevron, ≥44pt.
                                 Button {
                                     viewModel.choose(suggestion, for: rejection)
                                 } label: {
-                                    Text("› \(suggestion.name)")
-                                        .font(.sportivista(.footnote, weight: .bold))
-                                        .foregroundStyle(SportivistaTokens.accent)
+                                    HStack(spacing: 8) {
+                                        Text(suggestion.name)
+                                            .font(.sportivista(.subheadline, weight: .semibold))
+                                            .foregroundStyle(SportivistaTokens.accent)
+                                            .multilineTextAlignment(.leading)
+                                        Spacer(minLength: 8)
+                                        Image(systemName: "chevron.forward")
+                                            .font(.sportivista(.footnote, weight: .semibold))
+                                            .foregroundStyle(SportivistaTokens.tertiaryLabel)
+                                    }
+                                    .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                                    .contentShape(Rectangle())
                                 }
-                                .buttonStyle(SportivistaActionButtonStyle(tint: SportivistaTokens.accent, fullWidth: true))
+                                .buttonStyle(.plain)
                             }
                         }
                     }
@@ -285,8 +309,7 @@ struct AssistantResultThread: View {
                 }
                 .padding(12)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(SportivistaTokens.destructive.opacity(0.06))
-                .overlay(Rectangle().stroke(SportivistaTokens.destructive.opacity(0.3), lineWidth: 1))
+                .background(SportivistaTokens.destructive.opacity(0.06), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
             }
         }
     }
@@ -294,28 +317,38 @@ struct AssistantResultThread: View {
     // MARK: - Always-explain
 
     private func explanationSection(_ explanation: AssistantExplanation) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            sectionTitle("INGEN ENDRING")
-            Text(explanation.understood)
-                .font(.sportivista(.footnote))
-                .foregroundStyle(SportivistaTokens.label.opacity(0.85))
-            Text(explanation.reason)
-                .font(.sportivista(.caption))
-                .foregroundStyle(SportivistaTokens.label.opacity(0.65))
+        neutralCard {
+            VStack(alignment: .leading, spacing: 6) {
+                sectionTitle("INGEN ENDRING")
+                Text(explanation.understood)
+                    .font(.sportivista(.footnote))
+                    .foregroundStyle(SportivistaTokens.label.opacity(0.85))
+                Text(explanation.reason)
+                    .font(.sportivista(.caption))
+                    .foregroundStyle(SportivistaTokens.label.opacity(0.65))
+            }
         }
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(SportivistaTokens.label.opacity(0.05))
-        .overlay(Rectangle().stroke(SportivistaTokens.label.opacity(0.2), lineWidth: 1))
     }
 
     // MARK: - Small helpers
 
+    /// Native section header: grey (`secondaryLabel`), `.footnote` semibold, no
+    /// tracking — matches Deg/Nyheter (was an amber/grey-spaced VERSAL Tekst-TV
+    /// label).
     private func sectionTitle(_ text: String) -> some View {
         Text(text)
-            .font(.sportivista(.caption, weight: .bold))
-            .foregroundStyle(SportivistaTokens.label.opacity(0.5))
-            .tracking(1.5)
+            .font(.sportivista(.footnote, weight: .semibold))
+            .foregroundStyle(SportivistaTokens.secondaryLabel)
+    }
+
+    /// A neutral rounded 12pt content card (was a sharp `label.opacity(0.04)` +
+    /// hairline-stroke box) — the answer / regnskap / receipt / explanation
+    /// surfaces sit on `cell` over the sheet's grouped `background`.
+    private func neutralCard<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
+        content()
+            .padding(12)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(SportivistaTokens.cell, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 
     private func sign(for kind: MutationKind) -> String {
@@ -379,8 +412,7 @@ struct MisunderstoodEntryRow: View {
                     .textFieldStyle(.plain)
                     .lineLimit(1...3)
                     .padding(8)
-                    .background(SportivistaTokens.label.opacity(0.06))
-                    .overlay(Rectangle().stroke(SportivistaTokens.label.opacity(0.2), lineWidth: 1))
+                    .background(SportivistaTokens.label.opacity(0.06), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                 HStack(spacing: 14) {
                     Button("Lagre notat") {
                         onSaveNote(noteDraft)
@@ -418,9 +450,10 @@ struct MisunderstoodEntryRow: View {
                     .sportivistaTapTarget()
             }
         }
-        .padding(10)
+        // Rendered inside Deg › «Det jeg ikke forsto» as a native List row (its
+        // `cell` listRowBackground is the surface) — the old self-card (sharp
+        // stroke box) is dropped so it reads as a plain grouped row.
+        .padding(.vertical, 2)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(SportivistaTokens.label.opacity(0.04))
-        .overlay(Rectangle().stroke(SportivistaTokens.label.opacity(0.15), lineWidth: 1))
     }
 }
