@@ -36,7 +36,10 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		let golf = app.buttons["starterpack.norske-golfere"]
 		assertExists(golf, "the curated starter packs should render first")
 		golf.tap()
-		assertExists(app.staticTexts["VALGT"], "tapping a pack should mark it valgt")
+		// WP-149: the retired amber-tracked «VALGT» VERSAL label became a native
+		// amber `checkmark.circle.fill`; the applied state is carried on the pack
+		// button's a11y label («… Valgt»), so assert on that rather than a glyph.
+		XCTAssertTrue(golf.label.contains("Valgt"), "tapping a pack should mark it valgt")
 
 		// The clearly-secondary «fortell med egne ord» entry → the conversation:
 		// say what you follow, confirm the diff, watch "Følger nå" grow.
