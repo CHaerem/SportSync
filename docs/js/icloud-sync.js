@@ -163,7 +163,11 @@ window.ssICloud = (function () {
 		if (!cfg.apiToken) { showError('iCloud-innlogging er ikke konfigurert.'); return; }
 		if (!configure()) { showError('iCloud-innlogging er utilgjengelig akkurat nå.'); return; }
 		showGate();
-		container.setUpAuth().then((userIdentity) => { if (userIdentity) reveal(); }).catch(() => showError('Kunne ikke starte Apple-innlogging. Last siden på nytt — og sjekk at du åpner sportivista.com.'));
+		container.setUpAuth().then((userIdentity) => { if (userIdentity) reveal(); }).catch((err) => {
+			try { console.error('[Sportivista] CloudKit setUpAuth failed:', err && (err.ckErrorCode || err.reason || err.message) || err, err); } catch (e) {}
+			const code = (err && (err.ckErrorCode || err.reason)) || '';
+			showError('Kunne ikke starte Apple-innlogging' + (code ? ' (' + code + ')' : '') + '. Last siden på nytt, eller åpne DevTools → Console for detaljer.');
+		});
 		container.whenUserSignsIn().then(reveal).catch(() => {});
 		container.whenUserSignsOut().then(showGate).catch(() => {});
 	}
