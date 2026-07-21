@@ -20,7 +20,7 @@ window.SPORTIVISTA_ICLOUD = {
 	// Public + origin-locked → safe to commit. Production is where the TestFlight
 	// app writes, so this is the real daily channel. (The Development token was
 	// e6bf806… — swapped out once the schema was deployed to Production.)
-	apiToken: '90eb2fbc1ca28146c3c1a2d93d465f169e079fb0630acc87d818b529d7762965',
+	apiToken: '06223f002e1c2a2079777004fec19c26558cd32c35b5899ca3727c8182a9c804',
 	environment: 'production', // matches the deployed schema + the TestFlight app
 	zoneName: 'SportivistaProfile',
 };
