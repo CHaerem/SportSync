@@ -239,7 +239,7 @@ not as a one-off copy.
   web-LLM feasibility spike: Norwegian quality at a browser-LLM's size is the
   binding constraint — a Chrome Prompt API layer is a documented progressive
   enhancement, WebLLM deferred). A calm input under the hero.
-- **Adaptive personalisation (WP-138) — `ios/Sportivista/Memory/Affinity.swift`.**
+- **Adaptive personalisation (WP-138B; renumbered 21.07 from the double-assigned WP-138 — the pre-merge archive validation in `ios-tests.yml` keeps that number) — `ios/Sportivista/Memory/Affinity.swift`.**
   On-device: turns the already-recorded `BehaviorCounter` signal (open/expand/
   dismiss per entity/sport) into a mild, deterministic affinity that LIFTS what you
   engage with in "Det du følger" (a tie-break where order was otherwise arbitrary —

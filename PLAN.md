@@ -135,7 +135,7 @@ mennesket, aldri av en agent.
 | WP-128 | Web-agenda: fortids-dag-fiks + ekspandert-tilstand over live-poll + klokke-avstemming | 0I | WP-117 | ✅ #336 merget 20.07 |
 | WP-129 | Onboarding-klarhet: formål i klarspråk + kapsel-copy + stale kommentarer | 0I | WP-117 | ✅ #342 merget 20.07 |
 | WP-130 | Pipeline-kvalitet: refaktor-auditens quick-wins | 0I | — | ✅ #338 merget 20.07 — containsName-memo, haystack-dedup ×3, én fillesing, configDirPath (+2 env-bugfiks), 2 døde eksporter, flattenStats, golf mergeEvents |
-| WP-131 | Interests-arv-sanering: eier-personlige flagg ut av publiserte artefakter | 0I | WP-96 | 🔬 |
+| WP-131 | Interests-arv-sanering: eier-personlige flagg ut av publiserte artefakter | 0I | WP-96 | ✅ #345 merget 20.07 — publisert events.json uten mustWatch (0 stempler verifisert); ICS beregner VALARM selv fra interests; klienter beregner must-see fra egen profil/linse (statusrad etter-rettet 21.07, regel 6) |
 | WP-132 | Onboarding: quick-picks-først + generiske pakker + assistent-intro (dyp personalisering) | 0I | WP-129 | ✅ #347 merget 20.07 |
 | WP-133 | Entitets-dekning: Eliteserien + Ingebrigtsen + Norge-dedup + pakke-repek | 0I | WP-132 | ✅ #348 merget 20.07 |
 | WP-134 | Visningsbugs: tekst-forskyvning/feil størrelse (eier-dogfooding 20.07) | 0I | — | ✅ #349 merget 20.07 |
@@ -153,7 +153,7 @@ CI/CD-reviewen (4 read-only agenter) ga 5/6 og en billig herdingspakke. Disjunkt
 | WP-141 | Agenda-tid-klipp — EKTE fiks (WP-135 løste den ikke; eier så «:00» på bygg 9) | 0I+ | WP-135 | ✅ #357 merget 20.07 — reprodusert i sim (SE3 375 + iPhone 17 402, std str. large→xxxL: bred deltaker-tittel holdt seg på ÉN linje og overflyttet raden → `Button(.plain)` sentrerte overflyten → ledende tidskolonne skjøvet av VENSTRE kant, «15:00»→«:00»). Rotårsak: `RowBody.secondaryLine` sin `ChannelLabel(...).fixedSize()` — en UGRENSET sekundærlabel som selv ble bredere enn cellen. Fiks: bind kanalen (flexibel + `lineLimit(1)`), løft titen sitt linjetak (`nil`, aldri «…»-trunkering) og lås raden `.frame(maxWidth: .infinity, alignment: .leading)`. Tittelen BREKKER nå i stedet for å overflyte; tid alltid hel; flerdagsvindu helt; AX-reflow (WP-134) urørt. ViewThatFits-reflow ble prøvd først (brief-anbefaling) men reflowet HVER rad til vertikal på iPhone-bredder (måler tittelens én-linjes ideal) → brukte briefens egen alternativ «sikre at Button-label aldri overstiger cellebredden». Vektorer bit-like (763 vitest + 630 iOS unit grønne, 4 schemes bygger) |
 | WP-142 | Assistent-inngang: fjern command-line-følelsen, bevar calm (eier-beslutning 20.07) | 0I+ | WP-104 | ✅ #358 merget 20.07 — kapselen i RO NAVNGIR nå en evne KONTEKSTUELT (Uka → «Følg et lag, eller spør om uka»; Nyheter → «Følg noe, eller spør om nyhetene») i stedet for den blanke «Spør, eller be om noe …» som leste som en kommandolinje. Ny `CapsuleContext`-enum (Uka/Nyheter); `ContentView` mapper `rootTab.capsuleContext` inn. Ledende assistent-symbol + mic beholdt (uten symbolet leses linja som dødt felt). NULL chips på agendaen — guidingen skjer ved ENGASJEMENT (arkets eksisterende eksempelrader, verifisert rolige/klare). DESIGN.md § Hjelperen + spec-en oppdatert; onboarding-copy («Trykk assistenten nederst …») konsistent, uendret. Verifisert visuelt (RO Uka+Nyheter dark+light + åpnet ark): ÉN rolig linje, ingen chips, agenda urørt. 630 iOS unit grønne (gylne vektorer bit-like), 4 schemes bygger; ingen endring i armer/FM-prompt/eval-corpus |
 | WP-144 | Assistent-inngang → kompakt flytende BUNN-KNAPP (nåbar med én hånd + ærlig affordance) — iterasjonens endestasjon (eier-beslutning 20.07) | 0I+ | WP-143 | ✅ #365 merget 20.07 — **SUPERSEDERER WP-143** (header→bunn): eieren fant header-`sparkles`-knappen ÆRLIG men **uråkelig med én hånd** på toppen av en høy iPhone. WP-144 forener nåbarhet + ærlighet: tilbake til BUNNEN (tommelens nåbare sone), men som en TYDELIG KNAPP (ikke WP-104s falske søkefelt-kapsel). Ny `AssistantButton.swift` — en KOMPAKT glass-pille (`glassEffect(.regular.tint(amber).interactive(), in: .capsule)`) som HUGGER innholdet (ikke full bredde), sentrert over safe area: `sparkles` i amber + aktiv etikett «Spør assistenten», ≥44 pt, button-rolle, a11y «Assistent», id `assistant.button`. INGEN placeholder-tekst, INGEN `mic` inni (diktering bor i arket). `ContentView`: fjernet WP-143s `sparkles`-`ToolbarItem` (tannhjulet står igjen alene), lagt til `safeAreaInset(.bottom)` som kaller `openAssistant` — samme scroll-under-mønster som den gamle kapselen; agendaen/Nyheter scroller rolig UNDER. Samtalearket (AssistantSheetView) + intent-armene + FM-prompt + eval-corpus HELT uendret — ren INNGANGS-flytting. Onboarding-copy gjort plassering-robust (navngir knappen, ikke retning): AgendaView tom-tilstand «Trykk Spør assistenten.» + OnboardingView assistent-intro «… Trykk Spør assistenten når du vil legge til noe.». DESIGN.md § Navigasjon + § Hjelperen + § Liquid Glass + spec-en oppdatert (alle «header-toolbar-knapp»-formuleringer → historikk). UI-tester: `assistant.toolbar`→`assistant.button` (MainFlowsUITests + SportivistaUITestCase), `testToolbarButton…`→`testAssistantButton…`, prosa «toolbar button»→«bottom button» |
-| WP-145 | Release-lane selv-opprydning av signeringssertifikater (hindrer Apple cert-tak) | 0I+ | WP-137 | 🔬 Fiks bekreftet 21.07: cloud-signering på fersk CI-runner minter et nytt «Apple Development»-cert per kjøring (runneren har ingen signeringsidentitet i nøkkelringen); med auto-CD (WP-137, hver iOS-merge) hopet 10 «Created via API»-certer seg opp → traff Apples cert-tak → arkiveringen feilet med «reached the maximum number of certificates» (de 10 er døde — privatnøklene lå i engangs-nøkkelringer). Ny `scripts/prune-signing-certs.js` (bruker `ascRequest`): `GET /v1/certificates?limit=200`, BEHOLD navngitte (eierens, f.eks. «christopher hærem») + de nyeste `KEEP_RECENT`=2 API-mintede, REVOKER (`DELETE /v1/certificates/{id}`) resten. FAIL-SOFT: list-/DELETE-feil logges og svelges (exit 0) — prune skal ALDRI felle et gyldig bygg. Ny workflow-steg «Rydd gamle signeringssertifikater» i `ios-release.yml` FØR arkiveringen (en cap-et konto selv-heler i kjøringen). Ny enhetstest `tests/prune-signing-certs.test.js` (`certsToRevoke` pure-seleksjon + fail-soft, network-fri, injisert `request`). Rører BESKYTTET STI (`.github/workflows/`) → PR `needs-review`, eier merger |
+| WP-145 | Release-lane selv-opprydning av signeringssertifikater (hindrer Apple cert-tak) | 0I+ | WP-137 | ✅ #367 merget 21.07 (eier; statusrad etter-rettet 21.07) — cloud-signering på fersk CI-runner minter et nytt «Apple Development»-cert per kjøring (runneren har ingen signeringsidentitet i nøkkelringen); med auto-CD (WP-137, hver iOS-merge) hopet 10 «Created via API»-certer seg opp → traff Apples cert-tak → arkiveringen feilet med «reached the maximum number of certificates» (de 10 er døde — privatnøklene lå i engangs-nøkkelringer). Ny `scripts/prune-signing-certs.js` (bruker `ascRequest`): `GET /v1/certificates?limit=200`, BEHOLD navngitte (eierens, f.eks. «christopher hærem») + de nyeste `KEEP_RECENT`=2 API-mintede, REVOKER (`DELETE /v1/certificates/{id}`) resten. FAIL-SOFT: list-/DELETE-feil logges og svelges (exit 0) — prune skal ALDRI felle et gyldig bygg. Ny workflow-steg «Rydd gamle signeringssertifikater» i `ios-release.yml` FØR arkiveringen (en cap-et konto selv-heler i kjøringen). Ny enhetstest `tests/prune-signing-certs.test.js` (`certsToRevoke` pure-seleksjon + fail-soft, network-fri, injisert `request`). Rører BESKYTTET STI (`.github/workflows/`) → PR `needs-review`, eier merger |
 | WP-146 | Assistent-knapp variant D (kollaps ved scroll, bunn-trailing) + live-linje-reflow (design-review 21.07, eier valgte variant D) | 0I+ | WP-144 | ✅ #374 merget 21.07 — To rene inngangs-/visnings-endringer, ingen armer/ark/FM-prompt/eval-corpus rørt. (1) `AssistantButton`: FLYTTET fra bunn-SENTER → bunn-TRAILING (≈16 pt innrykk via `frame(maxWidth:.infinity, alignment:.trailing)` + `padding(.trailing,16)` på `safeAreaInset(.bottom)`) — mer nåbar for tommelen + rydder lesekolonnen (løser at sentrert pille okkluderte siste Nyheter-rad); copy i RO «✨ Assistent» (var «Spør assistenten»); KOLLAPS til bare `sparkles`-glyfen ved scroll via ny `collapsed`-param (spacing/padding/label-transisjon), re-ekspanderer i toppen (jf. Foto/Musikk). BEHOLDT: `glassEffect`, amber-tint, `sparkles`, button-rolle, ≥44 pt, a11y «Assistent», id `assistant.button` — ikke en FAB (glass-kapsel, ikke fylt sirkel). (2) `ContentView`: `onScrollGeometryChange` observerer aktiv fanes List-offset (Uka/Nyheter) og driver `assistantCollapsed` (animasjon på parent, respekterer Reduce Motion; reset på fane-bytte); `liveNowLine` REFLOWER ved `dynamicTypeSize.isAccessibilitySize` (tittel + kanal wrapper på egne linjer, «·» droppes) — fikser trunkering «The Open»→«The O…» / «TV 2 Play»→«TV 2…» (DESIGN § Typografi «bryt aldri til trunkering»); pikselidentisk ved std str. DESIGN.md § Navigasjon + § Hjelperen oppdatert til variant D. UI-tester urørt (id/a11y-label uendret) |
 | WP-143 | Assistent-inngang → header-toolbar-knapp (`sparkles`, «renest Apple»); bunn-kapsel fjernet (eier-beslutning 20.07) | 0I+ | WP-142 | ✅ #360 merget 20.07 — SUPERSEDERER WP-142s kapsel: bunn-kapselen var en FALSK søkefelt-affordance → FJERNET. Assistent-inngangen er nå en `ToolbarItem(.topBarTrailing)` `sparkles`-knapp til VENSTRE for tannhjulet (a11y «Assistent», id `assistant.toolbar`, ≥44 pt bar-button, iOS 26 Apple-Intelligence-idiom). `safeAreaInset(.bottom)`-kapselen borte → agendaen/Nyheter fyller HELE skjermen (ingen bunnflate). Slettet: `AssistantCapsule.swift` (hele fila), `AssistantViewModel.CapsuleContext`-enum + `capsulePrompt(for:)` + `RootTab.capsuleContext` + `dictateToAssistant`-handleren (micen bodde bare på kapselen; diktering bor nå i arket alene). Samtalearket (AssistantSheetView) + intent-armene + FM-prompt + eval-corpus HELT uendret — ren INNGANGS-flytting. Onboarding-copy «nederst»→«øverst» (AgendaView tom-tilstand + OnboardingView assistent-intro). DESIGN.md § Navigasjon+§ Hjelperen + spec-en oppdatert (alle «kapsel nederst»/«Liquid Glass-bunnflate»/«Spør, eller be om noe»-setninger utgått). UI-tester: `assistant.capsule`/`assistant.capsule.mic`→`assistant.toolbar`; mic-only-flowen (Flow 13) fjernet. Verifisert visuelt (RO Uka+Nyheter dark+light: header `sparkles`+tannhjul, agenda/Nyheter fyller skjermen, INGEN bunn-kapsel; tapp `sparkles`→samtalearket uendret). 630 iOS unit grønne (1 hoppet = FM-eval-gate; gylne vektorer bit-like), 4 schemes bygger. UI-suiten: 17/18 grønne — ALLE assistant.toolbar-flowene grønne (`testToolbarButtonOpensSheetAndLukkCloses`, Sheet-drag, Deg-gear-back-swipe, Nyheter-segment, følg-via-ark). Den ene røde (`testRapidStarterPackTogglesStayResponsive`) er URØRT av diffen (linje 119 = quick-picks-steget; min eneste OnboardingView-endring er copy i det SENERE assistent-intro-steget) og en last-indusert timing-flake: 45s-responsivitetsbudsjettet bommes ved maskin-last ~10-13, mens «FØLGER NÅ (9)» rendrer korrekt — ikke en WP-143-regresjon (UI-suiten er ikke en CI-gate). Ingen endring i Feed-predikater/vektorer/docs-data |
 | WP-147 | iOS amber-disiplin + klarspråk (design-reviewens quick-wins) | 0I+ | WP-83 | ✅ #373 merget 21.07 — Håndhever DESIGN.md-fargekontrakten (amber = KUN handling/tilstand/must-see) etter design-reviewen 21.07 — ren farge/copy, INGEN data/logikk/vektor-endring. Fem fikser: (1) 🔴 detaljark-seksjonsoverskrifter (`EventDetailSheet.header`) amber→`secondaryLabel` grå — de kolliderte med de grå ARENA/OM-etikettene (to farger, samme rolle) og ble matt sennep/brun i lys modus (datert Tekst-TV); amber beholdt KUN på «På»/streaming-lenke+↗/«Skjult»-avsløring; (2) Deg-rad-ikoner (`DegView.rowLabelContent`) amber→grå — fra ~9 amber-ikoner til 2 fargede elementer (amber «Varsel før start»-toggle + rød «Nullstill»); (3) golf-rad-meta klarspråk: ny ren `AgendaFormat.humanizeGolfMeta` («R2 · −4 · T8»→«Runde 2 · −4»: runde utskrevet, leaderboard-plassering droppet, score beholdt), brukt i `AgendaViewModel.makeLensRow`; `LensRenderer`-verbatim-kontrakten (LensRendererTests) URØRT (transformen bor i agenda-display-laget, ikke i renderer/vektorer); (4) «vekt 0.8»-jargon fjernet fra assistent-diff-subtittelen (`AssistantResultThread.subtitle` + ubrukt `weightLabel`); (5) Nyheter «Det du følger»-lenkerad strammet til standard radhøyde (`NewsView.followedLink`). Agenda-tomtilstand-glyfen var alt grå (verifisert, ingen endring). IKKE rørt ContentView/AssistantButton (WP-146 eier dem). 6 nye `AgendaFormatTests`-caser. Verifisering: iOS unit-suite + 4 schemes + gylne vektorer bit-like; skjermbilder dark+light av detaljark/Deg/golf-rad/assistent-diff |
@@ -162,7 +162,9 @@ CI/CD-reviewen (4 read-only agenter) ga 5/6 og en billig herdingspakke. Disjunkt
 | WP-150 | Assistent-ark + minne-side reskin til native (lukker Tekst-TV-todelingen) | 0I+ | WP-104,WP-30 | ✅ #381 merget 21.07 — ren DRAKT-endring av de to flatene som hang igjen i pensjonert Tekst-TV-språk mens agenda/Deg/Nyheter fikk native-reskinnen: assistent-arket (`AssistantSheetView` + `AssistantResultThread`) + «Hva jeg vet om deg» (`WhatIKnowView`). Skarpkant-`Rectangle().stroke`-bokser → avrundede 12pt native-celler (`cell`-flate over `background`); «ASSISTENT» amber-VERSAL → native inline nav-tittel «Assistent» + Lukk-cancellation; øvrige amber/grå-sperrede VERSAL-etiketter («FORESLÅTTE ENDRINGER», «PRØV», «SVAR», «APPLE INTELLIGENCE», «STRUKTURERT» …) → grå native seksjonshoder (`secondaryLabel` footnote-semibold, ingen tracking); kontur-Bekreft/Avvis/Glem-alt → ÉN primær amber-kapsel (delt `SportivistaPrimaryButtonStyle` m/WP-149; `.borderedProminent` FJERNET helt app-vidt så amber-kapselen er det ENESTE fylte prominente språket; diff-kortet nøytralt med add/remove-semantikk på +/−-markør; destruktive bekreftelser flat rød à la Deg › Nullstill; `SPOILERVERN`-kategorietikett grå — alt rev2 etter design-review) + dempet flat sekundær (`.borderless`); «mente du»-pille-bokser → flate hårlinjefrie rader; skrivefeltet → Meldinger-mønster (avrundet compose-felt); minne-prosa tabular→systemfont; atferd-tellere av-amberet. BEHOLDT: samtale-flyt, intent-armer, FM-prompt, eval-corpus, diff-/answer-semantikk, diff-farger (+grønn/−rød/±amber som tilstand), BlinkingCursor «tenker …» (delt m/onboarding, WP-149). IKKE rørt: OnboardingView/StarterPacks (WP-149), ContentView/AssistantButton (WP-146). Følger WP-149s DESIGN § Forbudsliste-avklaring («ingen pills» = ingen pille-sekundærer, men ÉN primær KAN være prominent fylt native knapp) — notert i PR-body, ingen DESIGN.md-endring her (unngår WP-149-konflikt). FØR/ETTER dark+light av ark/tråd/minne; iOS unit + 4 schemes + gylne vektorer bit-like + assistent-UI-flyter; `vitest` urørt |
 | WP-151 | Release-lane selv-heler byggnummer-race (retry med høyere nummer ved ASC-kollisjon) | 0I+ | WP-145 | ✅ #378 merget 21.07 — `next-testflight-build.js` henter byggnummer = ASC-maks+1 ved JOBB-START, men ASC registrerer en fersk opplasting med treghet (eventual consistency). Auto-CD (WP-137, hver iOS-merge) + manuelle dispatcher lager tette kjøringer; to tett henter SAMME nummer → den andre feiler i eksport med «The bundle version must be higher than the previously uploaded version: 'N'» (exit 70). Concurrency serialiserer, men beskytter ikke mot ASCs treghet. Fiks: nytt `scripts/testflight-upload.js` orkestrerer arkiver→eksporter→opplast i ÉN selv-helende operasjon — fanger kollisjonen, parser N, bumper til N+1 og RE-ARKIVERER (`CURRENT_PROJECT_VERSION=<N+1>`; arkivet baker inn `CFBundleVersion` med `manageAppVersionAndBuildNumber:false`, så nummeret må settes ved arkivering — re-eksport alene holder ikke), re-eksporterer, opptil `TF_MAX_ATTEMPTS`=3 forsøk med økende nummer. Det FAKTISK opplastede nummeret skrives til `$GITHUB_OUTPUT` (`build=`) og brukes av «Registrer opplastingen» (`record-testflight` registrerer riktig nummer, ikke det opprinnelig hentede). Feiler HØYLYTT hvis alle forsøk brukt opp (ekte problem). Prune (WP-145)/signering/alt annet uendret. Den rene logikken (`parseBuildCollision` → N+1; `uploadWithRetry`-beslutningen) er eksportert og enhets-testet network-/xcodebuild-fritt med injiserte arkiver/opplast-mocks (`tests/testflight-upload.test.js`, 12 caser: suksess uten retry, kollisjon→N+1, max(N+1,current+1)-bump, oppbrukte forsøk feiler, ikke-kollisjons-feil feiler umiddelbart). Rører BESKYTTET STI (`.github/workflows/ios-release.yml`) → PR `needs-review`, eier merger |
 | WP-152 | Kolonet i ordmerket som appens LIVE-signatur (prototype, iOS) | 0I+ | WP-146 | ✅ #387 merget 21.07, EIER-GODKJENT 21.07 («bare å pushe — minimal designendring») → normativt innskrevet i DESIGN.md § Bevegelse + § Cross-surface; web-paritet er dokumentert oppfølging (eies p.t. av parallell web-agent) — ordmerkets amber «:» (kandidat A «Kolonet») blir det LEVENDE live-signalet: pulserer rolig når noe eieren følger sender NÅ, ellers den statiske amber-aksenten det er i dag. Drevet av det EKSISTERENDE live-signalet (`AgendaViewModel.currentLiveRows`/`liveNow` — SAMME kilde som ▌ LIVE-linja, minutt-tikk via `TimelineView(.everyMinute)` så kolon og linje ALDRI er uenige). Pulsen er CALM, ikke alarm: langsomt (~1,6 s) ease-in-out, autoreverserende åndedrag opacity ~1,0 ↔ ~0,5 + myk amber-glød som puster med; INGEN layout-shift (kun opacity/glød animeres — kolonets ramme står stille, «SPORTIVISTA» rykker ikke), ingen fargeendring utover amber. Ny fil-privat `MastheadColon` (ContentView) + `mastheadLabel`. **Reduce Motion (bindende):** ingen bevegelse — statisk amber-glød bærer «på»-tilstanden. **a11y:** masthead-label «Sportivista — sender nå (N)» når live. **Demo-repro:** ny `MastheadLiveDemoSeed` + `SPORTIVISTA_DEMO=masthead-live`/`masthead-calm` (gjenbruker cache-seed-mekanismen; live-rad via autoritativ `status:"in"` så pulsen er deterministisk uansett klokkeslett). iOS KUN — web-paritet i `docs/`-headeren er DOKUMENTERT oppfølging (§ Cross-surface), IKKE bygd. Ren presentasjon: feed-kompilering/gylne vektorer URØRT. DESIGN.md § Bevegelse + § Cross-surface merket PROTOTYPE (avventer eierens dom, «amber = aksent»-invarianten holder). Verifisering: iOS unit + 4 schemes + gylne vektorer bit-like; skjermbilder av begge tilstander (nøytral/live) dark+light + Reduce-Motion-live. **Eier-godkjent 21.07 — normativt** |
-| WP-153 | Fast CI-signeringsidentitet — stopp cert-churn + «Certificate Revoked»-mailene | 0I+ | WP-145 | 🔬 branch `wp-153-ci-signing-identitet` (BESKYTTET STI → eier merger) — eieren fikk jevnlig «Your Certificate Has Been Revoked»-mail fordi prune-steget (WP-145) tilbakekaller ett API-mintet dev-cert per bygg (og hver tilbakekalling = én mail; «null null» = ASC-nøkkelens tomme visningsnavn). Rot: en fersk CI-runner uten signeringsidentitet får `-allowProvisioningUpdates` til å MINTE et nytt «Apple Development»-cert hver arkivering. Fiks (eier valgte «jeg lager certet»): jeg genererte ÉN dedikert CI-dev-identitet via ASC-admin (RSA-nøkkel jeg kontrollerer + CSR → `POST /v1/certificates`; cert-id `T8J9GR47HS`, gyldig 2027), bygde .p12 (cert+nøkkel, moderne AES-256-PBKDF2), satte secrets `SIGNING_CERT_P12`+`SIGNING_CERT_PASSWORD` (materiale ALDRI i repoet — kun scratchpad). Lanen importerer nå identiteten i en midlertidig nøkkelring FØR arkivering (`security import`/`set-key-partition-list`/søkeliste), så minting skal gjenbruke den → ingen churn, ingen mail. Prune beholdt som SIKKERHETSNETT men beskytter CI-certet på ID (`KEEP_CERT_IDS=T8J9GR47HS` — certet bærer også «Created via API», ville ellers blitt tilbakekalt av sin egen prune); `certsToRevoke`/`pruneSigningCerts` fikk `keepIds`-param + 4 nye tester (15 grønne). Verifisering: prune+workflows-tester grønne, js-yaml gyldig. **Etter merge:** verifiser at ingen nytt «Created via API»-cert mintes → oppfølger fjerner prune + rydder de stale churn-certene → mailene slutter helt |
+| WP-153 | Fast CI-signeringsidentitet — stopp cert-churn + «Certificate Revoked»-mailene | 0I+ | WP-145 | ✅ #388 merget 21.07 (eier; statusrad etter-rettet 21.07) — eieren fikk jevnlig «Your Certificate Has Been Revoked»-mail fordi prune-steget (WP-145) tilbakekaller ett API-mintet dev-cert per bygg (og hver tilbakekalling = én mail; «null null» = ASC-nøkkelens tomme visningsnavn). Rot: en fersk CI-runner uten signeringsidentitet får `-allowProvisioningUpdates` til å MINTE et nytt «Apple Development»-cert hver arkivering. Fiks (eier valgte «jeg lager certet»): jeg genererte ÉN dedikert CI-dev-identitet via ASC-admin (RSA-nøkkel jeg kontrollerer + CSR → `POST /v1/certificates`; cert-id `T8J9GR47HS`, gyldig 2027), bygde .p12 (cert+nøkkel, moderne AES-256-PBKDF2), satte secrets `SIGNING_CERT_P12`+`SIGNING_CERT_PASSWORD` (materiale ALDRI i repoet — kun scratchpad). Lanen importerer nå identiteten i en midlertidig nøkkelring FØR arkivering (`security import`/`set-key-partition-list`/søkeliste), så minting skal gjenbruke den → ingen churn, ingen mail. Prune beholdt som SIKKERHETSNETT men beskytter CI-certet på ID (`KEEP_CERT_IDS=T8J9GR47HS` — certet bærer også «Created via API», ville ellers blitt tilbakekalt av sin egen prune); `certsToRevoke`/`pruneSigningCerts` fikk `keepIds`-param + 4 nye tester (15 grønne). Verifisering: prune+workflows-tester grønne, js-yaml gyldig. **Etter merge:** verifiser at ingen nytt «Created via API»-cert mintes → oppfølger fjerner prune + rydder de stale churn-certene → mailene slutter helt |
+| WP-138B | Adaptiv personalisering on-device (akse A — affinitets-løft) | 0I+ | WP-132 | ✅ #364 merget 20.07 (slice 1 Affinity-kjerne + slice 2 løft i «Det du følger») — `ios/Sportivista/Memory/Affinity.swift`; omnummerert 21.07 fra dobbelt-tildelt WP-138 (nummeret var alt brukt av pre-merge-arkivvalideringen over) — se `### WP-138B`-seksjonen |
+| WP-154 | Web↔app-paritet: Nyheter-fane, rad-glyf+chevron, flytende assistent, Logg ut | 0I+ | WP-148 | ✅ #389 merget 21.07 (commit 4a82a0773) — etter-registrert 21.07: nummeret var brukt i PR-en uten PLAN-rad (regel 6) |
 
 ---
 
@@ -1760,6 +1762,500 @@ OPPFØRSEL endres (WP-82 er ren presentasjon — mock-suite grønn holder).
 
 ---
 
+## MILEPÆLSKARTET mot kommersialisering (eier-bestilling 21.07.2026)
+
+Eieren pekte 21.07 på de store milepælene som gjenstår før appen er reelt klar
+for kommersialisering; en syv-agenters kartlegging (web-følgeflyt, iOS-følgeflyt,
+entitetsmodell, identitet, planstatus, go-to-gap + adversariell kritiker som
+etterprøvde funnene mot koden) verifiserte rotårsakene mekanisk:
+
+1. **«Jeg prøvde å legge til Liverpool og fikk beskjed om at det ikke fantes.»**
+   Verifisert kjede: ALT følge-søk (iOS `AddFollowSearchView`/`MutationGrounder`,
+   webens detaljark-knapper) går mot `entities.json` — 53 oppføringer (42 reelt
+   følgbare, 4 lag), bygget av `build-entities.js` fra tracked.json/sports-config/
+   norwegian-golfers. `catalog.json` tier2 — som SELV lister Liverpool (linje 59)
+   og hele PL-toppen — foldes ALDRI inn. Følge-universet er avledet av tavlas
+   nå-tilstand (tracked-entries utløper, indeksen regenereres uten husk), ikke av
+   verden; to skipte startpakker peker alt på døde id-er, og onboardingen
+   reklamerer med «Liverpool» som eksempel (OnboardingView.swift:176). Det er en
+   OPPSLAGS-feil, ikke en hente-feil (fotball er tier1 — PL-kampene kommer på
+   tavla i sesong), og datamodellen under er klar (lens/FeedCompiler matcher på
+   navn, CRDT-en tåler alt): kun registeret + opprettelsesflatene mangler.
+   → **FASE 0J**.
+2. **«Appen er for anonym/kjedelig — mangler identitet.»** Villet mellomtilstand
+   (DESIGN.md: kosmetikken byttes ETTER at kjernen er herdet) — men kjernen ER
+   herdet nå, og ingen WP eide neste steg. Kolonet (WP-152) er et ekte,
+   eier-godkjent merke som bærer ~5 % av flaten; den redaksjonelle norske
+   stemmen — aktivumet INGEN konkurrent har — rendres som én faint grå linje;
+   null delbare flater (ingen og:image, ingen delekort). → **FASE 0L**.
+3. **«Go-to-appen for agenda/nyheter for det du følger.»** «Laget mitt»-objektet
+   finnes ikke (ingen entitetsside — svaret er spredt over Uka/Nyheter/detaljark);
+   resultater er fotball-only på tavla og målscorere hentes men vises aldri; iOS
+   har null live-score og synker ikke engang standings.json; nyhetslinsen treffer
+   6/32 saker (samme entitets-rot som Liverpool); pipelinen natt-fryser 23–07
+   Oslo — akkurat «hva skjedde i går kveld»-vinduet. Tid-til-svar-MEKANIKKEN er
+   god (kredit: onResume-sync, spoilervern, øyeblikkelig fanebytte) — gapet er
+   INNHOLD, ikke friksjon. → **FASE 0K**.
+
+Kritikeren fant i tillegg det planendrende: **Gate G1 er umålbar som definert** —
+null eksterne testere (WP-17: fortsatt gatet), null fjerntelemetri by design, og
+ekstern TestFlight KREVER personvernerklæring + privacy manifest som ikke finnes.
+→ **FASE 0M**.
+
+**Sekvens:** 0J først — den er forutsetningen både for 0K (entitetsside/nyheter
+trenger entitetsuniverset) og for reell G1-testing (en PL-fan må kunne følge
+laget sitt før retention betyr noe). 0L og 0M kan gå parallelt med 0K.
+Nummerblokker: 0J=160-serien, 0K=170, 0L=180, 0M=190 (155–159 = buffer for
+løpende småting). Hygiene ryddet 21.07 i samme slengen: WP-131/145/153-radene
+à jour, WP-154 etter-registrert, dobbelt-tildelte WP-138 → WP-138B.
+
+---
+
+## FASE 0J · «Følg hva som helst» — interesse-universet (eier-funn 21.07) — planlagt
+
+Kjerneprinsipp (fra entitets-kartleggingen): skill **FØLGE-UNIVERSET** (register:
+stort, varig, verdens-avledet) fra **DEKNINGSKOMPASSET** (catalog: kuratert,
+kostnadsbegrenset) fra **BOKFØRINGEN** (tracked.json: flyktig, datert). I dag
+avledes det første av det tredje — derfor «finnes ikke Liverpool». Merk også
+laget UNDER oppslaget: en bruker som følger noe helt utenfor katalogen får
+ingenting fra pipelinen (dekningsgaten) — det er WP-165s etterspørselssignal som
+over tid lukker dét, mens 0J-resten lukker oppslags-feilen.
+
+**Menneskebeslutninger i fasen:** ingen — alt er angrefritt og innenfor
+null-infra. (WP-165 følger B.1-rammen som alt er besluttet i BRUKERDATA-seksjonen:
+offentlige, anonyme signaler.)
+
+Bølge 1: WP-160 (pipeline) ∥ WP-163 (web) ∥ WP-164 (iOS) — disjunkte filer.
+Bølge 2: WP-161 (register) ∥ WP-165 (signal). Bølge 3: WP-162 (id-varighet).
+
+| WP | Tittel | Fase | Avhenger av | Status |
+|---|---|---|---|---|
+| WP-160 | Strakstiltak: catalog.tier2 → entities.json + håndball-label + alias-datafil | 0J | — | planlagt |
+| WP-161 | Verdensregisteret: seedet entitetsregister (~1 500–5 000 entiteter) | 0J | WP-160 | planlagt |
+| WP-162 | Sesongløse id-er + re-grounding: follows overlever sesonger | 0J | WP-161 | planlagt |
+| WP-163 | Web: søk-og-følg-flate + assistent-mutasjon wiret + katalog-kollaps-fella | 0J | WP-160 | planlagt |
+| WP-164 | iOS: soft-follow («følg likevel») + ærlig off-season-svar | 0J | WP-160 | planlagt |
+| WP-165 | Etterspørselssignal v0: utenfor-katalog-follow → anonymt, offentlig signal | 0J | WP-163, WP-164 | planlagt |
+
+### WP-160 · Strakstiltak: fold catalog.tier2 inn i entities.json (bølge 1)
+**Mål:** Liverpool — og hele tier2-langhalen (~29 lag + ~70 turneringer) — blir
+søkbar/følgbar på begge flater NÅ, uten å vente på verdensregisteret.
+**Innhold:** (1) `scripts/build-entities.js`: les `catalog.json` tier2 som fjerde
+kilde (tracked.json vinner fortsatt dedup via eksisterende termsOverlap-maskineri);
+tier2-lag → `type:"team"`, tier2-turneringer → `type:"tournament"`, aliaser fra
+katalogen; (2) håndball-hullet: `SPORT_LABELS` mangler `handball` → tier1-sporten
+kan ikke groundes i det hele tatt (samme klasse som WP-64 lukket for vintersport)
+— legg til; (3) generaliser `KNOWN_ALIAS_GROUPS` (kodekonstant i build-entities)
+til datafil `scripts/config/entity-aliases.json` så research/verify kan
+vedlikeholde aliaser (Liverpool FC/LFC-klassen) uten kodeendring; (4) re-frys
+iOS-fixturen (`ios/SportivistaTests/Fixtures/entities.json`) + manifest.
+**Ikke-mål:** ingen eksterne kilder (WP-161); ingen endring i catalog.json selv;
+ingen klientendring. **Aksept:** «liverpool» og «følg håndball» gir treff i
+`EntityIndex`-søk mot re-frosset fixture; entities.json ≈150+; vitest
+(build-entities/manifest) + full iOS-suite + 4 schemes + gylne vektorer bit-like;
+sandbox `build-entities → build-events → validate-events` rent.
+
+### WP-161 · Verdensregisteret: seedet, varig entitetsregister (bølge 2)
+**Mål:** følge-universet avledes av VERDEN (~1 500–5 000 entiteter: alle klubber i
+dekkede ligaer, landslag, F1-førere/-team, WorldTour-lag, ATP/WTA- og
+FIDE-topplister, esport-orgs, vintersportutøvere), ikke av tavla. **Innhold:**
+(1) nye sjekket-inn registerfiler `scripts/config/registry/{football,f1,cycling,
+tennis,chess,esports,winter,handball,athletics}.json` + `registry.schema.json` +
+koherenstest (à la catalog-schema); (2) seed-skript på månedlig/kvartalsvis
+Action: ESPN teams-API for klubbene i alle ligaer fetcherne alt dekker (samme
+host `APIClient` bruker), Wikidata SPARQL for utøvere (QID + flerspråklige
+aliaser), Liquipedia for CS2-orgs, FIDE-lister for sjakk; (3) stabile kebab-slugs
+som primær-id + `external`-felt per entitet (`{wikidata, espnId}`) for re-seeding
+og dedup; (4) `build-entities.js` folder registeret som kilde (tracked vinner
+dedup); (5) AI-vedlikehold: research/improve reconcilierer register mot verden
+ukentlig (opprykk/nedrykk, overganger, nye orgs) — prompt-tillegg med
+output-kontrakt. **Ikke-mål:** ingen utvidelse av hva pipelinen HENTER (catalog
+styrer fortsatt dekning/kost — registeret er oppslag, ikke dekningsløfte); ingen
+betalte API-er. **Aksept:** entities.json ≥1 500 med `external`-felter;
+manifest-diffen håndterer størrelsen (Pages + `manifest.json`-kontrakten; chunking
+per sport dokumentert som fallback); iOS `EntityIndex`-søk holder seg innenfor
+eksisterende perf-porter (AgendaMatchingPerfTests-klassen) mot skalert indeks;
+alle suiter grønne.
+
+### WP-162 · Sesongløse id-er + re-grounding: follows overlever sesonger (bølge 3)
+**Mål:** en følging dør aldri stille av et sesong-/utgaveskifte. I dag er id-ene
+utgave-stemplet (`premier-league-2026-27`, `the-open-championship-2026`), en
+profilregel fryser id+navn ved follow-tidspunkt, og edition-stripping finnes i
+RESOLVEREN men ikke i MATCHING-stien — så neste utgave matcher aldri (verifisert:
+to skipte startpakker peker alt på døde id-er, og grounding-testen kjører mot
+FIXTUREN så CI ikke ser driften). **Innhold:** (1) kanoniske, sesongløse id-er
+for tilbakevendende turneringer/ligaer i registeret (`the-open-championship`,
+`premier-league`) med utgave som metadata; tracked.json kan fortsatt bokføre
+daterte utgaver — build-entities mapper dem til kanonisk id; (2)
+edition-stripping inn i matching-stien (iOS `EffectiveInterests`/`FeedCompiler`/
+`NewsLens`-navnefallback; web `lens.js` term-bygging) så en gammel regel matcher
+ny utgave; (3) engangs-migrering av profilregler (re-ground mot ny indeks ved
+første last — `FollowPresenter.unresolved`-maskineriet finnes); (4) startpakkene
+re-pekes til kanoniske id-er + grounding-testen kjører mot LIVE-indeksen (eller
+en CI-vakt som diffing fixture↔live). **Ikke-mål:** ingen endring i de fem
+predikatene. **Aksept:** golden-vektorer — forventet re-frys KUN hvis
+vektor-inputs bærer utgave-id-er (dokumentér i DIVERGENCES.md); ny testklasse
+«2026-regel matcher 2027-utgave» begge plattformer; null døde id-er i skipte
+startpakker (CI-vakt).
+
+### WP-163 · Web: søk-og-følg + assistenten UTFØRER følging (bølge 1)
+**Mål:** en vanlig web-bruker kan følge noe som ikke står på tavla — i dag
+finnes kun detaljark-knappene (universet = tavlas rader), assistentens «følg X»
+er en død stub (`kind:'mutation'` konsumeres aldri), og rediger.html skriver
+KUN eierens interests.json via OWNER-gatede issues (no-op for alle andre).
+**Innhold:** (1) søk-og-følg-flate på hovedsiden (i/ved «Dette dekker vi»):
+søk mot entities.json (navn+aliaser, samme normalisering som `lens.js`), treff →
+`ssProfileFollow` direkte; (2) wire assistentens mutation-intent: «følg
+Liverpool» slår opp i entities.json og utfører følgingen med rolig kvittering
+(gjenbruk `bindAssistant`-flyten); (3) fjern den syntetiske id-divergensen:
+`followTargets` slår opp ekte entityId fra entities.json før fallback (i dag
+`normalize(name)|sport` som aldri matcher iOS-id-en → CRDT-dubletter på tvers av
+enheter); (4) katalog-kollaps-fella: første følging bytter «Dette dekker vi»/
+«Neste opp» fra katalog (~130 navn) til KUN profilens liste — vis «dine follows
++ katalogen» lagdelt i stedet; (5) rediger.html omprofileres ærlig til «be om
+dekning» (WP-96-intensjonen) og lenker til den nye følg-flaten for selve
+følgingen. **Ikke-mål:** ingen endring i follow-request-flyten/interests.json;
+ingen ny backend. **Aksept:** E2E i browser: søk «Liverpool» → følg → raden i
+«Det du følger» + iCloud-push kalles; assistent-«følg Liverpool» utfører;
+dashboard-cards-tester + nye lens/profile-tester; ingen feed-vektor-endring.
+
+### WP-164 · iOS: soft-follow + ærlig off-season-svar (bølge 1)
+**Mål:** søket sier aldri bare «finnes ikke» — og et navn utenfor indeksen kan
+likevel følges. **Innhold:** (1) «Følg likevel»-affordance ved søke-miss i
+`AddFollowSearchView` og i grounder-avvisningen: oppretter navnebasert regel
+(nedstrøms er `FeedCompiler`/`EffectiveInterests` alt navne-tolerante —
+verifisert; `FollowPresenter.unresolved` viser den ærlig med «venter på
+dekning»-tekst i stedet for «sjekk navnet»); fiks notify-default-detaljen
+(ukjent type havner i atlet-bøtta → arver bjelle-semantikk — sett nøytral
+default); (2) ærlig off-season-linje når entiteten FINNES men ikke har kommende
+events: «Fulgt — Premier League starter medio august» (sesongvindu fra
+registerets metadata (WP-161) eller tracked-reasons, som ALT vet dette —
+tracked.json:10 nevner sesongstarten i klartekst); (3) onboarding-copyen
+beholder «Liverpool»-eksemplet — etter WP-160 grounder det faktisk (CI-vakt:
+eksempel-ytringene i onboarding-copy må grounde mot live-indeksen); (4)
+`MutationGrounder` beholder anti-hallusinasjons-gaten for ASSISTENT-forslag, men
+avvisningen tilbyr soft-follow som eksplisitt brukervalg. **Ikke-mål:** ingen
+FM-prompt-utvidelse utover avvisnings-copy; ingen endring i diff/bekreft-flyten.
+**Aksept:** ny UI-flyt (søk-miss → Følg likevel → rad i «Det du følger» med
+ærlig status); unit-tester for navneregel-kompilering + notify-default; full
+iOS-suite + 4 schemes + vektorer bit-like (soft-follow er additiv regel, ingen
+predikatendring).
+
+### WP-165 · Etterspørselssignal v0: serveren FÅR VITE hva folk vil følge (bølge 2)
+**Mål:** en soft-follow utenfor katalogen skal ikke være «fulgt men dødt for
+alltid» — uten signal ser serveren aldri etterspørselen (rediger-veien er
+OWNER-gatet; WP-23 var kun skisse). B.1-rammen fra BRUKERDATA-seksjonen:
+offentlige, anonyme, ikke-personlige signaler. **Innhold:** (1) klient (begge
+flater): ved follow av entitet uten katalog-/registerdekning, tilby ETT valgfritt
+tapp «meld inn ønsket» → forhåndsutfylt offentlig GitHub-issue (follow-request-
+malen gjenbrukes med ny label `coverage-request`; INGEN auto-post, brukeren ser
+og sender selv — personvern-ærlig); (2) server: `detect-coverage-gaps.js` (eller
+et lite nytt skript) aggregerer åpne `coverage-request`-issues → et
+`demand`-felt i coverage-gaps.json; research-prompten prioriterer gap med
+etterspørsel; katalog-utvidelse skjer fortsatt via research-agentens vanlige
+catalog-rewrite (AI-styrt, kostnadsbevisst). **Ikke-mål:** ingen CloudKit
+public-DB ennå (B.2 — egen WP når massen finnes); ingen auto-endring av catalog.
+**Aksept:** issue-malen validerer; aggregering enhets-testet; research-prompt-
+kontrakten oppdatert + agent-prompts-koherenstesten grønn.
+
+---
+
+## FASE 0K · Go-to-opplevelsen: «laget mitt»-dybde i det daglige sjekket — planlagt
+
+Målet er eierens formulering: det skal være ENKLERE/RASKERE å sjekke Sportivista
+enn FotMob/VG Live/F1-appen for «hva skjer med det jeg følger i dag / hva skjedde
+i går». Posisjonen står (VISJON v3: det personlige filteret; deep-link til
+spesialisten for dybde) — men i dag mangler selve OBJEKTET (entitetssiden) og
+innholdsdybden rundt det. All data en entitetsside trenger er ALLEREDE publisert
+(events + entityId, news, recent-results, standings, entities) — mye av fasen er
+ren klient-komposisjon.
+
+**Menneskebeslutninger i fasen:** WP-176 varselnivå — velg (a) «vi konkurrerer
+på riktig agenda + ro, ikke på mål-push» (kun on-device-oppdagelse, ærlig
+dokumentert), eller (b) Actions→APNs resultat-push med 15–60 min latens (krever
+device-token-register, f.eks. CloudKit server-to-server + nye secrets — en reell
+arkitekturbeslutning). Mål-push i SANNTID er strukturelt utenfor null-infra og
+anbefales eksplisitt fravalgt.
+
+Bølge 1: WP-170 (iOS-klient) ∥ WP-171 (web-klient + pipeline-visning) ∥ WP-173
+(workflow-cron, beskyttet sti). Bølge 2: WP-172 ∥ WP-174. Bølge 3: WP-175 ∥ WP-176.
+
+| WP | Tittel | Fase | Avhenger av | Status |
+|---|---|---|---|---|
+| WP-170 | Entitetssiden: «laget mitt»-objektet (begge flater) | 0K | 0J WP-160 | planlagt |
+| WP-171 | Resultat- og tabelldybde: alle sporter, målscorere, standings på iOS | 0K | — | planlagt |
+| WP-172 | Live-paritet: iOS-scorepolling + config-drevet ligaliste (nor.1/nor.2) | 0K | — | planlagt |
+| WP-173 | Kvelds-ferskhet: pipeline-cron 22/23/00/03 UTC (BESKYTTET STI — eier merger) | 0K | — | planlagt |
+| WP-174 | «Min brief»: deterministisk personlig brief on-device (begge flater) | 0K | WP-171 | planlagt |
+| WP-175 | Nyhetsbredde per fulgt entitet: kilder + register-matching | 0K | 0J WP-161 | planlagt |
+| WP-176 | Varselnivå (EIERBESLUTNING) + widget-løft (resultater, accessory-familier) | 0K | WP-171 | planlagt |
+
+### WP-170 · Entitetssiden (bølge 1)
+**Mål:** ett sted som svarer «hva skjer med X?» per fulgt entitet: neste event
+(med kanal), siste resultat, tabellposisjon, nyheter. FotMob/VG Lives
+kjerneritual — i dag spredt over tre flater hos oss. **Innhold:** iOS: naviger
+fra «Det du følger»-raden (FollowedListView) og fra entitetsnavn i detaljark →
+ny `EntityPageView` komponert av eksisterende data (FeedQuery.upcoming, ny
+results/standings-lesing fra WP-171, NewsLens-filtrert nyhetsliste); web:
+tilsvarende visning fra «Det du følger»/detaljark (gjenbruk `followed.js`
+nextUp-logikken + news-web-radene). Deep-link til spesialist-appen (FotMob/
+kringkaster) nederst — VISJON v3-prinsippet. **Ikke-mål:** ingen ny server-fil;
+ingen tropp/spillerstall (andres voll); ingen endring i agendaens kronologi.
+**Aksept:** fra følge-rad til side på ≤1 tapp begge flater; alle seksjoner
+degraderer grasiøst når data mangler (ærlig «–»); UI-flyt-test iOS + dashboard-
+cards-test web; suiter grønne.
+
+### WP-171 · Resultat- og tabelldybde (bølge 1)
+**Mål:** «hva skjedde i går» besvares for ALT du følger — i dag er tavla
+fotball-only og kaster bort data som alt hentes. **Innhold:** (1) Nyheter-tavlas
+RESULTAT-seksjon viser golf/F1/tennis fra recent-results.json (i dag kun
+`.football`-nøkkelen på begge flater); (2) render målscorere med minutt (hentes
+alt av fetch-results — vises aldri); (3) iOS: `standings.json` inn i
+`SyncClient.defaultFilesOfInterest` + tabellflate (PL-tabell/F1-stilling/
+golf-leaderboard) i entitetssiden og event-detalj (web har den alt i detaljark);
+(4) resultat-cap per seksjon beholdes (ro), men «vis alle»-disclosure.
+**Ikke-mål:** ingen nye fetchere; ingen live-oppdatering av tabeller (statisk
+pipeline-kadens er nok). **Aksept:** golf-/F1-resultater synlige på begge tavler
+med testdekning; iOS-tabellflate med fixture-test; målscorer-rendering
+XSS-trygg (`escapeHtml`); suiter grønne.
+
+### WP-172 · Live-paritet (bølge 2)
+**Mål:** live-score der brukeren faktisk er — i dag har iOS NULL scorepolling
+(kun vindus-heuristikk «direkte»), og webens hardkodede ligaliste (eng.1/esp.1/
+fifa.world) dekker ikke Eliteserien/OBOS — Lyn får aldri live-score. **Innhold:**
+(1) web: ligalisten config-drevet fra sports-config (nor.1, nor.2, uefa.champions
+inn); løsne tavle-gaten så polling dekker fulgte lags kamper (poll ligaer med
+fulgt lag i kampvinduet, ikke kun «event på tavla siste 3 t» — arver ellers
+Liverpool-feilklassen); (2) iOS: foreground-polling av samme ESPN-scoreboard
+(60 s, kun mens appen er åpen og et fulgt/tavle-lag er i kampvindu) → stilling +
+kampklokke i agendarad/entitetsside; gjenbruk web-mønsteret, del vindus-logikken
+med `ssLiveState`-tvillingen (WP-126). **Ikke-mål:** ingen bakgrunns-polling;
+ingen golf/F1-live på iOS i første kutt (web har det — paritet kan følge);
+ingen mål-varsler (WP-176). **Aksept:** iOS viser stilling for pågående fulgt
+kamp i sim-demo (deterministisk seed); web poller norsk serierunde
+(fixture-test på ligaliste-bygging); nettverkskall mocket i tester; suiter +
+vektorer urørt.
+
+### WP-173 · Kvelds-ferskhet (bølge 1 — BESKYTTET STI, eier merger)
+**Mål:** «hva skjedde i går kveld»-vinduet dekkes — i dag natt-fryser pipelinen
+23:00–07:00 Oslo (cron 5–21 UTC), så CL-kvelder/sen F1 lander først neste
+morgen. Et VALG, ikke en grense (Actions er gratis; kvote-guvernøren gjelder
+AI-agentene). **Innhold:** utvid `static-pipeline.yml`-cron med 22, 23, 0, 3
+UTC; verifiser at editorial-morgenkjøringen (05:00 UTC = 07:00 Oslo) treffer
+morgensjekket eller flytt til 04:3x; dokumentér kadensen i CLAUDE.md.
+**Ikke-mål:** ingen agent-kadensendring (kvote). **Aksept:** workflows-testen
+pinner ny cron; én natts drift viser resultater synlige før 07:00.
+
+### WP-174 · «Min brief» — personlig, deterministisk, on-device (bølge 2)
+**Mål:** briefen handler om DET DU FØLGER — i dag er editorial-linja bevisst
+katalog-bred (WP-96) og dermed flaten med størst avstand til go-to-løftet.
+Løsningen er VISJON v3-arkitekturen: server destillerer ÉN gang, klienten
+komponerer personlig. **Innhold:** deterministisk brief-komposisjon i klienten
+(begge flater, delt logikk-tvilling à la lens): «I din verden i dag: [neste
+events for follows] · [siste resultater] · [nyhetstreff]» — 2–3 setninger,
+maks-lengde, spoilervern respektert; editorial-linja beholdes som katalog-bred
+fallback når profilen er tom; navnsettingen/ritualiseringen eies av 0L (WP-181
+— dette WP-et er MOTOREN, 0L er DRAKTEN). **Ikke-mål:** ingen LLM i klienten
+(web-LLM-spiken konkluderte norsk-kvalitet er bindende); ingen server-endring.
+**Aksept:** golden-tester på brief-komposisjon (tom profil → fallback; rik
+profil → deterministisk tekst); begge flater viser samme innhold for samme
+profil/data (tvilling-test); suiter grønne.
+
+### WP-175 · Nyhetsbredde per fulgt entitet (bølge 3)
+**Mål:** nyhetslinsen treffer det du følger — i dag har 6/32 news-items
+entityIds (universet var tavla — 0J fikser matching-siden), og kildelisten er
+11 generelle feeds: en Liverpool-følger får i praksis tom NYTT-seksjon.
+**Innhold:** (1) re-match news mot det NYE entitetsregisteret (WP-161) —
+måltall: >50 % av items entity-tagget; (2) utvid feed-listen målrettet:
+klubb-/forbunds-feeds og 1–2 engelskspråklige PL-/internasjonale kilder,
+prioritert etter registerets mest fulgte sporter (feed-listen forblir
+redaksjonelt kuratert, ikke bruker-styrt); (3) typeklassifisering av pekere
+(kamprapport/overgang/intervju — rad-DNA-en har alt et tomt type-slot); fortsatt
+KUN tittel+lenke (DSM art. 15-posisjonen står). **Ikke-mål:** ingen
+artikkeltekst/sammendrag per sak; ingen per-bruker-feeds server-side. **Aksept:**
+entity-tag-andel målt i test-fixture; nye feeds i fetch-rss med parser-tester;
+news-schema uendret (pekere).
+
+### WP-176 · Varselnivå + widget-løft (bølge 3 — EIERBESLUTNING først)
+**Mål:** lukk gapet mellom «forhåndspåminnelse» (alt vi har) og go-to-vanen —
+på det nivået eieren velger (se fasens menneskebeslutning). **Innhold (nivå a,
+grunnpakken):** (1) BGAppRefresh-oppdagelse: når ny sync viser sluttresultat
+for fulgt lag → lokalt, rolig varsel («Fulltid: Lyn 2–1» med spoilervern-
+respekt — av som default, opt-in per entitet fra entitetssiden); (2) widget:
+medium-varianten får «siste resultat»-linje under «neste must-see»;
+accessoryRectangular/-Inline (låseskjerm/StandBy) — ren klientjobb over
+eksisterende App Group-cache; (3) dokumentér ærlig i README/App Store-tekst hva
+vi IKKE gjør (mål-push) og hvorfor (ro + null-infra). **Nivå b (kun hvis eier
+velger det):** egen oppfølger-WP for Actions→APNs-arkitekturen — IKKE i denne.
+**Ikke-mål:** Live Activities (krever push-oppdatering for å være meningsfull —
+re-vurderes med nivå b / Fase 1 WP-24). **Aksept:** varsel-flyt testet med
+seedet resultat-diff (NotificationPlanner-mønsteret); widget-snapshot-tester;
+suiter grønne.
+
+---
+
+## FASE 0L · Identitet: gi roen en egen stemme — planlagt
+
+Rammen fra identitets-kartleggingen: appen er ikke identitetsløs — Kolonet
+(merkelås + ikon + live-puls, WP-152) er et ekte, eier-godkjent merke — men det
+bærer ~5 % av flaten, og «anonym»-tilstanden var en VILLET deferral («kosmetikk
+etter herding») som nå har utløpt: kjernen er herdet, og eierens «kjedelig»-dom
+er signalet. Identitetsløftet bygges INNENFOR calm-grunnloven («Ro-identiteten
+ER differensiatoren») og OPPÅ Apple-native-basen — det handler om å eie de få
+tingene som er våre (kolonet, den norske redaksjonelle stemmen, tallene/tidene),
+ikke om å legge på støy. DESIGN.md er kontrakt for KONSISTENS — denne fasen får
+eksplisitt mandat til å UTVIDE den (per WP, aldri fritt).
+
+**Menneskebeslutninger i fasen:** (a) WP-183 display-/tallfont — smaksvalg +
+DESIGN.md § Typografi-presisering; (b) WP-180 rad-kolon-live (kolonet i
+tidskolonnen pulserer på LIVE rader) — krever avklaring av «to amber-elementer
+i samme rad»-regelen; (c) endelig godkjenning av brief-navnene (WP-181).
+
+Bølge 1: WP-180 (web-header + ikoner) ∥ WP-182 (meta/delekort) ∥ WP-184
+(dokumenter/rydding). Bølge 2: WP-181 (rituale — etter 0K WP-174-motoren).
+Bølge 3: WP-183 (eier-beslutning).
+
+| WP | Tittel | Fase | Avhenger av | Status |
+|---|---|---|---|---|
+| WP-180 | Kolonet fullført: web-live-paritet + ikonvarianter (+ rad-kolon, eierbeslutning) | 0L | — | planlagt (web-pariteten er alt dokumentert forpliktelse i DESIGN.md § Cross-surface) |
+| WP-181 | Briefen som navngitt rituale («Morgenbriefen»/«Kveldsbriefen») | 0L | 0K WP-174 | planlagt |
+| WP-182 | Delbare flater: og:image + delekort (event/brief) i merkedrakt | 0L | — | planlagt |
+| WP-183 | Typografisk stemme: eie tallene (EIERBESLUTNING — display-font-token) | 0L | — | planlagt |
+| WP-184 | Brand-voice-kodifisering + stale-identitetsrester ryddet | 0L | — | planlagt |
+
+### WP-180 · Kolonet fullført (bølge 1)
+**Innhold:** (1) web-paritet av kolon-live-pulsen i headeren (dokumentert
+forpliktelse, DESIGN.md § Cross-surface — drives av samme delte live-begrep,
+`ssLiveState`; Reduce Motion → statisk glød, som iOS); (2) dark/tinted
+app-ikonvarianter (Contents.json har kun én 1024-PNG; regenerer fra
+`design/brand/kolonet.svg` via `generate-icons.swift`); (3) HVIS eier godkjenner:
+rad-kolonet i tidskolonnen pulser på LIVE rader — hele tavla svarer på
+merkeidéen (egen DESIGN.md-presisering av amber-regelen). **Aksept:**
+piksel-verifiserte ikoner; web-puls demo-reproduserbar; design-tokens-testen
+grønn; Reduce Motion verifisert.
+
+### WP-181 · Briefen som rituale (bølge 2)
+**Mål:** stemmen ingen konkurrent har — den rolige norske redaktøren — blir et
+NAVNGITT daglig rituale i stedet for én faint grå linje folk aldri registrerer.
+**Innhold:** navngi flaten («Morgenbriefen» 07:00 / «Kveldsbriefen» 17:00 —
+eier godkjenner navnene), gi den en stille egen innramming (fortsatt 2–3
+setninger, aldri kort-støy), valgfri daglig lokal notifikasjon («Morgenbriefen
+er klar» — opt-in), speiling i widgetens medium-variant; innholdet er WP-174s
+personlige brief (fallback: katalog-linja). **Ikke-mål:** ingen ny agent-kadens
+(kvote); ingen push-server. **Aksept:** rituale-flaten på begge plattformer +
+widget; notifikasjon opt-in-testet; DESIGN.md-tillegg for flaten.
+
+### WP-182 · Delbare flater (bølge 1)
+**Mål:** identiteten kan reise — i dag har docs/index.html NULL og:image/
+twitter-meta (en delt lenke rendrer uten identitet i iMessage/Slack), og det
+finnes ingen delekort for innhold (kun profil-QR). Hver deling er i dag en tapt
+merkeeksponering — dette er vekst like mye som identitet. **Innhold:** (1)
+og:image/og:title/twitter:card på alle docs-sider — ett generert statisk
+brand-bilde (svart, kolonet, tabular-tid-estetikk); (2) delekort per event og
+per brief: iOS ShareLink med renderet kort (svart, amber kolon, stor tabular
+tid, tittel, kanal), web canvas/statisk tilsvarende; delekortene er MARKEDSFLATE
+— her kan amber-på-svart brukes modigere enn i produktkromet (kontrakten
+regulerer produktflater). **Aksept:** lenke-preview verifisert i
+iMessage/Slack-debugger; ShareLink-flyt UI-testet; ingen eksterne requests
+(CSP/null-infra: bildet er statisk asset).
+
+### WP-183 · Typografisk stemme: eie tallene (bølge 3 — EIERBESLUTNING)
+**Mål:** produktets ansikt er bokstavelig talt klokkeslett (fast tidskolonne,
+tabular semibold) — én distinkt display-/tallfont KUN for ordmerket +
+tidskolonnen (+ delekort) gir gjenkjennelighet uten å røre lesbarhet.
+Arkitekturen er bygget for det: `--display`-tokenet finnes alt i base.css og
+peker i dag på `--font`; DesignTokens.swift er «a re-skin of this file alone».
+**Innhold:** eier velger font (forslag legges frem: 2–3 kandidater med
+mockups); token-bytte web (`--display`) + iOS (DesignTokens + UIFontMetrics for
+Dynamic Type); DESIGN.md § Typografi-presisering («systemfont overalt UNNTATT
+ordmerke/tidskolonne/delekort»); brødtekst forblir SF. **Ikke-mål:** ingen
+brødtekst-/UI-fontbytte; ingen webfont-CDN (selvhostet asset, null eksterne
+requests). **Aksept:** Dynamic Type-gaten grønn; design-tokens-testen oppdatert;
+mockup-godkjenning fra eier FØR merge.
+
+### WP-184 · Brand-voice + stale-rydding (bølge 1)
+**Innhold:** (1) kodifiser mikrocopy-stemmen som `design/brand/VOICE.md`
+(«Dette dekker vi», «Det du følger», ærlig «–», rolig norsk, bestemt form —
+i dag tre linjer i DESIGN.md; den fortjener en side agenter kan følge); tagline
+«Hele sporten. Ett rolig utsyn.» rulles ut (App Store-tekst, onboarding-velkomst,
+web-gatens lead — gaten er førsteinntrykket på web og i dag ren funksjonell
+prosa); (2) rydd stale identitets-rester som aktivt VILLEDER agenter:
+`ios/tools/enso-icon.swift`-headeren hevder ensō-mosaikken er fasit (usant siden
+Kolonet — en agent som følger den regenererer FEIL ikon), død
+`EnsoMark.imageset`, «ensō»/«Tekst-TV»-kommentarer i OnboardingView/
+SportivistaWidget, `(PROTOTYPE)`-markeringer i ContentView etter at WP-152 ble
+normativ, DESIGN.md-rebrand-notatet omformuleres (navnebyttet HAR skjedd — kun
+designprofil gjenstår), base.css/BRAND.md-amber-listene synkes (klokke/day-headers-
+driften). **Aksept:** grep-rent for ensō/Tekst-TV utenfor historikk-seksjoner;
+BRAND.md↔base.css-listene samstemte; koherens-/tokens-tester grønne.
+
+---
+
+## FASE 0M · Kommersialiseringsfundament: G1 målbar + juss/hosting i rekkefølge — planlagt
+
+Kritikerens hovedfunn: neste port i hele planen (G1: D7-retention etter ~4 uker
+TestFlight) kan i dag ikke måles — null eksterne testere, null instrument, og
+forutsetningene for å FÅ eksterne testere (Beta App Review) mangler. I tillegg
+skalerer tre risikoer med brukere: klient-side ESPN-polling (uoffisielt API,
+hver nettlesers IP), tvkampen-scraping som ground truth, og GitHub Pages-ToS
+(ikke kommersiell hosting, ~100 GB/mnd soft-cap). Fasen gjør G1 ærlig målbar og
+PINNER rekkefølgen på det som må skje FØR brukervekst — det meste er
+menneskeoppgaver med små kode-følger.
+
+**Menneskebeslutninger i fasen:** (a) WP-191 juridisk enhet + Apple-org-
+overføring (app-transfer er LETTEST før eksterne brukere — selgernavnet i App
+Store er i dag eierens private navn) + varemerkesjekk (utsatt med akseptert
+risiko siden WP-26 — før kommersiell lansering er den ikke lenger valgfri);
+(b) G1-målemetoden (App Store Connect-metrikker + eier-dagbok vs. opt-in-ping);
+(c) tidspunkt for repo-splitt (WP-28) — kritikeren påpeker at eierens «private»
+interests.json i dag er verdenslesbar i det offentlige repoet (lav reell risiko,
+men si det ærlig).
+
+| WP | Tittel | Fase | Avhenger av | Status |
+|---|---|---|---|---|
+| WP-190 | G1 gjort målbar: personvernerklæring + privacy manifest + ekstern TestFlight + målemetode | 0M | — | planlagt |
+| WP-191 | 💰 Juridisk fundament: enhet, Apple-org, varemerke (menneskeoppgave, sekvensert) | 0M | — | planlagt |
+| WP-192 | Kilde-/hosting-risiko sekvensert FØR vekst (WP-20/21-rekkefølgen pinnet) | 0M | — | planlagt |
+
+### WP-190 · G1 gjort målbar (bølge 1)
+**Innhold:** (1) personvernerklæring `docs/personvern.html` (norsk, ærlig:
+profil i brukerens egen private iCloud, aldri vår server; on-device-metrikk;
+ingen sporing) + lenket fra app/web; (2) `PrivacyInfo.xcprivacy` (required-
+reason APIs: UserDefaults/fil-tidsstempler) + nutrition-labels-utkast i ASC;
+(3) ekstern TestFlight-gruppe + Beta App Review-innsending (WP-96-gaten er
+åpnet — portene måles via port-report); (4) definér G1-instrumentet ærlig:
+App Store Connect/TestFlight-metrikker (sessions/installs — IKKE D7-kohorter)
++ strukturert eier-/testerdagbok, ELLER omdefiner porten til det målbare
+(«brukes appen daglig av N testere uke 3–4? sier de at de ville savnet den?»)
+— eier velger (b-beslutningen over). **Aksept:** Beta App Review godkjent;
+personvernsiden live; privacy manifest bygger; G1-teksten i denne planen
+oppdatert med valgt instrument.
+
+### WP-191 · 💰 Juridisk fundament (menneskeoppgave — planen sekvenserer)
+**Innhold (sjekkliste for eier, med bistand):** (1) juridisk enhet
+(ENK/AS-vurdering — affiliate-avtaler og Apple-org krever det); (2) Apple
+Developer personlig → organisasjon (app-transfer FØR eksterne brukere — ellers
+flyttes brukerne med); (3) varemerkesøk/-registrering «Sportivista» (NO/EU-
+klasser for app/media); (4) affiliate-forutsetningene kartlagt (Viaplay/TV 2/
+Discovery+-programmene krever org + utbetalingskonto). **Aksept:** beslutning
+per punkt dokumentert her (gjort/utsatt-med-begrunnelse); INGEN kodeendring.
+
+### WP-192 · Kilde-/hosting-risiko sekvensert (bølge 1)
+**Mål:** ingen av vekst-risikoene eksploderer FØR migreringene — rekkefølgen
+pinnes nå i stedet for å oppdages under lansering. **Innhold:** (1) planfest:
+WP-20 (primærkilder: kringkaster-EPG + forbunds-terminlister erstatter
+tvkampen-avhengigheten) og WP-21 (Pages → Workers/R2 + API-nøkkel) er GATE for
+markedsføring mot fremmede brukere — flytt dem eksplisitt foran WP-25 i Fase
+1-sekvensen (radene der oppdateres); (2) ESPN-klientpolling: dokumentér
+risikoen (uoffisielt API fra hver klients IP) + reduser flatetrykk (polling kun
+i kampvindu for fulgte lag — WP-172 gjør dette); server-proxy-alternativ
+skisseres som del av WP-21; (3) PWA-som-Android ærlig rammet inn i README
+(halve mobilmarkedet har ingen push i dagens plan — Android er Fase 3, det er
+et VALG). **Aksept:** Fase 1-sekvensen oppdatert i denne fila; README-avsnitt;
+ingen kodeendring utover ev. kommentarer.
+
+---
+
 ## 🚪 GATE G1 · Lakmustesten (dossier P500 Fase 0)
 
 Etter ~4 uker TestFlight: åpner folk appen daglig uten push-mas? D7-retention?
@@ -2061,7 +2557,7 @@ full iOS unit-suite + 4 schemes + gylne vektorer bit-like etter fixture-refrys
 (`test_starterPacks_areGroundedAndUnique` fortsatt grønn — pakkene grunnfester mot
 de nye id-ene).
 
-### WP-138 · Adaptiv personalisering on-device (akse A — «forbedre FOR brukeren»)
+### WP-138B · Adaptiv personalisering on-device (akse A — «forbedre FOR brukeren») — omnummerert fra WP-138 21.07 (nummerkollisjon med pre-merge-arkivvalideringen i 0I+)
 **Bakgrunn (data-strategi 20.07, seksjonen «BRUKERDATA → PRODUKTFORBEDRING»):**
 akse A er den umiddelbare, personvern-frie gevinsten — appen tilpasser seg DEG
 lokalt, null byte forlater enheten. Signalet finnes ALLEREDE: `BehaviorCounter`
