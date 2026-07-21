@@ -1825,17 +1825,20 @@ over tid lukker dét, mens 0J-resten lukker oppslags-feilen.
 null-infra. (WP-165 følger B.1-rammen som alt er besluttet i BRUKERDATA-seksjonen:
 offentlige, anonyme signaler.)
 
-Bølge 1: WP-160 (pipeline) ∥ WP-163 (web) ∥ WP-164 (iOS) — disjunkte filer.
-Bølge 2: WP-161 (register) ∥ WP-165 (signal). Bølge 3: WP-162 (id-varighet).
+Bølge 1: WP-160 (pipeline) ∥ WP-163 (web) ∥ WP-164 (iOS) — ✅ 21.07 (#394/#392/#393).
+Bølge 2: WP-161 (register) ∥ WP-165 (signal) ∥ WP-166 (iOS-indeks-tuning — disjunkte
+filer mot WP-161, og bør lande FØR registeret vokser indeksen 10–30×).
+Bølge 3: WP-162 (id-varighet).
 
 | WP | Tittel | Fase | Avhenger av | Status |
 |---|---|---|---|---|
-| WP-160 | Strakstiltak: catalog.tier2 → entities.json + håndball-label + alias-datafil | 0J | — | 🔬 branch wp-160-tier2-entities — catalog.json tier2 (29 lag→team + 72 turneringer→tournament) foldet inn i entities.json som 4. kilde (tracked vinner dedup, tier2-type autoritativ ved type-mismatch); `handball` lagt til `SPORT_LABELS` (Håndball groundbar, WP-64-klassen); `KNOWN_ALIAS_GROUPS`→datafil `scripts/config/entity-aliases.json` (research/verify-vedlikeholdbar, seed norway/norge). docs/data/entities.json 53→141 (bærer hele langhalen). iOS-fixtur re-frosset som superset (53→60, null fjernet) med akseptkritiske tillegg (Liverpool + hele håndball-langhalen + sport-handball); «liverpool»→team & «håndball»→sport-handball treffer i EntityIndex-søk. NB: full langhale i iOS-fixturen endrer assistent-grounding (representativeEntity/search-presedens/detection) som krever ios/Sportivista/**-kildeendringer → hører til WP-164 (avhenger av WP-160). Tester: JS 857/857 (+6), full iOS unit-suite grønn, 13/13 gylne vektorer bit-like, 4 schemes bygger, sandbox build-entities→build-events→validate-events rent (Liverpool-event får homeTeamEntityId=liverpool) |
+| WP-160 | Strakstiltak: catalog.tier2 → entities.json + håndball-label + alias-datafil | 0J | — | ✅ #394 merget 21.07 — catalog.json tier2 (29 lag→team + 72 turneringer→tournament) foldet inn i entities.json som 4. kilde (tracked vinner dedup, tier2-type autoritativ ved type-mismatch); `handball` lagt til `SPORT_LABELS` (Håndball groundbar, WP-64-klassen); `KNOWN_ALIAS_GROUPS`→datafil `scripts/config/entity-aliases.json` (research/verify-vedlikeholdbar, seed norway/norge). docs/data/entities.json 53→141 (bærer hele langhalen). iOS-fixtur re-frosset som superset (53→60, null fjernet) med akseptkritiske tillegg (Liverpool + hele håndball-langhalen + sport-handball); «liverpool»→team & «håndball»→sport-handball treffer i EntityIndex-søk. NB: full langhale i iOS-fixturen endrer assistent-grounding (representativeEntity/search-presedens/detection) som krever ios/Sportivista/**-kildeendringer → skilt ut som WP-166 (registrert 21.07). Tester: JS 857/857 (+6), full iOS unit-suite grønn, 13/13 gylne vektorer bit-like, 4 schemes bygger, sandbox build-entities→build-events→validate-events rent (Liverpool-event får homeTeamEntityId=liverpool) |
 | WP-161 | Verdensregisteret: seedet entitetsregister (~1 500–5 000 entiteter) | 0J | WP-160 | planlagt |
 | WP-162 | Sesongløse id-er + re-grounding: follows overlever sesonger | 0J | WP-161 | planlagt |
-| WP-163 | Web: søk-og-følg-flate + assistent-mutasjon wiret + katalog-kollaps-fella | 0J | WP-160 | 🔬 branch wp-163-web-sok-og-folg — søk-og-følg mot entities.json i «Dette dekker vi» (treff → ssProfileFollow); assistenten UTFØRER «følg X» (kind:'mutation' konsumert i bindAssistant); followTargets slår opp ekte entityId før syntetisk fallback (ingen CRDT-dubletter); katalogen lagdelt under «Det du følger» (aldri kollapset); rediger.html omprofilert til «Be om dekning». 26 nye tester, 877/877 grønt, E2E i browser (dark/light) |
-| WP-164 | iOS: soft-follow («følg likevel») + ærlig off-season-svar | 0J | WP-160 | 🔬 branch wp-164-ios-soft-follow — «Følg likevel» ved søke-miss + grounder-avvisning (navnebasert regel, nøytral notify-default), ærlig «Fulgt — …»-status m/sesonglinje fra tracked.json, onboarding-CI-vakt (Liverpool-assert: TODO(WP-160)) |
+| WP-163 | Web: søk-og-følg-flate + assistent-mutasjon wiret + katalog-kollaps-fella | 0J | WP-160 | ✅ #392 merget 21.07 — søk-og-følg mot entities.json i «Dette dekker vi» (treff → ssProfileFollow); assistenten UTFØRER «følg X» (kind:'mutation' konsumert i bindAssistant); followTargets slår opp ekte entityId før syntetisk fallback (ingen CRDT-dubletter); katalogen lagdelt under «Det du følger» (aldri kollapset); rediger.html omprofilert til «Be om dekning». 26 nye tester, 877/877 grønt, E2E i browser (dark/light) |
+| WP-164 | iOS: soft-follow («følg likevel») + ærlig off-season-svar | 0J | WP-160 | ✅ #393 merget 21.07 — «Følg likevel» ved søke-miss + grounder-avvisning (navnebasert regel m/deterministisk soft-id → CRDT-konvergens, nøytral notify-default for ukjent type), ærlig «Fulgt — …»-status m/sesonglinje fra tracked.json-reasons (grasiøs degradering), VENTER PÅ DEKNING-seksjon i følgelisten, onboarding-CI-vakt (Liverpool-assert flippet til hard etter #394, commit på main 21.07). 672 iOS-tester, vektorer bit-like, 4 schemes, UI-flyt dark+light |
 | WP-165 | Etterspørselssignal v0: utenfor-katalog-follow → anonymt, offentlig signal | 0J | WP-163, WP-164 | planlagt |
+| WP-166 | iOS-indeksen tåler langhalen: grounding-tuning + fullt fixture-speil (WP-160-funn) | 0J | WP-160; FØR WP-161 | planlagt |
 
 ### WP-160 · Strakstiltak: fold catalog.tier2 inn i entities.json (bølge 1)
 **Mål:** Liverpool — og hele tier2-langhalen (~29 lag + ~70 turneringer) — blir
@@ -1957,6 +1960,31 @@ catalog-rewrite (AI-styrt, kostnadsbevisst). **Ikke-mål:** ingen CloudKit
 public-DB ennå (B.2 — egen WP når massen finnes); ingen auto-endring av catalog.
 **Aksept:** issue-malen validerer; aggregering enhets-testet; research-prompt-
 kontrakten oppdatert + agent-prompts-koherenstesten grønn.
+
+### WP-166 · iOS-indeksen tåler langhalen: grounding-tuning + fullt fixture-speil (bølge 2 — WP-160-funn 21.07)
+**Bakgrunn:** WP-160 fant at full langhale i entitetsindeksen endrer
+assistent-groundingens semantikk: `representativeEntity` for sykkel flippet
+Tour de France → Arctic Race, search-topp-N flommer over ved store treffsett,
+og «Brann»/«OBOS-ligaen» detekteres nå der eldre WP-65-tester brukte dem som
+«ukjent»-eksempler. iOS-test-fixturen ble derfor targeted-re-frosset (60
+entiteter) mens produkt-indeksen fra Pages er 141 — dvs. RUNTIME-appen møter
+ALLEREDE langhalen med utestet grounding-semantikk, og WP-161 vokser den til
+~1 500–5 000. **Mål:** iOS-grounding (søk/representativ/deteksjon) er robust og
+kuratert-fornuftig med full langhale, og fixturen speiler produktet igjen.
+**Innhold:** (1) `EntityIndex.representativeEntity`-presedens: kuratert
+prioritet (tracked-/tier1-flaggskip vinner over tier2-langhale — Tour de France
+representerer sykkel, ikke Arctic Race); (2) `search`-rangering ved store
+treffsett: eksakt/prefiks foran delstreng, stabil topp-N; (3)
+detection-oppdatering: WP-65-testenes «ukjent»-eksempler byttes til navn som
+fortsatt er ukjente (Brann er nå dekket — det er RIKTIG); (4) re-frys fixturen
+til FULLT speil av docs/data/entities.json (supersett-avviket fra WP-160
+fjernes); (5) perf-porten (AgendaMatchingPerfTests-klassen) verifiseres mot
+141+ og den syntetiske skalerings-fixturen dimensjoneres for WP-161-skala.
+**Ikke-mål:** ingen endring i feed-predikatene/gylne vektorer; ingen
+registerutvidelse (WP-161); ingen FM-prompt-endring. **Aksept:** full iOS-suite
+grønn med fullt fixture-speil; eksplisitte representative-/search-/
+detection-tester; 13/13 vektorer bit-like; 4 schemes bygger; perf-port grønn.
+**Avhengighet:** WP-160 (✅). Bør lande FØR WP-161 vokser indeksen.
 
 ---
 

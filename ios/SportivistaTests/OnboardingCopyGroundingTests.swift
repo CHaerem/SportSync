@@ -42,15 +42,6 @@ final class OnboardingCopyGroundingTests: XCTestCase {
     }
 
     func test_liverpoolExample_groundsAgainstTheFixtureIndex() {
-        // TODO(WP-160): aktiveres når tier2-fixturen lander — WP-160 folder
-        // catalog.tier2 (med Liverpool) inn i entities.json og re-fryser
-        // fixturen. Frem til da er dette en KJENT mangel: non-strict expected
-        // failure, så vakten er grønn både før og etter re-frysen; hovedsesjonen
-        // fjerner XCTExpectFailure etter WP-160-merge.
-        let options = XCTExpectedFailure.Options()
-        options.isStrict = false
-        XCTExpectFailure("TODO(WP-160): «Liverpool» er ikke i entities-fixturen ennå", options: options) {
-            XCTAssertTrue(grounds("Liverpool"), "the copy promises «Liverpool» — it must ground")
-        }
+        XCTAssertTrue(grounds("Liverpool"), "the copy promises «Liverpool» — it must ground")
     }
 }
