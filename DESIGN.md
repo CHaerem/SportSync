@@ -346,3 +346,14 @@ spinnere · haptikk-fest · egendefinerte overgangskurver der Apple har en nativ
 egenlaget blur/glassmorfisme (system-Liquid Glass på kontroll-laget er native og
 påkrevd; DIY-glass — særlig på innhold — er forbudt) ·
 egne ikoner der en SF Symbol finnes · «AI-slop»-estetikk. Ved tvil: fjern.
+
+**Presisering — primær-CTA (WP-149):** «ingen pills» gjelder pille-formede
+SEKUNDÆR-/multi-knapper (Bekreft/Avvis, «mente du»-forslag, «Hopp over» — de
+forblir flate/dempede: `.sportivistaTapTarget()` eller den hårlinje-flate
+`SportivistaActionButtonStyle`). Men ÉN primær handling per skjerm KAN — og BØR —
+være en tydelig, lesbar prominent native knapp: en amber-fylt kapsel
+(`SportivistaPrimaryButtonStyle` / amber-tintet `.borderedProminent`). En umerket
+amber KONTUR uten fyll leste knapt som knapp i lys modus (design-review 🔴, 21.07);
+en fylt amber primærknapp per skjerm er derfor sanksjonert. Regelen «to amber-
+elementer i samme rad» gjelder fortsatt: primærknappen er skjermens ene fylte
+amber-flate, ikke to.

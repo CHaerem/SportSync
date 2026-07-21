@@ -36,7 +36,10 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		let golf = app.buttons["starterpack.norske-golfere"]
 		assertExists(golf, "the curated starter packs should render first")
 		golf.tap()
-		assertExists(app.staticTexts["VALGT"], "tapping a pack should mark it valgt")
+		// WP-149: the retired amber-tracked «VALGT» VERSAL label became a native
+		// amber `checkmark.circle.fill`; the applied state is carried on the pack
+		// button's a11y label («… Valgt»), so assert on that rather than a glyph.
+		XCTAssertTrue(golf.label.contains("Valgt"), "tapping a pack should mark it valgt")
 
 		// The clearly-secondary «fortell med egne ord» entry → the conversation:
 		// say what you follow, confirm the diff, watch "Følger nå" grow.
@@ -247,7 +250,7 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		entry.tap()
 
 		// The sheet is up: its header + the opened-state intro + the field.
-		assertExists(app.staticTexts["ASSISTENT"], "tapping the bottom button opens the conversation sheet")
+		assertExists(app.navigationBars["Assistent"], "tapping the bottom button opens the conversation sheet")
 		assertExists(app.staticTexts["assistant.intro"], "the opened sheet shows one hjelpesetning")
 		assertExists(app.textFields["assistant.field"], "the opened sheet carries the field")
 
@@ -269,7 +272,7 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		// Swipe the sheet down from its header (the grabber region) to dismiss it —
 		// the native sheet's drag-to-dismiss, one of the WP-99 close paths in ark
 		// form. The bottom button returning is the tell we're back on the agenda.
-		let header = app.staticTexts["ASSISTENT"]
+		let header = app.navigationBars["Assistent"]
 		let start = header.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
 		let end = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 1.5))
 		start.press(forDuration: 0.05, thenDragTo: end)
@@ -313,7 +316,7 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		// user's message shows as a bubble and the result thread appears — while
 		// the sheet stays open (an answer is not confirmed-then-closed).
 		assertExists(app.staticTexts["assistant.userMessage"], "the tapped example should land as a message bubble in the thread")
-		assertExists(app.staticTexts["ASSISTENT"], "the answer stays in the conversation sheet")
+		assertExists(app.navigationBars["Assistent"], "the answer stays in the conversation sheet")
 	}
 
 	// MARK: - Flow 12 · An example row runs a command (WP-104)

@@ -86,8 +86,17 @@ window.ssICloud = (function () {
 	}
 
 	/** One sync round: pull all snapshots → merge into local → save own snapshot.
-	 *  Returns {added, removed} or null on any failure (offline-first, never throws). */
-	async function sync() {
+	 *  Returns {added, removed} or null on any failure (offline-first, never throws).
+	 *  Re-entrant-safe: concurrent callers share the in-flight round, so a double
+	 *  trigger (setUpAuth + whenUserSignsIn both firing) can't race two writes into
+	 *  a 409 Conflict. */
+	let syncInFlight = null;
+	function sync() {
+		if (syncInFlight) return syncInFlight;
+		syncInFlight = syncOnce().finally(() => { syncInFlight = null; });
+		return syncInFlight;
+	}
+	async function syncOnce() {
 		if (!database) return null;
 		try {
 			const zoneName = cfg.zoneName || 'SportivistaProfile';
@@ -148,22 +157,69 @@ window.ssICloud = (function () {
 	 *  populates it), #auth-error (message), and body.gated (CSS hides the content). */
 	function gate(opts) {
 		const onAuthed = (opts && opts.onAuthed) || (() => {});
+		// Called after a FOREGROUND re-sync with the sync result, so the caller can
+		// re-render the board when returning to the tab picks up a phone change.
+		const onResync = (opts && opts.onResync) || (() => {});
 		const gateEl = () => document.getElementById('auth-gate');
 		const errEl = () => document.getElementById('auth-error');
-		const showGate = () => { const g = gateEl(); if (g) g.hidden = false; if (document.body) document.body.classList.add('gated'); };
+		// Reveal AT MOST ONCE per auth (setUpAuth AND whenUserSignsIn can both fire on
+		// a fresh sign-in — without this they'd each run a sync and race a 409).
+		// Reset on sign-out so a re-sign-in reveals again.
+		let revealed = false;
+		const showGate = () => { revealed = false; const g = gateEl(); if (g) g.hidden = false; if (document.body) document.body.classList.add('gated'); };
 		const showError = (m) => { showGate(); const e = errEl(); if (e) { e.textContent = m; e.hidden = false; } };
 		const reveal = async () => {
+			if (revealed) return;
+			revealed = true;
 			const e = errEl(); if (e) e.hidden = true;
 			try { await sync(); } catch { /* offline-first: reveal on the local profile anyway */ }
 			onAuthed();
 			if (document.body) document.body.classList.remove('gated');
 			const g = gateEl(); if (g) g.hidden = true;
+			wireForegroundResync();
 		};
+
+		// Re-sync when the tab returns to the foreground, so a change made on the
+		// phone shows up without a manual refresh. Throttled (min 8s between rounds)
+		// and skipped while gated/offline; sync() is itself re-entrant-safe.
+		let lastResync = 0, foregroundWired = false;
+		function wireForegroundResync() {
+			if (foregroundWired) return;
+			foregroundWired = true;
+			const maybe = async () => {
+				if (!revealed || document.hidden) return;
+				const now = (typeof performance !== 'undefined' ? performance.now() : Date.now());
+				if (now - lastResync < 8000) return;
+				lastResync = now;
+				const res = await sync();
+				if (res) onResync(res);
+			};
+			document.addEventListener('visibilitychange', maybe);
+			if (typeof window !== 'undefined') window.addEventListener('focus', maybe);
+		}
 		if (typeof CloudKit === 'undefined') { showError('Kunne ikke laste iCloud-innlogging. Sjekk nettforbindelsen og last siden på nytt.'); return; }
 		if (!cfg.apiToken) { showError('iCloud-innlogging er ikke konfigurert.'); return; }
 		if (!configure()) { showError('iCloud-innlogging er utilgjengelig akkurat nå.'); return; }
 		showGate();
-		container.setUpAuth().then((userIdentity) => { if (userIdentity) reveal(); }).catch(() => showError('Kunne ikke starte Apple-innlogging. Last siden på nytt — og sjekk at du åpner sportivista.com.'));
+		// Drive our own Apple-HIG button (#signin-apple) by forwarding its click to
+		// CloudKit's hidden button — the click is a user gesture, so the auth popup
+		// is allowed. Falls back to un-hiding CloudKit's own button if ours is absent.
+		const custom = document.getElementById('signin-apple');
+		if (custom) {
+			custom.addEventListener('click', () => {
+				const el = document.querySelector('#apple-sign-in-button a, #apple-sign-in-button button, #apple-sign-in-button [role="button"], #apple-sign-in-button [tabindex]');
+				if (el && typeof el.click === 'function') { el.click(); return; }
+				// Safety net: our forward target isn't there → un-hide CloudKit's own
+				// button so the user is never stuck with a dead custom button.
+				const ck = document.getElementById('apple-sign-in-button');
+				if (ck) { ck.style.cssText = 'position:static;width:auto;height:auto;clip:auto;pointer-events:auto;margin-top:8px;'; custom.style.display = 'none'; }
+			});
+		}
+		container.setUpAuth().then((userIdentity) => { if (userIdentity) reveal(); }).catch((err) => {
+			try { console.error('[Sportivista] CloudKit setUpAuth failed:', err && (err.ckErrorCode || err.reason || err.message) || err, err); } catch (e) {}
+			const code = (err && (err.ckErrorCode || err.reason)) || '';
+			showError('Kunne ikke starte Apple-innlogging' + (code ? ' (' + code + ')' : '') + '. Last siden på nytt, eller åpne DevTools → Console for detaljer.');
+		});
 		container.whenUserSignsIn().then(reveal).catch(() => {});
 		container.whenUserSignsOut().then(showGate).catch(() => {});
 	}

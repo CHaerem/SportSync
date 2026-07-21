@@ -49,33 +49,47 @@ struct AssistantSheetView: View {
     private var hasResult: Bool { viewModel.hasPresentableResult }
 
     var body: some View {
-        VStack(spacing: 0) {
-            headerBar
-            Rectangle().fill(SportivistaTokens.separator).frame(height: 1)
-            ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    // State 1 — the opened state shows only while the thread is
-                    // empty and nothing is being interpreted.
-                    if !hasResult && !viewModel.isThinking {
-                        openedState
+        // Native sheet: a NavigationStack with the inline title «Assistent» (was
+        // an amber-spaced VERSAL header) + a Lukk cancellation action — the same
+        // native chrome as Deg / «Hva jeg vet om deg». ContentView owns the
+        // detents + grabber; this just fills the sheet.
+        NavigationStack {
+            VStack(spacing: 0) {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        // State 1 — the opened state shows only while the thread is
+                        // empty and nothing is being interpreted.
+                        if !hasResult && !viewModel.isThinking {
+                            openedState
+                        }
+                        // State 4/5 — your message stays up as a bubble while the
+                        // model thinks and once the result lands.
+                        if let message = viewModel.lastSubmittedUtterance, hasResult || viewModel.isThinking {
+                            userBubble(message)
+                        }
+                        if hasResult {
+                            AssistantResultThread(viewModel: viewModel, dismissIfDone: dismissIfDone)
+                        }
+                        if viewModel.isThinking { thinkingRow }
                     }
-                    // State 4/5 — your message stays up as a bubble while the
-                    // model thinks and once the result lands.
-                    if let message = viewModel.lastSubmittedUtterance, hasResult || viewModel.isThinking {
-                        userBubble(message)
-                    }
-                    if hasResult {
-                        AssistantResultThread(viewModel: viewModel, dismissIfDone: dismissIfDone)
-                    }
-                    if viewModel.isThinking { thinkingRow }
+                    .padding(20)
+                    .frame(maxWidth: 640, alignment: .leading)
+                    .frame(maxWidth: .infinity, alignment: .center)
                 }
-                .padding(20)
-                .frame(maxWidth: 640, alignment: .leading)
-                .frame(maxWidth: .infinity, alignment: .center)
+                inputRow
             }
-            inputRow
+            .background(SportivistaTokens.background)
+            .navigationTitle("Assistent")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Lukk") { dismiss() }
+                        .foregroundStyle(SportivistaTokens.accent)
+                        .accessibilityIdentifier("assistant.close")
+                        .sportivistaTapTarget()
+                }
+            }
         }
-        .background(SportivistaTokens.cell)
         .foregroundStyle(SportivistaTokens.label)
         .task { viewModel.refreshAvailability() }
         // One light success haptic on Bekreft (a mutation/command confirmed),
@@ -88,25 +102,6 @@ struct AssistantSheetView: View {
         .onChange(of: viewModel.presentedFilter) { _, filter in
             if filter != nil { dismiss() }
         }
-    }
-
-    // MARK: - Header
-
-    private var headerBar: some View {
-        HStack(alignment: .firstTextBaseline) {
-            Text("ASSISTENT")
-                .font(.sportivista(.subheadline, weight: .bold))
-                .foregroundStyle(SportivistaTokens.accent)
-                .tracking(2)
-            Spacer()
-            Button("Lukk") { dismiss() }
-                .font(.sportivista(.subheadline))
-                .foregroundStyle(SportivistaTokens.secondaryLabel)
-                .accessibilityIdentifier("assistant.close")
-                .sportivistaTapTarget()
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 14)
     }
 
     // MARK: - State 1 — opened (intro + example rows)
@@ -125,23 +120,25 @@ struct AssistantSheetView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityIdentifier("assistant.intro")
 
-            Text("PRØV")
-                .font(.sportivista(.caption, weight: .bold))
-                .foregroundStyle(SportivistaTokens.label.opacity(0.5))
-                .tracking(1.5)
+            sectionTitle("PRØV")
+            // Native grupperte celler: rows on a `cell` surface, clipped to a
+            // 12pt corner (was a sharp-edge hairline box), inset separators.
             VStack(spacing: 0) {
                 ForEach(AssistantViewModel.exampleRows) { row in
                     exampleRow(row)
                     if row.id != AssistantViewModel.exampleRows.last?.id {
-                        Rectangle().fill(SportivistaTokens.separator).frame(height: 1)
+                        Rectangle().fill(SportivistaTokens.separator)
+                            .frame(height: 1)
+                            .padding(.leading, 12)
                     }
                 }
             }
-            .overlay(Rectangle().stroke(SportivistaTokens.label.opacity(0.15), lineWidth: 1))
+            .background(SportivistaTokens.cell, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         }
     }
 
-    /// One tappable example row (ikke chips) — label + trailing «›». ≥44pt.
+    /// One tappable example row (ikke chips) — label + a trailing native
+    /// `chevron.forward` (was a «›» glyph). ≥44pt.
     private func exampleRow(_ row: AssistantViewModel.ExampleRow) -> some View {
         Button {
             tapExample(row)
@@ -152,9 +149,9 @@ struct AssistantSheetView: View {
                     .foregroundStyle(SportivistaTokens.label)
                     .multilineTextAlignment(.leading)
                 Spacer(minLength: 8)
-                Text("›")
-                    .font(.sportivista(.subheadline, weight: .semibold))
-                    .foregroundStyle(SportivistaTokens.secondaryLabel)
+                Image(systemName: "chevron.forward")
+                    .font(.sportivista(.footnote, weight: .semibold))
+                    .foregroundStyle(SportivistaTokens.tertiaryLabel)
             }
             .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
             .padding(.horizontal, 12)
@@ -193,8 +190,10 @@ struct AssistantSheetView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
-                .background(SportivistaTokens.accent.opacity(0.12))
-                .overlay(Rectangle().stroke(SportivistaTokens.accent.opacity(0.3), lineWidth: 1))
+                // A quiet, rounded native message bubble (was a sharp-edge amber
+                // stroke box) — amber tint marks it as your own message.
+                .background(SportivistaTokens.accent.opacity(0.12),
+                            in: RoundedRectangle(cornerRadius: 16, style: .continuous))
                 .accessibilityIdentifier("assistant.userMessage")
         }
     }
@@ -235,6 +234,12 @@ struct AssistantSheetView: View {
                     .autocorrectionDisabled(true)
                     .disabled(viewModel.isThinking)
                     .accessibilityIdentifier("assistant.field")
+                    // Meldinger-mønsteret: a clean, rounded native compose field
+                    // (no `»_` prompt sigil, no block cursor) — the field IS the
+                    // surface. It grows to ~4 lines; send stays outside it.
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 9)
+                    .background(SportivistaTokens.cell, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
                 trailing
             }
             .padding(.horizontal, 20)
@@ -274,6 +279,17 @@ struct AssistantSheetView: View {
             .accessibilityIdentifier("assistant.mic")
             .sportivistaTapTarget()
         }
+    }
+
+    // MARK: - Small helpers
+
+    /// Native section header: grey (`secondaryLabel`), `.footnote` semibold, no
+    /// tracking — matches Deg/Nyheter (was an amber/grey-spaced VERSAL Tekst-TV
+    /// label).
+    private func sectionTitle(_ text: String) -> some View {
+        Text(text)
+            .font(.sportivista(.footnote, weight: .semibold))
+            .foregroundStyle(SportivistaTokens.secondaryLabel)
     }
 
     // MARK: - Actions

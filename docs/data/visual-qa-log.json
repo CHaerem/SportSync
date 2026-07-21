@@ -1,16 +1,30 @@
 {
-  "checkedAt": "2026-07-20T00:00:00Z",
+  "checkedAt": "2026-07-21T00:00:00Z",
   "widths": [375, 393, 900],
-  "verdict": "pass",
-  "findings": [],
+  "verdict": "issues",
+  "findings": [
+    {
+      "width": 375,
+      "area": "auth gate (#auth-gate, body.gated)",
+      "issue": "Whole dashboard is hidden behind a mandatory 'Logg på med Apple' wall (new since the apple-signin-button merge). Sign-in fails with 'Kunne ikke starte Apple-innlogging (AUTHENTICATION_FAILED)' and there is no fallback/skip — no agenda, header masthead, events, or 'Dette dekker vi' section render at all. The product's core promise (a calm scannable agenda) is completely invisible.",
+      "severity": "high"
+    },
+    {
+      "width": 393,
+      "area": "auth gate (#auth-gate, body.gated)",
+      "issue": "Same as 375px: only the Apple sign-in card and AUTHENTICATION_FAILED error are visible; no dashboard content renders.",
+      "severity": "high"
+    },
+    {
+      "width": 900,
+      "area": "auth gate (#auth-gate, body.gated)",
+      "issue": "Same as smaller widths: only the Apple sign-in card and AUTHENTICATION_FAILED error are visible; no dashboard content renders.",
+      "severity": "high"
+    }
+  ],
   "notes": [
-    "All three widths (375/393/900px) render a single quiet column, Apple-native styling, no horizontal scroll or clipped content — including the tightest 375px shot.",
-    "No match/event names truncated in a way that hides key info: '100 Thieves – Ninjas in Pyjamas', 'Strømsgodset – Lyn', 'AWS Hungarian Grand Prix', 'NM friidrett 2026 (Trondheim)' all wrap cleanly and stay fully readable at every width.",
-    "Every visible event shows a 'where to watch' channel and all are Norwegian-available: TV 2 Play, Kick (StarLadder, gratis offisiell strøm), BLAST.tv (gratis offisiell strøm), NRK, HBO Max (Sport), Viaplay — no foreign broadcasters (no FOX/ESPN/Sky) seen.",
-    "Times sensibly formatted (13:00, 15:00, 18:00, 19:30); multi-day date ranges ('23.-25. juli', '23.-26. juli') and stage context ('neste: Etappe 16 · 6 etapper') read clearly.",
-    "Must-see accent dot used sparingly — only on the two 100 Thieves rows and the 3M Open row, not on every event.",
-    "Header (wordmark, date, theme toggle), day headings, 'Neste opp' block, 'Dette dekker vi' disclosure, and footer (usage/AI-budsjett line) all intact and aligned across all three widths.",
-    "No broken image icons or empty boxes observed; the design does not use flags/crests in the agenda rows, so there was nothing broken to flag there.",
-    "Only the default light theme was checked (screenshot.js defaults to light unless --dark is passed, matching the prompt's exact commands) — dark/true-black theme was not assessed this run."
+    "Could not assess ANY of the correctness/layout checklist (match name truncation, streaming channel/foreign-broadcaster check, times, flags/crests, must-see accent, header/footer) at any width — everything behind the auth gate is unreachable without a successful Apple sign-in. Yesterday's run (2026-07-20, before this gate landed) passed cleanly with full dashboard content visible.",
+    "The gate screen itself (wordmark, lead copy, 'Logg på med Apple' button, error text) is well laid out at all three widths: no overflow, no clipping, no truncation, calm and centered.",
+    "index.html comments this as a deliberate owner decision ('eier-beslutning 21.07'): body.gated hides all content until CloudKit sign-in succeeds. The AUTHENTICATION_FAILED error comes from icloud-sync.js's CloudKit setUpAuth() rejecting — plausibly because this screenshot harness (self-served docs/, no network per this agent's own instructions) cannot reach Apple's CloudKit web services, so this may be an artifact of the offline screenshot environment rather than a bug real signed-in users hit. Flagging as high anyway because it means visual QA (and any anonymous/non-authenticated visitor) can no longer see the dashboard at all — a human should confirm whether real users reliably complete Sign in with Apple in production, and whether an anonymous/public view is still intended given the product's calm-dashboard vision."
   ]
 }
