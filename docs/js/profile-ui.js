@@ -57,6 +57,12 @@ Object.assign(window.Dashboard.prototype, {
 		else ssProfileFollow({ entityId: d.entityId, entityName: d.entityName, sport: d.entitySport, kind: d.kind });
 		this.applyProfile(ssProfileLoad());
 		this.render();
+		// Push the change to iCloud right away (fire-and-forget) so the phone picks
+		// it up on its next sync — no waiting for a later web sync round. No-op when
+		// iCloud isn't wired (dev/test) or the user isn't signed in.
+		if (window.ssICloud && typeof ssICloud.enabled === 'function' && ssICloud.enabled()) {
+			try { Promise.resolve(ssICloud.sync()).catch(() => {}); } catch { /* ignore */ }
+		}
 	},
 
 	/** Wire the deterministic assistant input: type a question → grounded answer

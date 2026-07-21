@@ -157,6 +157,9 @@ window.ssICloud = (function () {
 	 *  populates it), #auth-error (message), and body.gated (CSS hides the content). */
 	function gate(opts) {
 		const onAuthed = (opts && opts.onAuthed) || (() => {});
+		// Called after a FOREGROUND re-sync with the sync result, so the caller can
+		// re-render the board when returning to the tab picks up a phone change.
+		const onResync = (opts && opts.onResync) || (() => {});
 		const gateEl = () => document.getElementById('auth-gate');
 		const errEl = () => document.getElementById('auth-error');
 		// Reveal AT MOST ONCE per auth (setUpAuth AND whenUserSignsIn can both fire on
@@ -173,7 +176,27 @@ window.ssICloud = (function () {
 			onAuthed();
 			if (document.body) document.body.classList.remove('gated');
 			const g = gateEl(); if (g) g.hidden = true;
+			wireForegroundResync();
 		};
+
+		// Re-sync when the tab returns to the foreground, so a change made on the
+		// phone shows up without a manual refresh. Throttled (min 8s between rounds)
+		// and skipped while gated/offline; sync() is itself re-entrant-safe.
+		let lastResync = 0, foregroundWired = false;
+		function wireForegroundResync() {
+			if (foregroundWired) return;
+			foregroundWired = true;
+			const maybe = async () => {
+				if (!revealed || document.hidden) return;
+				const now = (typeof performance !== 'undefined' ? performance.now() : Date.now());
+				if (now - lastResync < 8000) return;
+				lastResync = now;
+				const res = await sync();
+				if (res) onResync(res);
+			};
+			document.addEventListener('visibilitychange', maybe);
+			if (typeof window !== 'undefined') window.addEventListener('focus', maybe);
+		}
 		if (typeof CloudKit === 'undefined') { showError('Kunne ikke laste iCloud-innlogging. Sjekk nettforbindelsen og last siden på nytt.'); return; }
 		if (!cfg.apiToken) { showError('iCloud-innlogging er ikke konfigurert.'); return; }
 		if (!configure()) { showError('iCloud-innlogging er utilgjengelig akkurat nå.'); return; }

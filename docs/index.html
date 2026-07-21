@@ -111,7 +111,17 @@
 				const ready = typeof CloudKit !== 'undefined';
 				if (ready || ++tries > 40) { // ~10s, then gate shows the CloudKit-missing error
 					clearInterval(t);
-					ssICloud.gate({ onAuthed: () => dashboard.init() });
+					ssICloud.gate({
+						onAuthed: () => dashboard.init(),
+						// A foreground re-sync may have merged a phone change → re-render
+						// the board from the freshly-synced local profile.
+						onResync: () => {
+							if (typeof dashboard.applyProfile === 'function' && typeof ssProfileLoad === 'function') {
+								dashboard.applyProfile(ssProfileLoad());
+								dashboard.render();
+							}
+						},
+					});
 				}
 			}, 250);
 		};
