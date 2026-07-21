@@ -554,7 +554,17 @@ class Dashboard {
 			if (n && !seen.has(n)) { seen.add(n); riders.push(n); }
 		}
 		if (riders.length) head += `<div class="d-row"><span class="d-k">Norske</span><span class="d-v">${escapeHtml(riders.join(', '))}</span></div>`;
-		if (s.nextStage?.summary) head += `<div class="d-row"><span class="d-k">Nå</span><span class="d-v">${escapeHtml(s.nextStage.summary)}</span></div>`;
+		// WP-148: the current-stage note ("Nå") is PROSE — render it FULL-WIDTH like
+		// eventDetail's "Om" (.d-prose + aboutParagraphs), not squeezed into the narrow
+		// d-v value column. WP-127 broke the ~700-char wall for every summary path
+		// EXCEPT this stage-race one; this closes it.
+		if (s.nextStage?.summary) {
+			const proseParas = this.aboutParagraphs(s.nextStage.summary);
+			if (proseParas.length) {
+				const body = proseParas.map((p) => `<p class="d-p">${p}</p>`).join('');
+				head += `<div class="d-prose"><span class="d-k">Nå</span><div class="d-prose-body">${body}</div></div>`;
+			}
+		}
 		const rows = s.stages.map((st) => {
 			const d = new Date(st.time);
 			const when = d.toLocaleDateString('nb-NO', { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Oslo' });

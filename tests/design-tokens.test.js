@@ -52,8 +52,9 @@ describe("design/tokens.json — shape", () => {
 
 describe("design/tokens.json ⇄ docs/css/base.css", () => {
 	// base.css custom properties this test can verify directly against a hex/rgba
-	// literal (skips tokens the file itself documents as web-absent, e.g. cell2,
-	// destructive — see each token's $extensions.sportivista.discrepancy).
+	// literal (skips tokens the file itself documents as web-absent, e.g. cell2 —
+	// see each token's $extensions.sportivista.discrepancy). destructive joined the
+	// web tokens in WP-148 (the «Fjern» action on rediger.html), so it is locked here.
 	const cssVarByToken = {
 		background: "--bg",
 		groupedBackground: "--bg",
@@ -65,6 +66,7 @@ describe("design/tokens.json ⇄ docs/css/base.css", () => {
 		accent: "--accent",
 		accentInk: "--accent-ink",
 		live: "--live",
+		destructive: "--destructive",
 	};
 
 	/** Extract `--var: value;` from a `:root { ... }` or `:root[data-theme="light"] { ... }` block. */

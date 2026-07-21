@@ -37,15 +37,19 @@
 		.run { padding: 12px 0; border-bottom: 1px solid var(--line); }
 		.run:last-child { border-bottom: 0; }
 		.run-head { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+		/* The agent name is a quiet amber TEXT label — no fill, no box (DESIGN: amber
+		   is an accent, never a badge/fill behind text). The PR link is the row's
+		   quiet action (dempet, amber on hover, like the change feed) so the row never
+		   carries two amber elements at rest. */
 		.run-agent {
-			font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;
-			color: var(--accent-ink); background: var(--accent); padding: 2px 7px; border-radius: 3px;
+			font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;
+			color: var(--accent);
 		}
 		.run-when { color: var(--fg-3); font-size: 0.78rem; margin-left: auto; }
 		.run-title { color: var(--fg); font-size: 0.92rem; line-height: 1.45; margin: 7px 0 0; }
 		.run-pr { font-size: 0.8rem; }
-		.run-pr a { color: var(--accent); text-decoration: none; }
-		.run-pr a:hover { text-decoration: underline; }
+		.run-pr a { color: var(--fg-2); text-decoration: none; border-bottom: 1px solid var(--line); }
+		.run-pr a:hover { color: var(--accent); border-bottom-color: var(--accent); }
 		.run-notes { margin: 8px 0 0; padding: 0; list-style: none; }
 		.run-notes li {
 			color: var(--fg-2); font-size: 0.82rem; line-height: 1.5; padding-left: 14px; position: relative;
@@ -63,9 +67,13 @@
 <body>
 	<header class="masthead">
 		<div class="wrap masthead-inner">
-			<span class="wordmark-lockup"><span class="wordmark">Sportivista</span><span class="wordmark-colon" aria-hidden="true">:</span></span>
-			<span class="masthead-clock" aria-hidden="true">aktivitet</span>
-			<button class="theme-toggle" id="theme-toggle" title="Bytt tema" aria-label="Bytt tema">◐</button>
+			<div class="mast-row mast-row-top">
+				<span class="wordmark-lockup"><span class="wordmark">Sportivista</span><span class="wordmark-colon" aria-hidden="true">:</span></span>
+				<button class="theme-toggle" id="theme-toggle" title="Bytt tema" aria-label="Bytt tema">◐</button>
+			</div>
+			<div class="mast-row mast-row-sub">
+				<p class="mast-date">Aktivitet</p>
+			</div>
 		</div>
 	</header>
 

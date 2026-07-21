@@ -42,14 +42,17 @@
 	align-self: center;
 }
 
-/* ── Day groups — an amber uppercase label over flat, hairline-separated rows ─
-   28pt of air before the header, 10pt after (the DESIGN.md rhythm). */
+/* ── Day groups — a quiet secondaryLabel uppercase label over flat, hairline-
+   separated rows. WP-148: greyed to match iOS's group header (secondaryLabel) — day
+   headers are no longer an amber use; amber stays reserved for the sparse accents so
+   the page doesn't read amber-saturated down its length. 28pt of air before the
+   header, 10pt after (the DESIGN.md rhythm). */
 .day { margin-top: 28px; }
 .day:first-of-type { margin-top: 14px; }
 .day-name {
 	font-size: 13px;
 	font-weight: 700;
-	color: var(--accent);          /* day headers are one of the five amber uses */
+	color: var(--fg-2);            /* secondaryLabel — matches iOS group headers (WP-148) */
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
 	margin: 0 0 10px 0;
