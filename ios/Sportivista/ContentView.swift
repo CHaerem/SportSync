@@ -6,13 +6,14 @@
 //  Claude Design-handoff root. The screen is now: the brand header, a segmented
 //  ROOT control with ORDS («Uka | Nyheter»), and — per tab — either the
 //  day-grouped agenda (Uka) or the news board shell (Nyheter). The assistant's
-//  ENTRY is a COMPACT floating BOTTOM BUTTON (`AssistantButton`: `sparkles` +
-//  «Spør assistenten», in the thumb-reachable zone — WP-144); tapping it opens the
-//  conversation sheet (AssistantSheetView), where writing, the example rows and the
-//  result thread all live. The inline command line (WP-16.4→WP-99) is retired; so is
-//  the WP-104 bottom capsule (a false search-field affordance) and WP-143's header
-//  `sparkles` toolbar button (honest but unreachable one-handed) — WP-144 lands the
-//  entry as a bottom button that BOTH is reachable AND reads plainly as a button.
+//  ENTRY is a COMPACT floating BOTTOM-TRAILING BUTTON (`AssistantButton`: `sparkles`
+//  + «Assistent», in the thumb-reachable corner — WP-144→WP-146, collapsing to the
+//  bare glyph while the board scrolls); tapping it opens the conversation sheet
+//  (AssistantSheetView), where writing, the example rows and the result thread all
+//  live. The inline command line (WP-16.4→WP-99) is retired; so is the WP-104 bottom
+//  capsule (a false search-field affordance) and WP-143's header `sparkles` toolbar
+//  button (honest but unreachable one-handed) — the entry is a bottom button that
+//  BOTH is reachable AND reads plainly as a button.
 //
 //  ContentView owns BOTH view models and hands them ONE shared ProfileStore, so
 //  a follow the assistant applies is the same profile the agenda recompiles
@@ -118,9 +119,20 @@ struct ContentView: View {
     /// it finishes; the WP-60 coalescing already collapses the agenda-reload half.
     @State private var foregroundRefreshInFlight = false
 
+    /// WP-146 — the floating `AssistantButton` collapses to the bare `sparkles`
+    /// glyph while the board scrolls (the iOS 26 floating-button idiom); expanded
+    /// at the top / at rest. Driven by the `onScrollGeometryChange` observer below,
+    /// which reads the active tab's List scroll offset. Reset to expanded on a tab
+    /// switch (the new side starts at the top).
+    @State private var assistantCollapsed = false
+
     @AppStorage(ThemeOverride.storageKey) private var themeOverrideRaw = ThemeOverride.system.rawValue
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.scenePhase) private var scenePhase
+    /// WP-146 — the live-now line reflows (never truncates) at Accessibility text
+    /// sizes, mirroring the agenda rows (WP-134); DESIGN § Typografi: "Bryt aldri til
+    /// trunkering når teksten vokser."
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     private var themeOverride: ThemeOverride {
         ThemeOverride(rawValue: themeOverrideRaw) ?? .system
@@ -248,16 +260,40 @@ struct ContentView: View {
                     NewsView(news: news, assistant: assistant)
                 }
             }
-            // WP-144: the assistant's ENTRY is a COMPACT floating button pinned to
-            // the BOTTOM (the thumb-reachable zone) via `safeAreaInset(.bottom)` —
-            // the same scroll-under idiom the old WP-104 capsule used, but as a pill
-            // that HUGS its content and reads unmistakably as a BUTTON (not the false
-            // search-field affordance the capsule had). The agenda / Nyheter scroll
-            // calmly beneath it. Supersedes WP-143's header toolbar button (honest,
-            // but the owner found it unreachable one-handed on a tall iPhone).
+            // WP-144→WP-146: the assistant's ENTRY is a COMPACT floating button
+            // pinned to the BOTTOM (the thumb-reachable zone) via
+            // `safeAreaInset(.bottom)` — a pill that HUGS its content and reads
+            // unmistakably as a BUTTON (not the false search-field affordance the
+            // WP-104 capsule had). WP-146 (variant D) moves it to the bottom-TRAILING
+            // corner (≈16 pt inset): even more thumb-reachable AND it clears the
+            // reading column so it never occludes the last agenda/Nyheter row. It
+            // COLLAPSES to the bare glyph while scrolling (`assistantCollapsed`).
             .safeAreaInset(edge: .bottom) {
-                AssistantButton(onOpen: openAssistant)
-                    .frame(maxWidth: .infinity, alignment: .center)
+                AssistantButton(onOpen: openAssistant, collapsed: assistantCollapsed)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .padding(.trailing, 16)
+            }
+            // WP-146: collapse the floating button while the active tab's List
+            // scrolls, re-expand at the top (jf. Foto/Musikk). `onScrollGeometryChange`
+            // observes the scroll view WITHIN this subtree — the Uka List or the
+            // Nyheter List, whichever tab is shown — so no child view needs to report
+            // up. The derived Bool flips once, ~40 pt below the top (a small
+            // dead-zone so a resting board stays expanded). The parent owns the
+            // animation, honouring Reduce Motion (no animation then).
+            .onScrollGeometryChange(for: Bool.self) { geometry in
+                geometry.contentOffset.y + geometry.contentInsets.top > 40
+            } action: { _, collapsed in
+                guard collapsed != assistantCollapsed else { return }
+                if reduceMotion {
+                    assistantCollapsed = collapsed
+                } else {
+                    withAnimation(.easeInOut(duration: 0.22)) { assistantCollapsed = collapsed }
+                }
+            }
+            // A tab switch shows a fresh List at the top — expand the button so it
+            // never lands on the new side already collapsed.
+            .onChange(of: rootTab) { _, _ in
+                if assistantCollapsed { assistantCollapsed = false }
             }
             .background(SportivistaTokens.background.ignoresSafeArea())
             .navigationBarTitleDisplayMode(.inline)
@@ -812,21 +848,46 @@ struct ContentView: View {
             if !rows.isEmpty {
                 VStack(alignment: .leading, spacing: 5) {
                     ForEach(rows) { row in
-                        HStack(spacing: 8) {
-                            Text("▌ LIVE")
-                                .font(.sportivista(.caption, weight: .semibold))
-                                .foregroundStyle(SportivistaTokens.live)
-                            Text(row.title)
-                                .font(.sportivista(.subheadline))
-                                .foregroundStyle(SportivistaTokens.label)
-                                .lineLimit(1)
-                            Text("·")
-                                .font(.sportivista(.subheadline))
-                                .foregroundStyle(SportivistaTokens.secondaryLabel.opacity(0.6))
-                            Text(row.channelLabel)
-                                .font(.sportivista(.subheadline))
-                                .foregroundStyle(SportivistaTokens.secondaryLabel)
-                                .lineLimit(1)
+                        if dynamicTypeSize.isAccessibilitySize {
+                            // WP-146: at Accessibility text sizes the one-line HStack
+                            // truncated («The Open» → «The O…», «TV 2 Play» → «TV 2…»).
+                            // DESIGN § Typografi: "Bryt aldri til trunkering når teksten
+                            // vokser — omform kilden." Reflow like the agenda rows
+                            // (WP-134): the LIVE badge + title, then the channel on its
+                            // own line, all wrapping/un-truncated (the «·» separator is
+                            // dropped — it only reads on one line).
+                            VStack(alignment: .leading, spacing: 3) {
+                                HStack(alignment: .firstTextBaseline, spacing: 8) {
+                                    Text("▌ LIVE")
+                                        .font(.sportivista(.caption, weight: .semibold))
+                                        .foregroundStyle(SportivistaTokens.live)
+                                    Text(row.title)
+                                        .font(.sportivista(.subheadline))
+                                        .foregroundStyle(SportivistaTokens.label)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                                Text(row.channelLabel)
+                                    .font(.sportivista(.subheadline))
+                                    .foregroundStyle(SportivistaTokens.secondaryLabel)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        } else {
+                            HStack(spacing: 8) {
+                                Text("▌ LIVE")
+                                    .font(.sportivista(.caption, weight: .semibold))
+                                    .foregroundStyle(SportivistaTokens.live)
+                                Text(row.title)
+                                    .font(.sportivista(.subheadline))
+                                    .foregroundStyle(SportivistaTokens.label)
+                                    .lineLimit(1)
+                                Text("·")
+                                    .font(.sportivista(.subheadline))
+                                    .foregroundStyle(SportivistaTokens.secondaryLabel.opacity(0.6))
+                                Text(row.channelLabel)
+                                    .font(.sportivista(.subheadline))
+                                    .foregroundStyle(SportivistaTokens.secondaryLabel)
+                                    .lineLimit(1)
+                            }
                         }
                     }
                 }
