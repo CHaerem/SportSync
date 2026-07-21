@@ -5,7 +5,7 @@
  * lookup table build-events.js uses to stamp `entityId` /
  * `homeTeamEntityId` / `awayTeamEntityId` onto matched events (WP-05 item 2).
  *
- * Three sources, folded in this priority order:
+ * Four data sources, folded in this priority order:
  *   1. scripts/config/tracked.json — AI-managed and already carries stable
  *      slugs (e.g. "viktor-hovland"). Reused verbatim. This source wins any
  *      cross-source dedup: its id/name/type are never overwritten.
@@ -15,6 +15,14 @@
  *   3. scripts/config/sports-config.js — free-text team/player lists the
  *      fetchers use for norwegian-relevance filtering. No existing ids here;
  *      a stable kebab-case slug is generated from the name.
+ *   4. scripts/config/catalog.json tier2 — the coverage compass's named-entity
+ *      long-tail (WP-160). tier2.teams → type "team", tier2.tournaments →
+ *      type "tournament", with the catalog's own aliases. Makes the WHOLE
+ *      catalog long-tail (Liverpool, handball clubs, tennis majors, cycling
+ *      monuments …) searchable/followable on both surfaces without waiting for
+ *      the world register (WP-161). tracked.json still wins dedup (it's folded
+ *      first); a tier2 entity that overlaps no already-registered SAME-type
+ *      entity registers fresh under its authoritative tier2 type.
  *
  * Entry shape: { id, name, aliases: [], sport, type }
  * type ∈ "athlete" | "team" | "tournament" | "league" | "sport" | "category"
@@ -68,7 +76,11 @@
  * build-events.js's homeTeam/awayTeam matching pool includes BOTH "team" and
  * "league" typed entities, so a literal `homeTeam: "FC Barcelona"` still
  * resolves correctly regardless of the label. Type-driven client behaviour is
- * out of scope for this WP.
+ * out of scope for this WP. catalog.json tier2 (source 4), by contrast, has
+ * PRECISE team/tournament lists — so where a tier2 entity fails to dedup into a
+ * tracked entry only because the buckets disagree on type (tracked's misfiled
+ * club "fc-barcelona" as a league vs. tier2's "Barcelona" as a team), the tier2
+ * type is authoritative and it registers as its own correctly-typed entity.
  */
 
 import fs from "fs";
@@ -105,6 +117,7 @@ const SPORT_LABELS = {
 	chess: { name: "Sjakk", aliases: ["chess"] },
 	esports: { name: "Esport", aliases: ["esports", "e-sport", "CS2"] },
 	athletics: { name: "Friidrett", aliases: ["athletics"] },
+	handball: { name: "Håndball", aliases: ["handball"] },
 	biathlon: { name: "Skiskyting", aliases: ["biathlon"] },
 	"cross-country": { name: "Langrenn", aliases: ["langrennsski", "cross-country skiing"] },
 	alpine: { name: "Alpint", aliases: ["utfor", "slalåm", "alpine skiing"] },
@@ -280,50 +293,72 @@ function isNicknameForm(a, b) {
 }
 
 /**
- * WP-133: curated cross-language synonym groups for NATIONAL TEAMS — the
- * "Norway" ⇄ "Norge" class. Each group lists spellings (already normalizeText'd:
- * lowercased, diacritics folded) of ONE and the same entity. Kept intentionally
- * small and explicit: an entry only folds the exact spellings it names, so it
- * cannot over-merge two genuinely different teams the way a generic
- * cross-language heuristic might. Same-sport + same-type is still enforced by the
- * caller (upsert), so a "Norge" in a different sport is unaffected. Extend as
- * more national sides enter the config (e.g. ["sweden", "sverige"]).
+ * WP-133: curated cross-language synonym groups — the "Norway" ⇄ "Norge" class.
+ * Each group lists spellings (already normalizeText'd: lowercased, diacritics
+ * folded) of ONE and the same entity. Kept intentionally small and explicit: an
+ * entry only folds the exact spellings it names, so it cannot over-merge two
+ * genuinely different entities the way a generic cross-language heuristic might.
+ * Same-sport + same-type is still enforced by the caller (upsert).
+ *
+ * WP-160: this is now only the SEED / fallback. The live groups are read from
+ * the data file scripts/config/entity-aliases.json (readAliasGroups) so
+ * research/verify can maintain aliases — cross-language national sides
+ * (["sweden", "sverige"]) or club abbreviations (the Liverpool FC/LFC class) —
+ * WITHOUT a code change. This constant is used verbatim when the file is absent
+ * (e.g. the temp config dirs the pipeline tests spin up).
  */
-const KNOWN_ALIAS_GROUPS = [
+const SEED_ALIAS_GROUPS = [
 	["norway", "norge"],
 ];
 
 /**
- * WP-133: are a and b two listed spellings of the same known entity (national
- * team)? True only when both normalized terms appear in the SAME curated group.
+ * WP-160: the curated known-alias groups for `configDir`, read from
+ * entity-aliases.json (its `groups` array, each spelling normalizeText'd so the
+ * file may carry human-readable casing) and falling back to SEED_ALIAS_GROUPS
+ * when the file is missing or malformed.
  */
-function isKnownAlias(a, b) {
+function readAliasGroups(configDir) {
+	const data = readJsonIfExists(path.join(configDir, "entity-aliases.json"));
+	const groups = Array.isArray(data?.groups) ? data.groups : null;
+	if (!groups) return SEED_ALIAS_GROUPS;
+	return groups
+		.filter((g) => Array.isArray(g))
+		.map((g) => g.map((s) => normalizeText(s).trim()).filter(Boolean))
+		.filter((g) => g.length >= 2);
+}
+
+/**
+ * WP-133/160: are a and b two listed spellings of the same known entity? True
+ * only when both normalized terms appear in the SAME curated group.
+ */
+function isKnownAlias(a, b, aliasGroups) {
 	const na = normalizeText(a).trim();
 	const nb = normalizeText(b).trim();
 	if (!na || !nb || na === nb) return false;
-	return KNOWN_ALIAS_GROUPS.some((group) => group.includes(na) && group.includes(nb));
+	return aliasGroups.some((group) => group.includes(na) && group.includes(nb));
 }
 
 /**
  * Do two term sets share a word-boundary, nickname/initial-form, or curated
- * known-alias (WP-133) match?
+ * known-alias (WP-133/160) match?
  */
-function termsOverlap(aTerms, bTerms) {
+function termsOverlap(aTerms, bTerms, aliasGroups) {
 	for (const a of aTerms) {
 		for (const b of bTerms) {
 			if (normalizeText(a).trim() === normalizeText(b).trim()) return true;
 			if (containsName(a, b) || containsName(b, a)) return true;
 			if (isNicknameForm(a, b)) return true;
-			if (isKnownAlias(a, b)) return true;
+			if (isKnownAlias(a, b, aliasGroups)) return true;
 		}
 	}
 	return false;
 }
 
 class EntityIndexBuilder {
-	constructor() {
+	constructor(aliasGroups = SEED_ALIAS_GROUPS) {
 		this.entities = []; // insertion order = source priority
 		this.usedSlugs = new Set();
+		this.aliasGroups = aliasGroups;
 	}
 
 	/** Register a candidate, or merge it (alias-union only) into a match. */
@@ -334,7 +369,7 @@ class EntityIndexBuilder {
 			(e) =>
 				e.type === type &&
 				(!e.sport || !sport || normalizeText(e.sport) === normalizeText(sport)) &&
-				termsOverlap(candidateTerms, terms(e))
+				termsOverlap(candidateTerms, terms(e), this.aliasGroups)
 		);
 		if (existing) {
 			for (const t of candidateTerms) {
@@ -363,7 +398,7 @@ class EntityIndexBuilder {
  * content staying stable over time.
  */
 export function buildEntityIndex(configDir = configDirPath(), sportsConfigData = defaultSportsConfig) {
-	const builder = new EntityIndexBuilder();
+	const builder = new EntityIndexBuilder(readAliasGroups(configDir));
 
 	// 1. tracked.json — ids reused verbatim; this source always wins dedup
 	// because it's folded in first.
@@ -401,7 +436,23 @@ export function buildEntityIndex(configDir = configDirPath(), sportsConfigData =
 		}
 	}
 
-	// 4. WP-64 — sport-/category-level entities (broad-coverage grounding).
+	// 4. WP-160 — catalog.json tier2 long-tail. teams → team, tournaments →
+	// tournament, with the catalog's aliases. tracked.json (source 1) already
+	// won dedup; a tier2 entity that overlaps no same-type entity registers
+	// fresh under its authoritative tier2 type. tier2.athletes are intentionally
+	// NOT folded here (out of WP-160 scope — the ~29 teams + ~70 tournaments are).
+	const catalog = readJsonIfExists(path.join(configDir, "catalog.json"));
+	const tier2 = catalog?.tier2 || {};
+	for (const t of tier2.teams || []) {
+		if (!t?.name) continue;
+		builder.upsert({ name: t.name, aliases: t.aliases || [], sport: t.sport, type: "team" });
+	}
+	for (const t of tier2.tournaments || []) {
+		if (!t?.name) continue;
+		builder.upsert({ name: t.name, aliases: t.aliases || [], sport: t.sport, type: "tournament" });
+	}
+
+	// 5. WP-64 — sport-/category-level entities (broad-coverage grounding).
 	addBroadCoverageEntities(builder, configDir);
 
 	return decorateAliases(builder.entities).map((e) => {
