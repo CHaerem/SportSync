@@ -1,11 +1,13 @@
 {
-	"runAt": "2026-07-20T00:00:00Z",
+	"runAt": "2026-07-21T00:00:00Z",
 	"action": "none",
 	"pr": null,
 	"fixed": [],
 	"notes": [
-		"visual-qa-log.json verdict is 'pass' with an empty findings[] — nothing to fix. Per the ui-fix contract (act only on high/medium findings), this run is a clean no-op: no branch, no PR.",
-		"Latest visual review (2026-07-20) confirmed all three widths (375/393/900px) render a single quiet column, Apple-native styling, no horizontal scroll or clipped content, Norwegian-only channels, and intact header/agenda/footer.",
-		"Note from the QA run: only the default light theme was screenshotted; dark/true-black was not assessed this pass. Not actionable here (no reported finding)."
+		"visual-qa-log.json verdict is 'issues' with three high findings (375/393/900px) — but all three describe the SAME thing: the whole web now sits behind a mandatory 'Logg på med Apple' gate, so no dashboard content renders for an unauthenticated visitor (the screenshot harness).",
+		"Not code-fixable by this agent: the gate is a DELIBERATE owner decision landed today — commit f905fc70a 'web: hele siden bak Sign in with Apple (eier-beslutning 21.07)', documented inline in index.html:22-26. body.gated hiding all content until Sign in with Apple succeeds is the designed behaviour, not a rendering bug.",
+		"The AUTHENTICATION_FAILED error the QA run saw is — per visual-qa's own note — plausibly an artifact of the offline screenshot environment (no network to Apple CloudKit web services), not a bug real signed-in users hit. gate-boot.js / index.html are designed to fail gracefully to a calm error card, never a blank page.",
+		"Fixing this would mean REVERSING an explicit owner decision (removing or bypassing the auth gate) and auto-merging that reversal to the live site — outside this agent's mandate ('only genuinely code-fixable UI issues'; 'be conservative, abandon rather than ship anything you can't prove is clean').",
+		"The visual-qa note explicitly defers to a human: whether real users reliably complete Sign in with Apple in production, and whether an anonymous/public view is still intended, are product-owner calls. Left for owner review — no PR opened."
 	]
 }
