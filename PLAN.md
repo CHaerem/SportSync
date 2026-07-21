@@ -1834,7 +1834,7 @@ Bølge 2: WP-161 (register) ∥ WP-165 (signal). Bølge 3: WP-162 (id-varighet).
 | WP-161 | Verdensregisteret: seedet entitetsregister (~1 500–5 000 entiteter) | 0J | WP-160 | planlagt |
 | WP-162 | Sesongløse id-er + re-grounding: follows overlever sesonger | 0J | WP-161 | planlagt |
 | WP-163 | Web: søk-og-følg-flate + assistent-mutasjon wiret + katalog-kollaps-fella | 0J | WP-160 | 🔬 branch wp-163-web-sok-og-folg — søk-og-følg mot entities.json i «Dette dekker vi» (treff → ssProfileFollow); assistenten UTFØRER «følg X» (kind:'mutation' konsumert i bindAssistant); followTargets slår opp ekte entityId før syntetisk fallback (ingen CRDT-dubletter); katalogen lagdelt under «Det du følger» (aldri kollapset); rediger.html omprofilert til «Be om dekning». 26 nye tester, 877/877 grønt, E2E i browser (dark/light) |
-| WP-164 | iOS: soft-follow («følg likevel») + ærlig off-season-svar | 0J | WP-160 | planlagt |
+| WP-164 | iOS: soft-follow («følg likevel») + ærlig off-season-svar | 0J | WP-160 | 🔬 branch wp-164-ios-soft-follow — «Følg likevel» ved søke-miss + grounder-avvisning (navnebasert regel, nøytral notify-default), ærlig «Fulgt — …»-status m/sesonglinje fra tracked.json, onboarding-CI-vakt (Liverpool-assert: TODO(WP-160)) |
 | WP-165 | Etterspørselssignal v0: utenfor-katalog-follow → anonymt, offentlig signal | 0J | WP-163, WP-164 | planlagt |
 
 ### WP-160 · Strakstiltak: fold catalog.tier2 inn i entities.json (bølge 1)

@@ -15,7 +15,10 @@
 //  bucket matching its entity type (athlete/team/league → the team & athlete
 //  buckets that ring the bell + earn the accent; tournament → the quieter
 //  tournament bucket), carrying the entity's real aliases from the index so
-//  word-boundary matching still finds it ("Lyn" as well as "FK Lyn Oslo"). It
+//  word-boundary matching still finds it ("Lyn" as well as "FK Lyn Oslo"). A
+//  rule of UNKNOWN type (WP-164: a soft-follow name the index can't resolve)
+//  matches from the athlete bucket too, but with an explicit neutral
+//  notify:false so it never inherits the bucket's bell default. It
 //  NEVER removes what the server already tracks — a `remove` in the profile
 //  simply drops that rule, so it stops being merged in. The local layer sits on
 //  top of the server config; it doesn't fight it (a rule can't suppress a sport
@@ -53,8 +56,16 @@ enum EffectiveInterests {
                 if !contains(teams, name) { teams.append(merged) }
             case "tournament":
                 if !contains(tournaments, name) { tournaments.append(merged) }
-            default: // athlete + any unknown type → the athlete bucket
+            case "athlete", "sport", "category":
                 if !contains(athletes, name) { athletes.append(merged) }
+            default:
+                // WP-164 — an UNKNOWN type (a soft-follow / an id the index can't
+                // resolve) still lands in the athlete bucket for MATCHING, but
+                // with an explicit neutral notify: the athlete bucket's implicit
+                // notify:true is bell semantics (FeedCompiler.notifyEntities)
+                // the user never opted into for a name we can't even resolve.
+                let neutral = Interests.Entity(name: name, aliases: aliases, sport: sport, notify: false)
+                if !contains(athletes, name) { athletes.append(neutral) }
             }
         }
 

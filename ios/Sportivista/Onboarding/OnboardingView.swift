@@ -47,6 +47,21 @@
 
 import SwiftUI
 
+/// WP-164 CI-vakt — the onboarding copy's promise, as data. The converse step
+/// advertises concrete example utterances; every CONCRETE entity name they
+/// name-drop must actually ground against the entity index, or the copy
+/// promises something the assistant will reject. `converseStep` renders
+/// `converseIntro` verbatim and OnboardingCopyGroundingTests replays every
+/// `entityMentions` name against the checked-in entities fixture — copy and
+/// guard can never drift apart.
+enum OnboardingExamples {
+    /// The converse step's intro line, rendered verbatim.
+    static let converseIntro = "Skriv fritt på norsk — «Liverpool», «golf, mest de norske», «sjakk når Carlsen spiller». Jeg foreslår, du bekrefter. Si gjerne flere ting etter hverandre."
+    /// The concrete entity names the examples above name-drop («golf, mest de
+    /// norske» is a sport + lens, not an entity — deliberately not listed).
+    static let entityMentions = ["Liverpool", "Carlsen"]
+}
+
 struct OnboardingView: View {
     /// The SAME assistant ContentView owns — so a follow made here is the same
     /// profile the agenda behind the overlay recompiles against.
@@ -173,7 +188,7 @@ struct OnboardingView: View {
     private var converseStep: some View {
         VStack(alignment: .leading, spacing: 20) {
             stepHeading("Fortell meg hva du følger")
-            Text("Skriv fritt på norsk — «Liverpool», «golf, mest de norske», «sjakk når Carlsen spiller». Jeg foreslår, du bekrefter. Si gjerne flere ting etter hverandre.")
+            Text(OnboardingExamples.converseIntro)
                 .font(.sportivista(.subheadline))
                 .foregroundStyle(SportivistaTokens.label.opacity(0.8))
                 .fixedSize(horizontal: false, vertical: true)

@@ -12,7 +12,7 @@
 //      KATEGORIER), so the list reads as what you follow, not one flat blur.
 //    • Row = canonical sport symbol (SportSymbol, WP-108) + name + the PER-ENTITY
 //      next event as the subtitle («Neste: lør 25. · Strømsgodset – Lyn · TV 2»)
-//      or an honest «Ikke satt opp ennå».
+//      or an honest quiet-state line («Fulgt — …», see FollowPresenter WP-164).
 //    • Safe handling: a `.swipeActions` «Slutt å følge» (same confirmation as the
 //      detail) + a calm undo snackbar after a removal.
 //  The next-event / news / grouping is the pure `FollowPresenter` (reusing the
@@ -32,7 +32,7 @@ struct FollowedListView: View {
     /// The read snapshot (relevance-filtered agenda + news + index), rebuilt when
     /// the rule set changes so a just-added follow's next event shows at once.
     @State private var snapshot: AssistantViewModel.FollowSnapshot?
-    /// Precomputed row subtitles (entityId → «Neste: …» / «Ikke satt opp ennå»),
+    /// Precomputed row subtitles (entityId → «Neste: …» / «Fulgt — …»),
     /// so scrolling never re-runs the per-rule event scan.
     @State private var subtitles: [String: String] = [:]
     /// The rule a swipe/detail is confirming a stop for (drives the dialog).
@@ -247,24 +247,47 @@ struct FollowDetailView: View {
     var body: some View {
         List {
             if isUnresolved {
-                Section {
-                    Text("Vi finner ingen kamper eller nyheter for «\(rule.entityName)». Navnet stemmer kanskje ikke helt.")
-                        .font(.sportivista(.subheadline))
-                        .foregroundStyle(SportivistaTokens.label)
-                        .fixedSize(horizontal: false, vertical: true)
-                    ForEach(nameSuggestions, id: \.id) { suggestion in
-                        suggestionRow(suggestion)
+                // WP-164: a deliberate soft-follow («Følg likevel») is not a typo
+                // — it waits honestly for coverage instead of blaming the name.
+                if rule.isSoftFollow {
+                    Section {
+                        Text("Vi kjenner ikke «\(rule.entityName)» ennå, men følger navnet. Raden fylles når events eller nyheter dukker opp.")
+                            .font(.sportivista(.subheadline))
+                            .foregroundStyle(SportivistaTokens.label)
+                            .fixedSize(horizontal: false, vertical: true)
+                        ForEach(nameSuggestions, id: \.id) { suggestion in
+                            suggestionRow(suggestion)
+                        }
+                    } header: {
+                        groupHeader("VENTER PÅ DEKNING")
+                    } footer: {
+                        Text(nameSuggestions.isEmpty
+                            ? "Du trenger ikke gjøre noe — dekning kan komme senere."
+                            : "Mente du ett av disse? Legg det til på nytt i så fall.")
+                            .font(.sportivista(.footnote))
+                            .foregroundStyle(SportivistaTokens.secondaryLabel)
                     }
-                } header: {
-                    groupHeader("SJEKK NAVNET")
-                } footer: {
-                    Text(nameSuggestions.isEmpty
-                        ? "Prøv å legge til på nytt med et litt annet navn."
-                        : "Kanskje du mente ett av disse? Legg det til på nytt om navnet er feil.")
-                        .font(.sportivista(.footnote))
-                        .foregroundStyle(SportivistaTokens.secondaryLabel)
+                    .listRowBackground(SportivistaTokens.cell)
+                } else {
+                    Section {
+                        Text("Vi finner ingen kamper eller nyheter for «\(rule.entityName)». Navnet stemmer kanskje ikke helt.")
+                            .font(.sportivista(.subheadline))
+                            .foregroundStyle(SportivistaTokens.label)
+                            .fixedSize(horizontal: false, vertical: true)
+                        ForEach(nameSuggestions, id: \.id) { suggestion in
+                            suggestionRow(suggestion)
+                        }
+                    } header: {
+                        groupHeader("SJEKK NAVNET")
+                    } footer: {
+                        Text(nameSuggestions.isEmpty
+                            ? "Prøv å legge til på nytt med et litt annet navn."
+                            : "Kanskje du mente ett av disse? Legg det til på nytt om navnet er feil.")
+                            .font(.sportivista(.footnote))
+                            .foregroundStyle(SportivistaTokens.secondaryLabel)
+                    }
+                    .listRowBackground(SportivistaTokens.cell)
                 }
-                .listRowBackground(SportivistaTokens.cell)
             }
 
             if !upcoming.isEmpty {
@@ -300,7 +323,9 @@ struct FollowDetailView: View {
             }
 
             Section {
-                detailInfoRow("Sport", SportVocabulary.display(for: rule.sport))
+                // WP-164: a soft-follow has no resolved sport yet — honest
+                // «ukjent ennå» beats a silently blank value.
+                detailInfoRow("Sport", rule.sport.isEmpty ? "ukjent ennå" : SportVocabulary.display(for: rule.sport))
                 if let scope = rule.scope, !scope.isEmpty {
                     detailInfoRow("Avgrensning", scope)
                 }

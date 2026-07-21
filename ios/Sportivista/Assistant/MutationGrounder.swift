@@ -129,20 +129,28 @@ enum MutationGrounder {
         let suggestions = resolution.candidates.map(\.entity)
         return RejectedMutation(
             query: query,
-            explanation: rejectionText(query: query, suggestions: suggestions),
+            explanation: rejectionText(query: query, suggestions: suggestions, offerSoftFollow: proposal.kind == .add),
             suggestions: suggestions,
             proposal: proposal
         )
     }
 
     /// The Norwegian rejection message — with a "mente du …?" tail only when
-    /// there is a genuine near-match to offer.
-    static func rejectionText(query: String, suggestions: [Entity]) -> String {
+    /// there is a genuine near-match to offer. WP-164: a rejected FOLLOW
+    /// (`offerSoftFollow`) additionally names the honest way out — following
+    /// the bare name anyway — which the UI offers as an explicit user action.
+    /// The gate itself is unchanged: the model still can't invent ids; only
+    /// the user can choose the soft-follow.
+    static func rejectionText(query: String, suggestions: [Entity], offerSoftFollow: Bool = false) -> String {
         let subject = query.isEmpty ? "det" : "«\(query)»"
         if suggestions.isEmpty {
-            return "Fant ikke \(subject) i indeksen over det du kan følge. Prøv et navn eller en turnering jeg kjenner."
+            return offerSoftFollow
+                ? "Fant ikke \(subject) i indeksen over det du kan følge. Du kan likevel følge navnet — da venter det på dekning."
+                : "Fant ikke \(subject) i indeksen over det du kan følge. Prøv et navn eller en turnering jeg kjenner."
         }
         let names = suggestions.map { $0.name }.joined(separator: ", ")
-        return "Fant ikke \(subject) i indeksen — mente du: \(names)?"
+        var text = "Fant ikke \(subject) i indeksen — mente du: \(names)?"
+        if offerSoftFollow { text += " Du kan også følge navnet likevel." }
+        return text
     }
 }
