@@ -181,7 +181,7 @@ enum StarterPacks {
                 StarterRule("kristoffer-reitan", "Kristoffer Reitan", sport: "golf", type: "athlete"),
                 // The lens does its work on the tournament: The Open becomes
                 // Norwegian-athlete rows rather than a flat leaderboard (WP-18).
-                StarterRule("the-open-championship-2026", "The Open Championship 2026", sport: "golf", type: "tournament", lens: .throughNorwegians),
+                StarterRule("the-open-championship", "The Open Championship", sport: "golf", type: "tournament", lens: .throughNorwegians),
             ]
         ),
         StarterPack(

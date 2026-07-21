@@ -9,14 +9,18 @@
 //  (exact/initials maps, fuzzy only on a miss) makes each name lookup O(1) on the
 //  common path, so a compile is O(events).
 //
-//  These tests are the guard. The synthetic fixture (~500 events / 2000 entities)
+//  These tests are the guard. The synthetic fixture (~500 events / 5000 entities)
 //  is generated deterministically IN CODE — never a checked-in megabyte of JSON.
-//  `test_buildSections_scalesLinearly…` is the machine-independent O(n²) catch:
-//  doubling BOTH events and entities must roughly DOUBLE the time (linear), not
-//  quadruple it (quadratic), so a regression that restores the per-name scan
-//  fails here regardless of how fast the host is. The `measure {}` blocks record
-//  the wall-clock baselines the acceptance target (< 50 ms for the scaled compile
-//  on the dev Mac) is read against; the measured figure is documented in the PR.
+//  WP-166: the entity scale is sized to the WP-161 world register (~1 500–5 000
+//  entities), so the guard proves the map-backed O(1) name lookup holds at the
+//  largest index the app will ship — well past the 141-entity fixture the rest of
+//  the suite exercises. `test_buildSections_scalesLinearly…` is the
+//  machine-independent O(n²) catch: doubling BOTH events and entities must roughly
+//  DOUBLE the time (linear), not quadruple it (quadratic), so a regression that
+//  restores the per-name scan fails here regardless of how fast the host is. The
+//  `measure {}` blocks record the wall-clock baselines the acceptance target
+//  (< 50 ms for the scaled compile on the dev Mac) is read against; the measured
+//  figure is documented in the PR.
 //
 
 import XCTest
@@ -120,8 +124,10 @@ final class AgendaMatchingPerfTests: XCTestCase {
         // roughly doubles the time. A regression to the per-name scan makes it
         // O(events × entities): the 2× scale would ~QUADRUPLE. The 3.0 ceiling
         // sits above linear-plus-noise and well below the ~4× of a quadratic.
-        let small = Scale(events: makeEvents(eventCount: 250, entityCount: 1_000), index: makeIndex(entityCount: 1_000))
-        let large = Scale(events: makeEvents(eventCount: 500, entityCount: 2_000), index: makeIndex(entityCount: 2_000))
+        // WP-166: entity counts raised to the WP-161 register band (2 500 → 5 000)
+        // so the doubling exercises the world-scale index, not just the fixture.
+        let small = Scale(events: makeEvents(eventCount: 250, entityCount: 2_500), index: makeIndex(entityCount: 2_500))
+        let large = Scale(events: makeEvents(eventCount: 500, entityCount: 5_000), index: makeIndex(entityCount: 5_000))
 
         // Warm caches / JIT-equivalent first pass, then measure.
         _ = interleavedMinTimes(small: small, large: large, iterations: 1)
@@ -144,7 +150,7 @@ final class AgendaMatchingPerfTests: XCTestCase {
             let (s, l) = interleavedMinTimes(small: small, large: large)
             let ratio = l / max(s, 1e-9)
             attempts.append((s, l, ratio))
-            print("WP-61 buildSections attempt \(attempt)/\(maxAttempts): small(250ev/1000ent)=\(ms(s)) ms, large(500ev/2000ent)=\(ms(l)) ms, ratio=\(fmt(ratio))")
+            print("WP-61 buildSections attempt \(attempt)/\(maxAttempts): small(250ev/2500ent)=\(ms(s)) ms, large(500ev/5000ent)=\(ms(l)) ms, ratio=\(fmt(ratio))")
             if ratio < ceiling {
                 // A clean attempt clears the guard — stop retrying. Also read the
                 // generous absolute sanity cap off this clean attempt so a
@@ -168,8 +174,9 @@ final class AgendaMatchingPerfTests: XCTestCase {
     // MARK: - Recorded baselines (measure {})
 
     func test_measure_buildSections_atScale() {
-        let events = makeEvents(eventCount: 500, entityCount: 2_000)
-        let index = makeIndex(entityCount: 2_000)
+        // WP-166: recorded at the WP-161 register ceiling (5 000 entities).
+        let events = makeEvents(eventCount: 500, entityCount: 5_000)
+        let index = makeIndex(entityCount: 5_000)
         let interests = Interests(followBroadly: ["football"])
         measure {
             _ = AgendaViewModel.buildSections(
@@ -183,7 +190,7 @@ final class AgendaMatchingPerfTests: XCTestCase {
         // event set — the second hot compile the audit named. It does not touch
         // the entity index, so it is a plain linear baseline, recorded here so a
         // future regression in the relevance/format pass is visible too.
-        let events = makeEvents(eventCount: 500, entityCount: 2_000)
+        let events = makeEvents(eventCount: 500, entityCount: 5_000)
         let interests = Interests(followBroadly: ["football"])
         measure {
             _ = FeedQuery.build(events: events, interests: interests, now: Self.now)

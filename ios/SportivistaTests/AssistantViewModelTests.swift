@@ -39,7 +39,11 @@ final class AssistantViewModelTests: XCTestCase {
 
     func test_submit_bulkUtterance_reportsEveryClauseInTally() async {
         let vm = makeVM()
-        vm.utterance = "Jeg liker golf, spesielt Hovland, all vintersport, følger Brann og litt F1"
+        // WP-166: "Skeid" is the not-found clause — WP-160 folded the catalog
+        // long-tail in, so the old example "Brann" is now a real, covered entity
+        // that grounds. Skeid (an Oslo lower-division club outside coverage) keeps
+        // a genuinely-unknown clause so the per-clause honesty contract still bites.
+        vm.utterance = "Jeg liker golf, spesielt Hovland, all vintersport, følger Skeid og litt F1"
         await vm.submit()
 
         // The four resolvable clauses become confirmable proposals.
@@ -48,7 +52,7 @@ final class AssistantViewModelTests: XCTestCase {
             ["sport-golf", "viktor-hovland", "category-winter-sports", "sport-f1"]
         )
         // The unresolvable one is shown as a rejection, not dropped.
-        XCTAssertEqual(vm.rejected.map { $0.query.lowercased() }, ["brann"])
+        XCTAssertEqual(vm.rejected.map { $0.query.lowercased() }, ["skeid"])
 
         // The per-clause tally names ALL of it — added AND not-found — so nothing
         // is silently swallowed. (The mock normalises a residual query to lower
@@ -57,8 +61,8 @@ final class AssistantViewModelTests: XCTestCase {
         XCTAssertNotNil(tally, "a multi-clause utterance publishes a tally")
         XCTAssertEqual(Set(tally?.added ?? []), ["Golf", "Viktor Hovland", "Vintersport", "Formel 1"])
         XCTAssertEqual(tally?.updated ?? [], [])
-        XCTAssertEqual(tally?.notFound.map { $0.lowercased() }, ["brann"])
-        XCTAssertTrue(tally?.summary.lowercased().contains("brann") ?? false, "the summary names the not-found clause")
+        XCTAssertEqual(tally?.notFound.map { $0.lowercased() }, ["skeid"])
+        XCTAssertTrue(tally?.summary.lowercased().contains("skeid") ?? false, "the summary names the not-found clause")
     }
 
     func test_submit_singleClause_hasNoTally() async {

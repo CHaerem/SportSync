@@ -111,8 +111,8 @@ final class OnboardingTests: XCTestCase {
         vm.toggleStarterPack(pack("norske-golfere"))
 
         let ids = Set(vm.profile.rules.map(\.entityId))
-        XCTAssertTrue(ids.isSuperset(of: ["viktor-hovland", "kristoffer-reitan", "the-open-championship-2026"]))
-        XCTAssertEqual(vm.profile.rule(for: "the-open-championship-2026")?.lens, .throughNorwegians,
+        XCTAssertTrue(ids.isSuperset(of: ["viktor-hovland", "kristoffer-reitan", "the-open-championship"]))
+        XCTAssertEqual(vm.profile.rule(for: "the-open-championship")?.lens, .throughNorwegians,
                        "the golf pack follows The Open THROUGH the Norwegians (WP-18)")
         XCTAssertEqual(vm.profile.rule(for: "viktor-hovland")?.lens, .sportAsSuch,
                        "an individual golfer is followed plainly")
@@ -176,9 +176,9 @@ final class OnboardingTests: XCTestCase {
         XCTAssertFalse(vm.availability.isAvailable, "no Apple Intelligence — quick-picks must still work")
 
         vm.toggleStarterPack(pack("norske-golfere"))
-        let rule = vm.profile.rule(for: "the-open-championship-2026")
+        let rule = vm.profile.rule(for: "the-open-championship")
         XCTAssertNotNil(rule, "the pack applied from its own curated data, no index needed")
-        XCTAssertEqual(rule?.entityName, "The Open Championship 2026")
+        XCTAssertEqual(rule?.entityName, "The Open Championship")
         XCTAssertEqual(rule?.lens, .throughNorwegians, "the lens survives a cold-start apply too")
     }
 

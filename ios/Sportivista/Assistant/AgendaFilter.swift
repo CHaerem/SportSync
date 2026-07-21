@@ -155,10 +155,26 @@ enum AgendaFilterParser {
     /// Words that mean "clear the filter" (reset to show everything).
     private static let resetWords: Set<String> = Set(AssistantVocab.shared.resetWords)
 
+    /// Event-open nouns ("Brann-kampen", "matchen") — an utterance naming a
+    /// SPECIFIC event to open belongs to the command arm's openEvent, never a
+    /// presentation filter. Mirrors the event nouns MockCommandParser treats as
+    /// "open this event".
+    private static let eventOpenNouns: Set<String> = [
+        "kamp", "kampen", "kampene", "match", "matchen", "arrangementet", "eventet", "hendelsen",
+    ]
+
     static func parse(_ utterance: String, index: EntityIndex) -> AgendaFilter? {
         let tokens = EntityIndex.tokens(utterance)
         guard let first = tokens.first, presentCues.contains(first) else { return nil }
         let set = Set(tokens)
+
+        // WP-166: an event-open noun means «vis <hendelse>» — a specific event to
+        // OPEN, not a filter. Before the catalog long-tail this fell out naturally
+        // (the named team did not ground, so no entity subject was found); now
+        // "Brann" IS an entity, so guard it explicitly — otherwise
+        // «Vis Brann-kampen» mis-reads as "filter to Brann" and steals the command
+        // arm's openEvent.
+        if !set.isDisjoint(with: eventOpenNouns) { return nil }
 
         let sports = detectSports(tokens: tokens)
         let entities = detectEntities(in: utterance, index: index)
