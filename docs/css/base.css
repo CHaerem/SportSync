@@ -100,5 +100,21 @@ body.gated .auth-gate {
 .auth-gate .wordmark { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; }
 .auth-gate .wordmark-colon { color: var(--accent); }
 .auth-gate-lead { color: var(--fg-2); font-size: 15px; line-height: 1.55; margin: 0; }
-.auth-signin { min-height: 44px; display: flex; justify-content: center; }
+/* CloudKit renders its own (inconsistent) sign-in button into #apple-sign-in-button;
+   we hide it off-screen (kept renderable + clickable) and drive it from our own
+   Apple-HIG button below, so the design is fully ours. */
+#apple-sign-in-button { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); pointer-events: none; }
+.signin-apple {
+	display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+	min-width: 240px; height: 50px; padding: 0 22px; border: none; border-radius: 12px;
+	font-size: 17px; font-weight: 500; letter-spacing: -0.01em; cursor: pointer;
+	background: #000; color: #fff; -webkit-font-smoothing: antialiased; transition: opacity 0.12s;
+}
+.signin-apple:hover { opacity: 0.85; }
+.signin-apple:active { opacity: 0.7; }
+.signin-apple .apple-logo { width: 17px; height: 17px; fill: currentColor; margin-top: -2px; }
+/* Apple HIG: on dark backgrounds use a WHITE button, on light a BLACK one. */
+@media (prefers-color-scheme: dark) { .signin-apple { background: #fff; color: #000; } }
+:root[data-theme="light"] .signin-apple { background: #000; color: #fff; }
+:root[data-theme="dark"] .signin-apple { background: #fff; color: #000; }
 .auth-error { color: #FF453A; font-size: 13.5px; line-height: 1.5; margin: 0; max-width: 32ch; }

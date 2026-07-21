@@ -201,6 +201,20 @@ window.ssICloud = (function () {
 		if (!cfg.apiToken) { showError('iCloud-innlogging er ikke konfigurert.'); return; }
 		if (!configure()) { showError('iCloud-innlogging er utilgjengelig akkurat nå.'); return; }
 		showGate();
+		// Drive our own Apple-HIG button (#signin-apple) by forwarding its click to
+		// CloudKit's hidden button — the click is a user gesture, so the auth popup
+		// is allowed. Falls back to un-hiding CloudKit's own button if ours is absent.
+		const custom = document.getElementById('signin-apple');
+		if (custom) {
+			custom.addEventListener('click', () => {
+				const el = document.querySelector('#apple-sign-in-button a, #apple-sign-in-button button, #apple-sign-in-button [role="button"], #apple-sign-in-button [tabindex]');
+				if (el && typeof el.click === 'function') { el.click(); return; }
+				// Safety net: our forward target isn't there → un-hide CloudKit's own
+				// button so the user is never stuck with a dead custom button.
+				const ck = document.getElementById('apple-sign-in-button');
+				if (ck) { ck.style.cssText = 'position:static;width:auto;height:auto;clip:auto;pointer-events:auto;margin-top:8px;'; custom.style.display = 'none'; }
+			});
+		}
 		container.setUpAuth().then((userIdentity) => { if (userIdentity) reveal(); }).catch((err) => {
 			try { console.error('[Sportivista] CloudKit setUpAuth failed:', err && (err.ckErrorCode || err.reason || err.message) || err, err); } catch (e) {}
 			const code = (err && (err.ckErrorCode || err.reason)) || '';
