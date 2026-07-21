@@ -8,18 +8,33 @@ Object.assign(window.Dashboard.prototype, {
 	// upcoming-only. Kept deliberately small so it tops the agenda without
 	// burying it; the full list (incl. "ikke satt opp ennå" + tournaments +
 	// editing) stays in the "Hva vi følger" disclosure at the bottom.
+	/** The athletes+teams behind "Neste opp": YOUR follows first, then the catalog
+	 *  (what we cover), de-duplicated by name. WP-163: following must not collapse
+	 *  the glance to only your list — it LAYERS your follows on top of the catalog. */
+	nextUpCandidates() {
+		const bucket = (c) => (c && c.alwaysTrack) ? [...(c.alwaysTrack.athletes || []), ...(c.alwaysTrack.teams || [])] : [];
+		const out = [];
+		const seen = new Set();
+		for (const entry of [...bucket(this.followed), ...bucket(this.covers)]) {
+			const key = ssNormalize(ssEntityName(entry));
+			if (!key || seen.has(key)) continue;
+			seen.add(key);
+			out.push(entry);
+		}
+		return out;
+	},
+
 	/** Followed athletes/teams that have an upcoming event, nearest first. The
-	 *  pure selection behind "Dine neste" (upcoming-only; gaps live at the bottom). */
+	 *  pure selection behind "Neste opp" (upcoming-only; gaps live at the bottom). */
 	nextUpEntries() {
-		// WP-96: sourced from the catalog (what we cover), not a personal profile.
-		const at = this.covers && this.covers.alwaysTrack;
-		if (!at) return [];
+		const candidates = this.nextUpCandidates();
+		if (!candidates.length) return [];
 		// WP-128: don't repeat an entity's next event in the glance when that same
 		// event already has its own visible agenda row in the window (renderAgenda
 		// records the shown ids). Absent the set (e.g. before first agenda render),
 		// no dedupe — the glance still shows everything.
 		const shown = this._agendaShownIds;
-		return [...(at.athletes || []), ...(at.teams || [])]
+		return candidates
 			.map((entry) => ({ entry, next: this.nextEventForEntity(entry) }))
 			.filter((x) => x.next)
 			.filter((x) => !(shown && shown.has(x.next.id)))
@@ -51,19 +66,38 @@ Object.assign(window.Dashboard.prototype, {
 		const wrap = document.getElementById('followed');
 		const body = document.getElementById('followed-body');
 		if (!wrap || !body) return;
-		// WP-96: "Dette dekker vi" renders the catalog (tier2), not a personal profile.
+		// WP-163: TWO layers, one disclosure — "Det du følger" (your personal list)
+		// on top, then "Dette dekker vi" (the catalog, tier2). Following something
+		// never collapses the catalog away (the old bug where covers became your
+		// list only). Both may be present; the catalog is always the base.
 		const at = this.covers && this.covers.alwaysTrack;
-		if (!at) { wrap.hidden = true; return; }
+		const mine = this.followed && this.followed.alwaysTrack;
+		if (!at && !mine) { wrap.hidden = true; return; }
 
 		const nextGroup = (label, items, notifyDefault) => (items || []).length
 			? `<div class="chip-group"><div class="chip-group-label">${label}</div><ul class="follow-next">${items.map((x) => this.followRow(x, notifyDefault)).join('')}</ul></div>`
 			: '';
-		body.innerHTML = '<div class="followed-layer">'
-			+ nextGroup('Utøvere', at.athletes, true)
-			+ nextGroup('Lag', at.teams, true)
-			+ nextGroup('Turneringer', at.tournaments, false)
-			+ `<div class="followed-hint">Dette er sportene og navnene Sportivista dekker · trykk en rad for detaljer. <a class="followed-edit" href="rediger.html">Savner du noe? Be om dekning →</a></div>`
-			+ '</div>';
+		// "Det du følger" — a flat, nearest-first list of everything you follow.
+		let yours = '';
+		if (mine) {
+			const followedEntries = [...(mine.athletes || []), ...(mine.teams || []), ...(mine.tournaments || [])];
+			if (followedEntries.length) {
+				yours = '<div class="followed-layer followed-mine">'
+					+ '<div class="followed-layer-label">Det du følger</div>'
+					+ `<ul class="follow-next">${followedEntries.map((x) => this.followRow(x, true)).join('')}</ul>`
+					+ '</div>';
+			}
+		}
+		const catalog = at
+			? '<div class="followed-layer followed-catalog">'
+				+ (yours ? '<div class="followed-layer-label">Dette dekker vi</div>' : '')
+				+ nextGroup('Utøvere', at.athletes, true)
+				+ nextGroup('Lag', at.teams, true)
+				+ nextGroup('Turneringer', at.tournaments, false)
+				+ '</div>'
+			: '';
+		body.innerHTML = yours + catalog
+			+ `<div class="followed-hint">Søk over for å følge et lag eller en utøver · trykk en rad for detaljer. <a class="followed-edit" href="rediger.html">Savner du en hel sport? Be om dekning →</a></div>`;
 		wrap.hidden = false;
 	},
 

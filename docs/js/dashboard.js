@@ -43,6 +43,7 @@ class Dashboard {
 		this.maybeShowInstallHint();
 		this.renderAppPromo();
 		if (typeof this.bindAssistant === 'function') this.bindAssistant();
+		if (typeof this.bindFollowSearch === 'function') this.bindFollowSearch();
 		if (typeof this.bindRootTabs === 'function') this.bindRootTabs();
 		document.addEventListener('visibilitychange', () => {
 			this._liveVisible = !document.hidden;
@@ -73,13 +74,20 @@ class Dashboard {
 		// catalog.json — NOT a personal interests.json (that is no longer published;
 		// the owner's personal view is the iOS app). `this.interests` stays null, so
 		// the personal accents/lens degrade to event-intrinsic signals only.
-		const [events, featured, standings, results, tracked, catalog, meta, usage, news] = await Promise.all([
+		const [events, featured, standings, results, tracked, catalog, meta, usage, news, entities] = await Promise.all([
 			load('events.json'), load('featured.json'), load('standings.json'), load('recent-results.json'), load('tracked.json'), load('catalog.json'), load('meta.json'), load('usage-state.json'),
 			// news.json — lens-ready pointers (id/title/link/source/sport/entityIds/
 			// publishedAt, never article text). Feeds the Nyheter board's NYTT section.
 			load('news.json'),
+			// entities.json — the stable-id index of athletes/teams/tournaments/leagues
+			// (WP-05, folded from the catalog long-tail by WP-160). WP-163 uses it for
+			// the search-and-follow flate AND to resolve an event's REAL entityId so a
+			// web follow key-matches the iOS id across devices (no CRDT dupes).
+			load('entities.json'),
 		]);
 		this.allEvents = Array.isArray(events) ? events : [];
+		// The followable entity index — a bare array of {id,name,aliases,sport,type}.
+		this.entities = Array.isArray(entities) ? entities : (entities && Array.isArray(entities.entities) ? entities.entities : []);
 		// news.json may be a bare array or {items:[…]} — normalise to an array.
 		this.news = Array.isArray(news) ? news : (news && Array.isArray(news.items) ? news.items : []);
 		// Prefer the server's stable id (build-events.js, WP-02) — a hash of
@@ -109,14 +117,19 @@ class Dashboard {
 		const profile = (typeof ssProfileLoad === 'function') ? ssProfileLoad() : null;
 		this.profile = profile;
 		this.hasProfile = !!(profile && typeof ssStateIsEmpty === 'function' && !ssStateIsEmpty(profile));
+		// WP-163 layering: the CATALOG (what we cover, ~130 names) is ALWAYS the base
+		// layer — following something must never collapse "Dette dekker vi"/"Neste opp"
+		// down to only your own list. `this.covers` = the catalog; `this.followed` =
+		// your personal follows (shown as a "Det du følger" layer ABOVE the catalog).
+		this.covers = catalog && catalog.tier2 ? { alwaysTrack: catalog.tier2 } : null;
 		if (this.hasProfile) {
+			// interests drives the LENS (isMustSee/whyShown/relevance) — unchanged.
 			this.interests = ssProfileToInterests(profile);
-			this.covers = { alwaysTrack: this.interests.alwaysTrack };
+			this.followed = { alwaysTrack: this.interests.alwaysTrack };
 		} else {
-			// WP-96 fallback: catalog-wide "Dette dekker vi" from what we COVER;
 			// interests null → isMustSee/emphasize use only event-intrinsic signals.
-			this.covers = catalog && catalog.tier2 ? { alwaysTrack: catalog.tier2 } : null;
 			this.interests = null;
+			this.followed = null;
 		}
 		this.meta = meta;
 		this.usage = usage;

@@ -278,6 +278,37 @@
 .followed[open] summary::before { content: "▾ "; }
 .followed-body { margin-top: 14px; }
 .followed-layer { margin-bottom: 22px; }
+/* WP-163: the two-layer heading — "Det du følger" (your list) above "Dette dekker
+   vi" (the catalog). Quiet, secondaryLabel, not amber (DESIGN § Gruppeoverskrift). */
+.followed-layer-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-3); margin: 0 0 8px; }
+.followed-mine { padding-bottom: 4px; }
+
+/* ── Søk-og-følg (WP-163) — a calm search box + hairline result rows ─────────
+   Mirrors rediger.html's .add-search. One amber accent (the name on hover / the
+   Følg label when following); flat rows, no chips, no boxes (DESIGN § Forbud). */
+.follow-search { margin-bottom: 18px; }
+.follow-search-input {
+	width: 100%; box-sizing: border-box; font: inherit; font-size: 15px;
+	padding: 10px 13px; border: 1px solid var(--line); border-radius: 10px;
+	background: var(--cell); color: var(--fg);
+}
+.follow-search-input::placeholder { color: var(--fg-3); }
+.follow-search-input:focus { outline: none; border-color: var(--accent); }
+.follow-search-results { margin-top: 6px; }
+.follow-search-results[hidden] { display: none; }
+.fs-result {
+	display: flex; align-items: baseline; gap: 10px; width: 100%; text-align: left;
+	font: inherit; font-size: 15px; color: var(--fg); background: none; border: none;
+	border-bottom: 1px solid var(--line); padding: 11px 0; cursor: pointer;
+}
+.fs-result:hover .fs-name { color: var(--accent); }
+.fs-name { min-width: 0; overflow-wrap: break-word; }
+.fs-sport { font-size: 11.5px; color: var(--fg-3); }
+.fs-follow { margin-left: auto; font-size: 12.5px; color: var(--accent); white-space: nowrap; flex-shrink: 0; }
+/* Once following: the whole row goes quiet, the label reads "Følger" in fg-3. */
+.fs-result.is-following .fs-follow { color: var(--fg-3); }
+.fs-empty { font-size: 13px; color: var(--fg-3); font-style: italic; padding: 10px 0 2px; }
+.fs-empty a { color: var(--accent); font-style: normal; }
 .chip-group { margin-bottom: 14px; }
 .chip-group-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-3); margin-bottom: 6px; }
 /* Tournaments read as a quiet dot-separated line, not pills. */
