@@ -520,24 +520,9 @@ extension Entity {
 /// canonical English sport tag entities carry, and back to a Norwegian display
 /// word for the assistant's reasons.
 enum SportVocabulary {
-    static let keywordToSport: [String: String] = [
-        "fotball": "football", "football": "football", "soccer": "football",
-        "golf": "golf",
-        "tennis": "tennis",
-        "sjakk": "chess", "chess": "chess",
-        "sykkel": "cycling", "sykling": "cycling", "landeveissykling": "cycling", "cycling": "cycling",
-        "friidrett": "athletics", "athletics": "athletics", "løping": "athletics",
-        "f1": "f1", "formel1": "f1", "formel": "f1", "formula1": "f1", "formula": "f1",
-        "esport": "esports", "esports": "esports", "cs2": "esports", "cs": "esports", "counterstrike": "esports",
-        // WP-64: winter sports — the datahull that made "all vintersport"
-        // ungroundable. Each maps to the canonical tag build-entities.js
-        // publishes a sport entity under (sport-biathlon, sport-cross-country …).
-        "skiskyting": "biathlon", "biathlon": "biathlon",
-        "langrenn": "cross-country", "crosscountry": "cross-country",
-        "alpint": "alpine", "alpine": "alpine", "slalam": "alpine", "utfor": "alpine",
-        "hopp": "ski jumping", "skihopp": "ski jumping", "hopprenn": "ski jumping",
-        "kombinert": "nordic", "nordic": "nordic"
-    ]
+    // WP-XX: now sourced from the SHARED assistant-vocab.json (AssistantVocab) so
+    // keywords stay identical to the web. Same type/API — no consumer changes.
+    static let keywordToSport: [String: String] = AssistantVocab.shared.sportKeywords
 
     static let sportDisplay: [String: String] = [
         "football": "fotball", "golf": "golf", "tennis": "tennis", "chess": "sjakk",
@@ -552,20 +537,13 @@ enum SportVocabulary {
 
     /// A free-text umbrella keyword ("vintersport") → the canonical category key
     /// build-entities.js publishes a category entity under (category-<key>).
-    static let keywordToCategory: [String: String] = [
-        "vintersport": "winter-sports", "vintersporter": "winter-sports",
-        "vinteridrett": "winter-sports", "vinteridretter": "winter-sports"
-    ]
+    static let keywordToCategory: [String: String] = AssistantVocab.shared.categories.keywords
 
     /// A category key → the member sports it expands to («vintersport» → settet).
     /// This is the app-side expansion the server's category entity stands in for.
-    static let categoryToSports: [String: [String]] = [
-        "winter-sports": ["biathlon", "cross-country", "nordic", "alpine", "ski jumping"]
-    ]
+    static let categoryToSports: [String: [String]] = AssistantVocab.shared.categories.members
 
-    static let categoryDisplayNames: [String: String] = [
-        "winter-sports": "vintersport"
-    ]
+    static let categoryDisplayNames: [String: String] = AssistantVocab.shared.categories.display
 
     static func categoryDisplay(for category: String) -> String { categoryDisplayNames[category] ?? category }
 }

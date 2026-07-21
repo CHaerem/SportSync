@@ -15,8 +15,8 @@
 // Depends on shared-constants.js + lens.js. Pure `ssAssistant(query, ctx)` is
 // unit-tested; the DOM wiring (bindAssistant) is a thin Dashboard extension.
 
-const SS_A_PRESENT_CUES = new Set(['vis', 'filtrer', 'fremhev']);
-const SS_A_RESET_WORDS = new Set(['alt', 'alle', 'igjen', 'allt']);
+// presentCues + resetWords now come from the shared assistant-vocab.json (below);
+// questionWords/followCues/unfollowPhrases stay web-only (iOS parses these differently).
 const SS_A_QUESTION_WORDS = new Set(['når', 'nar', 'hva', 'hvem', 'hvor', 'hvilke', 'hvilken', 'hvorfor', 'skjer']);
 const SS_A_FOLLOW_CUES = new Set(['følg', 'folg', 'følge', 'folge']);
 // Natural-form phrases; compared against ssNormalize(raw) via ssNormalize(phrase)
@@ -31,29 +31,59 @@ function ssATokens(s) {
 	return ssNormalize(s).replace(/[^\p{L}\p{N}\s]/gu, ' ').split(/\s+/).filter(Boolean);
 }
 
-/** Invert lens-config.sportNb (+ common aliases) → norwegian keyword → canonical. */
-function ssASportKeywords(config) {
-	const cfg = (typeof ssLensConfig === 'function') ? ssLensConfig(config) : { sportNb: {} };
-	const map = {};
-	for (const [canon, nb] of Object.entries(cfg.sportNb || {})) map[ssNormalize(nb)] = canon;
-	Object.assign(map, {
-		fotball: 'football', sykkel: 'cycling', sykling: 'cycling', sjakk: 'chess',
-		esport: 'esports', cs2: 'esports', cs: 'esports', friidrett: 'athletics',
-		skiskyting: 'biathlon', langrenn: 'cross-country', alpint: 'alpine',
-		formel: 'f1', f1: 'f1', golf: 'golf', tennis: 'tennis',
-	});
-	return map;
+// Baked-in fallback identical to docs/config/assistant-vocab.json — the SHARED
+// vocabulary iOS bundles too (AssistantVocab.swift). Used when the fetch fails so
+// the assistant degrades to today's behaviour, never breaks.
+const SS_A_VOCAB_DEFAULTS = Object.freeze({
+	sportKeywords: {
+		fotball: 'football', football: 'football', soccer: 'football', golf: 'golf', tennis: 'tennis',
+		sjakk: 'chess', chess: 'chess', sykkel: 'cycling', sykling: 'cycling', landeveissykling: 'cycling', cycling: 'cycling',
+		friidrett: 'athletics', athletics: 'athletics', 'løping': 'athletics',
+		f1: 'f1', formel1: 'f1', formel: 'f1', formula1: 'f1', formula: 'f1',
+		esport: 'esports', esports: 'esports', cs2: 'esports', cs: 'esports', counterstrike: 'esports',
+		skiskyting: 'biathlon', biathlon: 'biathlon', langrenn: 'cross-country', crosscountry: 'cross-country',
+		alpint: 'alpine', alpine: 'alpine', slalam: 'alpine', utfor: 'alpine',
+		hopp: 'ski jumping', skihopp: 'ski jumping', hopprenn: 'ski jumping', kombinert: 'nordic', nordic: 'nordic',
+	},
+	categories: {
+		keywords: { vintersport: 'winter-sports', vintersporter: 'winter-sports', vinteridrett: 'winter-sports', vinteridretter: 'winter-sports' },
+		members: { 'winter-sports': ['biathlon', 'cross-country', 'nordic', 'alpine', 'ski jumping'] },
+		display: { 'winter-sports': 'vintersport' },
+	},
+	presentCues: ['vis', 'filtrer', 'fremhev'],
+	resetWords: ['alt', 'alle', 'igjen', 'allt'],
+	windowTokens: {
+		'this-week': ['uka', 'uken', 'uke'], 'this-weekend': ['helga', 'helgen', 'helg'],
+		tomorrow: ['morgen', 'imorgen'], today: ['dag', 'idag'], tonight: ['kveld', 'ikveld'],
+	},
+});
+
+/** Coalesce a possibly-partial assistant-vocab.json with the baked-in defaults. */
+function ssAssistantVocab(v) {
+	if (!v) return SS_A_VOCAB_DEFAULTS;
+	const d = SS_A_VOCAB_DEFAULTS;
+	return {
+		sportKeywords: v.sportKeywords || d.sportKeywords,
+		categories: v.categories || d.categories,
+		presentCues: v.presentCues || d.presentCues,
+		resetWords: v.resetWords || d.resetWords,
+		windowTokens: v.windowTokens || d.windowTokens,
+	};
 }
 
-/** The [start,end) window for a keyword — today/tomorrow/this-week/this-weekend,
- *  Oslo day-key bounds (mirror AgendaFilterWindow.range). Returns null if none. */
-function ssADetectWindow(tokenSet) {
-	const has = (w) => tokenSet.has(w);
-	if (has('uka') || has('uken') || has('uke')) return 'this-week';
-	if (has('helga') || has('helgen') || has('helg')) return 'this-weekend';
-	if (has('morgen') || has('imorgen')) return 'tomorrow';
-	if (has('dag') || has('idag')) return 'today';
-	if (has('kveld') || has('ikveld')) return 'tonight';
+/** Norwegian keyword → canonical sport tag, from the shared vocabulary. */
+function ssASportKeywords(vocab) {
+	return ssAssistantVocab(vocab).sportKeywords;
+}
+
+/** The named window for a token set — from windowTokens. Returns null if none.
+ *  Order (this-week → tonight) mirrors the web's answer/filter precedence. */
+function ssADetectWindow(tokenSet, vocab) {
+	const wt = ssAssistantVocab(vocab).windowTokens;
+	const hasAny = (list) => (list || []).some((w) => tokenSet.has(w));
+	for (const win of ['this-week', 'this-weekend', 'tomorrow', 'today', 'tonight']) {
+		if (hasAny(wt[win])) return win;
+	}
 	return null;
 }
 
@@ -102,6 +132,9 @@ function ssAssistant(query, ctx) {
 	const events = (ctx && ctx.events) || [];
 	const interests = ctx && ctx.interests;
 	const config = ctx && ctx.config;
+	const vocab = ssAssistantVocab(ctx && ctx.vocab); // shared assistant-vocab.json
+	const presentCues = new Set(vocab.presentCues);
+	const resetWords = new Set(vocab.resetWords);
 	const nowMs = (ctx && ctx.nowMs) || Date.now();
 	const raw = String(query || '').trim();
 	if (!raw) return { kind: 'help', text: 'Spør f.eks. «hva skjer i kveld?» eller «vis golf denne uka».', eventIds: [] };
@@ -122,13 +155,19 @@ function ssAssistant(query, ctx) {
 	}
 
 	// 2. Filter utterance (starts with a present cue).
-	if (tokens[0] && SS_A_PRESENT_CUES.has(tokens[0])) {
-		const sportMap = ssASportKeywords(config);
+	if (tokens[0] && presentCues.has(tokens[0])) {
+		const sportMap = ssASportKeywords(vocab);
+		const catKeywords = vocab.categories.keywords || {};
+		const catMembers = vocab.categories.members || {};
 		const sports = new Set();
-		for (const t of tokens) if (sportMap[t]) sports.add(sportMap[t]);
-		const window = ssADetectWindow(tokenSet);
+		for (const t of tokens) {
+			if (sportMap[t]) sports.add(sportMap[t]);
+			// Umbrella category ("vintersport") → its member sports (WP-64 parity).
+			if (catKeywords[t]) for (const s of catMembers[catKeywords[t]] || []) sports.add(s);
+		}
+		const window = ssADetectWindow(tokenSet, vocab);
 		if (!sports.size && !window) {
-			if (tokens.some((t) => SS_A_RESET_WORDS.has(t))) return { kind: 'reset', text: 'Viser alt igjen.', eventIds: [] };
+			if (tokens.some((t) => resetWords.has(t))) return { kind: 'reset', text: 'Viser alt igjen.', eventIds: [] };
 			return { kind: 'help', text: 'Hva vil du se? Prøv «vis golf» eller «vis i helga».', eventIds: [] };
 		}
 		let list = relevant.filter((e) => (!sports.size || sports.has((e.sport || '').toLowerCase()))
@@ -142,7 +181,7 @@ function ssAssistant(query, ctx) {
 
 	// 3. Question — window or entity.
 	const isQuestion = raw.includes('?') || (tokens[0] && SS_A_QUESTION_WORDS.has(tokens[0])) || tokenSet.has('skjer');
-	const window = ssADetectWindow(tokenSet);
+	const window = ssADetectWindow(tokenSet, vocab);
 	if (window) {
 		const list = relevant.filter((e) => ssAInWindow(e, window, nowMs)).sort(sortByTime);
 		const when = { today: 'I dag', tomorrow: 'I morgen', tonight: 'I kveld', 'this-week': 'Denne uka', 'this-weekend': 'I helga' }[window];

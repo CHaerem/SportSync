@@ -52,6 +52,16 @@ describe("filter utterances", () => {
 	it("«vis alt» → reset", () => {
 		expect(ask("vis alt").kind).toBe("reset");
 	});
+	it("«vis vintersport» expands the umbrella category to its member sports (shared vocab)", () => {
+		const r = ask("vis vintersport");
+		expect(r.kind).toBe("filter");
+		expect(r.filter.sports.sort()).toEqual(["alpine", "biathlon", "cross-country", "nordic", "ski jumping"]);
+	});
+	it("recognises a keyword the old web table lacked (soccer → football)", () => {
+		const r = ask("vis soccer");
+		expect(r.kind).toBe("filter");
+		expect(r.filter.sports).toEqual(["football"]);
+	});
 });
 
 describe("entity next-event", () => {

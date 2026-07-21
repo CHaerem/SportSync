@@ -149,11 +149,11 @@ struct AgendaFilter: Equatable, Sendable {
 /// has no present cue, so this returns nil for it).
 enum AgendaFilterParser {
 
-    /// The words that open a presentation utterance.
-    private static let presentCues: Set<String> = ["vis", "filtrer", "fremhev"]
+    /// The words that open a presentation utterance (shared assistant-vocab.json).
+    private static let presentCues: Set<String> = Set(AssistantVocab.shared.presentCues)
 
     /// Words that mean "clear the filter" (reset to show everything).
-    private static let resetWords: Set<String> = ["alt", "alle", "igjen", "allt"]
+    private static let resetWords: Set<String> = Set(AssistantVocab.shared.resetWords)
 
     static func parse(_ utterance: String, index: EntityIndex) -> AgendaFilter? {
         let tokens = EntityIndex.tokens(utterance)
@@ -201,10 +201,11 @@ enum AgendaFilterParser {
     /// The date window named in the utterance, if any. Reads normalised tokens
     /// («på»→"pa", «uka»→"uka"), so "denne uka"/"i dag"/"i morgen"/"i helga" land.
     static func detectWindow(set: Set<String>) -> AgendaFilterWindow? {
-        if set.contains("uka") || set.contains("uken") || set.contains("uke") { return .thisWeek }
-        if set.contains("helga") || set.contains("helgen") || set.contains("helg") { return .thisWeekend }
-        if set.contains("morgen") || set.contains("imorgen") { return .tomorrow }
-        if set.contains("dag") || set.contains("idag") { return .today }
+        let v = AssistantVocab.shared // shared window tokens (iOS ignores web's 'tonight')
+        if !set.isDisjoint(with: v.tokens(for: "this-week")) { return .thisWeek }
+        if !set.isDisjoint(with: v.tokens(for: "this-weekend")) { return .thisWeekend }
+        if !set.isDisjoint(with: v.tokens(for: "tomorrow")) { return .tomorrow }
+        if !set.isDisjoint(with: v.tokens(for: "today")) { return .today }
         return nil
     }
 }
