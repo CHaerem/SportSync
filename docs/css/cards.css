@@ -308,7 +308,9 @@
 /* Once following: the whole row goes quiet, the label reads "Følger" in fg-3. */
 .fs-result.is-following .fs-follow { color: var(--fg-3); }
 .fs-empty { font-size: 13px; color: var(--fg-3); font-style: italic; padding: 10px 0 2px; }
-.fs-empty a { color: var(--accent); font-style: normal; }
+.fs-empty a, .fs-request { color: var(--accent); font-style: normal; }
+/* WP-165: the calm coverage-request note under a search miss — quiet, one line. */
+.fs-request-note { font-size: 11.5px; color: var(--fg-3); font-style: italic; padding: 2px 0 4px; }
 .chip-group { margin-bottom: 14px; }
 .chip-group-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-3); margin-bottom: 6px; }
 /* Tournaments read as a quiet dot-separated line, not pills. */

@@ -23,7 +23,12 @@ matter to a Norwegian sports fan that are NOT in the static data feeds**.
   a followed sport in the news but missing/not-imminent on the board — note
   `imminent` and `kind: "sport"`) and `anomalies[]` (a fetcher's own data looks
   unreliable). **Triage these first** — each is a potential missed event (recall
-  failures are the worst failure mode). Noise is expected; dismiss fast.
+  failures are the worst failure mode). Noise is expected; dismiss fast. This file
+  may also carry `demand[]` (WP-165) — distinct entities users **publicly asked us to
+  cover** via `coverage-request` issues, each `{ entity, sport, count, issues }`
+  (anonymous name+sport only, no profile data). This is real demand from outside the
+  catalog — **treat a high `count` as strong evidence to widen coverage** (see Step
+  2.6). The field is absent when the signal couldn't be read; don't assume zero.
 - `docs/data/coverage-audit.json` — the coverage-critic's reasoned recall audit.
   Its `gaps[]` (esp. `severity: "high"`) are events it believes we're MISSING,
   each with a `suggestedSource`. **Treat high-severity gaps as priority work** —
@@ -171,6 +176,17 @@ broad server coverage is safe. Look for:
   classic, a team on a European run;
 - a one-off a broad sports fan would care about (a championship, a debut, a record
   attempt) adjacent to what we already cover.
+
+**Prioritise demand (WP-165).** Before the open-ended scan above, read
+`coverage-gaps.json`'s `demand[]` (if present): these are entities users **publicly
+asked us to cover** (`coverage-request` issues), ordered by request `count`. Real,
+outside-the-catalog demand is the strongest breadth signal there is — a soft-follow
+that would otherwise sit «fulgt men dødt» forever. For each demand entry, decide
+exactly as you would any candidate: if it's in-scope, sourceable and defensible,
+promote it to `catalog.json` in the right tier as part of the Step 4 rewrite (and
+start covering its events); if it's out of scope (inside `neverCover`, unsourceable,
+spam), leave the catalog unchanged. **You never auto-add** — catalog expansion stays
+your deliberate, cost-aware decision; demand only tells you WHERE the interest is.
 
 You already own the catalog rewrite (Step 4 rewrites `catalog.json` and
 `tracked.json`), so when a candidate is clearly in-scope and defensible, ADD it to

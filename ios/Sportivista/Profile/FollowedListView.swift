@@ -258,6 +258,9 @@ struct FollowDetailView: View {
                         ForEach(nameSuggestions, id: \.id) { suggestion in
                             suggestionRow(suggestion)
                         }
+                        // WP-165: let the user signal the demand so the server learns
+                        // this is wanted — a soft-follow isn't «fulgt men dødt for alltid».
+                        CoverageRequestLink(name: rule.entityName, sport: rule.sport.isEmpty ? nil : rule.sport)
                     } header: {
                         groupHeader("VENTER PÅ DEKNING")
                     } footer: {
