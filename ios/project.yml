@@ -66,6 +66,10 @@ targets:
       # (Feed/); change a value in that one file and both platforms follow.
       - path: ../docs/config/lens-config.json
         buildPhase: resources
+      # The SHARED assistant vocabulary (docs/config/assistant-vocab.json) —
+      # AssistantVocab.swift decodes it. NOT in the widget (no assistant there).
+      - path: ../docs/config/assistant-vocab.json
+        buildPhase: resources
     info:
       path: Sportivista/Info.plist
       properties:
@@ -293,6 +297,10 @@ targets:
       # and FeedVectorTests prove the extraction is byte-identical to the old
       # hard-coded constants.
       - path: ../docs/config/lens-config.json
+        buildPhase: resources
+      # Shared assistant vocabulary — AssistantVocab resolves it in the test bundle;
+      # AgendaFilterTests/EvalCorpusTests prove the extraction changed nothing.
+      - path: ../docs/config/assistant-vocab.json
         buildPhase: resources
     resources:
       - path: SportivistaTests/Fixtures

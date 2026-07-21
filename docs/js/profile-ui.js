@@ -74,7 +74,7 @@ Object.assign(window.Dashboard.prototype, {
 		const run = () => {
 			const q = input.value.trim();
 			if (!q) { results.hidden = true; results.innerHTML = ''; return; }
-			const r = ssAssistant(q, { events: this.allEvents || [], interests: this.interests, config: this.lensConfig, nowMs: Date.now() });
+			const r = ssAssistant(q, { events: this.allEvents || [], interests: this.interests, config: this.lensConfig, vocab: this.assistantVocab, nowMs: Date.now() });
 			const rows = (r.eventIds || [])
 				.map((id) => (this._eventById && this._eventById.get(id)) || (this.allEvents || []).find((e) => e.id === id))
 				.filter(Boolean);

@@ -1,0 +1,40 @@
+{
+	"_readme": "SHARED assistant vocabulary — the single source read by BOTH the web (docs/js/assistant.js) and iOS (Assistant/AssistantVocab.swift, bundled via project.yml into the app + test targets, mirroring LensConfig). Change a keyword HERE and both platforms follow. This closes a real drift: iOS SportVocabulary was richer than the web's inline table. Values are the reconciled SUPERSET; keep them identical to what SportVocabulary (EntityIndex.swift) + AgendaFilterParser (AgendaFilter.swift) pinned. NOTE: the iOS AgendaFilterWindow enum has NO 'tonight' window, so iOS reads only today/tomorrow/this-week/this-weekend from windowTokens; 'tonight' is web-only (its answer path). Follow/question parsing stays per-platform (structurally different) and is NOT here.",
+	"version": 1,
+	"sportKeywords": {
+		"fotball": "football", "football": "football", "soccer": "football",
+		"golf": "golf",
+		"tennis": "tennis",
+		"sjakk": "chess", "chess": "chess",
+		"sykkel": "cycling", "sykling": "cycling", "landeveissykling": "cycling", "cycling": "cycling",
+		"friidrett": "athletics", "athletics": "athletics", "løping": "athletics",
+		"f1": "f1", "formel1": "f1", "formel": "f1", "formula1": "f1", "formula": "f1",
+		"esport": "esports", "esports": "esports", "cs2": "esports", "cs": "esports", "counterstrike": "esports",
+		"skiskyting": "biathlon", "biathlon": "biathlon",
+		"langrenn": "cross-country", "crosscountry": "cross-country",
+		"alpint": "alpine", "alpine": "alpine", "slalam": "alpine", "utfor": "alpine",
+		"hopp": "ski jumping", "skihopp": "ski jumping", "hopprenn": "ski jumping",
+		"kombinert": "nordic", "nordic": "nordic"
+	},
+	"categories": {
+		"keywords": {
+			"vintersport": "winter-sports", "vintersporter": "winter-sports",
+			"vinteridrett": "winter-sports", "vinteridretter": "winter-sports"
+		},
+		"members": {
+			"winter-sports": ["biathlon", "cross-country", "nordic", "alpine", "ski jumping"]
+		},
+		"display": {
+			"winter-sports": "vintersport"
+		}
+	},
+	"presentCues": ["vis", "filtrer", "fremhev"],
+	"resetWords": ["alt", "alle", "igjen", "allt"],
+	"windowTokens": {
+		"this-week": ["uka", "uken", "uke"],
+		"this-weekend": ["helga", "helgen", "helg"],
+		"tomorrow": ["morgen", "imorgen"],
+		"today": ["dag", "idag"],
+		"tonight": ["kveld", "ikveld"]
+	}
+}

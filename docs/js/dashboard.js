@@ -92,6 +92,9 @@ class Dashboard {
 		// iOS bundles. Passed to lens.js; a fetch failure → lens.js's baked-in
 		// defaults (byte-identical), so the board never breaks on a missing config.
 		this.lensConfig = await fetch('config/lens-config.json').then((r) => (r.ok ? r.json() : null)).catch(() => null);
+		// Shared assistant vocabulary (docs/config/assistant-vocab.json) — the SAME
+		// file iOS bundles. A fetch failure → assistant.js's baked-in defaults.
+		this.assistantVocab = await fetch('config/assistant-vocab.json').then((r) => (r.ok ? r.json() : null)).catch(() => null);
 		// The personal profile makes the board YOURS: a stored follow list
 		// (localStorage, synced via QR/iCloud) drives the accents, "dine lag og
 		// utøvere", and why-shown. An EMPTY profile == today's catalog-wide board,
