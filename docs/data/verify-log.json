@@ -1,13 +1,17 @@
 {
-  "runAt": "2026-07-20T08:22:52.000Z",
-  "checked": 2,
+  "runAt": "2026-07-21T07:47:58.000Z",
+  "checked": 5,
   "confirmed": 2,
-  "amended": 0,
+  "amended": 3,
   "removed": 0,
   "notes": [
-    "StarSeries Fall EU-kvalik: 100 Thieves–Ninjas in Pyjamas (Gruppe D, Bo3) bekreftet til 22.07 kl. 15.00 CEST (13.00 UTC) mot HLTV + Liquipedia — tid og motstander stemmer med brettet. Kvalifiseringen 22.–26.07, gratis StarLadder-strøm (Kick/Twitch). Status confirmed.",
-    "3M Open (TPC Twin Cities, Blaine MN): Kristoffer Ventura bekreftet i feltet (pgatour.com «Inside the Field», 19.07) som eneste nordmann; konkurranserunder 23.–26.07 bekreftet mot 3mopen.com. Norsk visning HBO Max (Sport)/Eurosport (WBD-rettigheter, per norwegian-rights + tidligere Corales-verifisering). Eksakte tee-tider ennå ikke publisert. Status confirmed.",
-    "Resten av 7-dagersvinduet (TdF etapper 16–20, NM friidrett, Strømsgodset–Lyn, BLAST Bounty S2) ble verifisert 19.07 og står uendret. Etappe 21 (Paris, 26.07) og AWS Hungarian GP (26.07, ESPN-static, venue TBD) beholdt uendret — start/venue ennå anslått, ikke oppfunnet.",
-    "Ingen events fjernet. 4 kilder logget til calibration-ledger."
+    "RETTIGHETSFEIL RETTET (viktigst): Branns to Conference League-kvalikkamper mot Universitatea Cluj (borte 23.07, hjemme 30.07) hadde streaming «TV 2 Play», men Conference League i Norge vises på VIAPLAY. To uavhengige kilder bekrefter: Viaplay har både Europa League og Conference League t.o.m. sommeren 2031, mens TV 2 kun har Champions League (t.o.m. 2026/27, fornyet til 2031) — nettavisen.no (5-95-3010868) + VG (rampelys/9pBV8M). Begge kampene endret til Viaplay (https://viaplay.no). Summary-teksten sa allerede Viaplay; det strukturerte feltet lå etter. Status amended.",
+    "U Cluj–Brann (23.07): avspark bekreftet kl. 20:00 lokal (EEST) = 17:00 UTC — stemmer med brettet. Kampen spilles på Sepsi OSK Arena i Sfântu Gheorghe (flyttet fra Cluj Arena pga. Untold-festivalen), venue allerede riktig. Kilde digisport.ro + fcucluj.ro. Returkamp 30.07 Brann Stadion, Bergen.",
+    "Ungarns Grand Prix – kvalifisering (25.07): tid bekreftet lør. 25.07 kl. 16:00 CEST (14:00 UTC) på Hungaroring mot racingnews365.com + skysports.com. Normal helg uten sprint (FP1–FP3 + kvalik); race søn. 26.07 kl. 15:00 CEST. Viaplay-visning korrekt. Status confirmed.",
+    "TdF etappe 21 (Thoiry–Paris, 26.07): TID KORRIGERT. Brettet hadde start 15:00 CEST (13:00 UTC, «anslått»); offisiell rutetid er reell start 16:15 CEST (14:15 UTC), forventet mål ~19:40 CEST (17:40 UTC), 133 km med tre runder over Côte de la Butte Montmartre før spurten. Kilde cyclingstage.com (offisiell etappeside) + nbcsports.com. time→14:15Z, endTime→17:40Z, summary oppdatert. Status amended.",
+    "BLAST Bounty S2 100 Thieves–Falcons (22.07): re-bekreftet kl. 19:30 CEST (17:30 UTC) fortsatt berammet mot hltv.org kampside. Uendret (allerede confirmed 19.07). StarSeries-kvalik 100T–NiP (22.07 13:00 UTC) sto verifisert 20.07 og er uendret.",
+    "TdF etapper 16–20, NM friidrett, Strømsgodset–Lyn ble verifisert 19.07 og står uendret. AWS Hungarian GP (26.07, ESPN-static, venue TBD) beholdt uendret — venue ennå anslått, ikke oppfunnet.",
+    "SKILL-OPPDATERING BLOKKERT AV TILLATELSE i denne økten: forsøkte å rette linjen «Champions League / Europa League → TV 2 Play [solid]» i .claude/skills/norwegian-rights/SKILL.md (skulle splittes til CL→TV 2, EL+ECL→Viaplay). Edit-verktøyet returnerte literal feiltekst: «Claude requested permissions to write to .../norwegian-rights/SKILL.md, but you haven't granted it yet.» Dette er en harness-tillatelsesport i denne økten, IKKE CI-blokken (WP-91-legenden) — event-rettelsene og kalibreringsloggen gikk gjennom uhindret. Kartkorreksjonen bør committes manuelt/i neste CI-kjøring: EL+ECL = Viaplay, CL = TV 2.",
+    "Ingen events fjernet. 5 kilder logget til calibration-ledger (2 boardWasProvisional: nettavisen-rettighet + cyclingstage-etappetid korrigerte provisoriske brettverdier)."
   ]
 }
