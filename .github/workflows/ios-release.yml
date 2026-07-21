@@ -147,25 +147,28 @@ jobs:
           ASC_PRIVATE_KEY: ${{ secrets.ASC_PRIVATE_KEY }}
         run: node scripts/prune-signing-certs.js
 
-      - name: Arkiver (Release, cloud-signert)
-        working-directory: ios
+      # Arkiver + eksporter + last opp i ÉN selv-helende operasjon (WP-151): ASC
+      # registrerer en fersk opplasting med treghet (eventual consistency), så to tette
+      # kjøringer (auto-CD + en dispatch, eller to merges i en byge) kan hente SAMME
+      # byggnummer i steget «Neste byggnummer» over → den andre feiler i eksport med
+      # «The bundle version must be higher than the previously uploaded version: 'N'»
+      # (exit 70). Orkestratoren fanger den feilen, bumper til N+1 og RE-ARKIVERER
+      # (arkivet baker inn CFBundleVersion ved arkivering — manageAppVersionAndBuildNumber
+      # er false — så nummeret MÅ settes på nytt der; re-eksport alene holder ikke) og
+      # re-eksporterer, opptil TF_MAX_ATTEMPTS ganger med økende nummer. Det FAKTISK
+      # opplastede nummeret skrives til $GITHUB_OUTPUT (build=) og brukes av «Registrer
+      # opplastingen» under. Feiler HØYLYTT hvis alle forsøk er brukt opp (ekte problem,
+      # ikke et race) — concurrency serialiserer kjøringene, men beskytter ikke mot ASCs
+      # treghet, så retryen er selve fiksen. macOS er gratis på repoet ⇒ re-arkivering ok.
+      - name: Arkiver + eksporter + last opp (selv-heler byggnummer-race)
+        id: upload
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          TF_BUILD: ${{ steps.build.outputs.build }}
         run: |
           set -o pipefail
-          xcodebuild -project Sportivista.xcodeproj -scheme SportivistaDeviceDev \
-            -destination 'generic/platform=iOS' -archivePath build/Sportivista.xcarchive \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.ASC_KEY_ID }}.p8 \
-            -authenticationKeyID "${{ secrets.ASC_KEY_ID }}" \
-            -authenticationKeyIssuerID "${{ secrets.ASC_ISSUER_ID }}" \
-            CURRENT_PROJECT_VERSION="${{ steps.build.outputs.build }}" \
-            archive | grep -E "ARCHIVE (SUCCEEDED|FAILED)|error:" || true
-          test -d build/Sportivista.xcarchive
-
-      - name: Eksporter + last opp til App Store Connect
-        working-directory: ios
-        run: |
-          set -o pipefail
-          cat > export-options.plist <<'EOF'
+          cat > ios/export-options.plist <<'EOF'
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0">
@@ -179,22 +182,19 @@ jobs:
           </dict>
           </plist>
           EOF
-          xcodebuild -exportArchive -archivePath build/Sportivista.xcarchive \
-            -exportOptionsPlist export-options.plist \
-            -allowProvisioningUpdates \
-            -authenticationKeyPath ~/.appstoreconnect/private_keys/AuthKey_${{ secrets.ASC_KEY_ID }}.p8 \
-            -authenticationKeyID "${{ secrets.ASC_KEY_ID }}" \
-            -authenticationKeyIssuerID "${{ secrets.ASC_ISSUER_ID }}" \
-            | grep -E "EXPORT (SUCCEEDED|FAILED)|Upload succeeded|error" | sort -u
+          node scripts/testflight-upload.js
 
       - name: Registrer opplastingen (app-version-kontrakten)
         run: |
+          # NB: byggnummeret her er det FAKTISK opplastede (steps.upload), ikke det
+          # opprinnelig hentede (steps.build) — det kan ha blitt bumpet ved en
+          # byggnummer-kollisjon i steget over. Recorden må matche det ASC faktisk fikk.
           VERSION=$(grep -m1 'MARKETING_VERSION' ios/project.yml | sed 's/[^0-9.]//g')
-          node scripts/record-testflight.js "${{ steps.build.outputs.build }}" "$VERSION"
+          node scripts/record-testflight.js "${{ steps.upload.outputs.build }}" "$VERSION"
           git config user.name "sportivista-release"
           git config user.email "actions@github.com"
           git add scripts/config/testflight.json
-          git commit -m "testflight: registrer bygg $VERSION (${{ steps.build.outputs.build }}) [via release-lanen]"
+          git commit -m "testflight: registrer bygg $VERSION (${{ steps.upload.outputs.build }}) [via release-lanen]"
           # Samme rebase-retry som static-pipeline: en samtidig datacommit på
           # main skal ikke felle en ellers vellykket opplasting (bitt av
           # branch-protection-varianten 19.07 — bygget var oppe, recorden røk).
@@ -204,7 +204,7 @@ jobs:
             echo "push avvist — rebaser mot main (forsøk $attempt)"
             git pull --rebase origin main || { git rebase --abort || true; }
           done
-          [ -n "$pushed" ] || { echo "::error::fikk ikke pushet testflight-recorden etter 5 forsøk — kjør scripts/record-testflight.js ${{ steps.build.outputs.build }} $VERSION lokalt"; exit 1; }
+          [ -n "$pushed" ] || { echo "::error::fikk ikke pushet testflight-recorden etter 5 forsøk — kjør scripts/record-testflight.js ${{ steps.upload.outputs.build }} $VERSION lokalt"; exit 1; }
 
       - name: Kick den statiske pipelinen (publiser app-version.json)
         env:
