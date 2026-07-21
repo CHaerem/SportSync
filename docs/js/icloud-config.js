@@ -16,7 +16,10 @@
 
 window.SPORTIVISTA_ICLOUD = {
 	containerIdentifier: 'iCloud.app.sportivista.ios',
-	apiToken: '', // <-- paste the origin-restricted web token to turn iCloud sync ON
-	environment: 'production', // 'development' while testing against a Debug device build
+	// Origin-restricted Development web token (sportivista.com + chaerem.github.io).
+	// Public + origin-locked → safe to commit. Swap for a Production token (and set
+	// environment:'production') once the schema is deployed to Production.
+	apiToken: 'e6bf806bb7dd49e9c4519fca24e2714d747b0b102ed36aac61c20282a746c10d',
+	environment: 'development', // matches where the schema currently lives
 	zoneName: 'SportivistaProfile',
 };
