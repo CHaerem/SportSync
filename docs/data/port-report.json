@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-07-20T22:35:49.466Z",
+  "generatedAt": "2026-07-21T07:31:07.517Z",
   "windowDays": 14,
   "ports": {
-    "coverage": "red",
+    "coverage": "green",
     "amendRate": "green",
     "silentStops": "yellow",
     "participantStatus": "green"
@@ -19,39 +19,17 @@
     ]
   },
   "coverage": {
-    "openGaps": 3,
+    "openGaps": 0,
     "bySeverity": {
-      "high": 1,
-      "medium": 2,
+      "high": 0,
+      "medium": 0,
       "low": 0
     },
-    "oldestGapAgeDays": 3.69,
-    "escalatable": 1,
-    "catalogMatched": 3,
-    "auditedAt": "2026-07-20T06:46:45Z",
-    "gaps": [
-      {
-        "interest": "Sykkel — Tour de France Femmes 2026 (Grand Tour, tier1 wholesale)",
-        "severity": "high",
-        "ageDays": 0.66,
-        "recurrences": 0,
-        "catalogMatched": true
-      },
-      {
-        "interest": "Sjakk — Grand Chess Tour, Saint Louis-leiren (Saint Louis Rapid & Blitz + Sinquefield Cup)",
-        "severity": "medium",
-        "ageDays": 0.66,
-        "recurrences": 0,
-        "catalogMatched": true
-      },
-      {
-        "interest": "F1 hele sesongen — kvalifisering + race",
-        "severity": "medium",
-        "ageDays": 3.69,
-        "recurrences": 3,
-        "catalogMatched": true
-      }
-    ]
+    "oldestGapAgeDays": null,
+    "escalatable": 0,
+    "catalogMatched": 0,
+    "auditedAt": "2026-07-21T06:29:11Z",
+    "gaps": []
   },
   "amendRate": {
     "nearTermRate": 0,
@@ -59,17 +37,10 @@
     "nearTermAmended": 0,
     "verifyRunAt": "2026-07-20T08:22:52.000Z",
     "windowRate": 0.22,
-    "windowChecks": 59,
-    "windowAmendments": 13,
+    "windowChecks": 55,
+    "windowAmendments": 12,
     "windowCorrections": 0,
     "byDay": [
-      {
-        "date": "2026-07-07",
-        "checks": 4,
-        "amendments": 1,
-        "corrections": 0,
-        "rate": 0.25
-      },
       {
         "date": "2026-07-08",
         "checks": 4,
@@ -165,26 +136,26 @@
   },
   "silentStops": {
     "buildOk": true,
-    "buildCheckedAt": "2026-07-20T22:35:49.392Z",
+    "buildCheckedAt": "2026-07-21T07:31:07.443Z",
     "buildAgeHours": 0,
-    "manifestGeneratedAt": "2026-07-20T21:09:14.667Z",
-    "manifestAgeHours": 1.44,
+    "manifestGeneratedAt": "2026-07-20T22:35:50.732Z",
+    "manifestAgeHours": 8.92,
     "staleFiles": [
       {
         "file": "football.json",
         "sourceLastUpdated": "2026-07-19T17:56:30.377Z",
-        "ageHours": 28.66
+        "ageHours": 37.58
       },
       {
         "file": "golf.json",
         "sourceLastUpdated": "2026-07-19T17:56:23.192Z",
-        "ageHours": 28.66
+        "ageHours": 37.58
       }
     ]
   },
   "participantStatus": {
     "checkedAt": "2026-07-20T08:22:52.000Z",
-    "verifyAgeHours": 14.22,
+    "verifyAgeHours": 23.14,
     "corrections": 0,
     "unresolved": 0,
     "signals": []
