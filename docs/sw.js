@@ -1,5 +1,5 @@
 // Sportivista v2 Service Worker — fresh data always, network-first shell
-const CACHE_NAME = 'sportivista-v1-8';
+const CACHE_NAME = 'sportivista-v1-9';
 const DATA_PATH_FRAGMENT = '/data/';
 
 const SHELL_FILES = [
@@ -29,6 +29,7 @@ const SHELL_FILES = [
     '/js/edit.js',
     '/js/icloud-config.js',
     '/js/icloud-sync.js',
+    '/js/gate-boot.js',
     '/activity.html',
     '/styleguide.html'
 ];
