@@ -240,7 +240,10 @@ struct AssistantResultThread: View {
         var parts = [SportVocabulary.display(for: mutation.entity.sport)]
         if let scope = mutation.scope, !scope.isEmpty { parts.append(scope) }
         if mutation.kind != .remove, !mutation.lens.isDefault { parts.append(mutation.lens.label) }
-        if mutation.kind != .remove { parts.append("vekt \(weightLabel(mutation.weight))") }
+        // WP-147: the internal relevance `weight` is engine jargon, not user copy —
+        // "vekt 0.8" leaked into the diff subtitle while the onboarding diff already
+        // omitted it (inconsistent). Dropped from the user-facing text; the value
+        // still drives ranking, it's just no longer shown.
         return parts.joined(separator: " · ")
     }
 
@@ -329,10 +332,6 @@ struct AssistantResultThread: View {
         case .update: return SportivistaTokens.accent
         case .remove: return SportivistaTokens.destructive
         }
-    }
-
-    private func weightLabel(_ weight: Double) -> String {
-        String(format: "%.1f", weight)
     }
 }
 
