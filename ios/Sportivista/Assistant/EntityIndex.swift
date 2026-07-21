@@ -76,9 +76,27 @@ struct EntityIndex: Sendable {
     /// exact match its clear lead (see the proof on `servedEntity`).
     private let initialsIds: [String: [String]]
 
+    /// WP-166 — each entity id → its position in the source-priority-ordered
+    /// index. `build-entities.js` folds its sources in a deliberate order
+    /// ("insertion order = source priority": tracked.json → norwegian-golfers →
+    /// sports-config → catalog tier2 → sport/category), so a lower position marks
+    /// a more "core" entity: a tracked / tier1 flagship over the tier2 long-tail.
+    /// It is the curated, deterministic tie-break both `representativeEntity` and
+    /// `search` use when a type-rank or match-score tie would otherwise fall back
+    /// to alphabetical name — the reason "Tour de France" (tracked) represents
+    /// cycling rather than "Arctic Race of Norway" (tier2), and the reason a
+    /// whole-sport search keeps the flagship in its top-N instead of flooding
+    /// with the alphabetically-earliest long-tail. First-occurrence wins, matching
+    /// `byId`'s de-dup.
+    private let sourceRank: [String: Int]
+
     init(_ entities: [Entity]) {
         self.entities = entities
         self.byId = Dictionary(entities.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        var rankMap: [String: Int] = [:]
+        rankMap.reserveCapacity(entities.count)
+        for (i, e) in entities.enumerated() where rankMap[e.id] == nil { rankMap[e.id] = i }
+        self.sourceRank = rankMap
 
         // Build the WP-61 exact/initials maps with EXACTLY the normalization
         // `matchScore` applies, so a fast-path hit is byte-identical to what the
@@ -259,6 +277,15 @@ struct EntityIndex: Sendable {
             .sorted { lhs, rhs in
                 let a = scoreById[lhs.id] ?? 0, b = scoreById[rhs.id] ?? 0
                 if a != b { return a > b }
+                // WP-166: equal scores break by curated source priority, not by
+                // name. The whole-sport keyword expansion gives every entity of a
+                // sport the SAME score, so a bare "sykkel"/"tennis" used to sort
+                // that large tie alphabetically and flood the top-N with the
+                // earliest long-tail — pushing the flagship (e.g. Tour de France)
+                // out. Ranking the tie by source position keeps tracked/tier1
+                // flagships in the top-N with a stable, deterministic order.
+                let ra = sourceRank[lhs.id] ?? .max, rb = sourceRank[rhs.id] ?? .max
+                if ra != rb { return ra < rb }
                 return lhs.name < rhs.name
             }
             .prefix(limit)
@@ -380,11 +407,14 @@ struct EntityIndex: Sendable {
     /// (`containsName`), or (2) every significant token of the name (years and
     /// parenthetical qualifiers dropped) is present — so a year-suffixed
     /// tournament name like "Tour de France 2026" still matches "Tour de
-    /// France". Only the highest-confidence tier is returned, so a scope phrase
-    /// ("i OBOS-ligaen") never competes with the real target ("Lyn").
+    /// France". Only the highest-confidence tier is returned. WP-166 adds two
+    /// full-long-tail guards: a bare sport-word term is ignored (a whole-sport
+    /// signal, not a target), and a co-mentioned competition drops out when a
+    /// specific team/athlete is present — so a scope phrase ("i OBOS-ligaen")
+    /// never competes with the real target ("Lyn").
     func detectEntities(in utterance: String) -> [Entity] {
         let hayTokens = Set(Self.tokens(utterance))
-        var scored: [(Entity, Int)] = []
+        var scored: [(entity: Entity, score: Int)] = []
         for e in entities {
             // WP-64: sport-/category-level entities are NOT matched as explicit
             // targets here — a whole-sport command ("mer langrenn") routes
@@ -394,24 +424,56 @@ struct EntityIndex: Sendable {
             if e.type == "sport" || e.type == "category" { continue }
             var score = 0
             for term in [e.name] + e.aliases {
+                // WP-166: a term that is nothing but bare sport vocabulary ("F1",
+                // "Formel 1") is a WHOLE-SPORT signal, not an explicit target — it
+                // routes through sportKeyword → the sport-level entity. So a
+                // tournament aliased with the sport's own abbreviation
+                // (f1-world-championship-2026 ↔ "F1") never steals "litt F1" from
+                // sport-f1. The entity's real, descriptive NAME still matches.
+                if Self.isBareSportWord(term) { continue }
                 if TextMatch.containsName(utterance, term) { score = max(score, 3) }
                 let sig = Set(Self.significantTokens(term))
                 if !sig.isEmpty, sig.isSubset(of: hayTokens) { score = max(score, 2) }
             }
             if score > 0 { scored.append((e, score)) }
         }
-        guard let best = scored.map(\.1).max() else { return [] }
+        guard let best = scored.map(\.score).max() else { return [] }
+        var winners = scored.filter { $0.score == best }.map(\.entity)
+        // WP-166: within ONE clause a specific team/athlete is the follow-target
+        // and a co-mentioned competition (league/tournament) is its SCOPE — "Lyn i
+        // OBOS-ligaen" follows Lyn, not the 1. divisjon. So when a team/athlete is
+        // present at the top tier, the competition drops out. A competition named
+        // ALONE (no team/athlete) stays a legitimate target ("Følg Tour de
+        // France"); clause-splitting already separates a genuine multi-follow
+        // ("Barcelona og La Liga") into its own clauses before this runs.
+        if winners.contains(where: { $0.type == "team" || $0.type == "athlete" }) {
+            winners.removeAll { $0.type == "league" || $0.type == "tournament" }
+        }
         var seen = Set<String>()
-        return scored
-            .filter { $0.1 == best }
-            .map { $0.0 }
-            .filter { seen.insert($0.id).inserted }
-            .sorted { $0.name < $1.name }
+        return winners.filter { seen.insert($0.id).inserted }.sorted { $0.name < $1.name }
+    }
+
+    /// WP-166: is a name/alias term nothing but bare sport vocabulary — "F1",
+    /// "Formel 1", "Formula 1" — i.e. every ALPHABETIC token is a sport keyword?
+    /// Such a term is a whole-sport signal (it routes through `sportKeyword`), not
+    /// an explicit-target one, so `detectEntities` ignores it: a tournament aliased
+    /// with the sport's own abbreviation never out-competes the sport-level entity
+    /// for a bare "litt F1". A full name like "Formula 1 World Championship" keeps
+    /// non-keyword tokens ("world", "championship"), so it is NOT bare and still
+    /// matches normally.
+    static func isBareSportWord(_ term: String) -> Bool {
+        let alpha = tokens(term).filter { $0.contains(where: \.isLetter) }
+        guard !alpha.isEmpty else { return false }
+        return alpha.allSatisfy { SportVocabulary.keywordToSport[$0] != nil }
     }
 
     /// A representative entity for a whole-sport command ("mer sykkel", "slutt
     /// med tennis"). Prefers one already in the profile; otherwise the most
-    /// "headline" entity of that sport (tournament > team > athlete > league).
+    /// "headline" entity of that sport (tournament > team > athlete > league),
+    /// and within one type the curated source priority (WP-166) — so a tracked /
+    /// tier1 flagship wins the long-tail. "Tour de France" (tracked, low source
+    /// position) represents cycling, not "Arctic Race of Norway" (tier2), even
+    /// though both are tournaments and Arctic Race sorts first alphabetically.
     func representativeEntity(forSport sport: String, preferredIn profile: InterestProfile) -> Entity? {
         if let rule = profile.rules.first(where: { $0.sport == sport }), let e = entity(id: rule.entityId) {
             return e
@@ -422,6 +484,8 @@ struct EntityIndex: Sendable {
             .sorted { lhs, rhs in
                 let a = rank[lhs.type] ?? 9, b = rank[rhs.type] ?? 9
                 if a != b { return a < b }
+                let ra = sourceRank[lhs.id] ?? .max, rb = sourceRank[rhs.id] ?? .max
+                if ra != rb { return ra < rb }
                 return lhs.name < rhs.name
             }
             .first

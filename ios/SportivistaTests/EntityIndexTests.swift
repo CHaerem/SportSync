@@ -73,6 +73,73 @@ final class EntityIndexTests: XCTestCase {
         )
     }
 
+    // MARK: - WP-166: curated source priority over the tier2 long-tail
+
+    func test_representativeEntity_curatedSourcePriority_flagshipBeatsLongTail() {
+        // With the full long-tail in the index, "Arctic Race of Norway" is a real
+        // tier2 cycling tournament that sorts BEFORE "Tour de France" by name — so
+        // an alphabetical tie-break would flip the representative to it. Source
+        // priority (build-entities' fold order) keeps the tracked flagship.
+        XCTAssertNotNil(index.entity(id: "arctic-race-of-norway-2026"),
+                        "the tier2 long-tail tournament is present in the full index")
+        XCTAssertEqual(
+            index.representativeEntity(forSport: "cycling", preferredIn: InterestProfile())?.id,
+            "tour-de-france-2026",
+            "the tracked flagship represents cycling, not the alphabetically-first tier2 entry"
+        )
+    }
+
+    func test_representativeEntity_entityGatedSport_fallsBackToTrackedFlagship() {
+        // chess is NOT in catalog.tier1, so the product publishes NO sport-chess
+        // entity — a bare "sjakk" cannot ground to a whole-sport entity. The
+        // representative then falls back to the sport's most-headline entity, and
+        // source priority makes that the tracked/current tournament (grand-chess-
+        // tour-saint-louis-2026) rather than an alphabetically-earlier tier2 one.
+        XCTAssertNil(index.entity(id: "sport-chess"), "chess is entity-gated — no sport-level entity")
+        let rep = index.representativeEntity(forSport: "chess", preferredIn: InterestProfile())
+        XCTAssertEqual(rep?.id, "grand-chess-tour-saint-louis-2026")
+        XCTAssertEqual(rep?.type, "tournament")
+    }
+
+    func test_search_wholeSportKeyword_keepsFlagshipInTopN() {
+        // A bare sport word expands EVERY entity of that sport to the same score;
+        // an alphabetical tie-break floods the top-N with the earliest long-tail
+        // and drops the flagship. Source priority keeps it in the default top-N…
+        let sykkel = index.search("sykkel").map(\.id)
+        XCTAssertTrue(sykkel.contains("tour-de-france-2026"),
+                      "the flagship survives the top-N of a large sport match set")
+        // …and ranks the tracked flagship ahead of the tier2 long-tail entry.
+        let ranked = index.search("sykkel", limit: 100).map(\.id)
+        let tdf = try? XCTUnwrap(ranked.firstIndex(of: "tour-de-france-2026"))
+        let arctic = try? XCTUnwrap(ranked.firstIndex(of: "arctic-race-of-norway-2026"))
+        if let tdf, let arctic {
+            XCTAssertLessThan(tdf, arctic, "the tracked flagship ranks ahead of the tier2 long-tail")
+        }
+    }
+
+    func test_search_exactAndPrefixRankAheadOfSubstring() {
+        // WP-166 (2): a prefix match beats a mere trailing-word/substring match.
+        // "Masters" is a prefix of "Masters Tournament" (the golf major) but only
+        // a trailing word in "Monte-Carlo Masters" — the prefix hit ranks first.
+        let masters = index.search("masters").map(\.id)
+        let major = masters.firstIndex(of: "masters-tournament")
+        let wordHit = masters.firstIndex(of: "monte-carlo-masters")
+        XCTAssertNotNil(major, "the prefix-matching golf major is in the results")
+        if let major, let wordHit {
+            XCTAssertLessThan(major, wordHit, "prefix match ranks ahead of a trailing-word match")
+        }
+    }
+
+    func test_detectEntities_nowCoversLongTailClub() {
+        // WP-160 folded the catalog long-tail in, so "Brann" is now a real,
+        // covered team — detection SHOULD find it (older WP-65 tests used it as an
+        // 'unknown' example; that is no longer correct). A club still outside
+        // coverage ("Skeid") stays undetected.
+        XCTAssertEqual(index.detectEntities(in: "Følg Brann").map(\.id), ["brann"])
+        XCTAssertTrue(index.detectEntities(in: "Følg Skeid").isEmpty,
+                      "a club outside coverage stays genuinely unknown")
+    }
+
     func test_sportKeywordDetection() {
         XCTAssertEqual(EntityIndex.sportKeyword(in: "mer sykkel i juli"), "cycling")
         XCTAssertEqual(EntityIndex.sportKeyword(in: "slutt med tennis"), "tennis")

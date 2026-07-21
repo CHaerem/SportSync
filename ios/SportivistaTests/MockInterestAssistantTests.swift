@@ -232,11 +232,18 @@ final class MockInterestAssistantTests: XCTestCase {
     // MARK: - WP-65: bulk-fangst (many interests in one utterance)
 
     /// The owner's real utterance class — the acceptance case. Five clauses
-    /// (golf, Hovland, all vintersport, Brann, litt F1) must ALL be caught: four
-    /// ground to the right ids, and the unresolvable "Brann" is reported as a
+    /// (golf, Hovland, all vintersport, Skeid, litt F1) must ALL be caught: four
+    /// ground to the right ids, and the unresolvable "Skeid" is reported as a
     /// not-found proposal — never silently dropped.
+    ///
+    /// WP-166: the original used "Brann" as the not-found club, but WP-160 folded
+    /// the catalog long-tail in and Brann is now a real, covered entity — so it
+    /// grounds correctly (see `test_detectEntities_nowCoversLongTailClub`). The
+    /// example moved to "Skeid" (an Oslo lower-division club outside coverage) so
+    /// the per-clause honesty contract still has a genuinely-unknown clause to
+    /// prove — never by slackening the assert.
     func test20_ownerUtterance_fiveClauses_noneDropped() {
-        let p = parse("Jeg liker golf, spesielt Hovland, all vintersport, følger Brann og litt F1")
+        let p = parse("Jeg liker golf, spesielt Hovland, all vintersport, følger Skeid og litt F1")
         XCTAssertEqual(p.count, 5, "every clause becomes a proposal — none dropped")
 
         let r = ground(p)
@@ -245,7 +252,7 @@ final class MockInterestAssistantTests: XCTestCase {
             ["sport-golf", "viktor-hovland", "category-winter-sports", "sport-f1"],
             "the four resolvable clauses ground to the right ids"
         )
-        XCTAssertEqual(r.rejected.map { $0.query.lowercased() }, ["brann"],
+        XCTAssertEqual(r.rejected.map { $0.query.lowercased() }, ["skeid"],
                        "the unresolvable clause is reported as not-found, not swallowed")
     }
 
