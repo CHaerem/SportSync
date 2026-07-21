@@ -149,7 +149,7 @@
 				<span class="sg-type-label">Gruppeoverskrift</span>
 				<div class="sg-type-sample">
 					<p class="day-name" style="margin:0;">I DAG</p>
-					<span class="sg-type-meta">.day-name — 13px/700 uppercase, amber (én av de fem godkjente amber-bruken) · iOS <code>.footnote</code> uppercase, secondaryLabel</span>
+					<span class="sg-type-meta">.day-name — 13px/700 uppercase, secondaryLabel (<code>--fg-2</code>, matcher iOS — WP-148, ikke lenger amber) · iOS <code>.footnote</code> uppercase, secondaryLabel</span>
 				</div>
 			</div>
 			<div class="sg-type-row">
@@ -177,7 +177,7 @@
 				<img class="sg-icon-demo" src="icons/icon-512x512.png" alt="Sportivista-ikonet: to amber prikker vertikalt (kolonet) på sort bakgrunn" width="72" height="72">
 				<span class="wordmark-lockup sg-wordmark-demo"><span class="wordmark">Sportivista</span><span class="wordmark-colon" aria-hidden="true">:</span></span>
 			</div>
-			<p class="sg-note">Wordmark + kolon: null mellomrom (<code>.wordmark-lockup</code>), kolonet ett hakk tyngre enn ordmerket (iOS: bold ordmerke + heavy kolon), én tilgjengelighets-etikett («Sportivista»). Merkelåsen er nå lik på begge flater (harmonisert i WP-98): ordmerket i tekstfarge (<code>--fg</code> / <code>label</code>), kun kolonet amber (én av de fem godkjente amber-bruken i <code>base.css</code>) — se BRAND.md.</p>
+			<p class="sg-note">Wordmark + kolon: null mellomrom (<code>.wordmark-lockup</code>), kolonet ett hakk tyngre enn ordmerket (iOS: bold ordmerke + heavy kolon), én tilgjengelighets-etikett («Sportivista»). Merkelåsen er nå lik på begge flater (harmonisert i WP-98): ordmerket i tekstfarge (<code>--fg</code> / <code>label</code>), kun kolonet amber (en av de sparsomme amber-aksentene i <code>base.css</code>) — se BRAND.md.</p>
 		</section>
 
 		<!-- ── Knapper / "ingen pills" ─────────────────────────────────────── -->
@@ -269,6 +269,7 @@
 			{ cssVar: '--accent', name: 'accent', role: 'ENESTE aksent (amber)' },
 			{ cssVar: '--accent-ink', name: 'accentInk', role: 'tekst på amber-flate (web-only)' },
 			{ cssVar: '--live', name: 'live / good', role: 'direkte / positiv' },
+			{ cssVar: '--destructive', name: 'destructive', role: 'slett/nullstill (web: «Fjern» på rediger)' },
 		];
 
 		function renderSwatches() {
@@ -291,14 +292,6 @@
 						<div class="sg-swatch-name">cell2</div>
 						<div class="sg-swatch-role">nøstet/hevet flate</div>
 						<div class="sg-swatch-hex">#2C2C2E / #FFFFFF</div>
-					</div>
-				</div>
-				<div class="sg-swatch sg-na">
-					<div class="sg-swatch-fill" style="background:#FF453A;"></div>
-					<div class="sg-swatch-info">
-						<div class="sg-swatch-name">destructive</div>
-						<div class="sg-swatch-role">slett/nullstill</div>
-						<div class="sg-swatch-hex">#FF453A / #FF3B30</div>
 					</div>
 				</div>`;
 		}

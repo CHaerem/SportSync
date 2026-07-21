@@ -41,7 +41,7 @@
 .wordmark-colon {
 	font-weight: 700;
 	font-size: 28px;
-	color: var(--accent);          /* amber — the wordmark colon is one of the five amber uses */
+	color: var(--accent);          /* amber — the wordmark colon is one of the sparse amber accents */
 	line-height: 1;
 }
 .mast-date {
@@ -51,14 +51,8 @@
 	letter-spacing: 0.04em;
 }
 .mast-index { color: var(--fg-3); }
-/* A quiet amber masthead label (tabular). No longer a clock on index.html (WP-128);
-   still used by activity.html for its «aktivitet» page label. */
-.masthead-clock {
-	font-size: 13px;
-	color: var(--accent);
-	font-variant-numeric: tabular-nums;
-	letter-spacing: 0.04em;
-}
+/* (WP-148: the amber .masthead-clock page label is retired — activity.html now uses
+   the same grey .mast-date sub-row as index/styleguide; no ticking clock since WP-128.) */
 /* Theme toggle — the quantized override glyph (◐ system / ● dark / ○ light). */
 .theme-toggle {
 	margin-left: auto;

@@ -42,8 +42,15 @@
 			<div class="assistant-results" id="assistant-results" hidden></div>
 		</section>
 		<div class="live-now" id="live-now" hidden></div>
-		<section class="next-up" id="next-up" hidden></section>
 		<div id="agenda"></div>
+		<!-- "Neste opp" sits UNDER the agenda (WP-148): a per-entity forward glance is a
+		     nice-to-have, but rendering it ABOVE the day-grouped agenda buried «I dag»
+		     under rows for events 8–14 days out — inverting «viktig + nært først». It
+		     keeps its nearest-first dedupe against what's already on the board; below
+		     the agenda it complements «Fremover»/«Dette dekker vi» instead of competing
+		     with today. (renderAgenda still runs before renderNextUp, so the dedupe set
+		     is populated regardless of DOM order.) -->
+		<section class="next-up" id="next-up" hidden></section>
 		<details class="fremover" id="fremover" hidden></details>
 		<details class="followed" id="followed" hidden>
 			<summary id="followed-summary"><span>Dette dekker vi</span><a class="followed-edit-top" href="rediger.html" onclick="event.stopPropagation()">Be om dekning</a></summary>

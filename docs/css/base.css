@@ -6,7 +6,9 @@
 
 /* Token values are the DESIGN.md § Tokens table verbatim (Apple system colours + one
    amber accent). Amber is the ONLY accent and is used only for: the wordmark colon,
-   day headers, the must-see dot, the clock, selected state. Live is systemGreen, sparse.
+   the must-see dot, the clock, selected state. Live is systemGreen, sparse. Day headers
+   are secondaryLabel (grey) — matching iOS's group header (WP-148 — no longer amber).
+   Destructive (systemRed) tints the one destructive web action ("Fjern" on rediger).
    Separators are the Apple hairline tokens. */
 :root {
 	/* Dark — the baseline default (true-black "page", system cell for depth) */
@@ -19,6 +21,7 @@
 	--accent: #FFB000;                    /* amber — the ONLY accent */
 	--accent-ink: #000000;                /* ink on an amber block */
 	--live: #30D158;                      /* systemGreen (dark) — live, sparse */
+	--destructive: #FF453A;               /* systemRed (dark) — slett/nullstill, sparse */
 
 	--font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, system-ui, sans-serif;
 	--display: var(--font);
@@ -37,6 +40,7 @@
 	--accent: #9A6800;                    /* amber (light) — AA on paper */
 	--accent-ink: #FFFFFF;                /* ink on an amber block */
 	--live: #34C759;                      /* systemGreen (light) */
+	--destructive: #FF3B30;               /* systemRed (light) */
 }
 
 @media (prefers-color-scheme: light) {
@@ -50,6 +54,7 @@
 		--accent: #9A6800;
 		--accent-ink: #FFFFFF;
 		--live: #34C759;
+		--destructive: #FF3B30;
 	}
 }
 

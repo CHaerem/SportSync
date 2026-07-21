@@ -388,6 +388,22 @@ describe("stage-race detail (TdF): Norwegian squad + current context", () => {
 		expect(html).toContain("Nå");
 		expect(html).toContain("sammenlagt");          // current context from the summary
 	});
+
+	// WP-148: the "Nå" note is now a FULL-WIDTH .d-prose block (like eventDetail's
+	// "Om", WP-127) instead of a narrow d-v value column that squeezed a ~700-char
+	// summary into a ~130px strip. WP-127 fixed every summary path EXCEPT this one.
+	it("renders the current-stage note as a full-width .d-prose block, not a narrow d-v (WP-148)", () => {
+		const summary = "Første setning om tempoetappen. Andre setning med mer kontekst. Tredje setning om sammenlagt. Fjerde runder av dagen.";
+		const stages = [
+			{ title: "Etappe 1", time: new Date(Date.now() + 86400000).toISOString(), norwegianPlayers: [{ name: "Tobias Halland Johannessen" }] },
+		];
+		const html = dash.seriesDetail({ isSeries: true, stages, nextStage: { summary } });
+		expect(html).toContain('<div class="d-prose"><span class="d-k">Nå</span>');
+		expect(html).toContain('<div class="d-prose-body">');
+		expect((html.match(/<p class="d-p">/g) || []).length).toBeGreaterThan(1); // ≥2 paragraphs, not one wall
+		// and NOT the old narrow key/value rendering of the note
+		expect(html).not.toContain('<div class="d-row"><span class="d-k">Nå</span>');
+	});
 });
 
 describe("F1 detail: championship + last race (data we already fetch)", () => {
