@@ -1,0 +1,6 @@
+{
+	"$schema": "Curated cross-language / abbreviation synonym groups for entity dedup (WP-160, generalised from build-entities.js's KNOWN_ALIAS_GROUPS). Each group lists spellings of ONE and the same entity, already normalised (lowercased, diacritics folded) — build-entities.js folds two terms into one entity when both appear in the SAME group. Deliberately narrow: an entry folds ONLY the exact spellings it names, so it can never over-merge two genuinely different entities. AI-maintainable: research/verify may add groups (e.g. cross-language national sides like [\"sweden\", \"sverige\"], or club abbreviations like [\"liverpool\", \"liverpool fc\", \"lfc\"]) WITHOUT a code change. Same-sport + same-type is still enforced by the caller.",
+	"groups": [
+		["norway", "norge"]
+	]
+}

@@ -390,6 +390,111 @@ describe("buildEntityIndex", () => {
 		expect(second).toEqual(first);
 		fs.rmSync(configDir, { recursive: true, force: true });
 	});
+
+	// WP-160: catalog.json tier2 long-tail folds in as a fourth source.
+	it("folds catalog.json tier2 teams → team and tournaments → tournament (with catalog aliases)", () => {
+		const configDir = tmpDir("ss-entities-tier2-");
+		fs.writeFileSync(
+			path.join(configDir, "catalog.json"),
+			JSON.stringify({
+				tier1: ["football"],
+				tier2: {
+					teams: [{ name: "Liverpool", aliases: ["Liverpool FC"], sport: "football" }],
+					tournaments: [{ name: "Premier League", aliases: ["EPL"], sport: "football" }],
+					athletes: [{ name: "Casper Ruud", aliases: ["Ruud"], sport: "tennis" }],
+				},
+			})
+		);
+		const entities = buildEntityIndex(configDir, {});
+		const liverpool = entities.find((e) => e.id === "liverpool");
+		expect(liverpool).toMatchObject({ name: "Liverpool", type: "team", sport: "football" });
+		expect(liverpool.aliases).toContain("Liverpool FC");
+		const pl = entities.find((e) => e.id === "premier-league");
+		expect(pl).toMatchObject({ name: "Premier League", type: "tournament", sport: "football" });
+		expect(pl.aliases).toContain("EPL");
+		// tier2.athletes are intentionally NOT folded (out of WP-160 scope: teams + tournaments only).
+		expect(entities.find((e) => e.name === "Casper Ruud")).toBeUndefined();
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("tracked.json still wins tier2 dedup for a same-type overlap (Tour de France folds under the tracked id)", () => {
+		const configDir = tmpDir("ss-entities-tier2-dedup-");
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({ tournaments: [{ id: "tour-de-france-2026", name: "Tour de France 2026", sport: "cycling" }] })
+		);
+		fs.writeFileSync(
+			path.join(configDir, "catalog.json"),
+			JSON.stringify({ tier2: { tournaments: [{ name: "Tour de France", aliases: ["TdF"], sport: "cycling" }] } })
+		);
+		const entities = buildEntityIndex(configDir, {});
+		const tdf = entities.filter((e) => e.sport === "cycling" && e.type === "tournament");
+		expect(tdf).toHaveLength(1); // one entity, not two
+		expect(tdf[0].id).toBe("tour-de-france-2026"); // tracked's id wins (folded first)
+		expect(tdf[0].aliases).toContain("TdF"); // the catalog alias folds in
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("keeps a tier2 team distinct from a tracked club MISFILED under a different type (Barcelona team vs. fc-barcelona league)", () => {
+		// The NOTE ON TYPE ACCURACY case: tracked files clubs under "leagues", but
+		// tier2 has precise team lists — so where the buckets disagree on type, the
+		// tier2 type is authoritative and it registers as its own team entity.
+		const configDir = tmpDir("ss-entities-tier2-type-");
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({ leagues: [{ id: "fc-barcelona", name: "FC Barcelona", sport: "football" }] })
+		);
+		fs.writeFileSync(
+			path.join(configDir, "catalog.json"),
+			JSON.stringify({ tier2: { teams: [{ name: "Barcelona", aliases: ["FC Barcelona"], sport: "football" }] } })
+		);
+		const entities = buildEntityIndex(configDir, {});
+		expect(entities.find((e) => e.id === "fc-barcelona").type).toBe("league");
+		expect(entities.find((e) => e.id === "barcelona")).toMatchObject({ type: "team", sport: "football" });
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	// WP-160: handball is now a groundable sport (the SPORT_LABELS hole, à la WP-64 for winter).
+	it("publishes a groundable Håndball sport entity when handball is in tier1 (the WP-160 label hole)", () => {
+		const configDir = tmpDir("ss-entities-handball-");
+		fs.writeFileSync(
+			path.join(configDir, "catalog.json"),
+			JSON.stringify({ tier1: ["handball"] })
+		);
+		const entities = buildEntityIndex(configDir, {});
+		const handball = entities.find((e) => e.id === "sport-handball");
+		expect(handball).toMatchObject({ name: "Håndball", sport: "handball", type: "sport" });
+		expect(handball.aliases).toContain("handball");
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	// WP-160: KNOWN_ALIAS_GROUPS generalised to scripts/config/entity-aliases.json.
+	it("reads curated known-alias groups from entity-aliases.json (research/verify-maintainable)", () => {
+		const configDir = tmpDir("ss-entities-aliasfile-");
+		// A pair that shares no token and is not an initial-form — only a curated
+		// group can fold it. Not in the seed, so it proves the FILE is read.
+		fs.writeFileSync(
+			path.join(configDir, "entity-aliases.json"),
+			JSON.stringify({ groups: [["sweden", "sverige"]] })
+		);
+		const fakeSportsConfig = { football: { sport: "football", norwegian: { teams: ["Sverige", "Sweden"] } } };
+		const entities = buildEntityIndex(configDir, fakeSportsConfig);
+		const teams = entities.filter((e) => e.sport === "football" && e.type === "team");
+		expect(teams).toHaveLength(1); // folded via the file's group
+		expect(teams[0].aliases).toContain("Sweden");
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("falls back to the seed alias groups when entity-aliases.json is absent (Norway/Norge still folds)", () => {
+		const configDir = tmpDir("ss-entities-aliasseed-");
+		const fakeSportsConfig = { football: { sport: "football", norwegian: { teams: ["Norge", "Norway"] } } };
+		const entities = buildEntityIndex(configDir, fakeSportsConfig); // no entity-aliases.json in this dir
+		const teams = entities.filter((e) => e.sport === "football" && e.type === "team");
+		expect(teams).toHaveLength(1);
+		expect(teams[0].id).toBe("norge");
+		expect(teams[0].aliases).toContain("Norway");
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
 });
 
 describe("writeEntities", () => {
