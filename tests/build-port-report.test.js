@@ -213,14 +213,20 @@ describe("port 4 · participant status", () => {
 describe("integration · standalone CLI against a temp data dir", () => {
 	it("reads the pipeline outputs and writes a coloured port-report.json", () => {
 		const dataDir = tmpDir("ss-port-cli-");
-		fs.writeFileSync(path.join(dataDir, "coverage-audit.json"), JSON.stringify({ auditedAt: hoursAgo(6), gaps: [{ severity: "high", firstSeen: daysAgo(2), recurrences: 1, interest: "Tour de France" }] }));
-		fs.writeFileSync(path.join(dataDir, "verify-log.json"), JSON.stringify({ runAt: hoursAgo(6), checked: 10, amended: 1, notes: [] }));
+		// The CLI evaluates freshness against the REAL clock (Date.now()), so the
+		// fixtures must be relative to real-now — NOT the fixed test `NOW` — else a
+		// simple calendar rollover makes fresh files look stale (green → yellow).
+		const rNow = Date.now();
+		const rHoursAgo = (h) => new Date(rNow - h * 3600000).toISOString();
+		const rDaysAgo = (d) => new Date(rNow - d * 86400000).toISOString();
+		fs.writeFileSync(path.join(dataDir, "coverage-audit.json"), JSON.stringify({ auditedAt: rHoursAgo(6), gaps: [{ severity: "high", firstSeen: rDaysAgo(2), recurrences: 1, interest: "Tour de France" }] }));
+		fs.writeFileSync(path.join(dataDir, "verify-log.json"), JSON.stringify({ runAt: rHoursAgo(6), checked: 10, amended: 1, notes: [] }));
 		fs.writeFileSync(path.join(dataDir, "calibration-ledger.jsonl"), [
-			JSON.stringify({ checkedAt: hoursAgo(20), source: "pgatour.com", agreed: true }),
-			JSON.stringify({ checkedAt: hoursAgo(20), source: "pgatour.com", agreed: false }),
+			JSON.stringify({ checkedAt: rHoursAgo(20), source: "pgatour.com", agreed: true }),
+			JSON.stringify({ checkedAt: rHoursAgo(20), source: "pgatour.com", agreed: false }),
 		].join("\n") + "\n");
-		fs.writeFileSync(path.join(dataDir, "build-alert.json"), JSON.stringify({ ok: true, checkedAt: hoursAgo(1) }));
-		fs.writeFileSync(path.join(dataDir, "manifest.json"), JSON.stringify({ generatedAt: hoursAgo(1), files: {} }));
+		fs.writeFileSync(path.join(dataDir, "build-alert.json"), JSON.stringify({ ok: true, checkedAt: rHoursAgo(1) }));
+		fs.writeFileSync(path.join(dataDir, "manifest.json"), JSON.stringify({ generatedAt: rHoursAgo(1), files: {} }));
 		fs.writeFileSync(path.join(dataDir, "catalog.json"), JSON.stringify({ tier1: ["cycling"], tier2: { tournaments: [{ name: "Tour de France", aliases: ["TdF"], sport: "cycling" }] } }));
 
 		execFileSync("node", ["scripts/build-port-report.js"], { env: { ...process.env, SPORTSYNC_DATA_DIR: dataDir } });

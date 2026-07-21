@@ -69,7 +69,11 @@ describe("mergeSnapshots", () => {
 });
 
 describe("enabled", () => {
-	it("is false with no token (sync stays off, board keeps working)", () => {
-		expect(W.ssICloud.enabled()).toBe(false); // icloud-config ships an empty token
+	it("is false when CloudKit JS isn't loaded, even with a token (sandbox has no CloudKit)", () => {
+		// The token is set in icloud-config.js, but enabled() also requires the
+		// CloudKit JS library — absent in the vm sandbox — so sync stays off here
+		// and the board keeps working on the local/QR profile.
+		expect(typeof W.CloudKit).toBe("undefined");
+		expect(W.ssICloud.enabled()).toBe(false);
 	});
 });

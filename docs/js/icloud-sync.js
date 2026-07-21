@@ -91,6 +91,11 @@ window.ssICloud = (function () {
 		if (!database) return null;
 		try {
 			const zoneName = cfg.zoneName || 'SportivistaProfile';
+			// Ensure the custom zone exists — either side may bootstrap it, so a web
+			// user who signs in BEFORE any device has written still gets a working
+			// zone (else the query fails with "zone not found"). Best-effort: a
+			// re-save of an existing zone / an unsupported call is harmless.
+			try { await database.saveRecordZones([{ zoneID: { zoneName } }]); } catch { /* exists / unsupported */ }
 			const resp = await database.performQuery({ recordType: RECORD_TYPE, zoneID: { zoneName } });
 			if (resp.hasErrors) return null;
 			const before = ssProfileLoad();
@@ -128,8 +133,9 @@ window.ssICloud = (function () {
 		async function whenSignedIn() {
 			say('Synker med iCloud …');
 			const res = await sync();
-			if (!res) { say('iCloud-synk er ikke tilgjengelig akkurat nå.'); return; }
-			say(`Synket med iCloud · la til ${res.added}, fjernet ${res.removed}.`);
+			if (!res) { say('Logget inn, men synk er ikke tilgjengelig akkurat nå — prøv igjen om litt.'); return; }
+			if (!res.added && !res.removed) say('Synket med iCloud — alt er oppdatert.');
+			else say(`Synket med iCloud · la til ${res.added}, fjernet ${res.removed}.`);
 			onSynced(res);
 		}
 	}
