@@ -14,6 +14,7 @@
     "build:calendar": "node scripts/build-ics.js",
     "validate:data": "node scripts/validate-events.js",
     "fetch:results": "node scripts/fetch-results.js",
+    "seed:registry": "node scripts/seed-registry/index.js",
     "screenshot": "node scripts/screenshot.js",
     "clean": "rm -rf docs/data/*.json docs/data/*.ics",
     "refresh": "npm run clean && npm run build"

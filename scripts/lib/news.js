@@ -13,11 +13,13 @@
  * manifest covers news.json.
  *
  * Entity matching REUSES the exact word-boundary name-matching build-events uses
- * to stamp entityId onto events (helpers.matchesEntity → containsName), so the
+ * to stamp entityId onto events (helpers.entityTerms → containsName), so the
  * Brooklyn/Lyn substring trap is avoided identically: an article about
  * "Brooklyn FC" does NOT match the tracked club "Lyn" (see
  * tests/fixtures/feed-vectors/DIVERGENCES.md §2 and the negative test in
- * tests/news.test.js). No new matching logic is introduced here.
+ * tests/news.test.js). The ONE news-specific addition (WP-161) is a minimum
+ * term length: headlines have no sport context to gate on, so a ≤2-letter
+ * entity name (the CS2 org "OG" vs. the Norwegian word "og") never claims news.
  *
  * Byte-idempotent on unchanged input (the manifest sync contract): the output
  * carries NO run-timestamp, only the parsed publishedAt of each item, so two
@@ -25,11 +27,23 @@
  */
 
 import crypto from "crypto";
-import { matchesEntity } from "./helpers.js";
+import { entityTerms, containsName, normalizeText } from "./helpers.js";
 
 export const NEWS_MAX_ITEMS = 100;
 export const NEWS_MAX_AGE_DAYS = 7;
 const MS_PER_DAY = 86_400_000;
+
+/**
+ * WP-161: minimum normalized length for a term to count in NEWS matching. The
+ * world registry legitimately contains entities whose names are everyday words
+ * at scale — the CS2 org "OG" word-boundary-matches the Norwegian conjunction
+ * "og" in nearly every headline, which would stamp its entityId across the
+ * whole feed. Headlines carry no sport context to gate on (unlike
+ * build-events, whose enrichment is sport-scoped), so ultra-short terms are
+ * simply excluded HERE — the entity stays fully searchable/followable and
+ * still matches events; it just can't claim news by a ≤2-letter name.
+ */
+const NEWS_MIN_TERM_LENGTH = 3;
 
 // Which entity types become news pointers. Mirrors build-events.js's enrichment
 // pools (athlete / team / league) plus tournaments — a news reader follows
@@ -51,14 +65,20 @@ export function newsEntityPool(entities) {
 
 /**
  * Which entity ids does `text` mention (word-boundary, accent-insensitive)?
- * Order-preserving + de-duplicated. Uses helpers.matchesEntity — the same
- * containsName word-boundary check build-events uses on events, so a substring
- * like "lyn" inside "Brooklyn" never matches the club "Lyn".
+ * Order-preserving + de-duplicated. Same containsName word-boundary check
+ * build-events uses on events (via helpers.entityTerms), so a substring like
+ * "lyn" inside "Brooklyn" never matches the club "Lyn" — with one extra news
+ * guard: terms shorter than NEWS_MIN_TERM_LENGTH are skipped (the "OG"
+ * common-word trap above).
  */
 export function matchEntityIds(text, pool) {
 	const ids = [];
 	for (const e of pool) {
-		if (e && e.id && matchesEntity(text, e) && !ids.includes(e.id)) ids.push(e.id);
+		if (!e || !e.id || ids.includes(e.id)) continue;
+		const hit = entityTerms(e).some(
+			(term) => normalizeText(term).trim().length >= NEWS_MIN_TERM_LENGTH && containsName(text, term)
+		);
+		if (hit) ids.push(e.id);
 	}
 	return ids;
 }

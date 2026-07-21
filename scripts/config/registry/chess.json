@@ -1,0 +1,2239 @@
+{
+	"$schema": "WP-161 verdensregister — sjakk — FIDE-topplistene (åpen + kvinner). OPPSLAG, ikke dekningsløfte (catalog.json styrer dekning/kost). Deterministisk artefakt: sortert på id, stabil serialisering — re-seed (npm run seed:registry) gir rene diffs. Id-er er varige kebab-slugs; external-id-ene (wikidata/espnId/fideId/liquipedia) er re-seed-nøklene. Vedlikeholdes ukentlig av research/improve-agentene (opprykk/nedrykk, overganger, navnebytter, nye orgs) — se registry.schema.json.",
+	"source": "fide-toplists: ratings.fide.com a_top open + women (topp 100 hver)",
+	"entities": [
+		{
+			"id": "a-r-saleh-salem",
+			"name": "A.R. Saleh Salem",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "UAE",
+			"external": {
+				"fideId": "9301348"
+			}
+		},
+		{
+			"id": "aamuktha-guntaka",
+			"name": "Aamuktha Guntaka",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "33486697"
+			}
+		},
+		{
+			"id": "abhimanyu-mishra",
+			"name": "Abhimanyu Mishra",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "USA",
+			"external": {
+				"fideId": "30920019"
+			}
+		},
+		{
+			"id": "abhimanyu-puranik",
+			"name": "Abhimanyu Puranik",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "5061245"
+			}
+		},
+		{
+			"id": "afruza-khamdamova",
+			"name": "Afruza Khamdamova",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "UZB",
+			"external": {
+				"fideId": "14210444"
+			}
+		},
+		{
+			"id": "aleksandra-goryachkina",
+			"name": "Aleksandra Goryachkina",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "FID",
+			"external": {
+				"fideId": "4147103"
+			}
+		},
+		{
+			"id": "aleksandra-maltsevskaya",
+			"name": "Aleksandra Maltsevskaya",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "POL",
+			"external": {
+				"fideId": "24174041"
+			}
+		},
+		{
+			"id": "alexander-donchenko",
+			"name": "Alexander Donchenko",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "GER",
+			"external": {
+				"fideId": "24603295"
+			}
+		},
+		{
+			"id": "alexander-grischuk",
+			"name": "Alexander Grischuk",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "RUS",
+			"external": {
+				"fideId": "4126025"
+			}
+		},
+		{
+			"id": "alexander-morozevich",
+			"name": "Alexander Morozevich",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "RUS",
+			"external": {
+				"fideId": "4116992"
+			}
+		},
+		{
+			"id": "alexandra-kosteniuk",
+			"name": "Alexandra Kosteniuk",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "SUI",
+			"external": {
+				"fideId": "4128125"
+			}
+		},
+		{
+			"id": "alexey-sarana",
+			"name": "Alexey Sarana",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "SRB",
+			"external": {
+				"fideId": "24133795"
+			}
+		},
+		{
+			"id": "alice-lee",
+			"name": "Alice Lee",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "USA",
+			"external": {
+				"fideId": "30941822"
+			}
+		},
+		{
+			"id": "alina-bivol",
+			"name": "Alina Bivol",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "SRB",
+			"external": {
+				"fideId": "4100123"
+			}
+		},
+		{
+			"id": "alina-kashlinskaya",
+			"name": "Alina Kashlinskaya",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "POL",
+			"external": {
+				"fideId": "4198026"
+			}
+		},
+		{
+			"id": "alireza-firouzja",
+			"name": "Alireza Firouzja",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "FRA",
+			"external": {
+				"fideId": "12573981"
+			}
+		},
+		{
+			"id": "alisa-galliamova",
+			"name": "Alisa Galliamova",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "RUS",
+			"external": {
+				"fideId": "4129725"
+			}
+		},
+		{
+			"id": "almira-skripchenko",
+			"name": "Almira Skripchenko",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "FRA",
+			"external": {
+				"fideId": "13900145"
+			}
+		},
+		{
+			"id": "alua-nurman",
+			"name": "Alua Nurman",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "KAZ",
+			"external": {
+				"fideId": "13729390"
+			}
+		},
+		{
+			"id": "anastasia-bodnaruk",
+			"name": "Anastasia Bodnaruk",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "RUS",
+			"external": {
+				"fideId": "4181751"
+			}
+		},
+		{
+			"id": "anastasiia-hnatyshyn",
+			"name": "Anastasiia Hnatyshyn",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "UKR",
+			"external": {
+				"fideId": "14198339"
+			}
+		},
+		{
+			"id": "andrey-esipenko",
+			"name": "Andrey Esipenko",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "RUS",
+			"external": {
+				"fideId": "24175439"
+			}
+		},
+		{
+			"id": "andy-woodward",
+			"name": "Andy Woodward",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "USA",
+			"external": {
+				"fideId": "30953499"
+			}
+		},
+		{
+			"id": "anish-giri",
+			"name": "Anish Giri",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "NED",
+			"external": {
+				"fideId": "24116068"
+			}
+		},
+		{
+			"id": "anita-gara",
+			"name": "Anita Gara",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "HUN",
+			"external": {
+				"fideId": "709751"
+			}
+		},
+		{
+			"id": "anna-m-sargsyan",
+			"name": "Anna M. Sargsyan",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "USA",
+			"external": {
+				"fideId": "13308130"
+			}
+		},
+		{
+			"id": "anna-muzychuk",
+			"name": "Anna Muzychuk",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "UKR",
+			"external": {
+				"fideId": "14111330"
+			}
+		},
+		{
+			"id": "anna-shukhman",
+			"name": "Anna Shukhman",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "FID",
+			"external": {
+				"fideId": "54180058"
+			}
+		},
+		{
+			"id": "anna-ushenina",
+			"name": "Anna Ushenina",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "UKR",
+			"external": {
+				"fideId": "14110911"
+			}
+		},
+		{
+			"id": "antoaneta-stefanova",
+			"name": "Antoaneta Stefanova",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "BUL",
+			"external": {
+				"fideId": "2902257"
+			}
+		},
+		{
+			"id": "aram-hakobyan",
+			"name": "Aram Hakobyan",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "ARM",
+			"external": {
+				"fideId": "13306677"
+			}
+		},
+		{
+			"id": "aryan-chopra",
+			"name": "Aryan Chopra",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "5084423"
+			}
+		},
+		{
+			"id": "aryan-tari",
+			"name": "Aryan Tari",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "NOR",
+			"external": {
+				"fideId": "1510045"
+			}
+		},
+		{
+			"id": "awonder-liang",
+			"name": "Awonder Liang",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "USA",
+			"external": {
+				"fideId": "2056437"
+			}
+		},
+		{
+			"id": "aydin-suleymanli",
+			"name": "Aydin Suleymanli",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "AZE",
+			"external": {
+				"fideId": "13413937"
+			}
+		},
+		{
+			"id": "bella-khotenashvili",
+			"name": "Bella Khotenashvili",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "GEO",
+			"external": {
+				"fideId": "13602640"
+			}
+		},
+		{
+			"id": "benjamin-gledura",
+			"name": "Benjamin Gledura",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "HUN",
+			"external": {
+				"fideId": "712779"
+			}
+		},
+		{
+			"id": "bibisara-assaubayeva",
+			"name": "Bibisara Assaubayeva",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "KAZ",
+			"external": {
+				"fideId": "13708694"
+			}
+		},
+		{
+			"id": "bogdan-daniel-deac",
+			"name": "Bogdan-Daniel Deac",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "ROU",
+			"external": {
+				"fideId": "1226380"
+			}
+		},
+		{
+			"id": "boris-gelfand",
+			"name": "Boris Gelfand",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "ISR",
+			"external": {
+				"fideId": "2805677"
+			}
+		},
+		{
+			"id": "carissa-yip",
+			"name": "Carissa Yip",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "USA",
+			"external": {
+				"fideId": "2090732"
+			}
+		},
+		{
+			"id": "chithambaram-vr-aravindh",
+			"name": "Chithambaram VR. Aravindh",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "5072786"
+			}
+		},
+		{
+			"id": "daniil-dubov",
+			"name": "Daniil Dubov",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "RUS",
+			"external": {
+				"fideId": "24126055"
+			}
+		},
+		{
+			"id": "david-anton-guijarro",
+			"name": "David Anton Guijarro",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "ESP",
+			"external": {
+				"fideId": "2285525"
+			}
+		},
+		{
+			"id": "david-w-l-howell",
+			"name": "David W L Howell",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "ENG",
+			"external": {
+				"fideId": "410608"
+			}
+		},
+		{
+			"id": "deimante-daulyte-cornette",
+			"name": "Deimante Daulyte-Cornette",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "FRA",
+			"external": {
+				"fideId": "12802859"
+			}
+		},
+		{
+			"id": "dinara-wagner",
+			"name": "Dinara Wagner",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "GER",
+			"external": {
+				"fideId": "24157570"
+			}
+		},
+		{
+			"id": "divya-deshmukh",
+			"name": "Divya Deshmukh",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "35006916"
+			}
+		},
+		{
+			"id": "dmitrij-kollars",
+			"name": "Dmitrij Kollars",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "GER",
+			"external": {
+				"fideId": "12909572"
+			}
+		},
+		{
+			"id": "dmitry-andreikin",
+			"name": "Dmitry Andreikin",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "FID",
+			"external": {
+				"fideId": "4158814"
+			}
+		},
+		{
+			"id": "ediz-gurel",
+			"name": "Ediz Gurel",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "TUR",
+			"external": {
+				"fideId": "44507356"
+			}
+		},
+		{
+			"id": "ekaterina-atalik",
+			"name": "Ekaterina Atalik",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "TUR",
+			"external": {
+				"fideId": "4130189"
+			}
+		},
+		{
+			"id": "ekaterina-goltseva",
+			"name": "Ekaterina Goltseva",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "RUS",
+			"external": {
+				"fideId": "24173770"
+			}
+		},
+		{
+			"id": "elif-mehmed",
+			"name": "Elif Mehmed",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "SRB",
+			"external": {
+				"fideId": "2921103"
+			}
+		},
+		{
+			"id": "elina-danielian",
+			"name": "Elina Danielian",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "ARM",
+			"external": {
+				"fideId": "13300210"
+			}
+		},
+		{
+			"id": "eline-roebers",
+			"name": "Eline Roebers",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "NED",
+			"external": {
+				"fideId": "1058401"
+			}
+		},
+		{
+			"id": "elisabeth-paehtz",
+			"name": "Elisabeth Paehtz",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "GER",
+			"external": {
+				"fideId": "4641833"
+			}
+		},
+		{
+			"id": "erigaisi-arjun",
+			"name": "Erigaisi Arjun",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "35009192"
+			}
+		},
+		{
+			"id": "ernesto-inarkiev",
+			"name": "Ernesto Inarkiev",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "RUS",
+			"external": {
+				"fideId": "4162722"
+			}
+		},
+		{
+			"id": "fabiano-caruana",
+			"name": "Fabiano Caruana",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "USA",
+			"external": {
+				"fideId": "2020009"
+			}
+		},
+		{
+			"id": "francisco-vallejo-pons",
+			"name": "Francisco Vallejo Pons",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "ESP",
+			"external": {
+				"fideId": "2205530"
+			}
+		},
+		{
+			"id": "frederik-svane",
+			"name": "Frederik Svane",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "GER",
+			"external": {
+				"fideId": "12923044"
+			}
+		},
+		{
+			"id": "gawain-c-b-maroroa-jones",
+			"name": "Gawain C B Maroroa Jones",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "ENG",
+			"external": {
+				"fideId": "409561"
+			}
+		},
+		{
+			"id": "govhar-beydullayeva",
+			"name": "Govhar Beydullayeva",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "AZE",
+			"external": {
+				"fideId": "13413015"
+			}
+		},
+		{
+			"id": "grigoriy-oparin",
+			"name": "Grigoriy Oparin",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "USA",
+			"external": {
+				"fideId": "24125890"
+			}
+		},
+		{
+			"id": "gukesh-d",
+			"name": "Gukesh D",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "46616543"
+			}
+		},
+		{
+			"id": "gulrukhbegim-tokhirjonova",
+			"name": "Gulrukhbegim Tokhirjonova",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "UZB",
+			"external": {
+				"fideId": "14203626"
+			}
+		},
+		{
+			"id": "gunay-mammadzada",
+			"name": "Gunay Mammadzada",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "AZE",
+			"external": {
+				"fideId": "13403729"
+			}
+		},
+		{
+			"id": "haik-m-martirosyan",
+			"name": "Haik M. Martirosyan",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "ARM",
+			"external": {
+				"fideId": "13306553"
+			}
+		},
+		{
+			"id": "hanna-marie-klek",
+			"name": "Hanna Marie Klek",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "GER",
+			"external": {
+				"fideId": "24670057"
+			}
+		},
+		{
+			"id": "hans-moke-niemann",
+			"name": "Hans Moke Niemann",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "USA",
+			"external": {
+				"fideId": "2093596"
+			}
+		},
+		{
+			"id": "hao-wang",
+			"name": "Hao Wang",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "CHN",
+			"external": {
+				"fideId": "8602883"
+			}
+		},
+		{
+			"id": "harika-dronavalli",
+			"name": "Harika Dronavalli",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "5015197"
+			}
+		},
+		{
+			"id": "hikaru-nakamura",
+			"name": "Hikaru Nakamura",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "USA",
+			"external": {
+				"fideId": "2016192"
+			}
+		},
+		{
+			"id": "humpy-koneru",
+			"name": "Humpy Koneru",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "5008123"
+			}
+		},
+		{
+			"id": "ian-nepomniachtchi",
+			"name": "Ian Nepomniachtchi",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "RUS",
+			"external": {
+				"fideId": "4168119"
+			}
+		},
+		{
+			"id": "igor-kovalenko",
+			"name": "Igor Kovalenko",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "UKR",
+			"external": {
+				"fideId": "14117908"
+			}
+		},
+		{
+			"id": "irina-bulmaga",
+			"name": "Irina Bulmaga",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "ROU",
+			"external": {
+				"fideId": "13903063"
+			}
+		},
+		{
+			"id": "irina-krush",
+			"name": "Irina Krush",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "USA",
+			"external": {
+				"fideId": "2012782"
+			}
+		},
+		{
+			"id": "ivan-cheparinov",
+			"name": "Ivan Cheparinov",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "BUL",
+			"external": {
+				"fideId": "2905540"
+			}
+		},
+		{
+			"id": "jan-krzysztof-duda",
+			"name": "Jan-Krzysztof Duda",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "POL",
+			"external": {
+				"fideId": "1170546"
+			}
+		},
+		{
+			"id": "javokhir-sindarov",
+			"name": "Javokhir Sindarov",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "UZB",
+			"external": {
+				"fideId": "14205483"
+			}
+		},
+		{
+			"id": "jeffery-xiong",
+			"name": "Jeffery Xiong",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "USA",
+			"external": {
+				"fideId": "2047640"
+			}
+		},
+		{
+			"id": "jiner-zhu",
+			"name": "Jiner Zhu",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "CHN",
+			"external": {
+				"fideId": "8608059"
+			}
+		},
+		{
+			"id": "johan-sebastian-christiansen",
+			"name": "Johan-Sebastian Christiansen",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "NOR",
+			"external": {
+				"fideId": "1512668"
+			}
+		},
+		{
+			"id": "jorden-van-foreest",
+			"name": "Jorden Van Foreest",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "NED",
+			"external": {
+				"fideId": "1039784"
+			}
+		},
+		{
+			"id": "jose-eduardo-martinez-alcantara",
+			"name": "Jose Eduardo Martinez Alcantara",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "MEX",
+			"external": {
+				"fideId": "3805662"
+			}
+		},
+		{
+			"id": "karina-ambartsumova",
+			"name": "Karina Ambartsumova",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "RUS",
+			"external": {
+				"fideId": "4166299"
+			}
+		},
+		{
+			"id": "kateryna-lagno",
+			"name": "Kateryna Lagno",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "RUS",
+			"external": {
+				"fideId": "14109336"
+			}
+		},
+		{
+			"id": "khanim-balajayeva",
+			"name": "Khanim Balajayeva",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "AZE",
+			"external": {
+				"fideId": "13406396"
+			}
+		},
+		{
+			"id": "kirill-alekseenko",
+			"name": "Kirill Alekseenko",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "AUT",
+			"external": {
+				"fideId": "4135539"
+			}
+		},
+		{
+			"id": "klaudia-kulon",
+			"name": "Klaudia Kulon",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "POL",
+			"external": {
+				"fideId": "1131044"
+			}
+		},
+		{
+			"id": "le-thao-nguyen-pham",
+			"name": "Le Thao Nguyen Pham",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "VIE",
+			"external": {
+				"fideId": "12401226"
+			}
+		},
+		{
+			"id": "leinier-dominguez-perez",
+			"name": "Leinier Dominguez Perez",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "USA",
+			"external": {
+				"fideId": "3503240"
+			}
+		},
+		{
+			"id": "lela-javakhishvili",
+			"name": "Lela Javakhishvili",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "GEO",
+			"external": {
+				"fideId": "13601458"
+			}
+		},
+		{
+			"id": "levon-aronian",
+			"name": "Levon Aronian",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "USA",
+			"external": {
+				"fideId": "13300474"
+			}
+		},
+		{
+			"id": "leya-garifullina",
+			"name": "Leya Garifullina",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "FID",
+			"external": {
+				"fideId": "34127035"
+			}
+		},
+		{
+			"id": "lilit-mkrtchian",
+			"name": "Lilit Mkrtchian",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "ARM",
+			"external": {
+				"fideId": "13300601"
+			}
+		},
+		{
+			"id": "liren-ding",
+			"name": "Liren Ding",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "CHN",
+			"external": {
+				"fideId": "8603677"
+			}
+		},
+		{
+			"id": "liya-kurmangaliyeva",
+			"name": "Liya Kurmangaliyeva",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "KAZ",
+			"external": {
+				"fideId": "13725831"
+			}
+		},
+		{
+			"id": "loek-van-wely",
+			"name": "Loek Van Wely",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "NED",
+			"external": {
+				"fideId": "1000268"
+			}
+		},
+		{
+			"id": "m-amin-tabatabaei",
+			"name": "M. Amin Tabatabaei",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IRI",
+			"external": {
+				"fideId": "12521213"
+			}
+		},
+		{
+			"id": "magnus-carlsen",
+			"name": "Magnus Carlsen",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "NOR",
+			"external": {
+				"fideId": "1503014"
+			}
+		},
+		{
+			"id": "mahammad-muradli",
+			"name": "Mahammad Muradli",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "AZE",
+			"external": {
+				"fideId": "13409301"
+			}
+		},
+		{
+			"id": "mai-narva",
+			"name": "Mai Narva",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "EST",
+			"external": {
+				"fideId": "4500512"
+			}
+		},
+		{
+			"id": "maksim-chigaev",
+			"name": "Maksim Chigaev",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "ESP",
+			"external": {
+				"fideId": "4108116"
+			}
+		},
+		{
+			"id": "marcandria-maurizzi",
+			"name": "MarcAndria Maurizzi",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "FRA",
+			"external": {
+				"fideId": "36083534"
+			}
+		},
+		{
+			"id": "mariam-mkrtchyan",
+			"name": "Mariam Mkrtchyan",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "ARM",
+			"external": {
+				"fideId": "13310828"
+			}
+		},
+		{
+			"id": "marie-sebag",
+			"name": "Marie Sebag",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "FRA",
+			"external": {
+				"fideId": "617822"
+			}
+		},
+		{
+			"id": "mariya-muzychuk",
+			"name": "Mariya Muzychuk",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "UKR",
+			"external": {
+				"fideId": "14114550"
+			}
+		},
+		{
+			"id": "marsel-efroimski",
+			"name": "Marsel Efroimski",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "ISR",
+			"external": {
+				"fideId": "2810964"
+			}
+		},
+		{
+			"id": "matthias-bluebaum",
+			"name": "Matthias Bluebaum",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "GER",
+			"external": {
+				"fideId": "24651516"
+			}
+		},
+		{
+			"id": "maxime-vachier-lagrave",
+			"name": "Maxime Vachier-Lagrave",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "FRA",
+			"external": {
+				"fideId": "623539"
+			}
+		},
+		{
+			"id": "melika-mohammadi",
+			"name": "Melika Mohammadi",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IRI",
+			"external": {
+				"fideId": "42529271"
+			}
+		},
+		{
+			"id": "meri-arabidze",
+			"name": "Meri Arabidze",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "GEO",
+			"external": {
+				"fideId": "13604040"
+			}
+		},
+		{
+			"id": "meruert-kamalidenova",
+			"name": "Meruert Kamalidenova",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "KAZ",
+			"external": {
+				"fideId": "13712802"
+			}
+		},
+		{
+			"id": "miaoyi-lu",
+			"name": "Miaoyi Lu",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "CHN",
+			"external": {
+				"fideId": "8618020"
+			}
+		},
+		{
+			"id": "mitra-hejazipour",
+			"name": "Mitra Hejazipour",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "FRA",
+			"external": {
+				"fideId": "12505951"
+			}
+		},
+		{
+			"id": "monika-socko",
+			"name": "Monika Socko",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "POL",
+			"external": {
+				"fideId": "1106619"
+			}
+		},
+		{
+			"id": "murali-karthikeyan",
+			"name": "Murali Karthikeyan",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "5074452"
+			}
+		},
+		{
+			"id": "nadya-toncheva",
+			"name": "Nadya Toncheva",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "BUL",
+			"external": {
+				"fideId": "2924056"
+			}
+		},
+		{
+			"id": "nana-dzagnidze",
+			"name": "Nana Dzagnidze",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "GEO",
+			"external": {
+				"fideId": "13601903"
+			}
+		},
+		{
+			"id": "nataliya-buksa",
+			"name": "Nataliya Buksa",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "UKR",
+			"external": {
+				"fideId": "14123622"
+			}
+		},
+		{
+			"id": "nihal-sarin",
+			"name": "Nihal Sarin",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "25092340"
+			}
+		},
+		{
+			"id": "nikita-vitiugov",
+			"name": "Nikita Vitiugov",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "ENG",
+			"external": {
+				"fideId": "4152956"
+			}
+		},
+		{
+			"id": "nikolas-theodorou",
+			"name": "Nikolas Theodorou",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "GRE",
+			"external": {
+				"fideId": "4262875"
+			}
+		},
+		{
+			"id": "nino-batsiashvili",
+			"name": "Nino Batsiashvili",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "GEO",
+			"external": {
+				"fideId": "13602993"
+			}
+		},
+		{
+			"id": "nodirbek-abdusattorov",
+			"name": "Nodirbek Abdusattorov",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "UZB",
+			"external": {
+				"fideId": "14204118"
+			}
+		},
+		{
+			"id": "nodirbek-yakubboev",
+			"name": "Nodirbek Yakubboev",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "UZB",
+			"external": {
+				"fideId": "14203987"
+			}
+		},
+		{
+			"id": "nurgyul-salimova",
+			"name": "Nurgyul Salimova",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "BUL",
+			"external": {
+				"fideId": "2915138"
+			}
+		},
+		{
+			"id": "olga-badelka",
+			"name": "Olga Badelka",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "AUT",
+			"external": {
+				"fideId": "13509926"
+			}
+		},
+		{
+			"id": "olga-girya",
+			"name": "Olga Girya",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "RUS",
+			"external": {
+				"fideId": "4195752"
+			}
+		},
+		{
+			"id": "oliwia-kiolbasa",
+			"name": "Oliwia Kiolbasa",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "POL",
+			"external": {
+				"fideId": "1154613"
+			}
+		},
+		{
+			"id": "parham-maghsoodloo",
+			"name": "Parham Maghsoodloo",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IRI",
+			"external": {
+				"fideId": "12539929"
+			}
+		},
+		{
+			"id": "pavel-eljanov",
+			"name": "Pavel Eljanov",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "UKR",
+			"external": {
+				"fideId": "14102951"
+			}
+		},
+		{
+			"id": "pentala-harikrishna",
+			"name": "Pentala Harikrishna",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "5007003"
+			}
+		},
+		{
+			"id": "peter-leko",
+			"name": "Peter Leko",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "HUN",
+			"external": {
+				"fideId": "703303"
+			}
+		},
+		{
+			"id": "peter-svidler",
+			"name": "Peter Svidler",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "FID",
+			"external": {
+				"fideId": "4102142"
+			}
+		},
+		{
+			"id": "pia-cramling",
+			"name": "Pia Cramling",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "SWE",
+			"external": {
+				"fideId": "1700030"
+			}
+		},
+		{
+			"id": "polina-shuvalova",
+			"name": "Polina Shuvalova",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "FID",
+			"external": {
+				"fideId": "24171760"
+			}
+		},
+		{
+			"id": "praggnanandhaa-r",
+			"name": "Praggnanandhaa R",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "25059530"
+			}
+		},
+		{
+			"id": "pranesh-m",
+			"name": "Pranesh M",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "35028600"
+			}
+		},
+		{
+			"id": "qi-guo",
+			"name": "Qi Guo",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "CHN",
+			"external": {
+				"fideId": "8604002"
+			}
+		},
+		{
+			"id": "qian-huang",
+			"name": "Qian Huang",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "CHN",
+			"external": {
+				"fideId": "8602689"
+			}
+		},
+		{
+			"id": "quang-liem-le",
+			"name": "Quang Liem Le",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "VIE",
+			"external": {
+				"fideId": "12401137"
+			}
+		},
+		{
+			"id": "radoslaw-wojtaszek",
+			"name": "Radoslaw Wojtaszek",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "POL",
+			"external": {
+				"fideId": "1118358"
+			}
+		},
+		{
+			"id": "rakshitta-ravi",
+			"name": "Rakshitta Ravi",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "25073230"
+			}
+		},
+		{
+			"id": "rameshbabu-vaishali",
+			"name": "Rameshbabu Vaishali",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "5091756"
+			}
+		},
+		{
+			"id": "rauf-mamedov",
+			"name": "Rauf Mamedov",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "AZE",
+			"external": {
+				"fideId": "13401653"
+			}
+		},
+		{
+			"id": "raunak-sadhwani",
+			"name": "Raunak Sadhwani",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "35093487"
+			}
+		},
+		{
+			"id": "ray-robson",
+			"name": "Ray Robson",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "USA",
+			"external": {
+				"fideId": "2023970"
+			}
+		},
+		{
+			"id": "richard-rapport",
+			"name": "Richard Rapport",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "HUN",
+			"external": {
+				"fideId": "738590"
+			}
+		},
+		{
+			"id": "robert-hovhannisyan",
+			"name": "Robert Hovhannisyan",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "ARM",
+			"external": {
+				"fideId": "13302507"
+			}
+		},
+		{
+			"id": "rose-atwell",
+			"name": "Rose Atwell",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "USA",
+			"external": {
+				"fideId": "30951011"
+			}
+		},
+		{
+			"id": "rout-padmini",
+			"name": "Rout Padmini",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "5029295"
+			}
+		},
+		{
+			"id": "ruslan-ponomariov",
+			"name": "Ruslan Ponomariov",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "UKR",
+			"external": {
+				"fideId": "14103320"
+			}
+		},
+		{
+			"id": "rustam-kasimdzhanov",
+			"name": "Rustam Kasimdzhanov",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "UZB",
+			"external": {
+				"fideId": "14200244"
+			}
+		},
+		{
+			"id": "sabrina-vega-gutierrez",
+			"name": "Sabrina Vega Gutierrez",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "ESP",
+			"external": {
+				"fideId": "2219026"
+			}
+		},
+		{
+			"id": "sam-shankland",
+			"name": "Sam Shankland",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "USA",
+			"external": {
+				"fideId": "2004887"
+			}
+		},
+		{
+			"id": "samuel-sevian",
+			"name": "Samuel Sevian",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "USA",
+			"external": {
+				"fideId": "2040506"
+			}
+		},
+		{
+			"id": "santosh-gujrathi-vidit",
+			"name": "Santosh Gujrathi Vidit",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "5029465"
+			}
+		},
+		{
+			"id": "sarasadat-khademalsharieh",
+			"name": "Sarasadat Khademalsharieh",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "ESP",
+			"external": {
+				"fideId": "12512214"
+			}
+		},
+		{
+			"id": "savitha-shri-b",
+			"name": "Savitha Shri B",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "35061887"
+			}
+		},
+		{
+			"id": "shakhriyar-mamedyarov",
+			"name": "Shakhriyar Mamedyarov",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "AZE",
+			"external": {
+				"fideId": "13401319"
+			}
+		},
+		{
+			"id": "shamsiddin-vokhidov",
+			"name": "Shamsiddin Vokhidov",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "UZB",
+			"external": {
+				"fideId": "14204223"
+			}
+		},
+		{
+			"id": "shanglei-lu",
+			"name": "Shanglei Lu",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "CHN",
+			"external": {
+				"fideId": "8603332"
+			}
+		},
+		{
+			"id": "shant-sargsyan",
+			"name": "Shant Sargsyan",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "ARM",
+			"external": {
+				"fideId": "13306766"
+			}
+		},
+		{
+			"id": "shubhi-gupta",
+			"name": "Shubhi Gupta",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "25195425"
+			}
+		},
+		{
+			"id": "sophie-milliet",
+			"name": "Sophie Milliet",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "FRA",
+			"external": {
+				"fideId": "623725"
+			}
+		},
+		{
+			"id": "stavroula-tsolakidou",
+			"name": "Stavroula Tsolakidou",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "GRE",
+			"external": {
+				"fideId": "4264312"
+			}
+		},
+		{
+			"id": "tatev-abrahamyan",
+			"name": "Tatev Abrahamyan",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "USA",
+			"external": {
+				"fideId": "13301918"
+			}
+		},
+		{
+			"id": "teimour-radjabov",
+			"name": "Teimour Radjabov",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "AZE",
+			"external": {
+				"fideId": "13400924"
+			}
+		},
+		{
+			"id": "teodora-injac",
+			"name": "Teodora Injac",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "SRB",
+			"external": {
+				"fideId": "932400"
+			}
+		},
+		{
+			"id": "thai-dai-van-nguyen",
+			"name": "Thai Dai Van Nguyen",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "CZE",
+			"external": {
+				"fideId": "358878"
+			}
+		},
+		{
+			"id": "tianqi-yan",
+			"name": "Tianqi Yan",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "CHN",
+			"external": {
+				"fideId": "8615250"
+			}
+		},
+		{
+			"id": "tingjie-lei",
+			"name": "Tingjie Lei",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "CHN",
+			"external": {
+				"fideId": "8605114"
+			}
+		},
+		{
+			"id": "ulviyya-fataliyeva",
+			"name": "Ulviyya Fataliyeva",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "AZE",
+			"external": {
+				"fideId": "13403052"
+			}
+		},
+		{
+			"id": "v-pranav",
+			"name": "V Pranav",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "25060783"
+			}
+		},
+		{
+			"id": "valentina-gunina",
+			"name": "Valentina Gunina",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "FID",
+			"external": {
+				"fideId": "4167570"
+			}
+		},
+		{
+			"id": "vantika-agrawal",
+			"name": "Vantika Agrawal",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "25050389"
+			}
+		},
+		{
+			"id": "vasyl-ivanchuk",
+			"name": "Vasyl Ivanchuk",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "UKR",
+			"external": {
+				"fideId": "14100010"
+			}
+		},
+		{
+			"id": "veselin-topalov",
+			"name": "Veselin Topalov",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "BUL",
+			"external": {
+				"fideId": "2900084"
+			}
+		},
+		{
+			"id": "vincent-keymer",
+			"name": "Vincent Keymer",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "GER",
+			"external": {
+				"fideId": "12940690"
+			}
+		},
+		{
+			"id": "viswanathan-anand",
+			"name": "Viswanathan Anand",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "IND",
+			"external": {
+				"fideId": "5000017"
+			}
+		},
+		{
+			"id": "vladimir-fedoseev",
+			"name": "Vladimir Fedoseev",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "SLO",
+			"external": {
+				"fideId": "24130737"
+			}
+		},
+		{
+			"id": "vladislav-artemiev",
+			"name": "Vladislav Artemiev",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "RUS",
+			"external": {
+				"fideId": "24101605"
+			}
+		},
+		{
+			"id": "volodar-murzin",
+			"name": "Volodar Murzin",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "FID",
+			"external": {
+				"fideId": "44155573"
+			}
+		},
+		{
+			"id": "wenjun-ju",
+			"name": "Wenjun Ju",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "CHN",
+			"external": {
+				"fideId": "8603006"
+			}
+		},
+		{
+			"id": "wesley-so",
+			"name": "Wesley So",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "USA",
+			"external": {
+				"fideId": "5202213"
+			}
+		},
+		{
+			"id": "xiangzhi-bu",
+			"name": "Xiangzhi Bu",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "CHN",
+			"external": {
+				"fideId": "8601445"
+			}
+		},
+		{
+			"id": "xue-zhao",
+			"name": "Xue Zhao",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "CHN",
+			"external": {
+				"fideId": "8601283"
+			}
+		},
+		{
+			"id": "yagiz-kaan-erdogmus",
+			"name": "Yagiz Kaan Erdogmus",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "TUR",
+			"external": {
+				"fideId": "44599790"
+			}
+		},
+		{
+			"id": "yang-shen",
+			"name": "Yang Shen",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "CHN",
+			"external": {
+				"fideId": "8603162"
+			}
+		},
+		{
+			"id": "yangyi-yu",
+			"name": "Yangyi Yu",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "CHN",
+			"external": {
+				"fideId": "8603820"
+			}
+		},
+		{
+			"id": "yi-wei",
+			"name": "Yi Wei",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "CHN",
+			"external": {
+				"fideId": "8603405"
+			}
+		},
+		{
+			"id": "yifan-hou",
+			"name": "Yifan Hou",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "CHN",
+			"external": {
+				"fideId": "8602980"
+			}
+		},
+		{
+			"id": "yixin-ding",
+			"name": "Yixin Ding",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "CHN",
+			"external": {
+				"fideId": "8602972"
+			}
+		},
+		{
+			"id": "yiyi-xiao",
+			"name": "Yiyi Xiao",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "CHN",
+			"external": {
+				"fideId": "8606161"
+			}
+		},
+		{
+			"id": "yuliia-osmak",
+			"name": "Yuliia Osmak",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "UKR",
+			"external": {
+				"fideId": "14101602"
+			}
+		},
+		{
+			"id": "yuxin-song",
+			"name": "Yuxin Song",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "CHN",
+			"external": {
+				"fideId": "8614300"
+			}
+		},
+		{
+			"id": "zarina-nurgaliyeva",
+			"name": "Zarina Nurgaliyeva",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "KAZ",
+			"external": {
+				"fideId": "13730096"
+			}
+		},
+		{
+			"id": "zhongyi-tan",
+			"name": "Zhongyi Tan",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "CHN",
+			"external": {
+				"fideId": "8603642"
+			}
+		},
+		{
+			"id": "zsoka-gaal",
+			"name": "Zsoka Gaal",
+			"aliases": [],
+			"sport": "chess",
+			"type": "athlete",
+			"country": "HUN",
+			"external": {
+				"fideId": "777765"
+			}
+		}
+	]
+}

@@ -17,6 +17,13 @@ matter to a Norwegian sports fan that are NOT in the static data feeds**.
 - `scripts/config/tracked.json` — what AI currently tracks (prior state); this is
   the **catalog's bookkeeping** — the concrete, dated events/entities behind the
   catalog's coverage promise.
+- `scripts/config/registry/*.json` — the **world registry** (WP-161): the seeded,
+  durable FOLLOW UNIVERSE (~1 500–5 000 entities — every club in covered leagues,
+  national teams, the F1 field, WorldTour squads, ATP/WTA + FIDE top lists,
+  esports orgs, winter-sport athletes). A LOOKUP, never a coverage promise:
+  editing it changes what users can *find and follow*, not what the pipeline
+  fetches (the catalog governs that). You maintain it weekly — see the registry
+  reconciliation step below.
 - `docs/data/events.json` — what the static pipeline already found
 - `docs/data/rss-digest.json` — last 24h Norwegian + international headlines
 - `docs/data/coverage-gaps.json` — mechanical recall watch: `gaps[]` (an entity or
@@ -197,6 +204,30 @@ belongs, plus `evidence` URLs** (a placeholder-style entry is fine; it still nee
 `addedAt`/`addedBy`/`evidence` like any other). Never invent coverage you can't
 source, stay inside `neverCover`, and never silently drop an existing catalog entry —
 this pass only proposes additions.
+
+### Step 2.8 — Weekly registry reconciliation (deep-tier sweep only)
+On the WEEKLY deep-tier sweep (Monday) — not on ordinary 4-hourly runs — spend one
+bounded pass reconciling `scripts/config/registry/*.json` against the world:
+- **Promotions/relegations** in covered leagues (a club promoted into Eliteserien/
+  OBOS-ligaen/PL belongs in `football.json`; a relegated club is KEPT — the
+  registry is durable, someone may follow it).
+- **Renames** (sponsor changes, org rebrands): update `name`, fold the old name
+  into `aliases`. **The `id` NEVER changes** — it is the follow-target real user
+  profiles point at.
+- **Transfers/new names**: new WorldTour riders, new FIDE/ATP/WTA top-list
+  entrants, new or newly-relevant esports orgs; Norwegian breakthroughs first.
+- **Never delete** an entity outright (a profile may follow it); if something is
+  truly defunct, say so in its `notes` instead.
+
+Contract for every edit: keep the file schema-valid (`registry.schema.json`) and
+DETERMINISTIC (entities sorted by `id`, tab-indented); every new entity needs a
+stable kebab `id`, `sport`, `type` and at least one `external` source id
+(wikidata/espnId/fideId/liquipedia) — ids must stay globally unique across all
+registry files. Verify with `npx vitest run tests/registry-schema.test.js`.
+The mechanical bulk re-seed (`npm run seed:registry`) is the improve agent's /
+owner's tool — your job here is the judgement layer on top: the targeted,
+evidenced corrections a bulk seed misses. Record what changed (or that nothing
+did) in research-log notes.
 
 ### Step 3 — Add discovered events to events.json
 Append discovered events to the existing array in `docs/data/events.json`

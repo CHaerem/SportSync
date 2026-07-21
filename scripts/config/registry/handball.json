@@ -1,0 +1,4680 @@
+{
+	"$schema": "WP-161 verdensregister — håndball — spillere, norske klubber og landslag (tynnere v0). OPPSLAG, ikke dekningsløfte (catalog.json styrer dekning/kost). Deterministisk artefakt: sortert på id, stabil serialisering — re-seed (npm run seed:registry) gir rene diffs. Id-er er varige kebab-slugs; external-id-ene (wikidata/espnId/fideId/liquipedia) er re-seed-nøklene. Vedlikeholdes ukentlig av research/improve-agentene (opprykk/nedrykk, overganger, navnebytter, nye orgs) — se registry.schema.json.",
+	"source": "wikidata-sparql: aktive håndballspillere (norske + notable) + norske klubber + landslag",
+	"entities": [
+		{
+			"id": "abel-serdio",
+			"name": "Abel Serdio",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Spania",
+			"external": {
+				"wikidata": "Q57783658"
+			}
+		},
+		{
+			"id": "aksel-horgen",
+			"name": "Aksel Horgen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q104737324"
+			}
+		},
+		{
+			"id": "albania-national-handball-team",
+			"name": "Albania national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Albania",
+			"external": {
+				"wikidata": "Q3511766"
+			}
+		},
+		{
+			"id": "aleix-gomez",
+			"name": "Aleix Gómez",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Spania",
+			"external": {
+				"wikidata": "Q42319564"
+			}
+		},
+		{
+			"id": "alex-dujshebaev",
+			"name": "Alex Dujshebaev",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Spania",
+			"external": {
+				"wikidata": "Q2641289"
+			}
+		},
+		{
+			"id": "alexander-blonz",
+			"name": "Alexander Blonz",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q59769815"
+			}
+		},
+		{
+			"id": "algeries-herrelandslag-i-handball",
+			"name": "Algeries herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Algerie",
+			"external": {
+				"wikidata": "Q923617"
+			}
+		},
+		{
+			"id": "algeries-kvinnelandslag-i-handball",
+			"name": "Algeries kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Algerie",
+			"external": {
+				"wikidata": "Q3131150"
+			}
+		},
+		{
+			"id": "ali-zein",
+			"name": "Ali Zein",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Egypt",
+			"external": {
+				"wikidata": "Q19518612"
+			}
+		},
+		{
+			"id": "althea-reinhardt",
+			"name": "Althea Reinhardt",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q27642590"
+			}
+		},
+		{
+			"id": "amanda-kurtovic",
+			"name": "Amanda Kurtović",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q291584"
+			}
+		},
+		{
+			"id": "ana-gros",
+			"name": "Ana Gros",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Slovenia",
+			"external": {
+				"wikidata": "Q4750364"
+			}
+		},
+		{
+			"id": "andorra-national-handball-team",
+			"name": "Andorra national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Andorra",
+			"external": {
+				"wikidata": "Q4754570"
+			}
+		},
+		{
+			"id": "andre-bergsholm-kristensen",
+			"name": "André Bergsholm Kristensen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q131587549"
+			}
+		},
+		{
+			"id": "andrea-klikovac",
+			"name": "Andrea Klikovac",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Montenegro",
+			"external": {
+				"wikidata": "Q4755143"
+			}
+		},
+		{
+			"id": "andrea-pedersen",
+			"name": "Andrea Pedersen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q28870908"
+			}
+		},
+		{
+			"id": "andreas-nilsson",
+			"name": "Andreas Nilsson",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Sverige",
+			"external": {
+				"wikidata": "Q499792"
+			}
+		},
+		{
+			"id": "andreas-wolff",
+			"name": "Andreas Wolff",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Tyskland",
+			"external": {
+				"wikidata": "Q2652573"
+			}
+		},
+		{
+			"id": "ane-cecilie-hogseth",
+			"name": "Ane Cecilie Høgseth",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q90112455"
+			}
+		},
+		{
+			"id": "ane-eidem",
+			"name": "Ane Eidem",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q19705537"
+			}
+		},
+		{
+			"id": "anette-helene-hansen",
+			"name": "Anette Helene Hansen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q22004766"
+			}
+		},
+		{
+			"id": "angela-malestein",
+			"name": "Angela Malestein",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Nederlandene",
+			"external": {
+				"wikidata": "Q4762498"
+			}
+		},
+		{
+			"id": "angolas-herrelandslag-i-handball",
+			"name": "Angolas herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Angola",
+			"external": {
+				"wikidata": "Q542138"
+			}
+		},
+		{
+			"id": "angolas-kvinnelandslag-i-handball",
+			"name": "Angolas kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Angola",
+			"external": {
+				"wikidata": "Q542083"
+			}
+		},
+		{
+			"id": "anna-sen",
+			"name": "Anna Sen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Russland",
+			"external": {
+				"wikidata": "Q521919"
+			}
+		},
+		{
+			"id": "anna-vjakhireva",
+			"name": "Anna Vjakhireva",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Russland",
+			"external": {
+				"wikidata": "Q15783543"
+			}
+		},
+		{
+			"id": "anne-mette-hansen",
+			"name": "Anne Mette Hansen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q15313118"
+			}
+		},
+		{
+			"id": "anniken-obaidli",
+			"name": "Anniken Obaidli",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q21583197"
+			}
+		},
+		{
+			"id": "anniken-wollik",
+			"name": "Anniken Wollik",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q114687782"
+			}
+		},
+		{
+			"id": "antonina-skorobogattsjenko",
+			"name": "Antonina Skorobogattsjenko",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Russland",
+			"external": {
+				"wikidata": "Q25367825"
+			}
+		},
+		{
+			"id": "argentinas-herrelandslag-i-handball",
+			"name": "Argentinas herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Argentina",
+			"external": {
+				"wikidata": "Q646023"
+			}
+		},
+		{
+			"id": "argentinas-kvinnelandslag-i-handball",
+			"name": "Argentinas kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Argentina",
+			"external": {
+				"wikidata": "Q3503408"
+			}
+		},
+		{
+			"id": "aron-palmarsson",
+			"name": "Aron Pálmarsson",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Island",
+			"external": {
+				"wikidata": "Q683427"
+			}
+		},
+		{
+			"id": "august-baskar-pedersen",
+			"name": "August Baskår Pedersen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q112147170"
+			}
+		},
+		{
+			"id": "australias-herrelandslag-i-handball",
+			"name": "Australias herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Australia",
+			"external": {
+				"wikidata": "Q721443"
+			}
+		},
+		{
+			"id": "australias-kvinnelandslag-i-handball",
+			"name": "Australias kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Australia",
+			"external": {
+				"wikidata": "Q3179718"
+			}
+		},
+		{
+			"id": "azerbaijan-national-handball-team",
+			"name": "Azerbaijan national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Aserbajdsjan",
+			"external": {
+				"wikidata": "Q30646152"
+			}
+		},
+		{
+			"id": "azerbaijan-women-s-national-handball-team",
+			"name": "Azerbaijan women's national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Aserbajdsjan",
+			"external": {
+				"wikidata": "Q3545046"
+			}
+		},
+		{
+			"id": "bahrains-herrelandslag-i-handball",
+			"name": "Bahrains herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Bahrain",
+			"external": {
+				"wikidata": "Q1957301"
+			}
+		},
+		{
+			"id": "belarus-herrelandslag-i-handball",
+			"name": "Belarus’ herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Belarus",
+			"external": {
+				"wikidata": "Q904742"
+			}
+		},
+		{
+			"id": "belarus-kvinnelandslag-i-handball",
+			"name": "Belarus’ kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Belarus",
+			"external": {
+				"wikidata": "Q3180466"
+			}
+		},
+		{
+			"id": "belgias-herrelandslag-i-handball",
+			"name": "Belgias herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Belgia",
+			"external": {
+				"wikidata": "Q606251"
+			}
+		},
+		{
+			"id": "belgium-women-s-national-handball-team",
+			"name": "Belgium women's national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Belgia",
+			"external": {
+				"wikidata": "Q647670"
+			}
+		},
+		{
+			"id": "bence-banhidi",
+			"name": "Bence Bánhidi",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Ungarn",
+			"external": {
+				"wikidata": "Q22084502"
+			}
+		},
+		{
+			"id": "bergen-handball",
+			"name": "Bergen Håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q1777209"
+			}
+		},
+		{
+			"id": "birgitte-karlsen-hagen",
+			"name": "Birgitte Karlsen Hagen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q33744962"
+			}
+		},
+		{
+			"id": "bjarki-mar-elisson",
+			"name": "Bjarki Már Elísson",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Island",
+			"external": {
+				"wikidata": "Q14623934"
+			}
+		},
+		{
+			"id": "blaz-janc",
+			"name": "Blaž Janc",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Slovenia",
+			"external": {
+				"wikidata": "Q23892332"
+			}
+		},
+		{
+			"id": "bodo-handballklubb",
+			"name": "Bodø Håndballklubb",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q17750655"
+			}
+		},
+		{
+			"id": "bosnia-hercegovinas-herrelandslag-i-handball",
+			"name": "Bosnia-Hercegovinas herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Bosnia-Hercegovina",
+			"external": {
+				"wikidata": "Q3432689"
+			}
+		},
+		{
+			"id": "brasils-herrelandslag-i-handball",
+			"name": "Brasils herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Brasil",
+			"external": {
+				"wikidata": "Q629728"
+			}
+		},
+		{
+			"id": "brasils-kvinnelandslag-i-handball",
+			"name": "Brasils kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Brasil",
+			"external": {
+				"wikidata": "Q693132"
+			}
+		},
+		{
+			"id": "bravo-handballklubb",
+			"name": "Bravo Håndballklubb",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q11962140"
+			}
+		},
+		{
+			"id": "bulgaria-men-s-national-handball-team",
+			"name": "Bulgaria men's national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Bulgaria",
+			"external": {
+				"wikidata": "Q3434201"
+			}
+		},
+		{
+			"id": "bulgaria-women-s-national-handball-team",
+			"name": "Bulgaria women's national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Bulgaria",
+			"external": {
+				"wikidata": "Q1091218"
+			}
+		},
+		{
+			"id": "byasen-handball-elite",
+			"name": "Byåsen Håndball Elite",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q4180232"
+			}
+		},
+		{
+			"id": "camila-micijevic",
+			"name": "Ćamila Mičijević",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kroatia",
+			"external": {
+				"wikidata": "Q18637732"
+			}
+		},
+		{
+			"id": "canada-national-handball-team",
+			"name": "Canada national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Canada",
+			"external": {
+				"wikidata": "Q1557170"
+			}
+		},
+		{
+			"id": "canadas-kvinnelandslag-i-handball",
+			"name": "Canadas kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Canada",
+			"external": {
+				"wikidata": "Q4992720"
+			}
+		},
+		{
+			"id": "celine-sivertsen",
+			"name": "Celine Sivertsen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q43311700"
+			}
+		},
+		{
+			"id": "chiles-herrelandslag-i-handball",
+			"name": "Chiles herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Chile",
+			"external": {
+				"wikidata": "Q1072855"
+			}
+		},
+		{
+			"id": "chiles-kvinnelandslag-i-handball",
+			"name": "Chiles kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Chile",
+			"external": {
+				"wikidata": "Q3038402"
+			}
+		},
+		{
+			"id": "china-men-s-national-handball-team",
+			"name": "China men's national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Kina",
+			"external": {
+				"wikidata": "Q2734021"
+			}
+		},
+		{
+			"id": "chloe-bulleux",
+			"name": "Chloé Bulleux",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q15974041"
+			}
+		},
+		{
+			"id": "chloe-valentini",
+			"name": "Chloé Valentini",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q58045229"
+			}
+		},
+		{
+			"id": "christian-dissinger",
+			"name": "Christian Dissinger",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Tyskland",
+			"external": {
+				"wikidata": "Q1079294"
+			}
+		},
+		{
+			"id": "christian-o-sullivan",
+			"name": "Christian O'Sullivan",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q15935247"
+			}
+		},
+		{
+			"id": "christine-homme",
+			"name": "Christine Homme",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q16539369"
+			}
+		},
+		{
+			"id": "colombia-national-handball-team",
+			"name": "Colombia national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Colombia",
+			"external": {
+				"wikidata": "Q5147912"
+			}
+		},
+		{
+			"id": "coralie-lassource",
+			"name": "Coralie Lassource",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q16543914"
+			}
+		},
+		{
+			"id": "costa-rica-national-handball-team",
+			"name": "Costa Rica national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Costa Rica",
+			"external": {
+				"wikidata": "Q4992692"
+			}
+		},
+		{
+			"id": "cubas-herrelandslag-i-handball",
+			"name": "Cubas herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Cuba",
+			"external": {
+				"wikidata": "Q1680323"
+			}
+		},
+		{
+			"id": "cubas-kvinnelandslag-i-handball",
+			"name": "Cubas kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Cuba",
+			"external": {
+				"wikidata": "Q3133245"
+			}
+		},
+		{
+			"id": "cyprus-national-handball-team",
+			"name": "Cyprus national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Kypros",
+			"external": {
+				"wikidata": "Q3434242"
+			}
+		},
+		{
+			"id": "czechoslovakia-national-handball-team",
+			"name": "Czechoslovakia national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Tsjekkoslovakia",
+			"external": {
+				"wikidata": "Q2732119"
+			}
+		},
+		{
+			"id": "czechoslovakia-women-s-national-handball-team",
+			"name": "Czechoslovakia women's national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Tsjekkoslovakia",
+			"external": {
+				"wikidata": "Q3108227"
+			}
+		},
+		{
+			"id": "dainis-kristopans",
+			"name": "Dainis Krištopāns",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Latvia",
+			"external": {
+				"wikidata": "Q4993074"
+			}
+		},
+		{
+			"id": "danick-snelder",
+			"name": "Danick Snelder",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Nederlandene",
+			"external": {
+				"wikidata": "Q5216288"
+			}
+		},
+		{
+			"id": "daniel-dujshebaev",
+			"name": "Daniel Dujshebaev",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Spania",
+			"external": {
+				"wikidata": "Q27978219"
+			}
+		},
+		{
+			"id": "daniel-fernandez",
+			"name": "Daniel Fernández",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Spania",
+			"external": {
+				"wikidata": "Q112841077"
+			}
+		},
+		{
+			"id": "danmarks-herrelandslag-i-handball",
+			"name": "Danmarks herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Danmark",
+			"external": {
+				"wikidata": "Q728491"
+			}
+		},
+		{
+			"id": "danmarks-kvinnelandslag-i-handball",
+			"name": "Danmarks kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Danmark",
+			"external": {
+				"wikidata": "Q661049"
+			}
+		},
+		{
+			"id": "darja-dmitrijeva",
+			"name": "Darja Dmitrijeva",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Russland",
+			"external": {
+				"wikidata": "Q16979890"
+			}
+		},
+		{
+			"id": "de-forente-arabiske-emiraters-herrelandslag-i-handball",
+			"name": "De forente arabiske emiraters herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "De forente arabiske emirater",
+			"external": {
+				"wikidata": "Q4992691"
+			}
+		},
+		{
+			"id": "den-demokratiske-republikken-kongos-herrelandslag-i-handball",
+			"name": "Den demokratiske republikken Kongos herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Kongo",
+			"external": {
+				"wikidata": "Q4992143"
+			}
+		},
+		{
+			"id": "den-demokratiske-republikken-kongos-kvinnelandslag-i-handball",
+			"name": "Den demokratiske republikken Kongos kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Kongo",
+			"external": {
+				"wikidata": "Q3590343"
+			}
+		},
+		{
+			"id": "den-dominikanske-republikks-kvinnelandslag-i-handball",
+			"name": "Den dominikanske republikks kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Den dominikanske republikk",
+			"external": {
+				"wikidata": "Q5290815"
+			}
+		},
+		{
+			"id": "dika-mem",
+			"name": "Dika Mem",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q26272465"
+			}
+		},
+		{
+			"id": "dominican-republic-national-handball-team",
+			"name": "Dominican Republic national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Den dominikanske republikk",
+			"external": {
+				"wikidata": "Q47686"
+			}
+		},
+		{
+			"id": "drammen-handballklubb",
+			"name": "Drammen Håndballklubb",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q1255740"
+			}
+		},
+		{
+			"id": "egypts-herrelandslag-i-handball",
+			"name": "Egypts herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Egypt",
+			"external": {
+				"wikidata": "Q253869"
+			}
+		},
+		{
+			"id": "egypts-kvinnelandslag-i-handball",
+			"name": "Egypts kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Egypt",
+			"external": {
+				"wikidata": "Q3589885"
+			}
+		},
+		{
+			"id": "eirik-kopp",
+			"name": "Eirik Köpp",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q30346179"
+			}
+		},
+		{
+			"id": "eivind-tangen",
+			"name": "Eivind Tangen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q1243172"
+			}
+		},
+		{
+			"id": "elfenbenskystens-kvinnelandslag-i-handball",
+			"name": "Elfenbenskystens kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Elfenbenskysten",
+			"external": {
+				"wikidata": "Q3182280"
+			}
+		},
+		{
+			"id": "eli-marie-raasok",
+			"name": "Eli Marie Raasok",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q105467058"
+			}
+		},
+		{
+			"id": "elisabeth-hammerstad",
+			"name": "Elisabeth Hammerstad",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q17094229"
+			}
+		},
+		{
+			"id": "elise-skinnehaugen",
+			"name": "Elise Skinnehaugen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q42290304"
+			}
+		},
+		{
+			"id": "elohim-prandi",
+			"name": "Elohim Prandi",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q65028302"
+			}
+		},
+		{
+			"id": "elverum-handball",
+			"name": "Elverum Håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q4585952"
+			}
+		},
+		{
+			"id": "emil-jakobsen",
+			"name": "Emil Jakobsen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q62059824"
+			}
+		},
+		{
+			"id": "emil-nielsen",
+			"name": "Emil Nielsen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q24033989"
+			}
+		},
+		{
+			"id": "emilie-christensen",
+			"name": "Emilie Christensen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q28862275"
+			}
+		},
+		{
+			"id": "emilie-hegh-arntzen",
+			"name": "Emilie Hegh Arntzen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q18611868"
+			}
+		},
+		{
+			"id": "emma-friis",
+			"name": "Emma Friis",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q28861630"
+			}
+		},
+		{
+			"id": "erik-toft",
+			"name": "Erik Toft",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q17112486"
+			}
+		},
+		{
+			"id": "estavana-polman",
+			"name": "Estavana Polman",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Nederlandene",
+			"external": {
+				"wikidata": "Q5400699"
+			}
+		},
+		{
+			"id": "estelle-nze-minko",
+			"name": "Estelle Nze Minko",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q16635082"
+			}
+		},
+		{
+			"id": "estonia-national-handball-team",
+			"name": "Estonia national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Estland",
+			"external": {
+				"wikidata": "Q3435168"
+			}
+		},
+		{
+			"id": "fabian-wiede",
+			"name": "Fabian Wiede",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Tyskland",
+			"external": {
+				"wikidata": "Q14902854"
+			}
+		},
+		{
+			"id": "faeroyenes-herrelandslag-i-handball",
+			"name": "Færøyenes herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Danmark",
+			"external": {
+				"wikidata": "Q3436022"
+			}
+		},
+		{
+			"id": "faeroyenes-kvinnelandslag-i-handball",
+			"name": "Færøyenes kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Danmark",
+			"external": {
+				"wikidata": "Q2684044"
+			}
+		},
+		{
+			"id": "felix-claar",
+			"name": "Felix Claar",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Sverige",
+			"external": {
+				"wikidata": "Q27654695"
+			}
+		},
+		{
+			"id": "ferran-sole",
+			"name": "Ferrán Solé",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Spania",
+			"external": {
+				"wikidata": "Q28916054"
+			}
+		},
+		{
+			"id": "finland-women-s-national-handball-team",
+			"name": "Finland women's national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Finland",
+			"external": {
+				"wikidata": "Q3545051"
+			}
+		},
+		{
+			"id": "finlands-herrelandslag-i-handball",
+			"name": "Finlands herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Finland",
+			"external": {
+				"wikidata": "Q1417987"
+			}
+		},
+		{
+			"id": "finn-lemke",
+			"name": "Finn Lemke",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Tyskland",
+			"external": {
+				"wikidata": "Q1417637"
+			}
+		},
+		{
+			"id": "follo-handballklubb",
+			"name": "Follo Håndballklubb",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q17773071"
+			}
+		},
+		{
+			"id": "frankrikes-herrelandslag-i-handball",
+			"name": "Frankrikes herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q457107"
+			}
+		},
+		{
+			"id": "frankrikes-kvinnelandslag-i-handball",
+			"name": "Frankrikes kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q1003357"
+			}
+		},
+		{
+			"id": "fredrikstad-ballklubb",
+			"name": "Fredrikstad Ballklubb",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q11970120"
+			}
+		},
+		{
+			"id": "frida-namo-ronning",
+			"name": "Frida Nåmo Rønning",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q108187346"
+			}
+		},
+		{
+			"id": "fyllingen-handball",
+			"name": "Fyllingen Håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q10500592"
+			}
+		},
+		{
+			"id": "gabriel-setterblom",
+			"name": "Gabriel Setterblom",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q118869688"
+			}
+		},
+		{
+			"id": "georgias-herrelandslag-i-handball",
+			"name": "Georgias herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Georgia",
+			"external": {
+				"wikidata": "Q941942"
+			}
+		},
+		{
+			"id": "gjerpen-handball",
+			"name": "Gjerpen Håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q13593427"
+			}
+		},
+		{
+			"id": "gnonsiane-niombla",
+			"name": "Gnonsiane Niombla",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q15291022"
+			}
+		},
+		{
+			"id": "gonzalo-perez-de-vargas",
+			"name": "Gonzalo Pérez de Vargas",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Spania",
+			"external": {
+				"wikidata": "Q5883204"
+			}
+		},
+		{
+			"id": "goran-johannessen",
+			"name": "Gøran Johannessen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q24663933"
+			}
+		},
+		{
+			"id": "goran-sorheim",
+			"name": "Gøran Sørheim",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q24689194"
+			}
+		},
+		{
+			"id": "grace-zaadi",
+			"name": "Grâce Zaadi",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q3118319"
+			}
+		},
+		{
+			"id": "gronlands-herrelandslag-i-handball",
+			"name": "Grønlands herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Grønland",
+			"external": {
+				"wikidata": "Q1539887"
+			}
+		},
+		{
+			"id": "gronlands-kvinnelandslag-i-handball",
+			"name": "Grønlands kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Grønland",
+			"external": {
+				"wikidata": "Q2334986"
+			}
+		},
+		{
+			"id": "guineas-herrelandslag-i-handball",
+			"name": "Guineas herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Guinea",
+			"external": {
+				"wikidata": "Q85764794"
+			}
+		},
+		{
+			"id": "guro-nestaker",
+			"name": "Guro Nestaker",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q64514116"
+			}
+		},
+		{
+			"id": "hampus-wanne",
+			"name": "Hampus Wanne",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Sverige",
+			"external": {
+				"wikidata": "Q13392766"
+			}
+		},
+		{
+			"id": "hanna-oftedal-sagosen",
+			"name": "Hanna Oftedal Sagosen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q17265903"
+			}
+		},
+		{
+			"id": "hanna-yttereng",
+			"name": "Hanna Yttereng",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q15986529"
+			}
+		},
+		{
+			"id": "harald-reinkind",
+			"name": "Harald Reinkind",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q15303059"
+			}
+		},
+		{
+			"id": "haslum-handballklubb",
+			"name": "Haslum Håndballklubb",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q3783604"
+			}
+		},
+		{
+			"id": "hatadou-sako",
+			"name": "Hatadou Sako",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q62680877"
+			}
+		},
+		{
+			"id": "hege-bakken-wahlquist",
+			"name": "Hege Bakken Wahlquist",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q23883029"
+			}
+		},
+		{
+			"id": "hege-loken",
+			"name": "Hege Løken",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q53869205"
+			}
+		},
+		{
+			"id": "helene-fauske",
+			"name": "Helene Fauske",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q28810233"
+			}
+		},
+		{
+			"id": "hellas-herrelandslag-i-handball",
+			"name": "Hellas’ herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Hellas",
+			"external": {
+				"wikidata": "Q732382"
+			}
+		},
+		{
+			"id": "hellas-kvinnelandslag-i-handball",
+			"name": "Hellas’ kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Hellas",
+			"external": {
+				"wikidata": "Q3499585"
+			}
+		},
+		{
+			"id": "hendrik-pekeler",
+			"name": "Hendrik Pekeler",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Tyskland",
+			"external": {
+				"wikidata": "Q999812"
+			}
+		},
+		{
+			"id": "henny-reistad",
+			"name": "Henny Reistad",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q53847369"
+			}
+		},
+		{
+			"id": "henriette-eggen",
+			"name": "Henriette Eggen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q130600237"
+			}
+		},
+		{
+			"id": "henrik-jakobsen",
+			"name": "Henrik Jakobsen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q30208409"
+			}
+		},
+		{
+			"id": "hugo-descat",
+			"name": "Hugo Descat",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q16642493"
+			}
+		},
+		{
+			"id": "ine-karlsen-stangvik",
+			"name": "Ine Karlsen Stangvik",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q21208190"
+			}
+		},
+		{
+			"id": "ingvild-bakkerud",
+			"name": "Ingvild Bakkerud",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q30008061"
+			}
+		},
+		{
+			"id": "irans-herrelandslag-i-handball",
+			"name": "Irans herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Iran",
+			"external": {
+				"wikidata": "Q3495847"
+			}
+		},
+		{
+			"id": "irans-kvinnelandslag-i-handball",
+			"name": "Irans kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Iran",
+			"external": {
+				"wikidata": "Q6067119"
+			}
+		},
+		{
+			"id": "ireland-men-s-national-handball-team",
+			"name": "Ireland men's national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Irland",
+			"external": {
+				"wikidata": "Q603710"
+			}
+		},
+		{
+			"id": "islands-herrelandslag-i-handball",
+			"name": "Islands herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Island",
+			"external": {
+				"wikidata": "Q741538"
+			}
+		},
+		{
+			"id": "islands-kvinnelandslag-i-handball",
+			"name": "Islands kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Island",
+			"external": {
+				"wikidata": "Q1443135"
+			}
+		},
+		{
+			"id": "israel-women-s-national-handball-team",
+			"name": "Israel women's national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Israel",
+			"external": {
+				"wikidata": "Q917723"
+			}
+		},
+		{
+			"id": "israels-herrelandslag-i-handball",
+			"name": "Israels herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Israel",
+			"external": {
+				"wikidata": "Q1083791"
+			}
+		},
+		{
+			"id": "italias-herrelandslag-i-handball",
+			"name": "Italias herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Italia",
+			"external": {
+				"wikidata": "Q1068227"
+			}
+		},
+		{
+			"id": "italy-women-s-national-handball-team",
+			"name": "Italy women's national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Italia",
+			"external": {
+				"wikidata": "Q1091201"
+			}
+		},
+		{
+			"id": "jacob-holm",
+			"name": "Jacob Holm",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q30033135"
+			}
+		},
+		{
+			"id": "jamina-roberts",
+			"name": "Jamina Roberts",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Sverige",
+			"external": {
+				"wikidata": "Q3499447"
+			}
+		},
+		{
+			"id": "jannik-kohlbacher",
+			"name": "Jannik Kohlbacher",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Tyskland",
+			"external": {
+				"wikidata": "Q15820808"
+			}
+		},
+		{
+			"id": "japans-herrelandslag-i-handball",
+			"name": "Japans herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Japan",
+			"external": {
+				"wikidata": "Q288686"
+			}
+		},
+		{
+			"id": "japans-kvinnelandslag-i-handball",
+			"name": "Japans kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Japan",
+			"external": {
+				"wikidata": "Q3045342"
+			}
+		},
+		{
+			"id": "jeanett-kristiansen",
+			"name": "Jeanett Kristiansen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q19974520"
+			}
+		},
+		{
+			"id": "jekaterina-ilina",
+			"name": "Jekaterina Ilina",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Russland",
+			"external": {
+				"wikidata": "Q5350324"
+			}
+		},
+		{
+			"id": "jim-gottfridsson",
+			"name": "Jim Gottfridsson",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Sverige",
+			"external": {
+				"wikidata": "Q5765727"
+			}
+		},
+		{
+			"id": "johan-hansen",
+			"name": "Jóhan Hansen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q18718744"
+			}
+		},
+		{
+			"id": "johannes-golla",
+			"name": "Johannes Golla",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Tyskland",
+			"external": {
+				"wikidata": "Q28779476"
+			}
+		},
+		{
+			"id": "johannes-hippe",
+			"name": "Johannes Hippe",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q1697699"
+			}
+		},
+		{
+			"id": "julian-koster",
+			"name": "Julian Köster",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"external": {
+				"wikidata": "Q109465153"
+			}
+		},
+		{
+			"id": "julie-aspelund-berg",
+			"name": "Julie Aspelund Berg",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q63536299"
+			}
+		},
+		{
+			"id": "julius-kuhn",
+			"name": "Julius Kühn",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Tyskland",
+			"external": {
+				"wikidata": "Q1712779"
+			}
+		},
+		{
+			"id": "june-krogh",
+			"name": "June Krogh",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q115273495"
+			}
+		},
+		{
+			"id": "juri-knorr",
+			"name": "Juri Knorr",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Tyskland",
+			"external": {
+				"wikidata": "Q59511474"
+			}
+		},
+		{
+			"id": "kaja-haugseng",
+			"name": "Kaja Haugseng",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q111722349"
+			}
+		},
+		{
+			"id": "kalidiatou-niakate",
+			"name": "Kalidiatou Niakaté",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q18221826"
+			}
+		},
+		{
+			"id": "kameruns-kvinnelandslag-i-handball",
+			"name": "Kameruns kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Kamerun",
+			"external": {
+				"wikidata": "Q3590620"
+			}
+		},
+		{
+			"id": "kamil-syprzak",
+			"name": "Kamil Syprzak",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Polen",
+			"external": {
+				"wikidata": "Q946012"
+			}
+		},
+		{
+			"id": "kapp-verdes-herrelandslag-i-handball",
+			"name": "Kapp Verdes herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Kapp Verde",
+			"external": {
+				"wikidata": "Q84433186"
+			}
+		},
+		{
+			"id": "kari-brattset-dale",
+			"name": "Kari Brattset Dale",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q23042317"
+			}
+		},
+		{
+			"id": "karoline-lund",
+			"name": "Karoline Lund",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q80566028"
+			}
+		},
+		{
+			"id": "karoline-olsen",
+			"name": "Karoline Olsen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q55318370"
+			}
+		},
+		{
+			"id": "kasakhstans-kvinnelandslag-i-handball",
+			"name": "Kasakhstans kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Kasakhstan",
+			"external": {
+				"wikidata": "Q942380"
+			}
+		},
+		{
+			"id": "kasper-thorsen-lien",
+			"name": "Kasper Thorsen Lien",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q118009104"
+			}
+		},
+		{
+			"id": "kathrine-heindahl",
+			"name": "Kathrine Heindahl",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q16948836"
+			}
+		},
+		{
+			"id": "katinka-haltvik",
+			"name": "Katinka Haltvik",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q17711742"
+			}
+		},
+		{
+			"id": "katrin-klujber",
+			"name": "Katrin Klujber",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Ungarn",
+			"external": {
+				"wikidata": "Q28971702"
+			}
+		},
+		{
+			"id": "kay-smits",
+			"name": "Kay Smits",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Nederlandene",
+			"external": {
+				"wikidata": "Q81337547"
+			}
+		},
+		{
+			"id": "kelly-dulfer",
+			"name": "Kelly Dulfer",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Nederlandene",
+			"external": {
+				"wikidata": "Q16210869"
+			}
+		},
+		{
+			"id": "kent-robin-tonnesen",
+			"name": "Kent Robin Tønnesen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q1739035"
+			}
+		},
+		{
+			"id": "kentin-mahe",
+			"name": "Kentin Mahé",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q962948"
+			}
+		},
+		{
+			"id": "kevin-gulliksen",
+			"name": "Kevin Gulliksen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q49867485"
+			}
+		},
+		{
+			"id": "kinas-kvinnelandslag-i-handball",
+			"name": "Kinas kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Kina",
+			"external": {
+				"wikidata": "Q1073893"
+			}
+		},
+		{
+			"id": "kjerstin-boge-solas",
+			"name": "Kjerstin Boge Solås",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q27064023"
+			}
+		},
+		{
+			"id": "kolstad-handball",
+			"name": "Kolstad Håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q19377654"
+			}
+		},
+		{
+			"id": "koreas-herrelandslag-i-handball",
+			"name": "Koreas herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Nord-Korea",
+			"external": {
+				"wikidata": "Q60246951"
+			}
+		},
+		{
+			"id": "kosovo-women-s-national-handball-team",
+			"name": "Kosovo women's national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Kosovo",
+			"external": {
+				"wikidata": "Q20527441"
+			}
+		},
+		{
+			"id": "kristian-hansen",
+			"name": "Kristian Hansen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q27983437"
+			}
+		},
+		{
+			"id": "kristian-saeveras",
+			"name": "Kristian Sæverås",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q39155679"
+			}
+		},
+		{
+			"id": "kristin-norstebo",
+			"name": "Kristin Nørstebø",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q63808970"
+			}
+		},
+		{
+			"id": "kristin-venn",
+			"name": "Kristin Venn",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q22957745"
+			}
+		},
+		{
+			"id": "kristina-jorgensen",
+			"name": "Kristina Jørgensen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q28945326"
+			}
+		},
+		{
+			"id": "kristine-breistol",
+			"name": "Kristine Breistøl",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q16382882"
+			}
+		},
+		{
+			"id": "kroatias-herrelandslag-i-handball",
+			"name": "Kroatias herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Kroatia",
+			"external": {
+				"wikidata": "Q639266"
+			}
+		},
+		{
+			"id": "kroatias-kvinnelandslag-i-handball",
+			"name": "Kroatias kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Kroatia",
+			"external": {
+				"wikidata": "Q620341"
+			}
+		},
+		{
+			"id": "ksenija-makejeva",
+			"name": "Ksenija Makejeva",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Russland",
+			"external": {
+				"wikidata": "Q3427993"
+			}
+		},
+		{
+			"id": "kuwaits-herrelandslag-i-handball",
+			"name": "Kuwaits herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Kuwait",
+			"external": {
+				"wikidata": "Q1638948"
+			}
+		},
+		{
+			"id": "larvik-handballklubb",
+			"name": "Larvik Håndballklubb",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q1092908"
+			}
+		},
+		{
+			"id": "lasse-andersson",
+			"name": "Lasse Andersson",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q15733322"
+			}
+		},
+		{
+			"id": "latvias-herrelandslag-i-handball",
+			"name": "Latvias herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Latvia",
+			"external": {
+				"wikidata": "Q3433831"
+			}
+		},
+		{
+			"id": "laura-flippes",
+			"name": "Laura Flippes",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q17350582"
+			}
+		},
+		{
+			"id": "laura-glauser",
+			"name": "Laura Glauser",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q16653248"
+			}
+		},
+		{
+			"id": "laura-van-der-heijden",
+			"name": "Laura van der Heijden",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Nederlandene",
+			"external": {
+				"wikidata": "Q322805"
+			}
+		},
+		{
+			"id": "levanger-handballklubb",
+			"name": "Levanger Håndballklubb",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q11983844"
+			}
+		},
+		{
+			"id": "line-bjornsen",
+			"name": "Line Bjørnsen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q28829853"
+			}
+		},
+		{
+			"id": "line-ellertsen",
+			"name": "Line Ellertsen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q55585096"
+			}
+		},
+		{
+			"id": "line-haugsted",
+			"name": "Line Haugsted",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q17485987"
+			}
+		},
+		{
+			"id": "lisa-johansen-persheim",
+			"name": "Lisa Johansen Persheim",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q16233475"
+			}
+		},
+		{
+			"id": "lisa-oppedal",
+			"name": "Lisa Oppedal",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q130617280"
+			}
+		},
+		{
+			"id": "litauens-herrelandslag-i-handball",
+			"name": "Litauens herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Litauen",
+			"external": {
+				"wikidata": "Q221421"
+			}
+		},
+		{
+			"id": "litauens-kvinnelandslag-i-handball",
+			"name": "Litauens kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Litauen",
+			"external": {
+				"wikidata": "Q3545049"
+			}
+		},
+		{
+			"id": "lois-abbingh",
+			"name": "Lois Abbingh",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Nederlandene",
+			"external": {
+				"wikidata": "Q440466"
+			}
+		},
+		{
+			"id": "louise-burgaard",
+			"name": "Louise Burgaard",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q442065"
+			}
+		},
+		{
+			"id": "luc-steins",
+			"name": "Luc Steins",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Nederlandene",
+			"external": {
+				"wikidata": "Q61816827"
+			}
+		},
+		{
+			"id": "ludovic-fabregas",
+			"name": "Ludovic Fabregas",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q20961816"
+			}
+		},
+		{
+			"id": "luka-cindric",
+			"name": "Luka Cindrić",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kroatia",
+			"external": {
+				"wikidata": "Q16218107"
+			}
+		},
+		{
+			"id": "luka-stepancic",
+			"name": "Luka Stepančić",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kroatia",
+			"external": {
+				"wikidata": "Q1290665"
+			}
+		},
+		{
+			"id": "lukas-jorgensen",
+			"name": "Lukas Jørgensen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q89358179"
+			}
+		},
+		{
+			"id": "luxembourg-men-s-national-handball-team",
+			"name": "Luxembourg men's national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Luxembourg",
+			"external": {
+				"wikidata": "Q3434181"
+			}
+		},
+		{
+			"id": "madeleine-hilby",
+			"name": "Madeleine Hilby",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q64514148"
+			}
+		},
+		{
+			"id": "mads-mensah",
+			"name": "Mads Mensah",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q2024999"
+			}
+		},
+		{
+			"id": "magnus-abelvik-rod",
+			"name": "Magnus Abelvik Rød",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q27955358"
+			}
+		},
+		{
+			"id": "magnus-fredriksen",
+			"name": "Magnus Fredriksen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q60677380"
+			}
+		},
+		{
+			"id": "magnus-gullerud",
+			"name": "Magnus Gullerud",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q15138783"
+			}
+		},
+		{
+			"id": "magnus-landin",
+			"name": "Magnus Landin",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q16634710"
+			}
+		},
+		{
+			"id": "magnus-saugstrup",
+			"name": "Magnus Saugstrup",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q65229777"
+			}
+		},
+		{
+			"id": "maja-furu-saeteren",
+			"name": "Maja Furu Sæteren",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q114687795"
+			}
+		},
+		{
+			"id": "maja-jakobsen",
+			"name": "Maja Jakobsen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q868559"
+			}
+		},
+		{
+			"id": "majda-mehmedovic",
+			"name": "Majda Mehmedović",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Montenegro",
+			"external": {
+				"wikidata": "Q575548"
+			}
+		},
+		{
+			"id": "makedonias-herrelandslag-i-handball",
+			"name": "Makedonias herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Nord-Makedonia",
+			"external": {
+				"wikidata": "Q905573"
+			}
+		},
+		{
+			"id": "malene-aambakk",
+			"name": "Malene Aambakk",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q64514150"
+			}
+		},
+		{
+			"id": "malin-aune",
+			"name": "Malin Aune",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q23007622"
+			}
+		},
+		{
+			"id": "malin-holta",
+			"name": "Malin Holta",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q24151032"
+			}
+		},
+		{
+			"id": "malta-national-handball-team",
+			"name": "Malta national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Malta",
+			"external": {
+				"wikidata": "Q3433652"
+			}
+		},
+		{
+			"id": "manon-houette",
+			"name": "Manon Houette",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q16662716"
+			}
+		},
+		{
+			"id": "maren-aardahl",
+			"name": "Maren Aardahl",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q25435541"
+			}
+		},
+		{
+			"id": "mari-finstad-bergum",
+			"name": "Mari Finstad Bergum",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q105520497"
+			}
+		},
+		{
+			"id": "mari-molid",
+			"name": "Mari Molid",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q460723"
+			}
+		},
+		{
+			"id": "marie-prouvensier",
+			"name": "Marie Prouvensier",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q17350858"
+			}
+		},
+		{
+			"id": "marie-tommerbakke",
+			"name": "Marie Tømmerbakke",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q28870903"
+			}
+		},
+		{
+			"id": "marina-vukcevic",
+			"name": "Marina Vukčević",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Montenegro",
+			"external": {
+				"wikidata": "Q556038"
+			}
+		},
+		{
+			"id": "mario-sostaric",
+			"name": "Mario Šoštarič",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kroatia",
+			"external": {
+				"wikidata": "Q15867203"
+			}
+		},
+		{
+			"id": "marit-rosberg-jacobsen",
+			"name": "Marit Røsberg Jacobsen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q24150838"
+			}
+		},
+		{
+			"id": "marko-grgic",
+			"name": "Marko Grgić",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Tyskland",
+			"external": {
+				"wikidata": "Q125378898"
+			}
+		},
+		{
+			"id": "marko-mamic",
+			"name": "Marko Mamić",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kroatia",
+			"external": {
+				"wikidata": "Q1450023"
+			}
+		},
+		{
+			"id": "marokkos-herrelandslag-i-handball",
+			"name": "Marokkos herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Marokko",
+			"external": {
+				"wikidata": "Q1851188"
+			}
+		},
+		{
+			"id": "marta-lopez-herrero",
+			"name": "Marta López Herrero",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Spania",
+			"external": {
+				"wikidata": "Q579444"
+			}
+		},
+		{
+			"id": "marta-tomac",
+			"name": "Marta Tomac",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q21623136"
+			}
+		},
+		{
+			"id": "martine-moen",
+			"name": "Martine Moen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q22006963"
+			}
+		},
+		{
+			"id": "martine-smeets",
+			"name": "Martine Smeets",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Nederlandene",
+			"external": {
+				"wikidata": "Q14858034"
+			}
+		},
+		{
+			"id": "martine-wolff",
+			"name": "Martine Wolff",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q28935107"
+			}
+		},
+		{
+			"id": "mathias-gidsel",
+			"name": "Mathias Gidsel",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q104840470"
+			}
+		},
+		{
+			"id": "mathieu-grebille",
+			"name": "Mathieu Grebille",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q3298736"
+			}
+		},
+		{
+			"id": "mathilde-rivas-toft",
+			"name": "Mathilde Rivas Toft",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q42722880"
+			}
+		},
+		{
+			"id": "mattias-zachrisson",
+			"name": "Mattias Zachrisson",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Sverige",
+			"external": {
+				"wikidata": "Q506686"
+			}
+		},
+		{
+			"id": "meline-nocandy",
+			"name": "Méline Nocandy",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q30118631"
+			}
+		},
+		{
+			"id": "melvyn-richardson",
+			"name": "Melvyn Richardson",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q23900297"
+			}
+		},
+		{
+			"id": "mette-tranborg",
+			"name": "Mette Tranborg",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q18669894"
+			}
+		},
+		{
+			"id": "mexicos-herrelandslag-i-handball",
+			"name": "Mexicos herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Mexico",
+			"external": {
+				"wikidata": "Q4993097"
+			}
+		},
+		{
+			"id": "mia-svele",
+			"name": "Mia Svele",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q47244214"
+			}
+		},
+		{
+			"id": "michael-damgaard",
+			"name": "Michael Damgaard",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q18913578"
+			}
+		},
+		{
+			"id": "mie-hojlund",
+			"name": "Mie Højlund",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q25476574"
+			}
+		},
+		{
+			"id": "miha-zarabec",
+			"name": "Miha Zarabec",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Slovenia",
+			"external": {
+				"wikidata": "Q23761908"
+			}
+		},
+		{
+			"id": "milena-raicevic",
+			"name": "Milena Raičević",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Montenegro",
+			"external": {
+				"wikidata": "Q576119"
+			}
+		},
+		{
+			"id": "moa-hogdahl-schonningsen",
+			"name": "Moa Høgdahl Schønningsen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q30524556"
+			}
+		},
+		{
+			"id": "molde-handballklubb",
+			"name": "Molde Håndballklubb",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q19381792"
+			}
+		},
+		{
+			"id": "mona-obaidli",
+			"name": "Mona Obaidli",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q115205664"
+			}
+		},
+		{
+			"id": "montenegros-herrelandslag-i-handball",
+			"name": "Montenegros herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Montenegro",
+			"external": {
+				"wikidata": "Q922801"
+			}
+		},
+		{
+			"id": "montenegros-kvinnelandslag-i-handball",
+			"name": "Montenegros kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Montenegro",
+			"external": {
+				"wikidata": "Q620344"
+			}
+		},
+		{
+			"id": "nathalie-hagman",
+			"name": "Nathalie Hagman",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Sverige",
+			"external": {
+				"wikidata": "Q4951993"
+			}
+		},
+		{
+			"id": "nederlands-herrelandslag-i-handball",
+			"name": "Nederlands herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Kongeriket Nederlandene",
+			"external": {
+				"wikidata": "Q1144338"
+			}
+		},
+		{
+			"id": "nederlands-kvinnelandslag-i-handball",
+			"name": "Nederlands kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Nederland",
+			"external": {
+				"wikidata": "Q1571139"
+			}
+		},
+		{
+			"id": "nedim-remili",
+			"name": "Nedim Remili",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q22093592"
+			}
+		},
+		{
+			"id": "nemanja-ilic",
+			"name": "Nemanja Ilić",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Serbia",
+			"external": {
+				"wikidata": "Q3000325"
+			}
+		},
+		{
+			"id": "new-zealands-herrelandslag-i-handball",
+			"name": "New Zealands herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "New Zealand",
+			"external": {
+				"wikidata": "Q721187"
+			}
+		},
+		{
+			"id": "niclas-kirkelokke",
+			"name": "Niclas Kirkeløkke",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q19968681"
+			}
+		},
+		{
+			"id": "nicolas-tournat",
+			"name": "Nicolas Tournat",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q18744987"
+			}
+		},
+		{
+			"id": "nigerias-herrelandslag-i-handball",
+			"name": "Nigerias herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Nigeria",
+			"external": {
+				"wikidata": "Q3134754"
+			}
+		},
+		{
+			"id": "nigerias-kvinnelandslag-i-handball",
+			"name": "Nigerias kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Nigeria",
+			"external": {
+				"wikidata": "Q284133"
+			}
+		},
+		{
+			"id": "nora-mork",
+			"name": "Nora Mørk",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q3499591"
+			}
+		},
+		{
+			"id": "nord-koreas-kvinnelandslag-i-handball",
+			"name": "Nord-Koreas kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Nord-Korea",
+			"external": {
+				"wikidata": "Q7055836"
+			}
+		},
+		{
+			"id": "nord-makedonias-kvinnelandslag-i-handball",
+			"name": "Nord-Makedonias kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Nord-Makedonia",
+			"external": {
+				"wikidata": "Q718199"
+			}
+		},
+		{
+			"id": "norges-herrelandslag-i-handball",
+			"name": "Norges herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q852003"
+			}
+		},
+		{
+			"id": "norges-kvinnelandslag-i-handball",
+			"name": "Norges kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q831911"
+			}
+		},
+		{
+			"id": "oceane-sercien-ugolin",
+			"name": "Océane Sercien-Ugolin",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q54393766"
+			}
+		},
+		{
+			"id": "oif-arendal",
+			"name": "ØIF Arendal",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q12011770"
+			}
+		},
+		{
+			"id": "omar-ingi-magnusson",
+			"name": "Ómar Ingi Magnússon",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Island",
+			"external": {
+				"wikidata": "Q28510778"
+			}
+		},
+		{
+			"id": "orlane-kanor",
+			"name": "Orlane Kanor",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q28803922"
+			}
+		},
+		{
+			"id": "ost-tysklands-herrelandslag-i-handball",
+			"name": "Øst-Tysklands herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Øst-Tyskland",
+			"external": {
+				"wikidata": "Q640478"
+			}
+		},
+		{
+			"id": "ost-tysklands-kvinnelandslag-i-handball",
+			"name": "Øst-Tysklands kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Øst-Tyskland",
+			"external": {
+				"wikidata": "Q559267"
+			}
+		},
+		{
+			"id": "osterrikes-herrelandslag-i-handball",
+			"name": "Østerrikes herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Østerrike",
+			"external": {
+				"wikidata": "Q304024"
+			}
+		},
+		{
+			"id": "osterrikes-kvinnelandslag-i-handball",
+			"name": "Østerrikes kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Østerrike",
+			"external": {
+				"wikidata": "Q301997"
+			}
+		},
+		{
+			"id": "paraguay-national-handball-team",
+			"name": "Paraguay national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Paraguay",
+			"external": {
+				"wikidata": "Q7134681"
+			}
+		},
+		{
+			"id": "paraguays-kvinnelandslag-i-handball",
+			"name": "Paraguays kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Paraguay",
+			"external": {
+				"wikidata": "Q3590750"
+			}
+		},
+		{
+			"id": "paul-drux",
+			"name": "Paul Drux",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Tyskland",
+			"external": {
+				"wikidata": "Q14506324"
+			}
+		},
+		{
+			"id": "pauletta-foppa",
+			"name": "Pauletta Foppa",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q57409544"
+			}
+		},
+		{
+			"id": "pauline-coatanea",
+			"name": "Pauline Coatanea",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q16669309"
+			}
+		},
+		{
+			"id": "peru-national-handball-team",
+			"name": "Peru national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Peru",
+			"external": {
+				"wikidata": "Q55629561"
+			}
+		},
+		{
+			"id": "petter-overby",
+			"name": "Petter Øverby",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q22279526"
+			}
+		},
+		{
+			"id": "polens-herrelandslag-i-handball",
+			"name": "Polens herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Polen",
+			"external": {
+				"wikidata": "Q754740"
+			}
+		},
+		{
+			"id": "polens-kvinnelandslag-i-handball",
+			"name": "Polens kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Polen",
+			"external": {
+				"wikidata": "Q1546637"
+			}
+		},
+		{
+			"id": "polina-vedjokhina",
+			"name": "Polina Vedjokhina",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Russland",
+			"external": {
+				"wikidata": "Q27756272"
+			}
+		},
+		{
+			"id": "portugals-herrelandslag-i-handball",
+			"name": "Portugals herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Portugal",
+			"external": {
+				"wikidata": "Q786147"
+			}
+		},
+		{
+			"id": "portugals-kvinnelandslag-i-handball",
+			"name": "Portugals kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Portugal",
+			"external": {
+				"wikidata": "Q3180456"
+			}
+		},
+		{
+			"id": "puerto-ricos-kvinnelandslag-i-handball",
+			"name": "Puerto Ricos kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "USA",
+			"external": {
+				"wikidata": "Q7258829"
+			}
+		},
+		{
+			"id": "qatars-herrelandslag-i-handball",
+			"name": "Qatars herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Qatar",
+			"external": {
+				"wikidata": "Q764859"
+			}
+		},
+		{
+			"id": "ragnhild-valle-dahl",
+			"name": "Ragnhild Valle Dahl",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q61624893"
+			}
+		},
+		{
+			"id": "rasmus-lauge",
+			"name": "Rasmus Lauge",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q1067334"
+			}
+		},
+		{
+			"id": "renars-uscins",
+			"name": "Renārs Uščins",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Tyskland",
+			"external": {
+				"wikidata": "Q108115174"
+			}
+		},
+		{
+			"id": "republikken-kongos-kvinnelandslag-i-handball",
+			"name": "Republikken Kongos kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Republikken Kongo",
+			"external": {
+				"wikidata": "Q3590652"
+			}
+		},
+		{
+			"id": "rodrigo-corrales",
+			"name": "Rodrigo Corrales",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Spania",
+			"external": {
+				"wikidata": "Q16508901"
+			}
+		},
+		{
+			"id": "romain-lagarde",
+			"name": "Romain Lagarde",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q41798703"
+			}
+		},
+		{
+			"id": "romanias-herrelandslag-i-handball",
+			"name": "Romanias herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Romania",
+			"external": {
+				"wikidata": "Q523675"
+			}
+		},
+		{
+			"id": "romanias-kvinnelandslag-i-handball",
+			"name": "Romanias kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Romania",
+			"external": {
+				"wikidata": "Q763098"
+			}
+		},
+		{
+			"id": "romerike-ravens",
+			"name": "Romerike Ravens",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q106448546"
+			}
+		},
+		{
+			"id": "runar-handball",
+			"name": "Runar Håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q10657768"
+			}
+		},
+		{
+			"id": "rune-dahmke",
+			"name": "Rune Dahmke",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Tyskland",
+			"external": {
+				"wikidata": "Q14902861"
+			}
+		},
+		{
+			"id": "russlands-herrelandslag-i-handball",
+			"name": "Russlands herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Russland",
+			"external": {
+				"wikidata": "Q581605"
+			}
+		},
+		{
+			"id": "russlands-kvinnelandslag-i-handball",
+			"name": "Russlands kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Russland",
+			"external": {
+				"wikidata": "Q785485"
+			}
+		},
+		{
+			"id": "sandefjord-handball",
+			"name": "Sandefjord Håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q1296299"
+			}
+		},
+		{
+			"id": "sander-sagosen",
+			"name": "Sander Sagosen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q16322523"
+			}
+		},
+		{
+			"id": "sandnes-handballklubb",
+			"name": "Sandnes Håndballklubb",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q19387618"
+			}
+		},
+		{
+			"id": "sanna-solberg-isaksen",
+			"name": "Sanna Solberg-Isaksen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q138598"
+			}
+		},
+		{
+			"id": "sara-berg",
+			"name": "Sara Berg",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q117322108"
+			}
+		},
+		{
+			"id": "sarah-bouktit",
+			"name": "Sarah Bouktit",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q105072430"
+			}
+		},
+		{
+			"id": "sarah-iversen",
+			"name": "Sarah Iversen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q19562490"
+			}
+		},
+		{
+			"id": "saudi-arabias-herrelandslag-i-handball",
+			"name": "Saudi-Arabias herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Saudi-Arabia",
+			"external": {
+				"wikidata": "Q1863034"
+			}
+		},
+		{
+			"id": "sebastian-barthold",
+			"name": "Sebastian Barthold",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q24701003"
+			}
+		},
+		{
+			"id": "selma-henriksen",
+			"name": "Selma Henriksen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q136334662"
+			}
+		},
+		{
+			"id": "senegals-kvinnelandslag-i-handball",
+			"name": "Senegals kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Senegal",
+			"external": {
+				"wikidata": "Q3590787"
+			}
+		},
+		{
+			"id": "serbia-and-montenegro-men-s-national-handball-team",
+			"name": "Serbia and Montenegro men's national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Serbia og Montenegro",
+			"external": {
+				"wikidata": "Q3590361"
+			}
+		},
+		{
+			"id": "serbias-herrelandslag-i-handball",
+			"name": "Serbias herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Serbia",
+			"external": {
+				"wikidata": "Q752288"
+			}
+		},
+		{
+			"id": "serbias-kvinnelandslag-i-handball",
+			"name": "Serbias kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Serbia",
+			"external": {
+				"wikidata": "Q2530158"
+			}
+		},
+		{
+			"id": "silje-solberg-osthassel",
+			"name": "Silje Solberg-Østhassel",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q45830"
+			}
+		},
+		{
+			"id": "silje-waade",
+			"name": "Silje Waade",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q27049364"
+			}
+		},
+		{
+			"id": "simen-pettersen",
+			"name": "Simen Pettersen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q104697950"
+			}
+		},
+		{
+			"id": "simon-hald",
+			"name": "Simon Hald",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q28835921"
+			}
+		},
+		{
+			"id": "simon-pytlick",
+			"name": "Simon Pytlick",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q110060760"
+			}
+		},
+		{
+			"id": "slovakias-herrelandslag-i-handball",
+			"name": "Slovakias herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Slovakia",
+			"external": {
+				"wikidata": "Q846226"
+			}
+		},
+		{
+			"id": "slovakias-kvinnelandslag-i-handball",
+			"name": "Slovakias kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Slovakia",
+			"external": {
+				"wikidata": "Q718188"
+			}
+		},
+		{
+			"id": "slovenias-herrelandslag-i-handball",
+			"name": "Slovenias herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Slovenia",
+			"external": {
+				"wikidata": "Q833101"
+			}
+		},
+		{
+			"id": "slovenias-kvinnelandslag-i-handball",
+			"name": "Slovenias kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Slovenia",
+			"external": {
+				"wikidata": "Q2094846"
+			}
+		},
+		{
+			"id": "sola-handball",
+			"name": "Sola Håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q19389543"
+			}
+		},
+		{
+			"id": "sor-koreas-herrelandslag-i-handball",
+			"name": "Sør-Koreas herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Sør-Korea",
+			"external": {
+				"wikidata": "Q1059935"
+			}
+		},
+		{
+			"id": "sor-koreas-kvinnelandslag-i-handball",
+			"name": "Sør-Koreas kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Sør-Korea",
+			"external": {
+				"wikidata": "Q485612"
+			}
+		},
+		{
+			"id": "soviet-union-men-s-national-handball-team",
+			"name": "Soviet Union men's national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Sovjetunionen",
+			"external": {
+				"wikidata": "Q2002529"
+			}
+		},
+		{
+			"id": "soviet-union-women-s-national-handball-team",
+			"name": "Soviet Union women's national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Sovjetunionen",
+			"external": {
+				"wikidata": "Q3139255"
+			}
+		},
+		{
+			"id": "spanias-herrelandslag-i-handball",
+			"name": "Spanias herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Spania",
+			"external": {
+				"wikidata": "Q721858"
+			}
+		},
+		{
+			"id": "spanias-kvinnelandslag-i-handball",
+			"name": "Spanias kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Spania",
+			"external": {
+				"wikidata": "Q939834"
+			}
+		},
+		{
+			"id": "stig-tore-moen-nilsen",
+			"name": "Stig-Tore Moen Nilsen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q25425294"
+			}
+		},
+		{
+			"id": "stine-oftedal-dahmke",
+			"name": "Stine Oftedal Dahmke",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q460909"
+			}
+		},
+		{
+			"id": "stine-skogrand",
+			"name": "Stine Skogrand",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q21622909"
+			}
+		},
+		{
+			"id": "storbritannias-herrelandslag-i-handball",
+			"name": "Storbritannias herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Storbritannia",
+			"external": {
+				"wikidata": "Q918298"
+			}
+		},
+		{
+			"id": "storbritannias-kvinnelandslag-i-handball",
+			"name": "Storbritannias kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Storbritannia",
+			"external": {
+				"wikidata": "Q918196"
+			}
+		},
+		{
+			"id": "storhamar-handball",
+			"name": "Storhamar Håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q12003460"
+			}
+		},
+		{
+			"id": "sunniva-andersen",
+			"name": "Sunniva Andersen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q46645006"
+			}
+		},
+		{
+			"id": "susanne-pettersen",
+			"name": "Susanne Pettersen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q108578411"
+			}
+		},
+		{
+			"id": "suzana-lazovic",
+			"name": "Suzana Lazović",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Montenegro",
+			"external": {
+				"wikidata": "Q94578"
+			}
+		},
+		{
+			"id": "sveits-herrelandslag-i-handball",
+			"name": "Sveits' herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Sveits",
+			"external": {
+				"wikidata": "Q478410"
+			}
+		},
+		{
+			"id": "sveits-kvinnelandslag-i-handball",
+			"name": "Sveits’ kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Sveits",
+			"external": {
+				"wikidata": "Q1091244"
+			}
+		},
+		{
+			"id": "sveriges-herrelandslag-i-handball",
+			"name": "Sveriges herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Sverige",
+			"external": {
+				"wikidata": "Q185686"
+			}
+		},
+		{
+			"id": "sveriges-kvinnelandslag-i-handball",
+			"name": "Sveriges kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Sverige",
+			"external": {
+				"wikidata": "Q928372"
+			}
+		},
+		{
+			"id": "tamara-horacek",
+			"name": "Tamara Horacek",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q18202562"
+			}
+		},
+		{
+			"id": "tertnes-handball-elite",
+			"name": "Tertnes Håndball Elite",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q48834624"
+			}
+		},
+		{
+			"id": "tess-lieder",
+			"name": "Tess Lieder",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Nederlandene",
+			"external": {
+				"wikidata": "Q14847459"
+			}
+		},
+		{
+			"id": "thailands-kvinnelandslag-i-handball",
+			"name": "Thailands kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Thailand",
+			"external": {
+				"wikidata": "Q3590427"
+			}
+		},
+		{
+			"id": "thea-mork",
+			"name": "Thea Mørk",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q9358340"
+			}
+		},
+		{
+			"id": "thomas-kristensen",
+			"name": "Thomas Kristensen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q21484320"
+			}
+		},
+		{
+			"id": "thomas-solstad",
+			"name": "Thomas Solstad",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q104697938"
+			}
+		},
+		{
+			"id": "timothey-n-guessan",
+			"name": "Timothey N'Guessan",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q2912940"
+			}
+		},
+		{
+			"id": "tiril-gunther-merg",
+			"name": "Tiril Gunther Merg",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q29886193"
+			}
+		},
+		{
+			"id": "tjasa-stanko",
+			"name": "Tjaša Stanko",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Slovenia",
+			"external": {
+				"wikidata": "Q27940448"
+			}
+		},
+		{
+			"id": "tobias-grondahl",
+			"name": "Tobias Grøndahl",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q109399073"
+			}
+		},
+		{
+			"id": "tonje-enkerud",
+			"name": "Tonje Enkerud",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q19392732"
+			}
+		},
+		{
+			"id": "tonje-lerstad",
+			"name": "Tonje Lerstad",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q30008085"
+			}
+		},
+		{
+			"id": "tonje-loseth",
+			"name": "Tonje Løseth",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q27064022"
+			}
+		},
+		{
+			"id": "torbjorn-bergerud",
+			"name": "Torbjørn Bergerud",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q23799543"
+			}
+		},
+		{
+			"id": "trine-ostergaard",
+			"name": "Trine Østergaard",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Danmark",
+			"external": {
+				"wikidata": "Q12339776"
+			}
+		},
+		{
+			"id": "tsjekkias-herrelandslag-i-handball",
+			"name": "Tsjekkias herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Tsjekkia",
+			"external": {
+				"wikidata": "Q220636"
+			}
+		},
+		{
+			"id": "tsjekkias-kvinnelandslag-i-handball",
+			"name": "Tsjekkias kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Tsjekkia",
+			"external": {
+				"wikidata": "Q718170"
+			}
+		},
+		{
+			"id": "tunisias-herrelandslag-i-handball",
+			"name": "Tunisias herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Tunisia",
+			"external": {
+				"wikidata": "Q1423587"
+			}
+		},
+		{
+			"id": "tunisias-kvinnelandslag-i-handball",
+			"name": "Tunisias kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Tunisia",
+			"external": {
+				"wikidata": "Q2094343"
+			}
+		},
+		{
+			"id": "tuva-hove",
+			"name": "Tuva Høve",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q105467055"
+			}
+		},
+		{
+			"id": "tyrkias-herrelandslag-i-handball",
+			"name": "Tyrkias herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Tyrkia",
+			"external": {
+				"wikidata": "Q3435206"
+			}
+		},
+		{
+			"id": "tyrkias-kvinnelandslag-i-handball",
+			"name": "Tyrkias kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Tyrkia",
+			"external": {
+				"wikidata": "Q3545246"
+			}
+		},
+		{
+			"id": "tysklands-herrelandslag-i-handball",
+			"name": "Tysklands herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Tyskland",
+			"external": {
+				"wikidata": "Q161047"
+			}
+		},
+		{
+			"id": "tysklands-kvinnelandslag-i-handball",
+			"name": "Tysklands kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Tyskland",
+			"external": {
+				"wikidata": "Q707420"
+			}
+		},
+		{
+			"id": "ukrainas-herrelandslag-i-handball",
+			"name": "Ukrainas herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Ukraina",
+			"external": {
+				"wikidata": "Q925708"
+			}
+		},
+		{
+			"id": "ukrainas-kvinnelandslag-i-handball",
+			"name": "Ukrainas kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Ukraina",
+			"external": {
+				"wikidata": "Q986535"
+			}
+		},
+		{
+			"id": "ungarns-herrelandslag-i-handball",
+			"name": "Ungarns herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Ungarn",
+			"external": {
+				"wikidata": "Q546212"
+			}
+		},
+		{
+			"id": "ungarns-kvinnelandslag-i-handball",
+			"name": "Ungarns kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Ungarn",
+			"external": {
+				"wikidata": "Q521856"
+			}
+		},
+		{
+			"id": "ur-ina-jaukovic",
+			"name": "Đurđina Jauković",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Montenegro",
+			"external": {
+				"wikidata": "Q18664826"
+			}
+		},
+		{
+			"id": "uruguays-herrelandslag-i-handball",
+			"name": "Uruguays herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Uruguay",
+			"external": {
+				"wikidata": "Q3084280"
+			}
+		},
+		{
+			"id": "uruguays-kvinnelandslag-i-handball",
+			"name": "Uruguays kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Uruguay",
+			"external": {
+				"wikidata": "Q3087264"
+			}
+		},
+		{
+			"id": "usas-herrelandslag-i-handball",
+			"name": "USAs herrelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "USA",
+			"external": {
+				"wikidata": "Q1725918"
+			}
+		},
+		{
+			"id": "usas-kvinnelandslag-i-handball",
+			"name": "USAs kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "USA",
+			"external": {
+				"wikidata": "Q4993183"
+			}
+		},
+		{
+			"id": "usbekistans-kvinnelandslag-i-handball",
+			"name": "Usbekistans kvinnelandslag i håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Usbekistan",
+			"external": {
+				"wikidata": "Q7375775"
+			}
+		},
+		{
+			"id": "uzbekistan-national-handball-team",
+			"name": "Uzbekistan national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Usbekistan",
+			"external": {
+				"wikidata": "Q7713361"
+			}
+		},
+		{
+			"id": "valentin-porte",
+			"name": "Valentin Porte",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Frankrike",
+			"external": {
+				"wikidata": "Q3206708"
+			}
+		},
+		{
+			"id": "venezuela-national-handball-team",
+			"name": "Venezuela national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Venezuela",
+			"external": {
+				"wikidata": "Q7919808"
+			}
+		},
+		{
+			"id": "veronica-kristiansen",
+			"name": "Veronica Kristiansen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q15300545"
+			}
+		},
+		{
+			"id": "vetle-eck-aga",
+			"name": "Vetle Eck Aga",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q4518803"
+			}
+		},
+		{
+			"id": "viking-handball",
+			"name": "Viking Håndball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q4586547"
+			}
+		},
+		{
+			"id": "vilde-ingeborg-johansen",
+			"name": "Vilde Ingeborg Johansen",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q19974501"
+			}
+		},
+		{
+			"id": "vilde-ingstad",
+			"name": "Vilde Ingstad",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q21621531"
+			}
+		},
+		{
+			"id": "volda-handball",
+			"name": "Volda Handball",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q114069061"
+			}
+		},
+		{
+			"id": "william-aar",
+			"name": "William Aar",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Norge",
+			"external": {
+				"wikidata": "Q28718172"
+			}
+		},
+		{
+			"id": "yahia-omar",
+			"name": "Yahia Omar",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Egypt",
+			"external": {
+				"wikidata": "Q28528696"
+			}
+		},
+		{
+			"id": "yugoslavia-national-handball-team",
+			"name": "Yugoslavia national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Jugoslavia",
+			"external": {
+				"wikidata": "Q1424277"
+			}
+		},
+		{
+			"id": "yugoslavia-women-s-national-handball-team",
+			"name": "Yugoslavia women's national handball team",
+			"aliases": [],
+			"sport": "handball",
+			"type": "team",
+			"country": "Jugoslavia",
+			"external": {
+				"wikidata": "Q3178606"
+			}
+		},
+		{
+			"id": "yvette-broch",
+			"name": "Yvette Broch",
+			"aliases": [],
+			"sport": "handball",
+			"type": "athlete",
+			"country": "Kongeriket Nederlandene",
+			"external": {
+				"wikidata": "Q8062362"
+			}
+		}
+	]
+}

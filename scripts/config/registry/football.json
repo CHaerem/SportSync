@@ -1,0 +1,1396 @@
+{
+	"$schema": "WP-161 verdensregister — fotball — alle klubber i ligaene fetcherne dekker + VM-landslagene. OPPSLAG, ikke dekningsløfte (catalog.json styrer dekning/kost). Deterministisk artefakt: sortert på id, stabil serialisering — re-seed (npm run seed:registry) gir rene diffs. Id-er er varige kebab-slugs; external-id-ene (wikidata/espnId/fideId/liquipedia) er re-seed-nøklene. Vedlikeholdes ukentlig av research/improve-agentene (opprykk/nedrykk, overganger, navnebytter, nye orgs) — se registry.schema.json.",
+	"source": "espn-teams: eng.1 + esp.1 + nor.1 + nor.2 + uefa.champions + fifa.world (landslag)",
+	"entities": [
+		{
+			"id": "aalesund",
+			"name": "Aalesund",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "3278"
+			}
+		},
+		{
+			"id": "afc-bournemouth",
+			"name": "AFC Bournemouth",
+			"aliases": [
+				"Bournemouth"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "349"
+			}
+		},
+		{
+			"id": "ajax-amsterdam",
+			"name": "Ajax Amsterdam",
+			"aliases": [
+				"Ajax"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "139"
+			}
+		},
+		{
+			"id": "alaves",
+			"name": "Alavés",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "96"
+			}
+		},
+		{
+			"id": "algeria",
+			"name": "Algeria",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Algeria",
+			"external": {
+				"espnId": "624"
+			}
+		},
+		{
+			"id": "argentina",
+			"name": "Argentina",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Argentina",
+			"external": {
+				"espnId": "202"
+			}
+		},
+		{
+			"id": "arsenal",
+			"name": "Arsenal",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "359"
+			}
+		},
+		{
+			"id": "as-monaco",
+			"name": "AS Monaco",
+			"aliases": [
+				"Monaco"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "174"
+			}
+		},
+		{
+			"id": "aston-villa",
+			"name": "Aston Villa",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "362"
+			}
+		},
+		{
+			"id": "atalanta",
+			"name": "Atalanta",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "105"
+			}
+		},
+		{
+			"id": "athletic-club",
+			"name": "Athletic Club",
+			"aliases": [
+				"Athletic"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "93"
+			}
+		},
+		{
+			"id": "atletico-madrid",
+			"name": "Atlético Madrid",
+			"aliases": [
+				"Atlético"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "1068"
+			}
+		},
+		{
+			"id": "australia",
+			"name": "Australia",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Australia",
+			"external": {
+				"espnId": "628"
+			}
+		},
+		{
+			"id": "austria",
+			"name": "Austria",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Austria",
+			"external": {
+				"espnId": "474"
+			}
+		},
+		{
+			"id": "barcelona",
+			"name": "Barcelona",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "83"
+			}
+		},
+		{
+			"id": "bayer-leverkusen",
+			"name": "Bayer Leverkusen",
+			"aliases": [
+				"Leverkusen"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "131"
+			}
+		},
+		{
+			"id": "bayern-munich",
+			"name": "Bayern Munich",
+			"aliases": [
+				"Bayern"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "132"
+			}
+		},
+		{
+			"id": "belgium",
+			"name": "Belgium",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Belgium",
+			"external": {
+				"espnId": "459"
+			}
+		},
+		{
+			"id": "benfica",
+			"name": "Benfica",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "1929"
+			}
+		},
+		{
+			"id": "bodo-glimt",
+			"name": "Bodo/Glimt",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "2980"
+			}
+		},
+		{
+			"id": "borussia-dortmund",
+			"name": "Borussia Dortmund",
+			"aliases": [
+				"Dortmund"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "124"
+			}
+		},
+		{
+			"id": "bosnia-herzegovina",
+			"name": "Bosnia-Herzegovina",
+			"aliases": [
+				"Bosnia-Herz"
+			],
+			"sport": "football",
+			"type": "team",
+			"country": "Bosnia-Herzegovina",
+			"external": {
+				"espnId": "452"
+			}
+		},
+		{
+			"id": "brazil",
+			"name": "Brazil",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Brazil",
+			"external": {
+				"espnId": "205"
+			}
+		},
+		{
+			"id": "brentford",
+			"name": "Brentford",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "337"
+			}
+		},
+		{
+			"id": "brighton-hove-albion",
+			"name": "Brighton & Hove Albion",
+			"aliases": [
+				"Brighton"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "331"
+			}
+		},
+		{
+			"id": "canada",
+			"name": "Canada",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Canada",
+			"external": {
+				"espnId": "206"
+			}
+		},
+		{
+			"id": "cape-verde",
+			"name": "Cape Verde",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Cape Verde",
+			"external": {
+				"espnId": "2597"
+			}
+		},
+		{
+			"id": "celta-vigo",
+			"name": "Celta Vigo",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "85"
+			}
+		},
+		{
+			"id": "chelsea",
+			"name": "Chelsea",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "363"
+			}
+		},
+		{
+			"id": "club-brugge",
+			"name": "Club Brugge",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "570"
+			}
+		},
+		{
+			"id": "colombia",
+			"name": "Colombia",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Colombia",
+			"external": {
+				"espnId": "208"
+			}
+		},
+		{
+			"id": "congo-dr",
+			"name": "Congo DR",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Congo DR",
+			"external": {
+				"espnId": "2850"
+			}
+		},
+		{
+			"id": "coventry-city",
+			"name": "Coventry City",
+			"aliases": [
+				"Coventry"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "388"
+			}
+		},
+		{
+			"id": "croatia",
+			"name": "Croatia",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Croatia",
+			"external": {
+				"espnId": "477"
+			}
+		},
+		{
+			"id": "crystal-palace",
+			"name": "Crystal Palace",
+			"aliases": [
+				"C Palace"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "384"
+			}
+		},
+		{
+			"id": "curacao",
+			"name": "Curaçao",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Curaçao",
+			"external": {
+				"espnId": "11678"
+			}
+		},
+		{
+			"id": "czechia",
+			"name": "Czechia",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Czechia",
+			"external": {
+				"espnId": "450"
+			}
+		},
+		{
+			"id": "deportivo-la-coruna",
+			"name": "Deportivo La Coruña",
+			"aliases": [
+				"Deportivo"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "90"
+			}
+		},
+		{
+			"id": "ecuador",
+			"name": "Ecuador",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Ecuador",
+			"external": {
+				"espnId": "209"
+			}
+		},
+		{
+			"id": "egypt",
+			"name": "Egypt",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Egypt",
+			"external": {
+				"espnId": "2620"
+			}
+		},
+		{
+			"id": "eintracht-frankfurt",
+			"name": "Eintracht Frankfurt",
+			"aliases": [
+				"Frankfurt"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "125"
+			}
+		},
+		{
+			"id": "elche",
+			"name": "Elche",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "3751"
+			}
+		},
+		{
+			"id": "england",
+			"name": "England",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "England",
+			"external": {
+				"espnId": "448"
+			}
+		},
+		{
+			"id": "espanyol",
+			"name": "Espanyol",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "88"
+			}
+		},
+		{
+			"id": "everton",
+			"name": "Everton",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "368"
+			}
+		},
+		{
+			"id": "f-c-kobenhavn",
+			"name": "F.C. København",
+			"aliases": [
+				"København"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "909"
+			}
+		},
+		{
+			"id": "fk-qarabag",
+			"name": "FK Qarabag",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "10414"
+			}
+		},
+		{
+			"id": "france",
+			"name": "France",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "France",
+			"external": {
+				"espnId": "478"
+			}
+		},
+		{
+			"id": "fredrikstad",
+			"name": "Fredrikstad",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "3039"
+			}
+		},
+		{
+			"id": "fulham",
+			"name": "Fulham",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "370"
+			}
+		},
+		{
+			"id": "galatasaray",
+			"name": "Galatasaray",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "432"
+			}
+		},
+		{
+			"id": "germany",
+			"name": "Germany",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Germany",
+			"external": {
+				"espnId": "481"
+			}
+		},
+		{
+			"id": "getafe",
+			"name": "Getafe",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "2922"
+			}
+		},
+		{
+			"id": "ghana",
+			"name": "Ghana",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Ghana",
+			"external": {
+				"espnId": "4469"
+			}
+		},
+		{
+			"id": "haiti",
+			"name": "Haiti",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Haiti",
+			"external": {
+				"espnId": "2654"
+			}
+		},
+		{
+			"id": "hamarkameratene",
+			"name": "Hamarkameratene",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "21380"
+			}
+		},
+		{
+			"id": "hull-city",
+			"name": "Hull City",
+			"aliases": [
+				"Hull"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "306"
+			}
+		},
+		{
+			"id": "ik-start",
+			"name": "IK Start",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "6750"
+			}
+		},
+		{
+			"id": "internazionale",
+			"name": "Internazionale",
+			"aliases": [
+				"Inter Milan"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "110"
+			}
+		},
+		{
+			"id": "ipswich-town",
+			"name": "Ipswich Town",
+			"aliases": [
+				"Ipswich"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "373"
+			}
+		},
+		{
+			"id": "iran",
+			"name": "Iran",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Iran",
+			"external": {
+				"espnId": "469"
+			}
+		},
+		{
+			"id": "iraq",
+			"name": "Iraq",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Iraq",
+			"external": {
+				"espnId": "4375"
+			}
+		},
+		{
+			"id": "ivory-coast",
+			"name": "Ivory Coast",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Ivory Coast",
+			"external": {
+				"espnId": "4789"
+			}
+		},
+		{
+			"id": "japan",
+			"name": "Japan",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Japan",
+			"external": {
+				"espnId": "627"
+			}
+		},
+		{
+			"id": "jordan",
+			"name": "Jordan",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Jordan",
+			"external": {
+				"espnId": "2917"
+			}
+		},
+		{
+			"id": "juventus",
+			"name": "Juventus",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "111"
+			}
+		},
+		{
+			"id": "kairat-almaty",
+			"name": "Kairat Almaty",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "2528"
+			}
+		},
+		{
+			"id": "kfum-oslo",
+			"name": "KFUM Oslo",
+			"aliases": [
+				"KFUM"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "22165"
+			}
+		},
+		{
+			"id": "kristiansund-bk",
+			"name": "Kristiansund BK",
+			"aliases": [
+				"Kristiansund"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "6672"
+			}
+		},
+		{
+			"id": "leeds-united",
+			"name": "Leeds United",
+			"aliases": [
+				"Leeds"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "357"
+			}
+		},
+		{
+			"id": "levante",
+			"name": "Levante",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "1538"
+			}
+		},
+		{
+			"id": "lillestrom",
+			"name": "Lillestrom",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "987"
+			}
+		},
+		{
+			"id": "liverpool",
+			"name": "Liverpool",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "364"
+			}
+		},
+		{
+			"id": "malaga",
+			"name": "Málaga",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "99"
+			}
+		},
+		{
+			"id": "manchester-city",
+			"name": "Manchester City",
+			"aliases": [
+				"Man City"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "382"
+			}
+		},
+		{
+			"id": "manchester-united",
+			"name": "Manchester United",
+			"aliases": [
+				"Man United"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "360"
+			}
+		},
+		{
+			"id": "marseille",
+			"name": "Marseille",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "176"
+			}
+		},
+		{
+			"id": "mexico",
+			"name": "Mexico",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Mexico",
+			"external": {
+				"espnId": "203"
+			}
+		},
+		{
+			"id": "molde",
+			"name": "Molde",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "2715"
+			}
+		},
+		{
+			"id": "morocco",
+			"name": "Morocco",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Morocco",
+			"external": {
+				"espnId": "2869"
+			}
+		},
+		{
+			"id": "napoli",
+			"name": "Napoli",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "114"
+			}
+		},
+		{
+			"id": "netherlands",
+			"name": "Netherlands",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Netherlands",
+			"external": {
+				"espnId": "449"
+			}
+		},
+		{
+			"id": "new-zealand",
+			"name": "New Zealand",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "New Zealand",
+			"external": {
+				"espnId": "2666"
+			}
+		},
+		{
+			"id": "newcastle-united",
+			"name": "Newcastle United",
+			"aliases": [
+				"Newcastle"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "361"
+			}
+		},
+		{
+			"id": "norway",
+			"name": "Norway",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Norway",
+			"external": {
+				"espnId": "464"
+			}
+		},
+		{
+			"id": "nottingham-forest",
+			"name": "Nottingham Forest",
+			"aliases": [
+				"Nottm Forest"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "393"
+			}
+		},
+		{
+			"id": "olympiacos",
+			"name": "Olympiacos",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "435"
+			}
+		},
+		{
+			"id": "osasuna",
+			"name": "Osasuna",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "97"
+			}
+		},
+		{
+			"id": "pafos",
+			"name": "Pafos",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "22281"
+			}
+		},
+		{
+			"id": "panama",
+			"name": "Panama",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Panama",
+			"external": {
+				"espnId": "2659"
+			}
+		},
+		{
+			"id": "paraguay",
+			"name": "Paraguay",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Paraguay",
+			"external": {
+				"espnId": "210"
+			}
+		},
+		{
+			"id": "paris-saint-germain",
+			"name": "Paris Saint-Germain",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "160"
+			}
+		},
+		{
+			"id": "portugal",
+			"name": "Portugal",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Portugal",
+			"external": {
+				"espnId": "482"
+			}
+		},
+		{
+			"id": "psv-eindhoven",
+			"name": "PSV Eindhoven",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "148"
+			}
+		},
+		{
+			"id": "qatar",
+			"name": "Qatar",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Qatar",
+			"external": {
+				"espnId": "4398"
+			}
+		},
+		{
+			"id": "racing-santander",
+			"name": "Racing Santander",
+			"aliases": [
+				"Racing"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "87"
+			}
+		},
+		{
+			"id": "rayo-vallecano",
+			"name": "Rayo Vallecano",
+			"aliases": [
+				"Rayo"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "101"
+			}
+		},
+		{
+			"id": "real-betis",
+			"name": "Real Betis",
+			"aliases": [
+				"Betis"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "244"
+			}
+		},
+		{
+			"id": "real-madrid",
+			"name": "Real Madrid",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "86"
+			}
+		},
+		{
+			"id": "real-sociedad",
+			"name": "Real Sociedad",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "89"
+			}
+		},
+		{
+			"id": "rosenborg",
+			"name": "Rosenborg",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "438"
+			}
+		},
+		{
+			"id": "sandefjord",
+			"name": "Sandefjord",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "3279"
+			}
+		},
+		{
+			"id": "sarpsborg-fk",
+			"name": "Sarpsborg FK",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "5002"
+			}
+		},
+		{
+			"id": "saudi-arabia",
+			"name": "Saudi Arabia",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Saudi Arabia",
+			"external": {
+				"espnId": "655"
+			}
+		},
+		{
+			"id": "scotland",
+			"name": "Scotland",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Scotland",
+			"external": {
+				"espnId": "580"
+			}
+		},
+		{
+			"id": "senegal",
+			"name": "Senegal",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Senegal",
+			"external": {
+				"espnId": "654"
+			}
+		},
+		{
+			"id": "sevilla",
+			"name": "Sevilla",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "243"
+			}
+		},
+		{
+			"id": "sk-brann",
+			"name": "SK Brann",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "620"
+			}
+		},
+		{
+			"id": "slavia-prague",
+			"name": "Slavia Prague",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "494"
+			}
+		},
+		{
+			"id": "south-africa",
+			"name": "South Africa",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "South Africa",
+			"external": {
+				"espnId": "467"
+			}
+		},
+		{
+			"id": "south-korea",
+			"name": "South Korea",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "South Korea",
+			"external": {
+				"espnId": "451"
+			}
+		},
+		{
+			"id": "spain",
+			"name": "Spain",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Spain",
+			"external": {
+				"espnId": "164"
+			}
+		},
+		{
+			"id": "sporting-cp",
+			"name": "Sporting CP",
+			"aliases": [
+				"Sporting"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "2250"
+			}
+		},
+		{
+			"id": "sunderland",
+			"name": "Sunderland",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "366"
+			}
+		},
+		{
+			"id": "sweden",
+			"name": "Sweden",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Sweden",
+			"external": {
+				"espnId": "466"
+			}
+		},
+		{
+			"id": "switzerland",
+			"name": "Switzerland",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Switzerland",
+			"external": {
+				"espnId": "475"
+			}
+		},
+		{
+			"id": "tottenham-hotspur",
+			"name": "Tottenham Hotspur",
+			"aliases": [
+				"Spurs"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "367"
+			}
+		},
+		{
+			"id": "tromso",
+			"name": "Tromso",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "5270"
+			}
+		},
+		{
+			"id": "tunisia",
+			"name": "Tunisia",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Tunisia",
+			"external": {
+				"espnId": "659"
+			}
+		},
+		{
+			"id": "turkiye",
+			"name": "Türkiye",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Türkiye",
+			"external": {
+				"espnId": "465"
+			}
+		},
+		{
+			"id": "union-st-gilloise",
+			"name": "Union St.-Gilloise",
+			"aliases": [
+				"Union SG"
+			],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "5807"
+			}
+		},
+		{
+			"id": "united-states",
+			"name": "United States",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "United States",
+			"external": {
+				"espnId": "660"
+			}
+		},
+		{
+			"id": "uruguay",
+			"name": "Uruguay",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Uruguay",
+			"external": {
+				"espnId": "212"
+			}
+		},
+		{
+			"id": "uzbekistan",
+			"name": "Uzbekistan",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"country": "Uzbekistan",
+			"external": {
+				"espnId": "2570"
+			}
+		},
+		{
+			"id": "valencia",
+			"name": "Valencia",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "94"
+			}
+		},
+		{
+			"id": "valerenga",
+			"name": "Vålerenga",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "2791"
+			}
+		},
+		{
+			"id": "viking-fk",
+			"name": "Viking FK",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "510"
+			}
+		},
+		{
+			"id": "villarreal",
+			"name": "Villarreal",
+			"aliases": [],
+			"sport": "football",
+			"type": "team",
+			"external": {
+				"espnId": "102"
+			}
+		}
+	]
+}

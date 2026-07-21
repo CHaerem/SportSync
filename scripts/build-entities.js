@@ -23,8 +23,24 @@
  *      the world register (WP-161). tracked.json still wins dedup (it's folded
  *      first); a tier2 entity that overlaps no already-registered SAME-type
  *      entity registers fresh under its authoritative tier2 type.
+ *   5. scripts/config/registry/*.json — the WORLD REGISTRY (WP-161): the
+ *      seeded, durable follow universe (~1 500–5 000 entities — every club in
+ *      covered leagues, national teams, F1 field, WorldTour squads, ATP/WTA +
+ *      FIDE top lists, esports orgs, winter-sport athletes; see
+ *      registry.schema.json and scripts/seed-registry/). Folded LAST among the
+ *      entity sources so every pre-registry entity keeps its exact published
+ *      id/name/type (follow-targets in user profiles must never silently
+ *      change id). A registry entity that overlaps an existing SAME-type
+ *      entity merges into it — donating aliases plus its `external` source ids
+ *      and `country` — while a fresh one registers under its own stable
+ *      registry id. Registry files are pre-deduped artifacts with globally
+ *      unique ids (CI-enforced), so registry entities are deliberately NOT
+ *      dedup-scanned against each other (a boundary cap keeps the fold
+ *      linear). The registry is authoritative on type: a cross-type overlap
+ *      (tracked's misfiled club-as-league vs. the registry's team) registers
+ *      fresh under the registry type and logs the mismatch (WP-160 semantics).
  *
- * Entry shape: { id, name, aliases: [], sport, type }
+ * Entry shape: { id, name, aliases: [], sport, type, country?, external? }
  * type ∈ "athlete" | "team" | "tournament" | "league" | "sport" | "category"
  *
  * WP-64: "sport" (one per followBroadly sport) and "category" (umbrella terms
@@ -185,7 +201,7 @@ function addBroadCoverageEntities(builder, configDir) {
  * Wærenskjold" → "s-ren-w-renskjold"). Transliterate those explicitly first
  * for a readable slug ("soren-waerenskjold").
  */
-function slugify(name) {
+export function slugify(name) {
 	const translit = String(name || "")
 		.replace(/[æÆ]/g, "ae")
 		.replace(/[øØ]/g, "o");
@@ -387,6 +403,62 @@ class EntityIndexBuilder {
 		this.entities.push(entity);
 		return entity;
 	}
+
+	/**
+	 * WP-161: register a WORLD-REGISTRY entity. Differs from upsert() in three
+	 * deliberate ways:
+	 *   (a) dedup scans only the first `searchLimit` entities — the pre-registry
+	 *       sources. Registry files are pre-deduped artifacts with globally
+	 *       unique ids (CI-enforced), so registry-vs-registry scanning is
+	 *       skipped and the fold stays linear at world scale.
+	 *   (b) a SAME-type merge also donates the registry's `external` source ids
+	 *       and `country` (existing values win — tracked/curated data is never
+	 *       overwritten).
+	 *   (c) the registry is authoritative on type: when the candidate overlaps
+	 *       an existing entity ONLY across types (the tracked misfiled
+	 *       club-as-league class), it registers fresh under its own type and
+	 *       the mismatch is logged (WP-160 semantics, now with the log the
+	 *       WP-161 contract asks for). An id collision (same slug, genuinely
+	 *       different entity) keeps the first-registered id — tracked wins —
+	 *       and the registry entity gets a suffixed slug, logged.
+	 */
+	upsertRegistry({ id, name, aliases = [], sport, type, country, external }, searchLimit) {
+		if (!name) return null;
+		const candidateTerms = [name, ...aliases].filter(Boolean);
+		const scope = this.entities.slice(0, searchLimit);
+		const sportOk = (e) => !e.sport || !sport || normalizeText(e.sport) === normalizeText(sport);
+		const existing = scope.find((e) => e.type === type && sportOk(e) && termsOverlap(candidateTerms, terms(e), this.aliasGroups));
+		if (existing) {
+			for (const t of candidateTerms) {
+				const norm = normalizeText(t).trim();
+				if (!norm) continue;
+				if (normalizeText(existing.name).trim() === norm) continue;
+				if (existing.aliases.some((a) => normalizeText(a).trim() === norm)) continue;
+				existing.aliases.push(t);
+			}
+			if (external && Object.keys(external).length) existing.external = { ...external, ...(existing.external || {}) };
+			if (country && !existing.country) existing.country = country;
+			return existing;
+		}
+		const crossType = scope.find((e) => e.type !== type && sportOk(e) && termsOverlap(candidateTerms, terms(e), this.aliasGroups));
+		if (crossType) {
+			console.warn(
+				`build-entities: registry type-mismatch — "${name}" (${type}) overlaps "${crossType.name}" (${crossType.type}, id ${crossType.id}); registry type is authoritative, registering fresh.`
+			);
+		}
+		let slug = id || uniqueSlug(slugify(name), this.usedSlugs);
+		if (this.usedSlugs.has(slug)) {
+			const suffixed = uniqueSlug(slug, this.usedSlugs);
+			console.warn(`build-entities: registry id collision — "${slug}" is taken (tracked wins); registering "${name}" as "${suffixed}".`);
+			slug = suffixed;
+		}
+		this.usedSlugs.add(slug);
+		const entity = { id: slug, name, aliases: [...aliases], sport: sport || null, type };
+		if (country) entity.country = country;
+		if (external && Object.keys(external).length) entity.external = { ...external };
+		this.entities.push(entity);
+		return entity;
+	}
 }
 
 /**
@@ -452,11 +524,32 @@ export function buildEntityIndex(configDir = configDirPath(), sportsConfigData =
 		builder.upsert({ name: t.name, aliases: t.aliases || [], sport: t.sport, type: "tournament" });
 	}
 
-	// 5. WP-64 — sport-/category-level entities (broad-coverage grounding).
+	// 5. WP-161 — the world registry (scripts/config/registry/*.json), folded
+	// LAST among the entity sources so every pre-registry entity keeps its
+	// exact published id/name/type. Files are read in sorted name order for
+	// determinism; the boundary caps dedup scanning to the pre-registry
+	// entities (see upsertRegistry). Absent directory → no-op (temp config
+	// dirs in tests, and any deployment without a seeded registry).
+	const registryDir = path.join(configDir, "registry");
+	if (fs.existsSync(registryDir)) {
+		const boundary = builder.entities.length;
+		const files = fs.readdirSync(registryDir).filter((f) => f.endsWith(".json")).sort();
+		for (const file of files) {
+			const registry = readJsonIfExists(path.join(registryDir, file));
+			for (const entity of registry?.entities || []) {
+				if (!entity?.id || !entity?.name || !entity?.type) continue;
+				builder.upsertRegistry(entity, boundary);
+			}
+		}
+	}
+
+	// 6. WP-64 — sport-/category-level entities (broad-coverage grounding).
 	addBroadCoverageEntities(builder, configDir);
 
 	return decorateAliases(builder.entities).map((e) => {
 		const out = { id: e.id, name: e.name, aliases: e.aliases, sport: e.sport, type: e.type };
+		if (e.country) out.country = e.country;
+		if (e.external) out.external = e.external;
 		if (e.initials && e.initials.length) out.initials = e.initials;
 		return out;
 	});

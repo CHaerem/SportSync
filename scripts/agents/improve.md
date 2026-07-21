@@ -36,6 +36,17 @@ Patterns worth acting on (pick the ONE with the best evidence + payoff):
   cron is too frequent for its payoff when the week runs hot, or there's headroom to
   run something more often → propose the cron change, citing the trend.
 - An **interest that's under-served** by the current fetchers/agents.
+- **World-registry drift** (WP-161, `scripts/config/registry/*.json`): the seeded
+  follow universe has fallen behind the world — stale team names, a promoted club
+  missing, a new season's field absent. The mechanical fix is yours to run:
+  `npm run seed:registry <sport>` re-seeds from the sources (ESPN/Wikidata/FIDE/
+  Liquipedia) with STABLE ids (external-id matching keeps every id across
+  re-seeds; nothing is deleted), and the diff ships as a normal PR gated by
+  `tests/registry-schema.test.js`. NB: a scheduled monthly re-seed Action is a
+  documented OWNER follow-up — `.github/workflows/**` is a protected path, so
+  never add that workflow yourself; until it exists, this evidence-triggered
+  re-seed (or the research agent's weekly targeted reconciliation) IS the
+  maintenance path.
 
 ## The bias that keeps this from becoming v1
 v2 exists because v1's "self-improving autonomy" **stagnated under its own

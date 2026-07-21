@@ -1,0 +1,78 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "Sportivista – verdensregisteret (én fil per sportsområde)",
+	"description": "WP-161: the world-derived FOLLOW UNIVERSE (scripts/config/registry/*.json) — every entity a user could plausibly follow (all clubs in covered leagues, national teams, F1 drivers/teams, WorldTour squads, ATP/WTA + FIDE top lists, esports orgs, winter-sport athletes). This is a LOOKUP, never a coverage promise: catalog.json still governs what the pipeline fetches/researches (cost), tracked.json remains the dated bookkeeping. Seeded mechanically (npm run seed:registry — ESPN teams/rankings, Wikidata SPARQL, FIDE top lists, Liquipedia), maintained weekly by the research/improve agents (promotions/relegations, transfers, renames, new orgs). Files are DETERMINISTIC artifacts: entities sorted by id, stable key order, tab-indented — so a re-seed yields a clean diff. Ids are stable kebab-slugs (primary key, globally unique across all registry files — enforced by tests/registry-schema.test.js, which also enforces the kebab pattern and non-empty external, since this tiny validator has no pattern/minProperties keywords); `external` carries the source ids (wikidata QID, espnId, fideId, liquipedia page) used for re-seed matching and dedup, so a rename keeps its id and the old name becomes an alias.",
+	"type": "object",
+	"required": ["entities"],
+	"additionalProperties": false,
+	"properties": {
+		"$schema": {
+			"type": "string",
+			"description": "Fritekst-notat (ikke en skjema-URL). La stå."
+		},
+		"source": {
+			"type": "string",
+			"description": "Hvor filen seedes fra (mekanisk kilde + ev. kurert supplement). Informativt."
+		},
+		"notes": {
+			"type": "string",
+			"description": "Fritt notat til agentene (vedlikeholdsregler, kjente hull)."
+		},
+		"entities": {
+			"type": "array",
+			"description": "Registerets entiteter, SORTERT på id (determinisme — re-seed gir rene diffs).",
+			"items": { "$ref": "#/definitions/entity" }
+		}
+	},
+	"definitions": {
+		"entity": {
+			"type": "object",
+			"required": ["id", "name", "sport", "type", "external"],
+			"additionalProperties": false,
+			"properties": {
+				"id": {
+					"type": "string",
+					"description": "Stabil kebab-slug — primær-id, globalt unik på tvers av alle registerfiler. ALDRI endres ved navnebytte (nytt navn → `name`, gammelt navn → `aliases`)."
+				},
+				"name": {
+					"type": "string",
+					"description": "Kanonisk visningsnavn (verdens nåværende navn — norsk der det finnes)."
+				},
+				"aliases": {
+					"type": "array",
+					"description": "Andre navn/stavemåter (tidligere lagnavn, kortformer, norsk/engelsk variant). Mater både app-søket og server-matchingen — aldri enkeltord som også er vanlige gloser.",
+					"items": { "type": "string" }
+				},
+				"sport": {
+					"type": "string",
+					"description": "Sport-tag (samme vokabular som catalog.json).",
+					"enum": ["football", "golf", "tennis", "f1", "cycling", "chess", "esports", "athletics", "handball", "biathlon", "cross-country", "alpine", "nordic", "ski jumping"]
+				},
+				"type": {
+					"type": "string",
+					"description": "Registeret er autoritativt på type (WP-160-semantikk: tracked vinner id-dedup, men en type-mismatch registreres ferskt under registerets type og logges).",
+					"enum": ["athlete", "team", "tournament", "league"]
+				},
+				"country": {
+					"type": "string",
+					"description": "Best-effort nasjonstilhørighet slik kilden oppgir den (FIDE-føderasjon som NOR, Wikidata-label som Norge). Normaliseres til ISO i WP-185."
+				},
+				"external": {
+					"type": "object",
+					"description": "Kilde-id-er for re-seeding og dedup. Minst én nøkkel (håndhevet av koherenstesten).",
+					"additionalProperties": false,
+					"properties": {
+						"wikidata": { "type": "string", "description": "Wikidata QID, f.eks. \"Q1130849\"." },
+						"espnId": { "type": "string", "description": "ESPN team-/athlete-id fra teams-/rankings-/standings-API-et." },
+						"fideId": { "type": "string", "description": "FIDE-id fra ratings.fide.com-profilen." },
+						"liquipedia": { "type": "string", "description": "Liquipedia-sidenavn (counterstrike-wikien), f.eks. \"Natus_Vincere\"." }
+					}
+				},
+				"notes": {
+					"type": "string",
+					"description": "Fritt notat (f.eks. sesongvindu, vedlikeholdsmerknad fra research-agenten)."
+				}
+			}
+		}
+	}
+}

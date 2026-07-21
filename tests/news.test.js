@@ -71,6 +71,23 @@ describe("entity matching (word-boundary, reused from helpers)", () => {
 		const ids = matchEntityIds("Tour de France starter i dag", newsEntityPool(ENTITIES));
 		expect(ids).toContain("tournament:tdf");
 	});
+
+	it("WP-161: a ≤2-letter entity name never claims news (the CS2 org 'OG' vs. the Norwegian word 'og')", () => {
+		// The world registry legitimately contains orgs whose names are everyday
+		// words. Headlines have no sport context to gate on, so ultra-short terms
+		// are excluded from NEWS matching only — the entity stays followable and
+		// still matches events (sport-scoped there).
+		const pool = newsEntityPool([
+			...ENTITIES,
+			{ id: "team:og", name: "OG", aliases: [], sport: "esports", type: "team" },
+		]);
+		expect(matchEntityIds("Warholm klar for NM og EM", pool)).not.toContain("team:og");
+		// A ≥3-letter alias would still match — the gate is per-TERM, not per-entity.
+		const poolWithAlias = newsEntityPool([
+			{ id: "team:og", name: "OG", aliases: ["OG Esports"], sport: "esports", type: "team" },
+		]);
+		expect(matchEntityIds("OG Esports vant finalen", poolWithAlias)).toContain("team:og");
+	});
 });
 
 describe("buildNews — item contract", () => {
