@@ -74,6 +74,14 @@
 			<section class="next-up" id="next-up" hidden></section>
 			<details class="followed" id="followed" hidden>
 				<summary id="followed-summary"><span>Dette dekker vi</span><a class="followed-edit-top" href="rediger.html" onclick="event.stopPropagation()">Be om dekning</a></summary>
+				<!-- Søk-og-følg (WP-163): the vanilla-user path to follow something that
+				     isn't on the board. Searches entities.json (name + aliases); a tap
+				     follows directly (ssProfileFollow) with a calm confirmation. Wired
+				     once by profile-ui.js bindFollowSearch (survives re-render). -->
+				<div class="follow-search" id="follow-search">
+					<input type="search" id="follow-search-input" class="follow-search-input" placeholder="Søk og følg et lag eller en utøver…" autocomplete="off" autocapitalize="off">
+					<div class="follow-search-results" id="follow-search-results" hidden></div>
+				</div>
 				<div class="followed-body" id="followed-body"></div>
 			</details>
 		</div>

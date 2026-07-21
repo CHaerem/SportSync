@@ -3,11 +3,11 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
-	<meta name="description" content="Rediger det du følger i Sportivista.">
+	<meta name="description" content="Be Sportivista om å dekke en ny sport eller turnering.">
 	<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
 	<meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)">
 	<link rel="icon" type="image/png" href="favicon.png">
-	<title>Rediger · Sportivista</title>
+	<title>Be om dekning · Sportivista</title>
 	<!-- Apply the chosen theme before paint (no flash of wrong theme); js/theme.js owns the toggle. -->
 	<script>try { var t = localStorage.getItem('ss-theme'); if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t; } catch (e) {}</script>
 	<link rel="stylesheet" href="css/base.css">
@@ -75,16 +75,18 @@
 
 	<main class="wrap">
 		<a class="edit-back" href="index.html">‹ Tilbake til oversikten</a>
-		<h1>Rediger det du følger</h1>
-		<p class="edit-lead">Trykk en rad for å se neste hendelse og endre den — ingen skriving, ingen JSON. Send inn skjemaet, så <strong>oppdateres lista automatisk</strong> og siden bygges om (~et par minutter).</p>
-
-		<div id="edit-root"><p class="muted">Laster …</p></div>
+		<h1>Be om dekning</h1>
+		<p class="edit-lead"><strong>Vil du bare følge et lag eller en utøver?</strong> Det gjør du direkte på forsiden — søk i «Dette dekker vi» og trykk <em>Følg</em>. <a href="index.html">Gå til forsiden →</a></p>
+		<p class="edit-lead">Denne siden er for å be Sportivista om å <strong>dekke noe nytt</strong> — en sport eller turnering vi ikke henter ennå. Det sendes som et forslag til vedlikeholderen; når det tas inn, dukker det opp for alle.</p>
 
 		<section class="add-box">
-			<h2>Legg til noe nytt</h2>
-			<input type="search" id="add-search" class="add-search" placeholder="Søk etter lag, utøver eller turnering…" autocomplete="off" autocapitalize="off">
+			<h2>Be om ny dekning</h2>
+			<input type="search" id="add-search" class="add-search" placeholder="Søk etter en sport, turnering eller et lag…" autocomplete="off" autocapitalize="off">
 			<div id="add-suggestions" class="add-suggestions"></div>
 		</section>
+
+		<h2 class="edit-subhead">Dette dekker vi allerede</h2>
+		<div id="edit-root"><p class="muted">Laster …</p></div>
 
 		<div class="edit-foot">
 			<p class="muted">Endringer vises her når siden er bygd om (~et par minutter etter innsending). Vil du endre alt for hånd (aliaser, varsel-tid m.m.)? <a href="https://github.dev/CHaerem/sportivista/blob/main/scripts/config/interests.json" target="_blank" rel="noopener">Rediger fila direkte</a>.</p>
