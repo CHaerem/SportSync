@@ -180,6 +180,40 @@ final class AgendaFormatTests: XCTestCase {
         XCTAssertNil(AgendaFormat.metaLabel(tournament: nil, title: "Noe"))
     }
 
+    // MARK: - humanizeGolfMeta (WP-147 — plain-language golf status for the row)
+
+    func testHumanizeGolfMeta_writesOutRound_dropsPlacement_keepsScore() {
+        // "R2 · −4 · T8" → round written out, placement dropped, score kept.
+        XCTAssertEqual(AgendaFormat.humanizeGolfMeta("R2 · −4 · T8", sport: "golf"), "Runde 2 · −4")
+    }
+
+    func testHumanizeGolfMeta_barePositionPlacementDropped() {
+        // A leaderboard position without the "T" (leader/solo) is still placement.
+        XCTAssertEqual(AgendaFormat.humanizeGolfMeta("R4 · +1 · 12", sport: "golf"), "Runde 4 · +1")
+    }
+
+    func testHumanizeGolfMeta_keepsEvenParAndPlainScoreTokens() {
+        // "E" (even par) is a score, not a placement — kept verbatim.
+        XCTAssertEqual(AgendaFormat.humanizeGolfMeta("R1 · E · T1", sport: "golf"), "Runde 1 · E")
+    }
+
+    func testHumanizeGolfMeta_namesPassThroughUnchanged() {
+        // The untimed-degradation meta is a list of followed NAMES — never a status;
+        // names match neither the round nor the placement pattern, so they survive.
+        XCTAssertEqual(AgendaFormat.humanizeGolfMeta("Hovland · Reitan", sport: "golf"), "Hovland · Reitan")
+    }
+
+    func testHumanizeGolfMeta_nonGolfUntouched() {
+        // Only golf is reshaped; any other sport's meta passes through verbatim.
+        XCTAssertEqual(AgendaFormat.humanizeGolfMeta("R2 · −4 · T8", sport: "football"), "R2 · −4 · T8")
+    }
+
+    func testHumanizeGolfMeta_onlyPlacement_isNil() {
+        // A meta that is nothing but placement collapses to nil, so the caller can
+        // fall back to the neutral tournament meta rather than show a bare "T8".
+        XCTAssertNil(AgendaFormat.humanizeGolfMeta("T8", sport: "golf"))
+    }
+
     // MARK: - channelLabel ("hvor")
 
     func testChannelLabel_firstPlatform() {

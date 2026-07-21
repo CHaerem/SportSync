@@ -170,6 +170,56 @@ enum AgendaFormat {
         return tournament
     }
 
+    // MARK: - Golf meta: plain-language player status for the calm row (WP-147)
+
+    /// Rewrite a golf player-status meta ("R2 · −4 · T8") into calm, casual-fan
+    /// language for the AGENDA ROW: the round code is written out ("R2" → "Runde
+    /// 2") and the leaderboard PLACEMENT token ("T8" / a bare "12") is dropped —
+    /// placement is a leaderboard detail, not part of the row's calm when·what·
+    /// where; the SCORE ("−4") is kept. Only golf is reshaped; every other sport's
+    /// meta passes through unchanged, and so does a golf meta that is really a list
+    /// of followed NAMES (the untimed-degradation case, e.g. "Hovland · Reitan") —
+    /// names match neither the round nor the placement pattern, so they survive
+    /// verbatim.
+    ///
+    /// A PURE DISPLAY transform that lives in the Agenda layer: the raw status stays
+    /// intact in the data AND in `LensRenderer.statusDetail` (whose "verbatim"
+    /// contract `LensRendererTests` pins) — this only reshapes what the row shows.
+    /// Returns nil when every token was dropped (a bare placement), so the caller
+    /// can fall back to the neutral tournament meta.
+    static func humanizeGolfMeta(_ meta: String, sport: String) -> String? {
+        guard sport.lowercased() == "golf" else { return meta }
+        var kept: [String] = []
+        for raw in meta.components(separatedBy: " · ") {
+            let token = raw.trimmingCharacters(in: .whitespaces)
+            if token.isEmpty { continue }
+            if let round = golfRoundNumber(token) {
+                kept.append("Runde \(round)")
+            } else if isGolfPlacementToken(token) {
+                continue // leaderboard placement lives in the detail sheet, not the calm row
+            } else {
+                kept.append(token)
+            }
+        }
+        return kept.isEmpty ? nil : kept.joined(separator: " · ")
+    }
+
+    /// The round number in a "R2"/"r2" round code, else nil.
+    private static func golfRoundNumber(_ token: String) -> String? {
+        guard let first = token.first, first == "R" || first == "r" else { return nil }
+        let digits = token.dropFirst()
+        guard !digits.isEmpty, digits.allSatisfy(\.isNumber) else { return nil }
+        return String(digits)
+    }
+
+    /// A leaderboard placement token — "T8"/"T12" (tied) or a bare position "12".
+    /// Score-to-par ("−4", "+2", "E") never matches (signed / not all-digits) and a
+    /// name never matches, so only the placement is dropped.
+    private static func isGolfPlacementToken(_ token: String) -> Bool {
+        let body = (token.first == "T" || token.first == "t") ? token.dropFirst() : token[...]
+        return !body.isEmpty && body.allSatisfy(\.isNumber)
+    }
+
     // MARK: - "Hvor" — the channel column
 
     /// First Norwegian streaming option, or an honest faint "–" when none is

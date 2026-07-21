@@ -579,7 +579,12 @@ final class AgendaViewModel {
         // fall back to the neutral tournament meta so no outcome leaks into the
         // agenda row (the detail sheet handles the fuller masking + reveal).
         let neutralMeta = AgendaFormat.metaLabel(tournament: event.tournament, title: lensRow.title)
-        let meta = spoilerSafe ? (lensRow.metaDetail ?? neutralMeta) : neutralMeta
+        // WP-147: reshape a golf player-status meta ("R2 · −4 · T8") into calm copy
+        // ("Runde 2 · −4") for the row — round written out, leaderboard placement
+        // dropped. Non-golf metas and the followed-NAMES degradation pass through
+        // unchanged; nil (a bare placement) falls back to the neutral tournament meta.
+        let lensMeta = lensRow.metaDetail.flatMap { AgendaFormat.humanizeGolfMeta($0, sport: event.sport) }
+        let meta = spoilerSafe ? (lensMeta ?? neutralMeta) : neutralMeta
         return AgendaEventRow(
             id: EventBridge.stableId(for: event) + "|" + lensRow.idSuffix,
             timeLabel: timeLabel,

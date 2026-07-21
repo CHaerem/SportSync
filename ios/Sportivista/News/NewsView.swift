@@ -80,17 +80,17 @@ struct NewsView: View {
 
 	private var followedLink: some View {
 		Section {
+			// WP-147: a standard single-line inset NavigationLink row, matching
+			// every other link (e.g. Deg › «Det du følger»). The earlier HStack +
+			// Spacer + explicit `.frame(minHeight: 44)` forced this one-line row to
+			// ~2× the normal height; the NavigationLink cell already gives a ≥44 pt
+			// full-width tap target plus the chevron, so a plain Text label suffices.
 			NavigationLink {
 				FollowedListView(viewModel: assistant)
 			} label: {
-				HStack {
-					Text("Det du følger")
-						.font(.sportivista(.subheadline))
-						.foregroundStyle(SportivistaTokens.label)
-					Spacer()
-				}
-				.frame(minHeight: 44, alignment: .leading)
-				.contentShape(Rectangle())
+				Text("Det du følger")
+					.font(.sportivista(.subheadline))
+					.foregroundStyle(SportivistaTokens.label)
 			}
 			.accessibilityIdentifier("news.followedLink")
 			.listRowBackground(SportivistaTokens.cell)

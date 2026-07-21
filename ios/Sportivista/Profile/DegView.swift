@@ -240,8 +240,15 @@ struct DegView: View {
                 .font(.sportivista(.body))
                 .foregroundStyle(tint)
         } icon: {
+            // WP-147: leading row icons are DEMPET grey (`secondaryLabel`), never
+            // amber. Amber is the app's ONE accent and belongs to action/state, not
+            // decoration (DESIGN § Farge). Tinting every row icon amber made Deg an
+            // amber wall (~9 amber glyphs); grey leaves exactly TWO coloured elements
+            // on the screen — the amber «Varsel før start» toggle (varsel-på =
+            // sanctioned state, via the Toggle's own `.tint(accent)`) and the red
+            // «Nullstill» row (destructive keeps its red).
             Image(systemName: symbol)
-                .foregroundStyle(tint == SportivistaTokens.destructive ? SportivistaTokens.destructive : SportivistaTokens.accent)
+                .foregroundStyle(tint == SportivistaTokens.destructive ? SportivistaTokens.destructive : SportivistaTokens.secondaryLabel)
         }
     }
 

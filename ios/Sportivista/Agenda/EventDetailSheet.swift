@@ -111,10 +111,18 @@ struct EventDetailSheet: View {
         .presentationDetents([.medium, .large])
     }
 
+    // WP-147: section headers are DEMPET grey (`secondaryLabel`), never amber.
+    // Amber is the app's ONE accent, reserved for action/state (DESIGN § Farge:
+    // "Aldri brødtekst, aldri to i samme rad"). The amber headers made
+    // "HANDLINGER"/"HVOR SER JEG DET"/… collide with the grey "ARENA"/"OM"
+    // DetailRow labels — two colours for the SAME role in one sheet — and read as
+    // matt mustard/brown in light mode (the dated Tekst-TV look). Grey matches the
+    // DetailRow/AboutRow labels + the agenda/Nyheter section headers. Amber stays
+    // ONLY on in-sheet action/state: «På», the streaming link + ↗, «Skjult»-reveal.
     private func header(_ text: String) -> some View {
         Text(text)
             .font(.sportivista(.caption2, weight: .semibold))
-            .foregroundStyle(SportivistaTokens.accent)
+            .foregroundStyle(SportivistaTokens.secondaryLabel)
             .tracking(0.5)
     }
 
