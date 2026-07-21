@@ -86,8 +86,17 @@ window.ssICloud = (function () {
 	}
 
 	/** One sync round: pull all snapshots → merge into local → save own snapshot.
-	 *  Returns {added, removed} or null on any failure (offline-first, never throws). */
-	async function sync() {
+	 *  Returns {added, removed} or null on any failure (offline-first, never throws).
+	 *  Re-entrant-safe: concurrent callers share the in-flight round, so a double
+	 *  trigger (setUpAuth + whenUserSignsIn both firing) can't race two writes into
+	 *  a 409 Conflict. */
+	let syncInFlight = null;
+	function sync() {
+		if (syncInFlight) return syncInFlight;
+		syncInFlight = syncOnce().finally(() => { syncInFlight = null; });
+		return syncInFlight;
+	}
+	async function syncOnce() {
 		if (!database) return null;
 		try {
 			const zoneName = cfg.zoneName || 'SportivistaProfile';
@@ -150,9 +159,15 @@ window.ssICloud = (function () {
 		const onAuthed = (opts && opts.onAuthed) || (() => {});
 		const gateEl = () => document.getElementById('auth-gate');
 		const errEl = () => document.getElementById('auth-error');
-		const showGate = () => { const g = gateEl(); if (g) g.hidden = false; if (document.body) document.body.classList.add('gated'); };
+		// Reveal AT MOST ONCE per auth (setUpAuth AND whenUserSignsIn can both fire on
+		// a fresh sign-in — without this they'd each run a sync and race a 409).
+		// Reset on sign-out so a re-sign-in reveals again.
+		let revealed = false;
+		const showGate = () => { revealed = false; const g = gateEl(); if (g) g.hidden = false; if (document.body) document.body.classList.add('gated'); };
 		const showError = (m) => { showGate(); const e = errEl(); if (e) { e.textContent = m; e.hidden = false; } };
 		const reveal = async () => {
+			if (revealed) return;
+			revealed = true;
 			const e = errEl(); if (e) e.hidden = true;
 			try { await sync(); } catch { /* offline-first: reveal on the local profile anyway */ }
 			onAuthed();
