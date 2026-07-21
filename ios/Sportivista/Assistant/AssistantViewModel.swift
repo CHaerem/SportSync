@@ -164,6 +164,11 @@ final class AssistantViewModel {
     /// app to the same DataStore the feed reads. Read-only: no write path here.
     private let eventsProvider: () -> [Event]
     private let newsProvider: () -> [NewsItem]
+    /// WP-164 — the synced tracked.json (read-only), so «Det du følger» can show
+    /// an honest season line («Fulgt — sesongstart medio august …») for a
+    /// followed entity with nothing on the board yet. Defaults to nil (the
+    /// mutation-only tests); wired in the app to the same DataStore cache.
+    private let trackedProvider: () -> TrackedConfig?
     /// WP-16.4 — the in-flight interpret task, so the command line can cancel it.
     private var currentTask: Task<Void, Never>?
 
@@ -185,6 +190,7 @@ final class AssistantViewModel {
         feedProvider: @escaping () -> FeedQuery = { FeedQuery(now: Date()) },
         eventsProvider: @escaping () -> [Event] = { [] },
         newsProvider: @escaping () -> [NewsItem] = { [] },
+        trackedProvider: @escaping () -> TrackedConfig? = { nil },
         deferAvailabilityCheck: Bool = false
     ) {
         self.assistant = assistant
@@ -193,6 +199,7 @@ final class AssistantViewModel {
         self.misunderstoodLog = misunderstoodLog
         self.eventsProvider = eventsProvider
         self.newsProvider = newsProvider
+        self.trackedProvider = trackedProvider
         // Default the memory store over the SAME profile file, so memory and the
         // profile share one on-disk `ProfileSyncState`.
         self.memoryStore = memoryStore ?? MemoryStore(profileStore: profileStore)
@@ -255,6 +262,8 @@ final class AssistantViewModel {
             // events + news the agenda/Nyheter boards read (no new source).
             eventsProvider: { dataStore.loadEvents() },
             newsProvider: { dataStore.loadNews() },
+            // WP-164 — the honest season line's source (read-only, same cache).
+            trackedProvider: { dataStore.loadTracked() },
             deferAvailabilityCheck: true
         )
         // Den utsatte FM-tilgjengelighetssjekken (se init) — av hovedtråden.
@@ -298,7 +307,7 @@ final class AssistantViewModel {
             uniquingKeysWith: { first, _ in first }
         )
         return FollowSnapshot(
-            presenter: FollowPresenter(feed: feed, index: idx, news: news, now: now),
+            presenter: FollowPresenter(feed: feed, index: idx, news: news, tracked: trackedProvider(), now: now),
             eventsById: byId
         )
     }
@@ -645,6 +654,17 @@ final class AssistantViewModel {
 
     func dismissRejection(_ rejection: RejectedMutation) {
         rejected.removeAll { $0.id == rejection.id }
+    }
+
+    /// WP-164 — the user chose «Følg likevel» on a rejection: the stale «ingen
+    /// endring»-account no longer holds (something DID change), so it is
+    /// replaced by a calm receipt. Called by the soft-follow arm in
+    /// Profile/AssistantViewModel+Follow.swift (which owns the actual rule
+    /// write); only the result-state bookkeeping lives here, next to the other
+    /// private(set) result setters.
+    func noteSoftFollowApplied(named name: String) {
+        explanation = nil
+        commandReceipt = "Følger «\(name)» — venter på dekning."
     }
 
     /// WP-16.2: the user tapped a "mente du …?" suggestion — re-ground the

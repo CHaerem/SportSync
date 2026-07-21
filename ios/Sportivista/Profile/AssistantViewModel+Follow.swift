@@ -52,4 +52,47 @@ extension AssistantViewModel {
         onProfileChanged?()
         return saved
     }
+
+    // MARK: - WP-164 — soft-follow («Følg likevel»)
+
+    /// Follow a bare NAME the entity index doesn't know — the explicit user
+    /// choice behind «Følg likevel» at a search miss / a grounder rejection.
+    /// Builds a stand-in entity (deterministic soft id, empty type) and runs it
+    /// through the SAME apply path as every other follow; downstream the
+    /// feed/news matching is already name-tolerant, so the rule waits honestly
+    /// («venter på dekning») and starts matching the moment coverage arrives.
+    @discardableResult
+    func softFollow(name: String, sport: String = "", now: Date = Date()) -> Bool {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return false }
+        let entity = Entity(
+            id: InterestRule.softFollowId(for: trimmed),
+            name: trimmed,
+            aliases: [],
+            sport: sport,
+            type: ""
+        )
+        return follow(
+            entity,
+            reason: "Du valgte å følge «\(trimmed)» selv om vi ikke kjenner navnet ennå. Raden venter til dekningen kommer.",
+            now: now
+        )
+    }
+
+    /// Soft-follow the phrase behind a grounder REJECTION — the calm action in
+    /// the avvisningsraden. The anti-hallucination gate is untouched (the model
+    /// still can't invent ids); this is the USER explicitly choosing to follow
+    /// the name anyway. Clears the rejection it answers.
+    @discardableResult
+    func softFollow(from rejection: RejectedMutation, now: Date = Date()) -> Bool {
+        let name = rejection.query.trimmingCharacters(in: .whitespacesAndNewlines)
+        let saved = softFollow(name: name, now: now)
+        dismissRejection(rejection)
+        if !name.isEmpty {
+            // The «ingen endring»-account no longer holds — replace it with a
+            // calm receipt (result-state bookkeeping lives in the main file).
+            noteSoftFollowApplied(named: name)
+        }
+        return saved
+    }
 }

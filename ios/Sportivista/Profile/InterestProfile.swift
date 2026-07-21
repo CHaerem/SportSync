@@ -74,6 +74,34 @@ struct InterestRule: Codable, Equatable, Identifiable, Sendable {
     }
 }
 
+// MARK: - WP-164 — soft-follow (a NAME-based rule for something the index doesn't know)
+
+extension InterestRule {
+    /// Id prefix for a soft-follow rule — a follow the user created for a NAME
+    /// the entity index couldn't resolve («Følg likevel»). The prefix is what
+    /// lets the presentation layer tell a deliberate name-follow (honest
+    /// «venter på dekning») apart from a mistyped one («sjekk navnet»).
+    /// Downstream matching needs no special case: FeedQuery/EffectiveInterests
+    /// are already name-tolerant (id-first, then name/alias), so a soft rule
+    /// simply starts matching the moment coverage arrives.
+    static let softFollowIdPrefix = "soft-"
+
+    /// Deterministic id for a soft-follow of `name` — the same name yields the
+    /// same id on every device, so the CRDT profile sync converges instead of
+    /// duplicating («soft-erling-haaland» everywhere).
+    static func softFollowId(for name: String) -> String {
+        let normalized = TextMatch.normalize(name)
+        let slug = normalized
+            .components(separatedBy: CharacterSet.alphanumerics.inverted)
+            .filter { !$0.isEmpty }
+            .joined(separator: "-")
+        return softFollowIdPrefix + (slug.isEmpty ? "navn" : slug)
+    }
+
+    /// Whether this rule is a soft-follow (created by name, not from the index).
+    var isSoftFollow: Bool { entityId.hasPrefix(Self.softFollowIdPrefix) }
+}
+
 struct InterestProfile: Codable, Equatable, Sendable {
     /// Neutral default weight for a freshly added rule with no explicit weight.
     static let defaultWeight: Double = 0.5

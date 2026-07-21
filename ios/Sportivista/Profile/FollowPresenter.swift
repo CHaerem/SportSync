@@ -19,7 +19,10 @@
 //    • newsItems(for:)     — the lens-matched news pointers about the rule
 //                           (the detail's SISTE NYTT), via a single-rule NewsLens.
 //    • rowSubtitle(for:)   — the calm «Neste: lør 25. · Strømsgodset – Lyn · TV 2»
-//                           line, or an honest «Ikke satt opp ennå».
+//                           line, or an honest quiet-state line (WP-164): a
+//                           tracked.json season window when one is known,
+//                           «venter på dekning» for a soft-follow, else
+//                           «Fulgt — ingen kommende events på tavla ennå».
 //
 //  Foundation-only and clock-injected (`now` is passed), so FollowPresenterTests
 //  drives every branch against the checked-in fixtures with no SwiftUI + no app.
@@ -71,12 +74,17 @@ struct FollowPresenter {
     let feed: FeedQuery
     let index: EntityIndex
     let news: [NewsItem]
+    /// WP-164 — the synced tracked.json (read-only), the source of the honest
+    /// season line for a follow with nothing on the board. nil degrades to the
+    /// neutral «Fulgt — ingen kommende events …» line.
+    let tracked: TrackedConfig?
     let now: Date
 
-    init(feed: FeedQuery, index: EntityIndex, news: [NewsItem] = [], now: Date = Date()) {
+    init(feed: FeedQuery, index: EntityIndex, news: [NewsItem] = [], tracked: TrackedConfig? = nil, now: Date = Date()) {
         self.feed = feed
         self.index = index
         self.news = news
+        self.tracked = tracked
         self.now = now
     }
 
@@ -152,11 +160,14 @@ struct FollowPresenter {
     ///   • `.scheduled`  — ≥1 upcoming event → the «Neste: …» subtitle.
     ///   • `.idle`       — a real follow that just has nothing right now (a known
     ///                     entity, a whole-sport follow, or one still carrying
-    ///                     news): «Ikke satt opp ennå».
+    ///                     news): «Fulgt — …» with a season line when tracked.json
+    ///                     knows one (WP-164).
     ///   • `.unresolved` — the followed NAME resolves to nothing we know AND has no
-    ///                     news either — most likely a wrong/mistyped name:
-    ///                     «Ingen treff — sjekk navnet», with nearest-name help in
-    ///                     the detail.
+    ///                     news either. For a mistyped follow: «Ingen treff — sjekk
+    ///                     navnet», with nearest-name help in the detail. For a
+    ///                     deliberate soft-follow (WP-164, «Følg likevel»): the
+    ///                     honest «Fulgt — venter på dekning» instead — the user
+    ///                     chose the name knowingly; there is nothing to check.
     enum FollowMatchState: Equatable { case scheduled, idle, unresolved }
 
     /// Classify a rule (see `FollowMatchState`). A whole-sport / category follow is
@@ -188,16 +199,124 @@ struct FollowPresenter {
     // MARK: - Row subtitle
 
     /// The calm per-entity subtitle: «Neste: lør 25. · Strømsgodset – Lyn · TV 2»
-    /// (day · what · where) when scheduled; an honest «Ikke satt opp ennå» when a
-    /// real follow is quiet; or «Ingen treff — sjekk navnet» when the name resolves
-    /// to nothing (the WP-125 lens-miss signal). No technical words ever.
+    /// (day · what · where) when scheduled. When nothing is scheduled (WP-164,
+    /// honest off-season): «Fulgt — sesongstart medio august 2026» when
+    /// tracked.json knows the season window, else the neutral «Fulgt — ingen
+    /// kommende events på tavla ennå»; a soft-follow waits with «Fulgt — venter
+    /// på dekning», and only a genuinely mistyped name gets «Ingen treff — sjekk
+    /// navnet» (the WP-125 lens-miss signal). No technical words ever.
     func rowSubtitle(for rule: InterestRule) -> String {
         if let next = nextEvents(for: rule, limit: 1).first {
             var parts = ["Neste: \(shortDayLabel(dayKey: next.dayKey))", next.title]
             if next.channelLabel != "–" { parts.append(next.channelLabel) }
             return parts.joined(separator: " · ")
         }
-        return matchState(for: rule) == .unresolved ? "Ingen treff — sjekk navnet" : "Ikke satt opp ennå"
+        if let season = seasonLine(for: rule) { return "Fulgt — \(season)" }
+        if matchState(for: rule) == .unresolved {
+            return rule.isSoftFollow ? "Fulgt — venter på dekning" : "Ingen treff — sjekk navnet"
+        }
+        return "Fulgt — ingen kommende events på tavla ennå"
+    }
+
+    // MARK: - Season line (WP-164 — the honest off-season answer)
+
+    /// The season phrase for a quiet follow («sesongstart medio august 2026»),
+    /// pulled from the matching tracked.json entry's `reason` — the server
+    /// bookkeeping ALREADY narrates season windows in plain Norwegian there.
+    /// nil when tracked.json is absent, no entry matches, or no season sentence
+    /// is found (the caller degrades to the neutral line). A mistyped follow
+    /// (`.unresolved`, not soft) never gets a season line — «sjekk navnet» is
+    /// the honest answer there.
+    func seasonLine(for rule: InterestRule) -> String? {
+        if matchState(for: rule) == .unresolved, !rule.isSoftFollow { return nil }
+        return Self.seasonInfo(for: rule, entity: entity(for: rule), tracked: tracked)
+    }
+
+    /// Find the tracked.json entry matching this follow (by id, else by the
+    /// entity's name/alias terms word-boundary-matching the entry name — the
+    /// SAME TextMatch the feed uses, no new fuzzy) and extract its season
+    /// phrase. Static + pure so tests drive it directly.
+    static func seasonInfo(for rule: InterestRule, entity: Entity, tracked: TrackedConfig?) -> String? {
+        guard let tracked else { return nil }
+        let terms = ([rule.entityName, entity.name] + entity.aliases).filter { !$0.isEmpty }
+        let entries = tracked.leagues + tracked.tournaments + tracked.athletes
+        for entry in entries {
+            let hit = entry.id == rule.entityId || terms.contains { term in
+                TextMatch.containsName(entry.name, term) || TextMatch.containsName(term, entry.name)
+            }
+            guard hit else { continue }
+            if let phrase = seasonPhrase(in: entry.reason) { return phrase }
+        }
+        return nil
+    }
+
+    /// Pull the season-window sentence out of a tracked `reason`: the first
+    /// sentence that names BOTH a season/start cue and a month, trimmed at the
+    /// first dash/semicolon clause so only the calm fact remains
+    /// («Sesongstart medio august 2026 — statiske ESPN-fetchere …» →
+    /// «sesongstart medio august 2026»). nil when no such sentence exists or
+    /// the remainder is still too long for a subtitle — graceful degradation,
+    /// never a truncated half-sentence.
+    static func seasonPhrase(in reason: String) -> String? {
+        for sentence in sentences(in: reason) {
+            let lower = sentence.lowercased()
+            guard Self.seasonCues.contains(where: { lower.contains($0) }),
+                  Self.monthNames.contains(where: { lower.contains($0) }) else { continue }
+            var phrase = sentence
+            for separator in [" — ", " – ", "; ", " ("] {
+                if let range = phrase.range(of: separator) {
+                    phrase = String(phrase[..<range.lowerBound])
+                }
+            }
+            phrase = phrase.trimmingCharacters(in: CharacterSet(charactersIn: " .,:—–-"))
+            guard !phrase.isEmpty, phrase.count <= 90 else { continue }
+            return lowercasedIfCommonNoun(phrase)
+        }
+        return nil
+    }
+
+    /// «Sesongstart …» → «sesongstart …» after the subtitle's tankestrek, but a
+    /// phrase leading with a proper noun («Premier League starter …») keeps its
+    /// capital. Only the small closed set of season cue-words is lowered.
+    private static func lowercasedIfCommonNoun(_ phrase: String) -> String {
+        guard let firstWord = phrase.split(separator: " ").first else { return phrase }
+        let lowered = firstWord.lowercased()
+        guard seasonCues.contains(where: { lowered.hasPrefix($0) }) else { return phrase }
+        return lowered + phrase.dropFirst(firstWord.count)
+    }
+
+    private static let seasonCues = [
+        "sesongstart", "seriestart", "sesongåpning", "sesongen starter",
+        "starter", "begynner", "tilbake"
+    ]
+
+    private static let monthNames = [
+        "januar", "februar", "mars", "april", "mai", "juni",
+        "juli", "august", "september", "oktober", "november", "desember"
+    ]
+
+    /// Split a tracked `reason` into sentences: a period followed by whitespace
+    /// and an uppercase letter. Deliberately conservative so «kl. 21.00»,
+    /// «26. aug» and abbreviations never fragment a sentence.
+    private static func sentences(in text: String) -> [String] {
+        var out: [String] = []
+        var current = ""
+        var previous: Character?
+        for (i, ch) in text.enumerated() {
+            current.append(ch)
+            if previous == ".", ch == " " || ch == "\n" {
+                // Peek: next non-space char uppercase ⇒ sentence boundary.
+                let rest = text.dropFirst(i + 1)
+                if let next = rest.first(where: { $0 != " " && $0 != "\n" }), next.isUppercase {
+                    out.append(current.trimmingCharacters(in: .whitespacesAndNewlines))
+                    current = ""
+                }
+            }
+            previous = ch
+        }
+        let tail = current.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !tail.isEmpty { out.append(tail) }
+        return out
     }
 
     // MARK: - Helpers

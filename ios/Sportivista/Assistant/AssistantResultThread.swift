@@ -302,6 +302,31 @@ struct AssistantResultThread: View {
                             }
                         }
                     }
+                    // WP-164: the rejection is honest, not a dead-end — the USER
+                    // may choose to follow the bare name anyway (a soft-follow;
+                    // the model's anti-hallucination gate is untouched). Only a
+                    // rejected FOLLOW offers it — «slutt å følge X» does not.
+                    if rejection.proposal.kind == .add, !rejection.query.isEmpty {
+                        Button {
+                            viewModel.softFollow(from: rejection)
+                            dismissIfDone()
+                        } label: {
+                            HStack(spacing: 8) {
+                                Text("Følg «\(rejection.query)» likevel")
+                                    .font(.sportivista(.subheadline, weight: .semibold))
+                                    .foregroundStyle(SportivistaTokens.label)
+                                    .multilineTextAlignment(.leading)
+                                Spacer(minLength: 8)
+                                Image(systemName: "plus")
+                                    .font(.sportivista(.footnote, weight: .semibold))
+                                    .foregroundStyle(SportivistaTokens.tertiaryLabel)
+                            }
+                            .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier("assistant.softfollow")
+                    }
                     Button("OK") { viewModel.dismissRejection(rejection); dismissIfDone() }
                         .font(.sportivista(.caption))
                         .foregroundStyle(SportivistaTokens.label.opacity(0.6))
