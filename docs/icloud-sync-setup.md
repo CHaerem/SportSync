@@ -1,10 +1,18 @@
 # iCloud-synk mellom web og app — oppsett (eier, engangs)
 
-Web-versjonen kan synke «hva du følger» to veier med iPhone-appen via **CloudKit
-JS + Sign in with Apple** — helt uten vår egen server. Koden er ferdig; det som
-gjenstår er noen manuelle steg i **CloudKit Console** (bare eieren kan gjøre dem,
-krever den betalte Apple-kontoen). Til de er gjort holder web seg til den lokale
-profilen + QR/lenke-import — ingenting brekker.
+> **STATUS (21.07.2026): SATT OPP + LIVE i Production.** `ProfileSnapshot`-skjemaet
+> er deployet til Production (verifisert med `cktool export-schema`), et origin-låst
+> Production web-token ligger i `docs/js/icloud-config.js`, og web-innloggingen er
+> bekreftet mot iCloud. Dette dokumentet er nå referanse for re-oppsett / et nytt
+> miljø. **Lærdom:** `cktool` kan definere/importere skjema til **Development**, men
+> IKKE til Production («endpoint not applicable in the environment 'production'») og
+> kan ikke lage web-API-tokens — Production-deploy + token-generering er dashboard-
+> only. Skjema-fila `scripts/cloudkit-schema.ckdb` fungerte (7 indekser inkl. den
+> påkrevde `recordName`-queryable).
+
+Web-versjonen synker «hva du følger» to veier med iPhone-appen via **CloudKit
+JS + Sign in with Apple** — helt uten vår egen server. Til oppsettet er gjort
+holder web seg til den lokale profilen + QR/lenke-import — ingenting brekker.
 
 ## Hvorfor et «ProfileSnapshot»
 

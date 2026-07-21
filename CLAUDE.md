@@ -144,12 +144,12 @@ The product's primary goal is **correct when/where info and complete coverage**
 
 ### Config model
 
-- **`scripts/config/catalog.json`** — **the server's coverage compass (WP-96): "what Sportivista COVERS", not what any one person follows.** `tier1` = sports covered wholesale; `tier2` = the named entity long-tail (athletes/teams/tournaments) that admits events in sports we do NOT cover wholesale (chess/esports entity-gated; tennis via majors + names). `build-events.js`'s `isCovered` and the research/verify/coverage agents key off this. AI-managed (research rewrites it); validated by `catalog.schema.json`. Personal precision (Carlsen-only, 100-Thieves-only, …) is REMOVED from the server and lives only in each user's on-device lens (`docs/js` on the catalog-wide web board; iOS `FeedCompiler` per profile).
+- **`scripts/config/catalog.json`** — **the server's coverage compass (WP-96): "what Sportivista COVERS", not what any one person follows.** `tier1` = sports covered wholesale; `tier2` = the named entity long-tail (athletes/teams/tournaments) that admits events in sports we do NOT cover wholesale (chess/esports entity-gated; tennis via majors + names). `build-events.js`'s `isCovered` and the research/verify/coverage agents key off this. AI-managed (research rewrites it); validated by `catalog.schema.json`. Personal precision (Carlsen-only, 100-Thieves-only, …) is REMOVED from the server and lives only in each user's on-device lens (`docs/js/lens.js` + the web profile store; iOS `FeedCompiler` per profile).
 - **`scripts/config/interests.json`** — the OWNER's private profile / catalog seed. **The human owns this; AI never writes here.** Since WP-96 it is no longer the server compass (catalog.json is) and is no longer published to `docs/data/`; it seeds the catalog and remains the owner's personal lens profile + the source for the owner-scoped `events.ics` (its VALARM reminders, computed at build time in `build-ics.js` via `mustWatchEntity`). "AI never writes here" is precise: the two ways it changes are both the human's own intent — (a) the human edits the file directly, or (b) a *follow-request* (below) which a deterministic script transcribes.
 - **`scripts/config/tracked.json`** — AI-managed, transparent — the catalog's bookkeeping (the concrete, dated events/entities behind the catalog's coverage). Every entry has `reason`, `addedAt`, `addedBy`, `evidence` (which must cite a `catalog.json#`/`interests.json#` basis), optional `expires`. Rewritten by the research agent, seeded manually at v2 launch.
 - `scripts/config/sports-config.js` + `norwegian-golfers.json` — static fetcher infrastructure (not curated event data).
 
-**Published-artefaktenes rekkevidde (WP-131):** exactly ONE published artifact is deliberately owner-scoped — **`docs/data/events.ics`** (the owner's calendar, whose VALARM reminders follow `interests.json` via `mustWatchEntity` in `build-ics.js`). **Everything else in `docs/data/` is USER-NEUTRAL** — it carries what Sportivista *covers* (catalog.json), never one person's *precision*. Catalog-based coverage is the product and is fine to publish; owner precision — favourites, must-see, a Lyn-angle, reminder lead time — is NOT: `build-events.js` publishes `events.json` with no `mustWatch` stamp, and each client recomputes its own must-see/reminders from its device profile (iOS `FeedCompiler`/`NotificationPlanner`; the catalog-wide web board falls back to intrinsic signals only). `interests.json` itself remains the owner's private seed (not published, WP-96). When adding a published field, ask: is it coverage (product → publish) or precision (owner → keep it on the owner artifact / the device lens)?
+**Published-artefaktenes rekkevidde (WP-131):** exactly ONE published artifact is deliberately owner-scoped — **`docs/data/events.ics`** (the owner's calendar, whose VALARM reminders follow `interests.json` via `mustWatchEntity` in `build-ics.js`). **Everything else in `docs/data/` is USER-NEUTRAL** — it carries what Sportivista *covers* (catalog.json), never one person's *precision*. Catalog-based coverage is the product and is fine to publish; owner precision — favourites, must-see, a Lyn-angle, reminder lead time — is NOT: `build-events.js` publishes `events.json` with no `mustWatch` stamp, and each client recomputes its own must-see/reminders from its device profile (iOS `FeedCompiler`/`NotificationPlanner`; the web now from its OWN `localStorage`/iCloud profile via `lens.js` — see "Web personalisering", or intrinsic signals when the profile is empty). `interests.json` itself remains the owner's private seed (not published, WP-96). When adding a published field, ask: is it coverage (product → publish) or precision (owner → keep it on the owner artifact / the device lens)?
 
 ### Follow-request flow (human-initiated edits to interests.json)
 
@@ -188,9 +188,58 @@ DESIGN.md is the source of intent behind them.
 
 - `docs/index.html` — shell: header (wordmark · date · theme toggle), one quiet editorial headline line, live-now line (conditional), the agenda, "Dette dekker vi" disclosure, footer. `docs/rediger.html` — the follow-request page (see below); `docs/activity.html` — the ops/activity view.
 - `docs/css/` — `base.css` (Apple-native tokens: true-black dark default `#000000` (cell `#1C1C1E`), grouped-light `#F2F2F7` (cell `#FFFFFF`) via prefers-color-scheme; amber `#FFB000` dark / `#9A6800` light as the ONLY accent; the **system font stack** — `-apple-system, BlinkMacSystemFont, "SF Pro Text", …` — with tabular numerals opted in where digits must align; max-width 640px, fixed 120px time column), `layout.css` (single centered column, all breakpoints), `cards.css` (agenda rows, day groups)
-- `docs/js/` — the `Dashboard` class is split along its seams across a shared prototype (window-global, no build step): `dashboard.js` (~456 lines: lifecycle + hero + the day-grouped agenda), `live.js` (ESPN live polling, 60s), `detail.js` (expand/detail + AI-provenance modal), `followed.js` ("Dette dekker vi" disclosure), `chrome.js` (date/footer/usage/install-hint). `theme.js` is the shared 3-step theme toggle (system → dark → light) used on all pages; `shared-constants.js` holds shared utilities (time windows, escaping, name matching) that mirror the server helpers; `edit.js` drives `rediger.html`.
-- Each event row answers only: **when · what · where to watch**. Must-see (favorite / importance≥4 / Norwegian) gets a small accent dot — the gentlest possible emphasis, never a card. Channel shown quietly, with an honest faint "–" when unknown.
+- `docs/js/` — the `Dashboard` class is split along its seams across a shared prototype (window-global, no build step): `dashboard.js` (lifecycle + hero + the day-grouped agenda), `live.js` (ESPN live polling, 60s), `detail.js` (expand/detail + AI-provenance modal + follow buttons), `followed.js` ("Dette dekker vi" disclosure), `chrome.js` (date/footer/usage/install-hint/app-promo). `theme.js` is the shared 3-step theme toggle (system → dark → light) used on all pages; `shared-constants.js` holds shared utilities (time windows, escaping, name matching) that mirror the server helpers; `edit.js` drives `rediger.html`. **Personalisering (web-parity, 20–21.07):** `lens.js` (the SHIPPED lens — a config-driven JS twin of `FeedCompiler`, see below), `profile-sync.js` (the CRDT merge + share codec + localStorage profile store — a JS twin of `ProfileMerge`/`ProfileSyncModel`/`ProfileShareCodec`), `profile-ui.js` (follow/unfollow wiring + the affinity lift), `assistant.js` (a deterministic on-device assistant), `icloud-config.js` + `icloud-sync.js` (CloudKit JS two-way sync).
+- Each event row answers only: **when · what · where to watch**. Must-see (favorite / importance≥4 / Norwegian / a followed team-or-athlete) gets a small accent dot — the gentlest possible emphasis, never a card. Channel shown quietly, with an honest faint "–" when unknown.
 - The editorial agent produces a single `headline` block shown as one quiet line under the date (a "nice extra"), nothing more. AI-research events carry a small ⓘ that opens a source modal on tap.
+
+### Web personalisering + iCloud-synk (web-parity, 20–21.07.2026)
+
+The web was catalog-wide with no per-user state; it now has a **personal profile**
+that makes the board yours — built so it stays in sync with the iOS app over time,
+not as a one-off copy.
+
+- **Shared lens tunables — `docs/config/lens-config.json`.** The ONE source for the
+  lens's tunable parameters (`followBroadlyDefault`, `entityGatedSports`,
+  `retentionDays`, `mustSeeImportance`, `enduranceSports`, `sportNb`). Served by
+  Pages AND bundled into the iOS app/widget/test targets (`ios/project.yml`
+  references `../docs/config/lens-config.json`; `Feed/LensConfig.swift` decodes it).
+  Change a value there and both platforms follow. The lens ALGORITHM stays twinned
+  (`FeedCompiler.swift` ↔ `docs/js/lens.js`) and is frozen bit-for-bit by the golden
+  feed-vectors — only PARAMETERS are config. `dashboard.isMustSee` now delegates to
+  the shipped `lens.js`, so the code users run IS the code the vectors pin.
+- **Personal profile — `docs/js/profile-sync.js`.** A JS twin of the iOS profile
+  core: the mergeable `ProfileSyncState` (rules/episodic/counters/facts), the CRDT
+  merge (LWW+tombstone / union / G-counter), the `ProfileShareCodec` (deflate-raw +
+  base64url), and a `localStorage` store (`ss-profile`, `ss-device-id`). Follow /
+  unfollow a team or athlete from any event's detail sheet; an EMPTY profile
+  reproduces the old catalog-wide board byte-for-byte. Cross-device import via the
+  app's QR/deep-link payload (`#profile=…` on `rediger.html`), no login.
+- **iCloud two-way sync — `docs/js/icloud-sync.js` + `icloud-config.js`.** Because
+  CloudKit JS can't page the app's per-record types, iOS also publishes a plaintext
+  **`ProfileSnapshot`** per device (`CloudKitProfileSync.writeSnapshot` — one
+  `payload` field = the codec string of the full merged state; `pull()` folds every
+  device's snapshot back in). The web signs in with the user's own Apple ID
+  (CloudKit JS, `rediger.html` → "Synk med iCloud"), reads/merges/writes snapshots —
+  genuine two-way sync, **zero Sportivista server** (the user's own private iCloud).
+  The `apiToken` in `icloud-config.js` is a PUBLIC, origin-restricted web token
+  (safe to commit). The profile is deliberately **plaintext** (not E2E): a sports
+  follow-list is low-sensitivity, and plaintext is what lets the user's own web
+  sign-in read it — the privacy boundary that matters (data only in the user's own
+  private DB, never our server) is unchanged. Setup: `docs/icloud-sync-setup.md`.
+- **Deterministic assistant — `docs/js/assistant.js`.** A grounded, on-device Q&A
+  over the personal feed (window questions, an entity's next event, a sport/window
+  filter, follow intent), reusing `lens.js`. No model is load-bearing (per the
+  web-LLM feasibility spike: Norwegian quality at a browser-LLM's size is the
+  binding constraint — a Chrome Prompt API layer is a documented progressive
+  enhancement, WebLLM deferred). A calm input under the hero.
+- **Adaptive personalisation (WP-138) — `ios/Sportivista/Memory/Affinity.swift`.**
+  On-device: turns the already-recorded `BehaviorCounter` signal (open/expand/
+  dismiss per entity/sport) into a mild, deterministic affinity that LIFTS what you
+  engage with in "Det du følger" (a tie-break where order was otherwise arbitrary —
+  never a relevance gate, never re-sorting the chronological agenda). Explained in
+  "Hva jeg vet om deg". Null new data collection. The cross-user half (axis B —
+  public follow-requests → opt-in CloudKit PUBLIC DB) is a documented PLAN.md
+  strategy item, not built.
 
 ### Data files (docs/data/, gitignore-whitelisted)
 
