@@ -2109,11 +2109,14 @@ eksplisitt mandat til å UTVIDE den (per WP, aldri fritt).
 **Menneskebeslutninger i fasen:** (a) WP-183 display-/tallfont — smaksvalg +
 DESIGN.md § Typografi-presisering; (b) WP-180 rad-kolon-live (kolonet i
 tidskolonnen pulserer på LIVE rader) — krever avklaring av «to amber-elementer
-i samme rad»-regelen; (c) endelig godkjenning av brief-navnene (WP-181).
+i samme rad»-regelen; (c) endelig godkjenning av brief-navnene (WP-181);
+(d) WP-185 EKTE klubblogoer ja/nei — crests er varemerker (reell IP-risiko for
+en kommersiell app; FotMob-klassen bærer den med skala/lisenser) — grunnpakken
+bygger den trygge stigen (flagg + farge-monogrammer) uansett.
 
 Bølge 1: WP-180 (web-header + ikoner) ∥ WP-182 (meta/delekort) ∥ WP-184
-(dokumenter/rydding). Bølge 2: WP-181 (rituale — etter 0K WP-174-motoren).
-Bølge 3: WP-183 (eier-beslutning).
+(dokumenter/rydding). Bølge 2: WP-181 (rituale — etter 0K WP-174-motoren)
+∥ WP-185 (etter WP-161-metadata). Bølge 3: WP-183 (eier-beslutning).
 
 | WP | Tittel | Fase | Avhenger av | Status |
 |---|---|---|---|---|
@@ -2122,6 +2125,7 @@ Bølge 3: WP-183 (eier-beslutning).
 | WP-182 | Delbare flater: og:image + delekort (event/brief) i merkedrakt | 0L | — | planlagt |
 | WP-183 | Typografisk stemme: eie tallene (EIERBESLUTNING — display-font-token) | 0L | — | planlagt |
 | WP-184 | Brand-voice-kodifisering + stale-identitetsrester ryddet | 0L | — | planlagt |
+| WP-185 | Visuell entitets-identitet: flagg + farge-monogrammer per rad (eier-funn 21.07) | 0L | 0J WP-161 (delvis) | planlagt |
 
 ### WP-180 · Kolonet fullført (bølge 1)
 **Innhold:** (1) web-paritet av kolon-live-pulsen i headeren (dokumentert
@@ -2188,6 +2192,35 @@ normativ, DESIGN.md-rebrand-notatet omformuleres (navnebyttet HAR skjedd — kun
 designprofil gjenstår), base.css/BRAND.md-amber-listene synkes (klokke/day-headers-
 driften). **Aksept:** grep-rent for ensō/Tekst-TV utenfor historikk-seksjoner;
 BRAND.md↔base.css-listene samstemte; koherens-/tokens-tester grønne.
+
+### WP-185 · Visuell entitets-identitet: flagg + farge-monogrammer per rad (bølge 2 — eier-funn 21.07)
+**Mål:** radene og entitetssidene får et rolig visuelt ANKER per entitet —
+eierens dom 21.07: tavla oppleves anonym, «vi mangler blant annet logoer/flagg».
+I dag er raden ren tekst (sport-glyfene fra WP-108/WP-154 er sport-nivå, ikke
+entitets-nivå). Referanse-appene (FotMob/Sofascore) bruker ekte klubblogoer —
+men crests er VAREMERKER med reell IP-risiko for en kommersiell app, så
+grunnpakken bygger den trygge stigen og lar ekte logoer være eierbeslutning (d).
+**Innhold:** (1) registeret (WP-161) utvides med `country` (ISO-kode) og
+`colors` (primær/sekundær hex) per entitet — Wikidata (P17/P6364-klassen) og
+ESPN teams-API bærer begge; registry.schema.json + seed-skriptene oppdateres;
+(2) FLAGG for landslag og utøvere: emoji-flagg fra `country` — null assets,
+null rettigheter, skalerer med Dynamic Type gratis; (3) FARGE-MONOGRAM for
+klubber/lag/orgs: liten avrundet avatar (to klubbfarger + 1–2 initialer, à la
+Kontakter/Kalender) tegnet LOKALT (SwiftUI-shape / ren CSS — aldri eksterne
+bilde-requests: null-infra + personvern); (4) sportglyf beholdes som fallback
+når register-metadata mangler (grasiøs degradering); (5) DESIGN.md-utvidelse
+(sanksjonert per 0L-mandatet): avatar-spesifikasjon — størrelse ~24–28 pt,
+plassering i raden, dark/light-varianter, og regelen «maks ÉN farget
+avatar-flate per rad» (amber-invarianten står: avataren er entitetens farger,
+aldri en ny aksent); entitetssiden (0K WP-170) bruker samme avatar i stor
+variant. **Ikke-mål (BINDENDE):** ingen ekte klubblogoer/crests i dette WP-et —
+eierbeslutning (d) med rettighetsvurdering/lisensiert kilde som egen ev.
+oppfølger (alternativene dokumenteres i PR-body); ingen spillerfotos; ingen
+tredjeparts-CDN/eksterne bilder i klienten. **Aksept:** rad med flagg
+(landslag/utøver) + rad med monogram (klubb) på BEGGE flater,
+dark/light-skjermbilder (maks ~4 per flate); registerskjema utvidet + validert
++ koherens-test; grasiøs degradering uten metadata bevist i test; suiter
+grønne, gylne vektorer urørt (ren presentasjon).
 
 ---
 
