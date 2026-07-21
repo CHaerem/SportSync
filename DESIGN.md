@@ -141,6 +141,19 @@ Apple-system-farger + én amber-aksent. Ved rebrand endres KUN denne tabellen.
 > Note: den amber-tikkende klokka og «P-nummer»-arven fra v2 er FJERNET — de var
 > skall, ikke visjon. Tid bor i raden + systemets statusbar.
 
+> **PROTOTYPE (WP-152) — under evaluering, IKKE normativ ennå.** Ordmerkets amber
+> «:» (kandidat A «Kolonet») prøves ut som appens LIVE-signatur på iOS: når noe du
+> følger sender NÅ, puster kolonet rolig — et langsomt (~1,6 s) ease-in-out,
+> autoreverserende åndedrag i opacity (~1,0 ↔ ~0,5) + en myk amber-glød som puster
+> med. Et rolig hjerteslag, ALDRI et blink; ingen layout-forskyvning (kun
+> opacity/glød animeres, kolonets ramme står stille); ingen fargeendring utover
+> amber. Drevet av det EKSISTERENDE live-signalet (samme kilde som ▌ LIVE-linja), så
+> kolon og linje er alltid enige. **Reduce Motion:** ingen bevegelse — en statisk
+> amber-glød bærer «på»-tilstanden i stedet. **«Amber = aksent»-invarianten holder**
+> (pulsen puster den samme ene aksenten). Dette **avventer eierens dom** før det
+> skrives inn som normativ kontrakt; web-paritet er en dokumentert oppfølging (se
+> § Cross-surface).
+
 ## Navigasjon & informasjonsarkitektur
 
 - **`NavigationStack` med agendaen som rot.** Ingen tab bar (én permanent
@@ -326,6 +339,13 @@ skal likevel bestå denne før merge; håndhev det som kan håndheves i CI:
   dermed avviklet.
 - **Klokke-paritet (WP-128):** den sekundtikkende amber-klokka i web-headeren er
   **FJERNET** — datoen består, tid bor i raden (samsvar med § Bevegelse og iOS).
+- **Kolon-live-signal (WP-152 — PROTOTYPE, web-paritet PENDING):** kolon-som-
+  LIVE-signatur (§ Bevegelse-noten) prøves NÅ ut på **iOS kun** — føl-testen på
+  TestFlight. Web-headerens ordmerke har ikke noe amber-kolon i dag, men om eieren
+  godkjenner signalet, er iOS-adferden ment å speiles i `docs/`-headeren (samme
+  rolige puls, drevet av web-linsens live-tilstand `ssLiveState`, med
+  `prefers-reduced-motion` som den bindende av-bryteren). **Ikke bygd på web ennå** —
+  dokumentert oppfølging, avventer samme eier-dom som iOS-prototypen.
 - **Tema-glyf-unntak (WP-128):** web beholder tema-toggle-glyfen ◐ i headeren
   (system → mørk → lys) som et *bevisst* unntak fra § Tema. iOS flyttet temavalget
   til Deg › Utseende, men web har ingen Deg-skjerm, så header-glyfen er den eneste

@@ -524,6 +524,23 @@ struct ContentView: View {
                     agenda.reloadFromCache(now: Date())
                     rootTab = .nyheter
                 }
+                // WP-152 (PROTOTYPE): the masthead colon LIVE signal. Seed a
+                // deterministically-live event so `agenda.liveNow` (the SAME
+                // signal the ▌ LIVE line uses) is non-empty and the header «:»
+                // pulses — deterministic, offline, reproducible for the feel-test
+                // + screenshots. `masthead-live` shows the pulse; `masthead-calm`
+                // seeds the SAME board without the live row (colon static) as the
+                // neutral control.
+                if mode == "masthead-live" {
+                    MastheadLiveDemoSeed.seed(profileStore: profileStore)
+                    assistant.reloadProfile()
+                    agenda.reloadFromCache(now: Date())
+                }
+                if mode == "masthead-calm" {
+                    MastheadLiveDemoSeed.seed(profileStore: profileStore, live: false)
+                    assistant.reloadProfile()
+                    agenda.reloadFromCache(now: Date())
+                }
                 assistant.demoSeed(mode)
                 // WP-83: a diff/answer screenshot renders the (slimmed) result
                 // panel full-screen via demoOverlay (a `.sheet` is a no-op in the
@@ -712,9 +729,11 @@ struct ContentView: View {
         // WP-18/WP-70: the lens screenshot demo and the XCUITest harness both run
         // entirely off their seeded cache — a live sync would clobber it (and make
         // the flows non-deterministic), so don't fetch (and don't schedule
-        // notifications) in those modes.
+        // notifications) in those modes. WP-152: the masthead colon demos likewise
+        // depend on the seeded (deterministically-live) board surviving.
         let demoMode = ProcessInfo.processInfo.environment["SPORTIVISTA_DEMO"]
-        if demoMode == "lens" || demoMode == "filter" || demoMode == UITestSeed.demoMode { return }
+        if demoMode == "lens" || demoMode == "filter" || demoMode == UITestSeed.demoMode
+            || demoMode == "masthead-live" || demoMode == "masthead-calm" { return }
         #endif
         // WP-107: decode the pre-sync events OFF the main actor. This was a
         // synchronous full-events.json decode ON the main thread, fired right
@@ -797,17 +816,27 @@ struct ContentView: View {
             // wordmark in label colour + the amber colon — the ":" from every
             // time on the board, the app's core answer («når») as the mark.
             // Amber stays accent-only; no separate image mark (ensō retired).
-            HStack(alignment: .center, spacing: 0) {
-                Text("SPORTIVISTA")
-                    .font(.sportivista(.title, weight: .bold))
-                    .foregroundStyle(SportivistaTokens.label)
-                    .tracking(2)
-                Text(":")
-                    .font(.sportivista(.title, weight: .heavy))
-                    .foregroundStyle(SportivistaTokens.accent)
+            //
+            // WP-152 (PROTOTYPE — under evaluering): that colon becomes the app's
+            // LIVE signature. It reads liveness from the EXISTING signal — the same
+            // `agenda.currentLiveRows` the ▌ LIVE line uses (`liveNowLine`) — so the
+            // colon and the line can NEVER disagree. A minute tick (TimelineView,
+            // matching the live line) keeps them in step between reloads. When
+            // something followed is live NOW the colon pulses calmly (see
+            // `MastheadColon`); otherwise it is the static amber accent it is today.
+            // Amber stays accent-only — the pulse only breathes the same amber.
+            TimelineView(.everyMinute) { context in
+                let liveRows = agenda.currentLiveRows(now: context.date)
+                HStack(alignment: .center, spacing: 0) {
+                    Text("SPORTIVISTA")
+                        .font(.sportivista(.title, weight: .bold))
+                        .foregroundStyle(SportivistaTokens.label)
+                        .tracking(2)
+                    MastheadColon(isLive: !liveRows.isEmpty)
+                }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(Self.mastheadLabel(liveCount: liveRows.count))
             }
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Sportivista")
             Text(dateLabel)
                 .font(.sportivista(.footnote))
                 .foregroundStyle(SportivistaTokens.secondaryLabel)
@@ -816,6 +845,17 @@ struct ContentView: View {
         .padding(.top, 4)
         .padding(.bottom, 16)
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    /// WP-152 — the masthead's accessibility label. When something followed is
+    /// live the label SAYS so (a11y parity with the visible pulse), with the count
+    /// when more than one is on; otherwise the plain wordmark.
+    private static func mastheadLabel(liveCount: Int) -> String {
+        switch liveCount {
+        case 0: return "Sportivista"
+        case 1: return "Sportivista — sender nå"
+        default: return "Sportivista — sender nå, \(liveCount) direkte"
+        }
     }
 
     // MARK: - Root segmented (WP-104 — «Uka | Nyheter»)
@@ -943,6 +983,76 @@ struct ContentView: View {
                 .fill(SportivistaTokens.separator)
                 .frame(height: 1)
         }
+    }
+}
+
+/// WP-152 (PROTOTYPE — under evaluering) — the masthead's amber «:» as the app's
+/// LIVE signature. Driven by the EXISTING live signal (ContentView passes
+/// `isLive = !agenda.currentLiveRows.isEmpty`, the same source as the ▌ LIVE
+/// line), so colon and line never disagree.
+///
+/// The pulse is a CALM heartbeat, not an alarm: a slow (~1.6 s) ease-in-out,
+/// autoreversing breath of opacity (1.0 ↔ 0.5) plus a soft amber glow that
+/// breathes with it. NO layout shift — only opacity/shadow animate, so the
+/// colon's frame stays put and «SPORTIVISTA» never nudges. No colour change
+/// beyond the one amber accent.
+///
+/// Accessibility & low-power:
+///  • Reduce Motion (BINDING): no motion at all — instead a STATIC "on" tell
+///    (a steady soft amber glow) so live is still readable without animation.
+///  • The a11y label is set by the parent masthead («… sender nå»).
+/// It degrades gracefully: not live ⇒ exactly the static amber `.heavy` colon
+/// it was before this prototype (glow clear, full opacity).
+private struct MastheadColon: View {
+    /// Whether something the user follows is live NOW — the ONE input.
+    let isLive: Bool
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// The breathing phase. Held at `pulses` (true while a live pulse should run),
+    /// toggled under a repeatForever autoreversing animation so the presentation
+    /// oscillates between the bright (1.0) and dim (0.5) states.
+    @State private var breathing = false
+
+    /// The calm pulse runs only when live AND motion is allowed. With Reduce
+    /// Motion on we never animate — a steady glow carries the signal instead.
+    private var pulses: Bool { isLive && !reduceMotion }
+
+    var body: some View {
+        Text(":")
+            .font(.sportivista(.title, weight: .heavy))
+            .foregroundStyle(SportivistaTokens.accent)
+            // Opacity breath: ~1.0 ↔ ~0.5. Only ever moves while pulsing (breathing
+            // is pinned false otherwise), so the resting/Reduce-Motion colon is solid.
+            .opacity(breathing ? 0.5 : 1.0)
+            // A soft amber glow — the STATIC "on" tell under Reduce Motion, and a
+            // gentle warmth that breathes with the pulse otherwise. Clear when not
+            // live, so nothing changes for the ordinary colon.
+            .shadow(color: glowColor, radius: glowRadius)
+            // The pulse animation when active; a short settle otherwise (so the
+            // colon eases back to rest, never snapping, when live ends).
+            .animation(pulses ? Self.pulse : .easeInOut(duration: 0.3), value: breathing)
+            .onAppear { breathing = pulses }
+            .onChange(of: pulses) { _, now in breathing = now }
+    }
+
+    /// The calm heartbeat: slow, ease-in-out, autoreversing, forever.
+    private static let pulse: Animation =
+        .easeInOut(duration: 1.6).repeatForever(autoreverses: true)
+
+    /// Amber glow colour. Clear when not live (the ordinary colon). Under Reduce
+    /// Motion it is a steady, slightly stronger glow (the static "on" state);
+    /// otherwise it breathes between faint and soft in sync with the opacity.
+    private var glowColor: Color {
+        guard isLive else { return .clear }
+        if reduceMotion { return SportivistaTokens.accent.opacity(0.6) }
+        return SportivistaTokens.accent.opacity(breathing ? 0.15 : 0.55)
+    }
+
+    /// Glow radius, matched to `glowColor`. Zero (no glow) when not live.
+    private var glowRadius: CGFloat {
+        guard isLive else { return 0 }
+        if reduceMotion { return 4 }
+        return breathing ? 1 : 5
     }
 }
 
