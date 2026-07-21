@@ -16,10 +16,11 @@
 
 window.SPORTIVISTA_ICLOUD = {
 	containerIdentifier: 'iCloud.app.sportivista.ios',
-	// Origin-restricted Development web token (sportivista.com + chaerem.github.io).
-	// Public + origin-locked → safe to commit. Swap for a Production token (and set
-	// environment:'production') once the schema is deployed to Production.
-	apiToken: 'e6bf806bb7dd49e9c4519fca24e2714d747b0b102ed36aac61c20282a746c10d',
-	environment: 'development', // matches where the schema currently lives
+	// Origin-restricted PRODUCTION web token (sportivista.com + chaerem.github.io).
+	// Public + origin-locked → safe to commit. Production is where the TestFlight
+	// app writes, so this is the real daily channel. (The Development token was
+	// e6bf806… — swapped out once the schema was deployed to Production.)
+	apiToken: '90eb2fbc1ca28146c3c1a2d93d465f169e079fb0630acc87d818b529d7762965',
+	environment: 'production', // matches the deployed schema + the TestFlight app
 	zoneName: 'SportivistaProfile',
 };
