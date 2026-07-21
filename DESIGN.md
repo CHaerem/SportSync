@@ -350,10 +350,26 @@ skal likevel bestå denne før merge; håndhev det som kan håndheves i CI:
   (system → mørk → lys) som et *bevisst* unntak fra § Tema. iOS flyttet temavalget
   til Deg › Utseende, men web har ingen Deg-skjerm, så header-glyfen er den eneste
   plassen det kan bo.
-- **Sport-symbol-unntak (WP-128):** § Radens anatomis per-sport SF-symbol gjelder
-  KUN native flater. Web har ingen SF Symbols, og emoji/logo i kromet er forbudt
-  (§ Forbudsliste), så web signaliserer sport gjennom innholdet (tittel + meta),
-  ikke en per-rad-glyf. Et eget web-ikonsett innføres ikke bare for dette.
+- **Sport-symbol (web-paritet, WP-154 — LUKKER WP-128-unntaket):** § Radens
+  anatomis per-sport-glyf gjelder NÅ også web. SF Symbols finnes ikke på web, så
+  `docs/` bruker et eget lite SVG-ikonsett (`js/sport-icons.js`) tastet på de SAMME
+  kanoniske sport-taggene — stille (`tertiaryLabel`/`--fg-3`), ALDRI farget
+  (amber-budsjettet urørt), dekorativt (tittel/meta bærer sporten for AT). Ikke
+  emoji/logo (§ Forbudsliste holder — dette er rene SVG-glyfer). Bevisste web-avvik
+  fra SF-tabellen: vintersportene (langrenn/alpint/hopp/kombinert) deler ett
+  snøfnugg (en håndtegnet figur per gren er uleselig på 16px), skiskyting beholder
+  blinken (`target`).
+- **Disclosure-chevron (web-paritet, WP-154):** ekspanderbare web-rader bærer nå en
+  stille chevron (`--fg-3`, roteres 90° ved åpning under `prefers-reduced-motion`-
+  respekt) — samme trykkbarhets-signal som iOS' native `List`-chevron, portert til
+  web-SVG. (Erstatter den gamle «trykkbarhet kun via rytme»-web-regelen.)
+- **Uka | Nyheter + Hjelperen (web-paritet, WP-154):** web har nå den samme
+  segmenterte roten (§ Navigasjon — «Uka | Nyheter») og den flytende bunn-trailing
+  «Assistent»-knappen + samtalearket (§ Hjelperen), kollaps-på-scroll inkludert.
+  Nyhetstavla speiler § Nyheter (NYTT `news.json` · RESULTAT · FREMOVER; den
+  redaksjonelle overskriften bor fortsatt som web-heroens rolige linje, så § Nyheters
+  første seksjon gjentas ikke). Web-assistenten er den deterministiske gulvversjonen
+  (`js/assistant.js`) — samme inngang/ark-mønster, mindre motor.
 - **Stemme:** norsk, lavmælt, presis. «Kanal ukjent», ikke «Ingen streaming!».
   Aldri utropstegn i kromet. Feil forklarer hva og hvorfor.
 

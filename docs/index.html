@@ -53,26 +53,66 @@
 			<h1 class="hero-headline" id="hero-headline"></h1>
 		</section>
 		<p class="install-hint" id="install-hint" hidden></p>
-		<section class="assistant" id="assistant">
-			<input type="text" id="assistant-input" class="assistant-input" autocomplete="off" placeholder="Spør: hva skjer i kveld? · vis golf · når spiller Liverpool?">
-			<div class="assistant-results" id="assistant-results" hidden></div>
-		</section>
-		<div class="live-now" id="live-now" hidden></div>
-		<div id="agenda"></div>
-		<!-- "Neste opp" sits UNDER the agenda (WP-148): a per-entity forward glance is a
-		     nice-to-have, but rendering it ABOVE the day-grouped agenda buried «I dag»
-		     under rows for events 8–14 days out — inverting «viktig + nært først». It
-		     keeps its nearest-first dedupe against what's already on the board; below
-		     the agenda it complements «Fremover»/«Dette dekker vi» instead of competing
-		     with today. (renderAgenda still runs before renderNextUp, so the dedupe set
-		     is populated regardless of DOM order.) -->
-		<section class="next-up" id="next-up" hidden></section>
-		<details class="fremover" id="fremover" hidden></details>
-		<details class="followed" id="followed" hidden>
-			<summary id="followed-summary"><span>Dette dekker vi</span><a class="followed-edit-top" href="rediger.html" onclick="event.stopPropagation()">Be om dekning</a></summary>
-			<div class="followed-body" id="followed-body"></div>
-		</details>
+		<!-- Root segmented (app-parity, WP-154): «Uka» (what's happening — the agenda)
+		     vs «Nyheter» (what's new — the four-section news board). Mirrors the iOS
+		     ContentView segmented control. Both cover the whole week. -->
+		<div class="root-tabs" role="tablist" aria-label="Visning">
+			<button type="button" class="root-tab is-active" data-view="uka" role="tab" aria-selected="true">Uka</button>
+			<button type="button" class="root-tab" data-view="nyheter" role="tab" aria-selected="false">Nyheter</button>
+		</div>
+		<div id="view-uka" class="root-view" role="tabpanel">
+			<div class="live-now" id="live-now" hidden></div>
+			<div id="agenda"></div>
+			<!-- "Neste opp" sits UNDER the agenda (WP-148): a per-entity forward glance is a
+			     nice-to-have, but rendering it ABOVE the day-grouped agenda buried «I dag»
+			     under rows for events 8–14 days out — inverting «viktig + nært først». It
+			     keeps its nearest-first dedupe against what's already on the board; below
+			     the agenda it complements «Fremover»/«Dette dekker vi» instead of competing
+			     with today. (renderAgenda still runs before renderNextUp, so the dedupe set
+			     is populated regardless of DOM order.) -->
+			<section class="next-up" id="next-up" hidden></section>
+			<details class="followed" id="followed" hidden>
+				<summary id="followed-summary"><span>Dette dekker vi</span><a class="followed-edit-top" href="rediger.html" onclick="event.stopPropagation()">Be om dekning</a></summary>
+				<div class="followed-body" id="followed-body"></div>
+			</details>
+		</div>
+		<div id="view-nyheter" class="root-view" role="tabpanel" hidden>
+			<!-- The four-section Nyheter board (twin of iOS NewsBoard/NewsView): NYTT
+			     (news.json pointers, lens-matched) · RESULTAT (followed teams' results)
+			     · FREMOVER (forvarsler beyond 14 d). The editorial headline stays the
+			     quiet hero line above, so its «I din verden i dag» section isn't repeated. -->
+			<div id="nyheter"></div>
+			<details class="fremover" id="fremover" hidden></details>
+		</div>
 	</main>
+
+	<!-- Assistent-inngang (app-parity, WP-154): a compact floating bottom-trailing
+	     button — sparkles + «Assistent» — that reads unmistakably as a button (never a
+	     dead field), collapsing to the bare glyph while the board scrolls (mirrors the
+	     iOS AssistantButton). Tapping it opens the conversation sheet below, where the
+	     input, example rows and grounded results live (mirrors AssistantSheetView). -->
+	<button type="button" id="assistant-fab" class="assistant-fab" aria-haspopup="dialog" aria-label="Assistent">
+		<svg class="fab-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l1.7 4.5L18 8.8l-4.3 1.7L12 15l-1.7-4.5L6 8.8l4.3-1.7L12 2.6zm6.5 9.4l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9.9-2.4zM6 13.5l.7 1.8 1.8.7-1.8.7L6 18.5l-.7-1.8L3.5 16l1.8-.7L6 13.5z"/></svg>
+		<span class="fab-label">Assistent</span>
+	</button>
+	<div id="assistant-sheet" class="assistant-sheet" hidden role="dialog" aria-modal="true" aria-label="Assistent">
+		<div class="sheet-backdrop" data-assistant-close></div>
+		<div class="sheet-panel">
+			<div class="sheet-grabber" aria-hidden="true"></div>
+			<div class="sheet-head">
+				<span class="sheet-title">Assistent</span>
+				<button type="button" class="sheet-close" data-assistant-close aria-label="Lukk">Lukk</button>
+			</div>
+			<input type="text" id="assistant-input" class="assistant-input" autocomplete="off" enterkeyhint="search" placeholder="Spør om det du følger …">
+			<div class="assistant-examples" id="assistant-examples">
+				<p class="ex-lead">Prøv for eksempel</p>
+				<button type="button" class="ex-row" data-ex="hva skjer i kveld?">hva skjer i kveld?</button>
+				<button type="button" class="ex-row" data-ex="vis golf denne uka">vis golf denne uka</button>
+				<button type="button" class="ex-row" data-ex="når spiller Liverpool?">når spiller Liverpool?</button>
+			</div>
+			<div class="assistant-results" id="assistant-results" hidden></div>
+		</div>
+	</div>
 
 	<footer class="site-footer wrap">
 		<span id="footer-updated"></span>
@@ -82,7 +122,11 @@
 		<a id="app-promo-link" class="footer-alt footer-app" href="#" hidden title="Sportivista som iPhone-app — varsler, widget og assistent på lomma">Få iPhone-appen</a>
 		<span id="footer-stale" class="footer-stale" hidden></span>
 		<span id="footer-usage" class="footer-usage" hidden></span>
-		<span id="apple-sign-out-button" class="footer-signout" title="Logg ut av iCloud"></span>
+		<!-- CloudKit renders its own (inconsistent) sign-out control into
+		     #apple-sign-out-button; we hide it off-screen and drive our own calm
+		     footer link (shown only when signed in). Same pattern as sign-in. -->
+		<span id="apple-sign-out-button" aria-hidden="true"></span>
+		<button type="button" id="signout-link" class="footer-alt footer-signout-link" hidden>Logg ut</button>
 	</footer>
 
 	<script src="js/icloud-config.js"></script>
@@ -92,12 +136,14 @@
 	<script src="js/lens.js"></script>
 	<script src="js/profile-sync.js"></script>
 	<script src="js/assistant.js"></script>
+	<script src="js/sport-icons.js"></script>
 	<script src="js/theme.js"></script>
 	<script src="js/dashboard.js"></script>
 	<script src="js/live.js"></script>
 	<script src="js/detail.js"></script>
 	<script src="js/followed.js"></script>
 	<script src="js/profile-ui.js"></script>
+	<script src="js/news-web.js"></script>
 	<script src="js/chrome.js"></script>
 	<script>
 		// Whole-web-behind-login boot: dashboard.js's DOMContentLoaded calls
