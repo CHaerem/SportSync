@@ -1,30 +1,8 @@
 {
-  "generatedAt": "2026-07-21T14:10:20.647Z",
-  "gapCount": 10,
+  "generatedAt": "2026-07-21T14:43:50.007Z",
+  "gapCount": 7,
   "anomalyCount": 0,
   "gaps": [
-    {
-      "kind": "entity",
-      "entity": "Karsten Warholm",
-      "type": "missing",
-      "imminent": false,
-      "headline": "Bekrefter til NRK: Warholm stiller til start i NM",
-      "link": "https://www.nrk.no/sport/bekrefter-til-nrk_-warholm-stiller-til-start-i-nm-1.17964676",
-      "feed": "nrk-sport",
-      "matchCount": 1,
-      "detectedAt": "2026-07-21T14:10:19.733Z"
-    },
-    {
-      "kind": "entity",
-      "entity": "Warholm",
-      "type": "missing",
-      "imminent": false,
-      "headline": "Warholm klar for Molde",
-      "link": "https://www.nrk.no/sport/warholm-klar-for-molde-1.17964924",
-      "feed": "nrk-sport",
-      "matchCount": 2,
-      "detectedAt": "2026-07-21T14:10:19.733Z"
-    },
     {
       "kind": "entity",
       "entity": "Molde",
@@ -34,7 +12,7 @@
       "link": "https://www.nrk.no/sport/warholm-klar-for-molde-1.17964924",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-21T14:10:19.733Z"
+      "detectedAt": "2026-07-21T14:43:48.929Z"
     },
     {
       "kind": "entity",
@@ -45,18 +23,7 @@
       "link": "https://www.nrk.no/sport/city-auksjonerer-bort-guardiolas-kontor-_-haaland-ball-kan-ga-for-svimlende-sum-1.17964367",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-21T14:10:19.733Z"
-    },
-    {
-      "kind": "entity",
-      "entity": "Liverpool",
-      "type": "missing",
-      "imminent": false,
-      "headline": "Kevin Keegan er død: – Han var min første store helt",
-      "link": "https://www.nrk.no/sport/kevin-keegan-er-dod_-_-han-var-min-forste-store-helt-1.17963933",
-      "feed": "nrk-sport",
-      "matchCount": 2,
-      "detectedAt": "2026-07-21T14:10:19.733Z"
+      "detectedAt": "2026-07-21T14:43:48.929Z"
     },
     {
       "kind": "entity",
@@ -67,7 +34,7 @@
       "link": "https://www.nrk.no/sport/city-auksjonerer-bort-guardiolas-kontor-_-haaland-ball-kan-ga-for-svimlende-sum-1.17964367",
       "feed": "nrk-sport",
       "matchCount": 3,
-      "detectedAt": "2026-07-21T14:10:19.733Z"
+      "detectedAt": "2026-07-21T14:43:48.929Z"
     },
     {
       "kind": "entity",
@@ -78,7 +45,7 @@
       "link": "https://www.nrk.no/sport/tidligere-yndling-klar-for-comeback-i-eliteserien-for-hamkam-1.17964814",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-21T14:10:19.733Z"
+      "detectedAt": "2026-07-21T14:43:48.929Z"
     },
     {
       "kind": "entity",
@@ -89,7 +56,7 @@
       "link": "https://www.nrk.no/sport/godset-grep-etter-brannen_-inviterer-berorte-pa-kamp-1.17963987",
       "feed": "nrk-sport",
       "matchCount": 1,
-      "detectedAt": "2026-07-21T14:10:19.733Z"
+      "detectedAt": "2026-07-21T14:43:48.929Z"
     },
     {
       "kind": "entity",
@@ -100,7 +67,7 @@
       "link": "https://www.tv2.no/a/19066981",
       "feed": "tv2-fotball",
       "matchCount": 3,
-      "detectedAt": "2026-07-21T14:10:19.733Z"
+      "detectedAt": "2026-07-21T14:43:48.929Z"
     },
     {
       "kind": "tracked-claim",
@@ -112,9 +79,9 @@
       "claimedDate": "2026-08-16T00:00:00.000Z",
       "reason": "tracked.json asserts board coverage for this interest, but no matching event is on the board",
       "trackedId": "viktor-hovland",
-      "detectedAt": "2026-07-21T14:10:20.602Z"
+      "detectedAt": "2026-07-21T14:43:49.796Z"
     }
   ],
   "anomalies": [],
-  "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board (kind entity/sport), or a tracked.json reason that claims an upcoming event the board lacks (kind tracked-claim, RSS-independent). anomalies: a fetcher's own data looks unreliable."
+  "note": "Recall-biased mechanical detection — the coverage-critic and research agents triage these and cross-check the web. gaps: entity/sport in the news but missing or not imminent on the board (kind entity/sport), or a tracked.json reason that claims an upcoming event the board lacks (kind tracked-claim, RSS-independent). anomalies: a fetcher's own data looks unreliable. demand: distinct entities users publicly asked us to cover (open coverage-request issues), anonymous name+sport only — the research agent prioritises these when widening the catalog."
 }
