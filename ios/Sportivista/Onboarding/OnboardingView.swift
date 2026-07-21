@@ -8,7 +8,7 @@
 //  type, one amber accent, the ensō mark), no hero art, no carousel, no emoji,
 //  no exclamation marks. WP-129 — the copy speaks plainly to a non-technical
 //  first-time user (say WHAT the app does before asking for anything) and points
-//  at the assistant CAPSULE, never the retired inline command line:
+//  at the assistant BUTTON, never the retired inline command line:
 //
 //    1. welcome    — one plain-language sentence about what Sportivista does
 //                    (samler når · hvor du kan se sporten du bryr deg om)
@@ -23,11 +23,23 @@
 //                    Norwegian starter packs as ≥44pt tap targets. This alone
 //                    gives full value on a cold start with no Apple Intelligence,
 //                    and needs no understanding of the assistant.
-//    4. landing    — the quiet finish: it points at the assistant (WP-144: the
-//                    floating bottom «Spør assistenten» button — "du kan alltid si
-//                    mer til Sportivista") and drops the user into an agenda that ALREADY
+//    4. landing    — the quiet finish: it points at the assistant (WP-144/146: the
+//                    floating bottom «Assistent» button — "du kan alltid si mer til
+//                    Sportivista") and drops the user into an agenda that ALREADY
 //                    reflects the choices, because every confirm/tap recompiled it
 //                    live via onProfileChanged.
+//
+//  WP-149 — DRAKT-reskin to the Apple-native baseline (the retired Tekst-TV skin
+//  is CLOSED, DESIGN § Cross-surface). This screen is the FIRST impression, and it
+//  was the last surface still wearing the teletext look (sharp `Rectangle().stroke`
+//  boxes, a `»_` prompt sigil + `▌` block cursor, amber-tracked VERSAL micro-labels,
+//  and an unfilled amber-outline CTA that barely read as a button in light mode).
+//  It now matches Deg/Nyheter EXACTLY: native rounded 12 pt `cell` cards
+//  (`onboardingCell`), GREY section headers (`secondaryLabel`, not amber), a plain
+//  native `TextField`, a native selection treatment (an amber `checkmark.circle.fill`,
+//  never a VERSAL «VALGT» label), and ONE prominent filled amber primary button per
+//  screen (`SportivistaPrimaryButtonStyle`) — secondary actions stay flat/muted.
+//  Pure drakt: all copy, flow and the assistant/eval logic are untouched.
 //
 //  Presentation only. Every mutation goes through AssistantViewModel + the pure
 //  pipeline (grounding, InterestProfile.applying, ProfileStore, EffectiveInterests).
@@ -42,7 +54,7 @@ struct OnboardingView: View {
     /// Finish: mark onboarding done and drop into the (already-filled) agenda.
     var onFinish: () -> Void
     /// Skip from the welcome: mark done, leave the profile empty. The agenda's
-    /// own empty state then points back at the command line.
+    /// own empty state then points back at the assistant.
     var onSkip: () -> Void
     /// WP-132 — «Prøv nå» / a tapped example from the assistant-intro step:
     /// finish onboarding AND open the assistant, optionally pre-filling the
@@ -55,10 +67,6 @@ struct OnboardingView: View {
     @State private var step: OnboardingStep = .welcome
     @FocusState private var inputFocused: Bool
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    /// WP-134: the leading marker glyph column («+»/«•» in packRow, «»» in
-    /// exampleRow) scales WITH its `.callout` font — a fixed 14 pt frame stayed
-    /// put while the glyph grew at Accessibility sizes, clipping the marker.
-    @ScaledMetric(relativeTo: .callout) private var markerWidth = 14
 
     private var trimmed: String {
         assistant.utterance.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -69,19 +77,25 @@ struct OnboardingView: View {
             SportivistaTokens.background.ignoresSafeArea()
             VStack(spacing: 0) {
                 brandHeader
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 24) {
-                        switch step {
-                        case .welcome: welcomeStep
-                        case .quickPicks: quickPicksStep
-                        case .converse: converseStep
-                        case .assistantIntro: assistantIntroStep
+                // WP-149: a GeometryReader so the sparse welcome step can fill the
+                // viewport and drift its primary action into the thumb-reachable
+                // lower third (better vertical balance than the old top-third +
+                // dead void); content-heavy steps size to content and scroll normally.
+                GeometryReader { proxy in
+                    ScrollView {
+                        Group {
+                            switch step {
+                            case .welcome: welcomeStep(minHeight: proxy.size.height)
+                            case .quickPicks: quickPicksStep
+                            case .converse: converseStep
+                            case .assistantIntro: assistantIntroStep
+                            }
                         }
+                        .padding(.horizontal, 24)
+                        .padding(.bottom, 40)
+                        .frame(maxWidth: 640, alignment: .leading)
+                        .frame(maxWidth: .infinity, alignment: .center)
                     }
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 40)
-                    .frame(maxWidth: 640, alignment: .leading)
-                    .frame(maxWidth: .infinity, alignment: .center)
                 }
             }
         }
@@ -113,43 +127,45 @@ struct OnboardingView: View {
 
     // MARK: - Step 1 · Welcome
 
-    private var welcomeStep: some View {
+    private func welcomeStep(minHeight: CGFloat) -> some View {
         VStack(alignment: .leading, spacing: 20) {
             stepHeading("Velkommen")
             Text("Sportivista samler når og hvor du kan se sporten du bryr deg om — alt i én rolig liste.")
-                .font(.sportivistaTabular(.subheadline, weight: .regular))
+                .font(.sportivista(.subheadline))
                 .foregroundStyle(SportivistaTokens.label.opacity(0.9))
                 .fixedSize(horizontal: false, vertical: true)
 
-            // The privacy moment — on-brand, true, trust-building (P350/P360).
+            // The privacy moment — on-brand, true, trust-building (P350/P360). A
+            // native rounded cell with a GREY header (matches Deg/Nyheter), not the
+            // retired amber-tracked VERSAL micro-label in a sharp stroke box.
             VStack(alignment: .leading, spacing: 6) {
-                Text("PÅ TELEFONEN DIN")
-                    .font(.sportivistaTabular(.caption2, weight: .bold))
-                    .foregroundStyle(SportivistaTokens.accent.opacity(0.85))
-                    .tracking(1.5)
+                sectionLabel("PÅ TELEFONEN DIN")
                 Text("Det du følger bor på telefonen din — aldri på en server.")
-                    .font(.sportivistaTabular(.subheadline, weight: .regular))
+                    .font(.sportivista(.subheadline))
                     .foregroundStyle(SportivistaTokens.label.opacity(0.85))
                     .fixedSize(horizontal: false, vertical: true)
             }
-            .padding(14)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .overlay(Rectangle().stroke(SportivistaTokens.accent.opacity(0.3), lineWidth: 1))
+            .onboardingCell()
+
+            // WP-149: push the primary action into the reachable lower third so the
+            // screen reads as a deliberate content → action flow, not a jammed top.
+            Spacer(minLength: 32)
 
             VStack(alignment: .leading, spacing: 14) {
                 // WP-132: quick-picks is the first build step for everyone.
                 Button("Kom i gang") { go(to: .quickPicks) }
-                .font(.sportivistaTabular(.subheadline, weight: .bold))
-                .foregroundStyle(SportivistaTokens.accent)
-                .buttonStyle(SportivistaActionButtonStyle(tint: SportivistaTokens.accent, fullWidth: true))
+                    .buttonStyle(SportivistaPrimaryButtonStyle())
 
                 Button("Hopp over") { onSkip() }
-                    .font(.sportivistaTabular(.footnote, weight: .regular))
+                    .font(.sportivista(.footnote))
                     .foregroundStyle(SportivistaTokens.secondaryLabel)
+                    .frame(maxWidth: .infinity)
                     .sportivistaTapTarget()
             }
-            .padding(.top, 8)
         }
+        // Fill the viewport (minus the 40 pt bottom padding) so the trailing Spacer
+        // has room to expand; scrolls normally when large Dynamic Type overflows it.
+        .frame(minHeight: max(0, minHeight - 40), alignment: .top)
     }
 
     // MARK: - Step · Converse (the secondary «fortell med egne ord» path)
@@ -158,7 +174,7 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 20) {
             stepHeading("Fortell meg hva du følger")
             Text("Skriv fritt på norsk — «Liverpool», «golf, mest de norske», «sjakk når Carlsen spiller». Jeg foreslår, du bekrefter. Si gjerne flere ting etter hverandre.")
-                .font(.sportivistaTabular(.subheadline, weight: .regular))
+                .font(.sportivista(.subheadline))
                 .foregroundStyle(SportivistaTokens.label.opacity(0.8))
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -182,22 +198,22 @@ struct OnboardingView: View {
     }
 
     /// The onboarding's inline conversation field — the enthusiast, say-what-you-
-    /// follow input. A plain field with a `»_` prompt sigil and a blinking amber
-    /// cursor / "tenker …" / send, feeding the SAME assistant the capsule opens,
-    /// so onboarding feels like the app, not a wizard.
+    /// follow input. WP-149: a PLAIN native `TextField` in a rounded `cell` field
+    /// (no `»_` prompt sigil, no `▌` block cursor), configured exactly like the
+    /// assistant ark's field (autocap/autocorrect off for proper nouns). It feeds
+    /// the SAME assistant the button opens, so onboarding feels like the app.
     private var promptLine: some View {
         HStack(alignment: .center, spacing: 10) {
-            Text("»_")
-                .font(.sportivistaTabular(.subheadline, weight: .semibold))
-                .foregroundStyle(SportivistaTokens.secondaryLabel)
-                .accessibilityHidden(true)
-
             TextField("Skriv hva du følger …", text: $assistant.utterance, axis: .vertical)
-                .font(.sportivistaTabular(.subheadline, weight: .regular))
+                .font(.sportivista(.subheadline))
                 .textFieldStyle(.plain)
                 .lineLimit(1...3)
                 .focused($inputFocused)
                 .submitLabel(.send)
+                // Proper nouns (Bodø/Glimt, Ruud) must not be auto-capitalised or
+                // corrected out from under the user — parity with the assistant ark.
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled(true)
                 .disabled(assistant.isThinking)
                 .onSubmit(submit)
                 // WP-70: stable handle for the onboarding converse-step flow.
@@ -207,17 +223,18 @@ struct OnboardingView: View {
                 HStack(spacing: 8) {
                     BlinkingCursor()
                     Text("tenker …")
-                        .font(.sportivistaTabular(.footnote, weight: .regular))
+                        .font(.sportivista(.footnote))
                         .foregroundStyle(SportivistaTokens.secondaryLabel)
                     Button("Avbryt") { assistant.cancel() }
-                        .font(.sportivistaTabular(.caption, weight: .regular))
+                        .font(.sportivista(.caption))
                         .foregroundStyle(SportivistaTokens.secondaryLabel)
                         .sportivistaTapTarget()
                 }
             } else if !trimmed.isEmpty {
+                // Send = the amber primærknapp (matches the assistant ark's field).
                 Button(action: submit) {
-                    Text("↵")
-                        .font(.sportivistaTabular(.body, weight: .semibold))
+                    Text("Send")
+                        .font(.sportivista(.subheadline, weight: .semibold))
                         .foregroundStyle(SportivistaTokens.accent)
                 }
                 .accessibilityLabel("Send")
@@ -226,14 +243,22 @@ struct OnboardingView: View {
                 .accessibilityIdentifier("onboarding.send")
                 .sportivistaTapTarget()
             } else {
-                BlinkingCursor()
+                // Empty field: a quiet mic that focuses the field (bringing up the
+                // keyboard, whose native dictation mic is the v1 diktering). Never
+                // amber — parity with the assistant ark.
+                Button { inputFocused = true } label: {
+                    Image(systemName: "mic")
+                        .font(.sportivista(.subheadline))
+                        .foregroundStyle(SportivistaTokens.secondaryLabel)
+                }
+                .accessibilityLabel("Diktér")
+                .sportivistaTapTarget()
             }
         }
         .padding(.horizontal, 14)
-        .padding(.vertical, 12)
+        .padding(.vertical, 10)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(SportivistaTokens.cell)
-        .overlay(Rectangle().stroke(SportivistaTokens.separator, lineWidth: 1))
+        .background(SportivistaTokens.cell, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 
     private func submit() {
@@ -250,52 +275,48 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 6) {
             sectionLabel("REGNSKAP")
             Text(tally.summary)
-                .font(.sportivistaTabular(.footnote, weight: .regular))
+                .font(.sportivista(.footnote))
                 .foregroundStyle(SportivistaTokens.label.opacity(0.85))
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(SportivistaTokens.label.opacity(0.04))
-        .overlay(Rectangle().stroke(SportivistaTokens.label.opacity(0.15), lineWidth: 1))
+        .onboardingCell(padding: 12)
     }
 
     /// The proposal diff — the same before/after language as the assistant ark,
-    /// pared down for onboarding: `+`/`±`/`−` in the semantic colours, the
-    /// entity + scope + lens subtitle, the reason, and a comfortable Bekreft /
-    /// Avvis per row (never glyph-small).
+    /// pared down for onboarding: `+`/`±`/`−` in the semantic colours, the entity
+    /// + scope + lens subtitle, the reason, and a comfortable Bekreft / Avvis per
+    /// row (never glyph-small). WP-149: a neutral rounded `cell` card (the colour
+    /// is carried by the leading sign glyph, matching Deg's neutral cells), not a
+    /// tinted sharp stroke box.
     private var diffBlock: some View {
         VStack(alignment: .leading, spacing: 12) {
             sectionLabel("FORSLAG")
             ForEach(assistant.pending) { mutation in
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 8) {
                     HStack(alignment: .firstTextBaseline, spacing: 8) {
                         Text(sign(mutation.kind))
                             .font(.sportivistaTabular(.callout, weight: .bold))
                             .foregroundStyle(color(mutation.kind))
                         VStack(alignment: .leading, spacing: 2) {
                             Text(mutation.entity.name)
-                                .font(.sportivistaTabular(.subheadline, weight: .bold))
+                                .font(.sportivista(.subheadline, weight: .bold))
                             Text(mutationSubtitle(mutation))
-                                .font(.sportivistaTabular(.caption, weight: .regular))
-                                .foregroundStyle(SportivistaTokens.label.opacity(0.6))
+                                .font(.sportivista(.caption))
+                                .foregroundStyle(SportivistaTokens.secondaryLabel)
                         }
                     }
                     HStack(spacing: 10) {
                         Button("Bekreft") { assistant.confirm(mutation) }
-                            .font(.sportivistaTabular(.footnote, weight: .bold))
+                            .font(.sportivista(.footnote, weight: .bold))
                             .foregroundStyle(SportivistaTokens.live)
                             .buttonStyle(SportivistaActionButtonStyle(tint: SportivistaTokens.live))
                         Button("Avvis") { assistant.reject(mutation) }
-                            .font(.sportivistaTabular(.footnote, weight: .regular))
-                            .foregroundStyle(SportivistaTokens.label.opacity(0.6))
+                            .font(.sportivista(.footnote))
+                            .foregroundStyle(SportivistaTokens.secondaryLabel)
                             .buttonStyle(SportivistaActionButtonStyle(tint: SportivistaTokens.label))
                     }
                 }
-                .padding(12)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(color(mutation.kind).opacity(0.08))
-                .overlay(Rectangle().stroke(color(mutation.kind).opacity(0.4), lineWidth: 1))
+                .onboardingCell(padding: 12)
             }
         }
     }
@@ -307,28 +328,25 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 10) {
             sectionLabel("IKKE FUNNET")
             ForEach(assistant.rejected) { rejection in
-                VStack(alignment: .leading, spacing: 6) {
+                VStack(alignment: .leading, spacing: 8) {
                     Text(rejection.explanation)
-                        .font(.sportivistaTabular(.footnote, weight: .regular))
+                        .font(.sportivista(.footnote))
                         .foregroundStyle(SportivistaTokens.label.opacity(0.85))
                         .fixedSize(horizontal: false, vertical: true)
                     ForEach(rejection.suggestions, id: \.id) { suggestion in
                         Button { assistant.choose(suggestion, for: rejection) } label: {
                             Text("› \(suggestion.name)")
-                                .font(.sportivistaTabular(.footnote, weight: .bold))
+                                .font(.sportivista(.footnote, weight: .bold))
                                 .foregroundStyle(SportivistaTokens.accent)
                         }
                         .buttonStyle(SportivistaActionButtonStyle(tint: SportivistaTokens.accent, fullWidth: true))
                     }
                     Button("OK") { assistant.dismissRejection(rejection) }
-                        .font(.sportivistaTabular(.caption, weight: .regular))
-                        .foregroundStyle(SportivistaTokens.label.opacity(0.6))
+                        .font(.sportivista(.caption))
+                        .foregroundStyle(SportivistaTokens.secondaryLabel)
                         .sportivistaTapTarget()
                 }
-                .padding(12)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(SportivistaTokens.destructive.opacity(0.06))
-                .overlay(Rectangle().stroke(SportivistaTokens.destructive.opacity(0.3), lineWidth: 1))
+                .onboardingCell(padding: 12)
             }
         }
     }
@@ -337,22 +355,19 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 6) {
             sectionLabel("INGEN ENDRING")
             Text(explanation.understood)
-                .font(.sportivistaTabular(.footnote, weight: .regular))
+                .font(.sportivista(.footnote))
                 .foregroundStyle(SportivistaTokens.label.opacity(0.85))
                 .fixedSize(horizontal: false, vertical: true)
             Text(explanation.reason)
-                .font(.sportivistaTabular(.caption, weight: .regular))
-                .foregroundStyle(SportivistaTokens.label.opacity(0.65))
+                .font(.sportivista(.caption))
+                .foregroundStyle(SportivistaTokens.secondaryLabel)
                 .fixedSize(horizontal: false, vertical: true)
             Button("Tilbake til startpakker") { go(to: .quickPicks) }
-                .font(.sportivistaTabular(.caption, weight: .bold))
+                .font(.sportivista(.caption, weight: .bold))
                 .foregroundStyle(SportivistaTokens.accent)
                 .sportivistaTapTarget()
         }
-        .padding(12)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(SportivistaTokens.label.opacity(0.05))
-        .overlay(Rectangle().stroke(SportivistaTokens.label.opacity(0.2), lineWidth: 1))
+        .onboardingCell(padding: 12)
     }
 
     // MARK: - Step · Quick picks (the first build step, for everyone — WP-132)
@@ -361,7 +376,7 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 20) {
             stepHeading("Velg det du bryr deg om")
             Text(quickPicksIntro)
-                .font(.sportivistaTabular(.subheadline, weight: .regular))
+                .font(.sportivista(.subheadline))
                 .foregroundStyle(SportivistaTokens.label.opacity(0.8))
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -392,33 +407,28 @@ struct OnboardingView: View {
         let applied = assistant.isApplied(pack)
         return Button { assistant.toggleStarterPack(pack) } label: {
             HStack(alignment: .top, spacing: 12) {
-                // A calm add/valgt marker — the amber dot is the whole language.
-                Text(applied ? "•" : "+")
-                    .font(.sportivistaTabular(.callout, weight: .bold))
+                // WP-149: a native selection treatment — an amber `checkmark.circle.fill`
+                // when selected (DESIGN «valgt tilstand»), a grey `plus.circle` when not
+                // (DESIGN § Ikoner «Følg»). The checkmark IS the whole selection signal
+                // (one amber element per row), replacing the amber-tracked VERSAL «VALGT»
+                // label. SF Symbols scale with Dynamic Type — no fixed marker frame needed.
+                Image(systemName: applied ? "checkmark.circle.fill" : "plus.circle")
+                    .font(.sportivista(.title3))
                     .foregroundStyle(applied ? SportivistaTokens.accent : SportivistaTokens.secondaryLabel)
-                    .frame(width: markerWidth, alignment: .leading)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(pack.title)
-                        .font(.sportivistaTabular(.subheadline, weight: .bold))
+                        .font(.sportivista(.subheadline, weight: .bold))
                         .foregroundStyle(SportivistaTokens.label)
                     Text(pack.subtitle)
-                        .font(.sportivistaTabular(.caption, weight: .regular))
+                        .font(.sportivista(.caption))
                         .foregroundStyle(SportivistaTokens.secondaryLabel)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 Spacer(minLength: 8)
-                if applied {
-                    Text("VALGT")
-                        .font(.sportivistaTabular(.caption2, weight: .bold))
-                        .foregroundStyle(SportivistaTokens.accent)
-                        .tracking(1)
-                }
             }
-            .padding(12)
             .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+            .onboardingCell(padding: 12)
             .contentShape(Rectangle())
-            .background((applied ? SportivistaTokens.accent : SportivistaTokens.label).opacity(applied ? 0.08 : 0.03))
-            .overlay(Rectangle().stroke((applied ? SportivistaTokens.accent : SportivistaTokens.label).opacity(applied ? 0.4 : 0.15), lineWidth: 1))
         }
         .buttonStyle(.plain)
         .accessibilityLabel("\(pack.title). \(pack.subtitle). \(applied ? "Valgt" : "Legg til")")
@@ -447,7 +457,7 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 20) {
             stepHeading("Gjør Sportivista til din")
             Text("Startpakkene er bare begynnelsen. Fortell Sportivista med egne ord, så skreddersyr den seg — helt ned på detaljnivå. Tapp et eksempel for å prøve.")
-                .font(.sportivistaTabular(.subheadline, weight: .regular))
+                .font(.sportivista(.subheadline))
                 .foregroundStyle(SportivistaTokens.label.opacity(0.85))
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -459,14 +469,14 @@ struct OnboardingView: View {
 
             if !assistant.availability.isAvailable, let message = assistant.availability.message {
                 Text(message)
-                    .font(.sportivistaTabular(.footnote, weight: .regular))
+                    .font(.sportivista(.footnote))
                     .foregroundStyle(SportivistaTokens.label.opacity(0.7))
                     .fixedSize(horizontal: false, vertical: true)
             }
 
             if assistant.profile.isEmpty {
-                Text("Du følger ingenting ennå — det er helt greit. Trykk Spør assistenten når du vil legge til noe.")
-                    .font(.sportivistaTabular(.subheadline, weight: .regular))
+                Text("Du følger ingenting ennå — det er helt greit. Trykk Assistent når du vil legge til noe.")
+                    .font(.sportivista(.subheadline))
                     .foregroundStyle(SportivistaTokens.label.opacity(0.85))
                     .fixedSize(horizontal: false, vertical: true)
             } else {
@@ -475,17 +485,16 @@ struct OnboardingView: View {
 
             VStack(alignment: .leading, spacing: 14) {
                 // «Prøv nå»: finish AND open the assistant (empty) so the user can
-                // say anything — the primary, inviting action.
+                // say anything — the ONE prominent primary action.
                 Button("Prøv nå") { onTryAssistant(nil) }
-                    .font(.sportivistaTabular(.subheadline, weight: .bold))
-                    .foregroundStyle(SportivistaTokens.accent)
-                    .buttonStyle(SportivistaActionButtonStyle(tint: SportivistaTokens.accent, fullWidth: true))
+                    .buttonStyle(SportivistaPrimaryButtonStyle())
                     .accessibilityIdentifier("onboarding.tryAssistant")
 
                 // The quiet skip: straight into the (already-filled) agenda.
                 Button("Til agendaen") { onFinish() }
-                    .font(.sportivistaTabular(.footnote, weight: .regular))
+                    .font(.sportivista(.footnote))
                     .foregroundStyle(SportivistaTokens.secondaryLabel)
+                    .frame(maxWidth: .infinity)
                     .sportivistaTapTarget()
                     .accessibilityIdentifier("onboarding.toAgenda")
             }
@@ -493,32 +502,26 @@ struct OnboardingView: View {
         }
     }
 
-    /// One tappable deep-personalisation example — the quoted utterance in a
-    /// calm row (≥44pt). A tap finishes onboarding and opens the assistant with
-    /// the phrase pre-filled, so the user sees exactly how it is said.
+    /// One tappable deep-personalisation example — the quoted utterance in a calm
+    /// native rounded row (≥44pt) with a trailing chevron (WP-149: the leading `»`
+    /// Tekst-TV sigil is gone). A tap finishes onboarding and opens the assistant
+    /// with the phrase pre-filled, so the user sees exactly how it is said.
     private func exampleRow(_ id: String, _ utterance: String) -> some View {
         Button { onTryAssistant(utterance) } label: {
-            HStack(alignment: .top, spacing: 12) {
-                Text("»")
-                    .font(.sportivistaTabular(.callout, weight: .bold))
-                    .foregroundStyle(SportivistaTokens.accent)
-                    .frame(width: markerWidth, alignment: .leading)
-                    .accessibilityHidden(true)
+            HStack(alignment: .center, spacing: 10) {
                 Text("«\(utterance)»")
-                    .font(.sportivistaTabular(.subheadline, weight: .regular))
+                    .font(.sportivista(.subheadline))
                     .foregroundStyle(SportivistaTokens.label)
                     .fixedSize(horizontal: false, vertical: true)
                 Spacer(minLength: 8)
                 Image(systemName: "chevron.right")
-                    .font(.sportivistaTabular(.footnote, weight: .semibold))
+                    .font(.sportivista(.footnote, weight: .semibold))
                     .foregroundStyle(SportivistaTokens.secondaryLabel)
                     .accessibilityHidden(true)
             }
-            .padding(12)
             .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+            .onboardingCell(padding: 12)
             .contentShape(Rectangle())
-            .background(SportivistaTokens.label.opacity(0.03))
-            .overlay(Rectangle().stroke(SportivistaTokens.separator, lineWidth: 1))
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Prøv: \(utterance)")
@@ -529,7 +532,7 @@ struct OnboardingView: View {
 
     /// The growing "Følger nå" list — the visible feedback that saying a thing
     /// (typed or tapped) landed, exactly the same profile the agenda compiles
-    /// against.
+    /// against. WP-149: a native rounded `cell` card with a grey header.
     @ViewBuilder
     private var followingNow: some View {
         if !assistant.profile.isEmpty {
@@ -539,23 +542,20 @@ struct OnboardingView: View {
                     ForEach(assistant.profile.rules) { rule in
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             Text("•")
-                                .font(.sportivistaTabular(.footnote, weight: .bold))
+                                .font(.sportivista(.footnote, weight: .bold))
                                 .foregroundStyle(SportivistaTokens.accent)
                             VStack(alignment: .leading, spacing: 1) {
                                 Text(rule.entityName)
-                                    .font(.sportivistaTabular(.subheadline, weight: .bold))
+                                    .font(.sportivista(.subheadline, weight: .bold))
                                 Text(ruleSubtitle(rule))
-                                    .font(.sportivistaTabular(.caption2, weight: .regular))
+                                    .font(.sportivista(.caption2))
                                     .foregroundStyle(SportivistaTokens.secondaryLabel)
                             }
                         }
                     }
                 }
             }
-            .padding(12)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(SportivistaTokens.label.opacity(0.03))
-            .overlay(Rectangle().stroke(SportivistaTokens.separator, lineWidth: 1))
+            .onboardingCell(padding: 12)
         }
     }
 
@@ -566,15 +566,14 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: 12) {
             if let alternative {
                 Button(alternative.label) { alternative.action() }
-                    .font(.sportivistaTabular(.footnote, weight: .regular))
+                    .font(.sportivista(.footnote))
                     .foregroundStyle(SportivistaTokens.secondaryLabel)
+                    .frame(maxWidth: .infinity)
                     .sportivistaTapTarget()
                     .accessibilityIdentifier(alternative.id)
             }
             Button(primary.label) { primary.action() }
-                .font(.sportivistaTabular(.subheadline, weight: .bold))
-                .foregroundStyle(SportivistaTokens.accent)
-                .buttonStyle(SportivistaActionButtonStyle(tint: SportivistaTokens.accent, fullWidth: true))
+                .buttonStyle(SportivistaPrimaryButtonStyle())
                 .accessibilityIdentifier(primary.id)
         }
         .padding(.top, 8)
@@ -582,42 +581,38 @@ struct OnboardingView: View {
 
     private func stepHeading(_ text: String) -> some View {
         Text(text)
-            .font(.sportivistaTabular(.title3, weight: .bold))
+            .font(.sportivista(.title3, weight: .bold))
             .foregroundStyle(SportivistaTokens.label)
             .fixedSize(horizontal: false, vertical: true)
     }
 
+    /// A native section header — GREY (`secondaryLabel`), `.footnote` semibold, no
+    /// letter-tracking. Matches Deg's `groupHeader` and Nyheter's `sectionHeader`
+    /// exactly (WP-149: replaces the retired amber/`opacity(0.5)`-tracked VERSAL label).
     private func sectionLabel(_ text: String) -> some View {
         Text(text)
-            .font(.sportivistaTabular(.caption, weight: .bold))
-            .foregroundStyle(SportivistaTokens.label.opacity(0.5))
-            .tracking(1.5)
+            .font(.sportivista(.footnote, weight: .semibold))
+            .foregroundStyle(SportivistaTokens.secondaryLabel)
     }
 
     private func unavailableBanner(_ message: String) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("APPLE INTELLIGENCE")
-                .font(.sportivistaTabular(.caption2, weight: .bold))
-                .foregroundStyle(SportivistaTokens.accent.opacity(0.8))
-                .tracking(1.5)
+            sectionLabel("APPLE INTELLIGENCE")
             Text(message)
-                .font(.sportivistaTabular(.footnote, weight: .regular))
+                .font(.sportivista(.footnote))
                 .foregroundStyle(SportivistaTokens.label.opacity(0.8))
                 .fixedSize(horizontal: false, vertical: true)
             Button("Tilbake til startpakker") { go(to: .quickPicks) }
-                .font(.sportivistaTabular(.caption, weight: .bold))
+                .font(.sportivista(.caption, weight: .bold))
                 .foregroundStyle(SportivistaTokens.accent)
                 .sportivistaTapTarget()
         }
-        .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(SportivistaTokens.accent.opacity(0.10))
-        .overlay(Rectangle().stroke(SportivistaTokens.accent.opacity(0.35), lineWidth: 1))
+        .onboardingCell()
     }
 
     private func errorRow(_ error: String) -> some View {
         Text(error)
-            .font(.sportivistaTabular(.footnote, weight: .regular))
+            .font(.sportivista(.footnote))
             .foregroundStyle(SportivistaTokens.destructive)
     }
 
@@ -660,5 +655,21 @@ struct OnboardingView: View {
         if let scope = rule.scope, !scope.isEmpty { parts.append(scope) }
         if !rule.lens.isDefault { parts.append(rule.lens.label) }
         return parts.joined(separator: " · ")
+    }
+}
+
+// MARK: - Native rounded cell (the Deg/Nyheter surface)
+
+private extension View {
+    /// A native rounded 12 pt `cell` surface (the Deg/Nyheter cell expression) — the
+    /// WP-149 replacement for the retired Tekst-TV hairline `Rectangle().stroke` box.
+    /// Content is padded and laid on the `cell` token over the grouped `background`,
+    /// exactly like an inset-grouped list row. No stroke: the fill-vs-background
+    /// contrast IS the card, matching Deg.
+    func onboardingCell(padding: CGFloat = 14) -> some View {
+        self
+            .padding(padding)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(SportivistaTokens.cell, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 }

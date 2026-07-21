@@ -16,12 +16,19 @@
 //     "Fjern", "Slett", note-edit controls …). The glyph/text stays exactly
 //     the size DESIGN.md specifies; only the invisible hit area grows to
 //     ≥44×44pt via padding + `contentShape`, never by enlarging the mark.
-//   • `SportivistaActionButtonStyle` — for controls that ARE the action, not
-//     incidental chrome (Bekreft/Avvis, «mente du»-forslag): a real,
-//     comfortable button — min 44pt tall, roomy horizontal padding, a flat
-//     hairline box. Still no fill (DESIGN.md forbudsliste: "ingen … fylte
-//     'pill buttons'") — the box is a 1pt stroke in the action's own colour
-//     (diffAdd/diffRemove/accent/muted), never a second accent.
+//   • `SportivistaActionButtonStyle` — for SECONDARY / multi controls that ARE
+//     the action, not incidental chrome (Bekreft/Avvis, «mente du»-forslag): a
+//     real, comfortable button — min 44pt tall, roomy horizontal padding, a flat
+//     hairline box. Deliberately UNFILLED (DESIGN.md forbudsliste: no pill-shaped
+//     SECONDARY/multi-buttons) — the box is a 1pt stroke in the action's own
+//     colour (diffAdd/diffRemove/accent/muted), never a second accent.
+//   • `SportivistaPrimaryButtonStyle` — for the ONE prominent PRIMARY action per
+//     screen (DESIGN.md § Forbudsliste, primary-CTA clarification): a readable,
+//     FILLED amber native capsule. The barred "pills" are secondary/multi-buttons;
+//     a single prominent primary action per screen is sanctioned and must read
+//     unmistakably as a button (the unfilled outline read barely as a button in
+//     light mode — the design-review 🔴). Use exactly once per screen; every other
+//     action stays flat/muted (`SportivistaActionButtonStyle` / `.sportivistaTapTarget()`).
 //
 
 import SwiftUI
@@ -62,5 +69,28 @@ struct SportivistaActionButtonStyle: ButtonStyle {
         .contentShape(Rectangle())
         .overlay(Rectangle().stroke(tint.opacity(0.4), lineWidth: 1))
         .opacity(configuration.isPressed ? 0.55 : 1)
+    }
+}
+
+/// The ONE prominent PRIMARY action per screen — a readable, FILLED amber native
+/// capsule (DESIGN.md § Forbudsliste, primary-CTA clarification: a single prominent
+/// primary action per screen is sanctioned; the barred "pills" are the SECONDARY /
+/// multi-buttons). The unfilled amber outline read barely as a button in light mode
+/// (design-review 🔴, 21.07) — this fills it so it is unmistakably tappable.
+///
+/// Filled with the `accent` token; the label uses the scheme-inverse colour so it
+/// stays high-contrast in BOTH themes — black on the bright dark-amber (`#FFB000`),
+/// white on the darker light-amber (`#9A6800`) — since a single fixed label colour
+/// can't clear WCAG on both. Scales with Dynamic Type (`.headline`), ≥44 pt tall.
+/// Use EXACTLY once per screen; every other action stays flat/muted.
+struct SportivistaPrimaryButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.sportivista(.headline))
+            .foregroundStyle(Color.sportivista(dark: .black, light: .white))
+            .frame(maxWidth: .infinity, minHeight: 50)
+            .background(SportivistaTokens.accent, in: Capsule())
+            .contentShape(Capsule())
+            .opacity(configuration.isPressed ? 0.8 : 1)
     }
 }
