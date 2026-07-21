@@ -10,43 +10,70 @@
 //  COMPACT floating button pinned to the BOTTOM (the reachable zone) that reads
 //  UNMISTAKABLY as a button — the sanctioned iOS 26 floating Liquid Glass action.
 //
-//  It is NOT the old capsule: it HUGS its content (not full width), is centred
-//  over the safe area, carries `sparkles` + an active label («Spør assistenten»)
-//  — no grey «skriv her»-placeholder, no inline mic (diktering lives in the
-//  sheet). Glass belongs to the CONTROL layer only; the agenda underneath is
-//  never glassed and scrolls calmly beneath it (DESIGN § Liquid Glass / § Hjelperen).
+//  WP-146 (variant D, eier-beslutning 21.07 — design-review) refines it into the
+//  full iOS 26 floating-button idiom: it moves to the bottom-TRAILING corner (even
+//  more thumb-reachable, and it clears the reading column so it never occludes the
+//  last agenda/Nyheter row), its resting copy is «✨ Assistent» (self-explanatory
+//  on arrival), and it COLLAPSES to the bare `sparkles` glyph while the board
+//  scrolls — re-expanding at the top / at rest (jf. Foto/Musikk). The collapse is
+//  driven by ContentView from the scroll offset; the parent owns the animation, so
+//  Reduce Motion is honoured there.
+//
+//  It is NOT the old capsule: it HUGS its content (not full width), carries
+//  `sparkles` + an active label — no grey «skriv her»-placeholder, no inline mic
+//  (diktering lives in the sheet). It is NOT a FAB either — it stays a glass
+//  CAPSULE (not a filled, shadowed circle). Glass belongs to the CONTROL layer
+//  only; the agenda underneath is never glassed and scrolls calmly beneath it
+//  (DESIGN § Liquid Glass / § Hjelperen).
 //
 
 import SwiftUI
 
-/// The compact, floating bottom entry to the samtaleark. One quiet glass pill
-/// that reads as a button — `sparkles` + «Spør assistenten» — never a field.
-/// Wired from ContentView's `safeAreaInset(.bottom)` so the List scrolls beneath.
+/// The compact, floating bottom-trailing entry to the samtaleark. One quiet glass
+/// pill that reads as a button — `sparkles` + «Assistent» — never a field. Wired
+/// from ContentView's `safeAreaInset(.bottom)` so the List scrolls beneath;
+/// `collapsed` (driven by ContentView's scroll observer) drops the label to the
+/// bare glyph while the board scrolls.
 struct AssistantButton: View {
     /// Open the samtaleark (a plain tap — diktering is a tap on the sheet's mic).
     var onOpen: () -> Void
 
+    /// WP-146 — collapsed to the bare `sparkles` glyph while the board scrolls (the
+    /// iOS 26 floating-button idiom, jf. Foto/Musikk); expanded (label shown) at the
+    /// top / at rest. ContentView drives it from the agenda/Nyheter scroll offset and
+    /// owns the animation, so Reduce Motion is honoured there (a change made without
+    /// `withAnimation` when Reduce Motion is on). Defaults expanded so a standalone
+    /// use / `#Preview` shows the resting «✨ Assistent».
+    var collapsed: Bool = false
+
     var body: some View {
         Button(action: onOpen) {
-            HStack(spacing: 8) {
+            HStack(spacing: collapsed ? 0 : 8) {
                 // The assistant glyph, amber — the ONE accent, and the tell that
                 // this pill IS a control (not a blank field). `sparkles` is the
                 // iOS 26 Apple-Intelligence idiom (the assistant is an on-device
-                // Foundation Models one).
+                // Foundation Models one). It is the whole button when collapsed.
                 Image(systemName: SportSymbol.assistant)
                     .font(.sportivista(.subheadline, weight: .semibold))
                     .foregroundStyle(SportivistaTokens.accent)
                     .accessibilityHidden(true)
-                // An ACTIVE label naming the action (sentence case, imperative) —
-                // never a passive «skriv her …» placeholder. label colour, so the
-                // amber stays accent-only.
-                Text("Spør assistenten")
-                    .font(.sportivista(.subheadline, weight: .semibold))
-                    .foregroundStyle(SportivistaTokens.label)
+                // An ACTIVE label naming the entry (sentence case) — never a passive
+                // «skriv her …» placeholder. Label colour, so the amber stays
+                // accent-only. Hidden while collapsed; `fixedSize` keeps it from
+                // truncating mid-collapse (DESIGN § Typografi: never truncate).
+                if !collapsed {
+                    Text("Assistent")
+                        .font(.sportivista(.subheadline, weight: .semibold))
+                        .foregroundStyle(SportivistaTokens.label)
+                        .lineLimit(1)
+                        .fixedSize(horizontal: true, vertical: false)
+                        .transition(.opacity)
+                }
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, collapsed ? 14 : 20)
             .padding(.vertical, 12)
-            // Hug the content, ≥44 pt tall; the pill is only as wide as its label.
+            // Hug the content, ≥44 pt tall; the pill is only as wide as its content
+            // (a near-circular glyph capsule when collapsed).
             .frame(minHeight: 44)
             .contentShape(Capsule())
         }

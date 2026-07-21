@@ -154,11 +154,12 @@ Apple-system-farger + én amber-aksent. Ved rebrand endres KUN denne tabellen.
 - **Detaljer** vises som native `.sheet` (detents) eller push i agendaens stakk.
 - **Ett navigasjonsmønster:** rad → detalj (push/sheet med ‹ tilbake); aldri
   gester som eneste vei.
-- **Hjelperen** er en kompakt flytende BUNN-KNAPP (`sparkles` + «Spør assistenten»)
-  i tommelens nåbare sone som åpner samtalearket (§ Hjelperen) — ikke en fane, ikke
+- **Hjelperen** er en kompakt flytende BUNN-TRAILING-KNAPP (`sparkles` + «Assistent»)
+  i tommelens nåbare hjørne som åpner samtalearket (§ Hjelperen) — ikke en fane, ikke
   et inline-felt, ikke en header-verktøylinje-knapp (WP-143→WP-144), og ikke den gamle
   bunn-kapselen (falskt søkefelt). Den flyter over innholdet (`safeAreaInset(.bottom)`);
-  agendaen/Nyheter scroller rolig UNDER den.
+  agendaen/Nyheter scroller rolig UNDER den og KOLLAPSER knappen til bare `sparkles`-
+  glyfen mens tavla scrolles (WP-146 — jf. Foto/Musikk), re-ekspanderer i toppen.
 
 ## Agendaen (rot-skjermen)
 
@@ -211,15 +212,28 @@ WP-144 forener begge kravene: en TYDELIG KNAPP (ikke det gamle felt-metafor-felt
 den NÅBARE sonen — det sanksjonerte iOS 26 flytende Liquid Glass-mønsteret. Full
 tilstandsspec i `design/specs/assistent-nyheter-v0.md`.
 
-- **Bunn-knappen** (`AssistantButton`: `sparkles` + etikett «Spør assistenten»,
-  iOS 26 Apple-Intelligence-idiomet) flyter nederst, sentrert over safe area
-  (`safeAreaInset(.bottom)`): en umiskjennelig HIG-knapp (button-rolle, ≥44 pt,
+Rev. 21.07.2026 (WP-146, variant D — design-review, eier-beslutning): knappen flyttes
+til bunn-TRAILING-hjørnet (rydder lesekolonnen, okkluderer aldri siste rad), copy i ro
+er «✨ Assistent», og den KOLLAPSER til bare `sparkles`-glyfen mens tavla scrolles
+(re-ekspanderer i toppen) — det fulle iOS 26 flytende-knapp-idiomet (jf. Foto/Musikk).
+Glass-materiale, amber-tint, `sparkles`, button-rolle og id `assistant.button` er
+UENDRET; det er en ren inngangs-/visnings-endring.
+
+- **Bunn-knappen** (`AssistantButton`: `sparkles` + etikett «Assistent»,
+  iOS 26 Apple-Intelligence-idiomet) flyter i bunn-TRAILING-hjørnet (≈16 pt innrykk,
+  over home-indicator; `safeAreaInset(.bottom)`, trailing-justert — WP-146 variant D,
+  eier-beslutning 21.07): en umiskjennelig HIG-knapp (button-rolle, ≥44 pt,
   a11y «Assistent», id `assistant.button`) som åpner samtalearket. **Nåbar sone +
-  ærlig affordance** — den bor der tommelen når, OG den leser umiskjennelig som en
-  KNAPP: en KOMPAKT glass-pille som HUGGER innholdet sitt (ikke full bredde, ikke en
-  flate), med `sparkles` i amber + en aktiv etikett som NAVNGIR handlingen. INGEN
-  placeholder-grå «skriv her»-tekst (det var kapselens falske felt-affordance), INGEN
-  `mic` inni (diktering bor i arket alene). Skriving OG diktering bor i arket.
+  ærlig affordance + ryddig lesekolonne** — den bor der tommelen når, den okkluderer
+  ALDRI siste agenda-/Nyheter-rad, OG den leser umiskjennelig som en KNAPP: en KOMPAKT
+  glass-pille som HUGGER innholdet sitt (ikke full bredde, ikke en flate, ikke en FAB —
+  fortsatt en glass-KAPSEL, aldri en fylt sirkel med skygge), med `sparkles` i amber
+  + en aktiv etikett. **Kollaps ved scroll:** når tavla scrolles kollapser pilla til
+  bare `sparkles`-glyfen (iOS 26 flytende-knapp-atferd, jf. Foto/Musikk) og re-
+  ekspanderer i toppen / ved ro; overgangen respekterer Reduce Motion (ingen animasjon
+  da). INGEN placeholder-grå «skriv her»-tekst (det var kapselens falske felt-
+  affordance), INGEN `mic` inni (diktering bor i arket alene). Skriving OG diktering
+  bor i arket.
   - **Guidingen skjer ved ENGASJEMENT** (arkets eksempelrader når du åpner),
     ALDRI som en stående chips-vegg på agendaen — calm er ufravikelig (én rolig,
     skannbar flate; ingen konkurrerende paneler). ÉN kompakt knapp, aldri chips.
