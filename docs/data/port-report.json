@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-21T21:05:19.910Z",
+  "generatedAt": "2026-07-22T07:32:42.050Z",
   "windowDays": 14,
   "ports": {
     "coverage": "green",
@@ -28,7 +28,7 @@
     "oldestGapAgeDays": null,
     "escalatable": 0,
     "catalogMatched": 0,
-    "auditedAt": "2026-07-21T06:29:11Z",
+    "auditedAt": "2026-07-22T06:35:00Z",
     "gaps": []
   },
   "amendRate": {
@@ -36,18 +36,11 @@
     "nearTermChecked": 5,
     "nearTermAmended": 3,
     "verifyRunAt": "2026-07-21T07:47:58.000Z",
-    "windowRate": 0.2,
-    "windowChecks": 60,
+    "windowRate": 0.21,
+    "windowChecks": 56,
     "windowAmendments": 12,
     "windowCorrections": 2,
     "byDay": [
-      {
-        "date": "2026-07-08",
-        "checks": 4,
-        "amendments": 0,
-        "corrections": 0,
-        "rate": 0
-      },
       {
         "date": "2026-07-09",
         "checks": 3,
@@ -143,21 +136,21 @@
   },
   "silentStops": {
     "buildOk": true,
-    "buildCheckedAt": "2026-07-21T21:05:19.699Z",
+    "buildCheckedAt": "2026-07-22T07:32:41.847Z",
     "buildAgeHours": 0,
-    "manifestGeneratedAt": "2026-07-21T19:17:03.392Z",
-    "manifestAgeHours": 1.8,
+    "manifestGeneratedAt": "2026-07-21T21:05:21.469Z",
+    "manifestAgeHours": 10.46,
     "staleFiles": [
       {
         "file": "football.json",
         "sourceLastUpdated": "2026-07-19T17:56:30.377Z",
-        "ageHours": 51.15
+        "ageHours": 61.6
       }
     ]
   },
   "participantStatus": {
     "checkedAt": "2026-07-21T07:47:58.000Z",
-    "verifyAgeHours": 13.29,
+    "verifyAgeHours": 23.75,
     "corrections": 0,
     "unresolved": 0,
     "signals": []
