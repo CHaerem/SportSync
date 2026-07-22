@@ -208,6 +208,24 @@ verified by its own test suite (500+ unit tests, UI flows, and a versioned
 real-model eval corpus), and ships to **TestFlight** through the scripted
 release lane. See [ios/README.md](ios/README.md).
 
+## Android & the honest limits
+
+A few deliberate constraints, stated plainly rather than discovered later:
+
+- **Android is not built.** The web PWA is the de-facto Android client today —
+  it carries the full personal feed, but **without push notifications and
+  without a widget** (the platform APIs the calm-notification story relies on
+  are iOS-only in this codebase). A native Android app is a Phase 3 decision,
+  not an accident of neglect.
+- **Live scores on web poll ESPN's unofficial API from each visitor's
+  browser.** Fine at dogfood scale, not a foundation for growth — moving that
+  polling behind our own edge is part of the Phase 1 server-layer work
+  (WP-21), which is sequenced **before** any user-acquisition push.
+- **GitHub Pages hosts the data for free** — which also means its terms cap
+  what this can become while it lives there (no commercial hosting). The
+  migration path (Workers + R2, same static JSON contract) is designed and
+  gated ahead of launch (WP-20/21 before WP-25 in PLAN.md).
+
 ### Notifications: what we do, and what we deliberately don't
 
 **Sportivista does not send live goal alerts. That is a choice, not a gap.**

@@ -2357,7 +2357,7 @@ men si det ærlig).
 |---|---|---|---|---|
 | WP-190 | G1 gjort målbar: personvernerklæring + privacy manifest + ekstern TestFlight + målemetode | 0M | — | 🔬 branch wp-190-g1-malbar — personvernerklæring (`docs/personvern.html`, ugatet, lenket fra web-foten + Deg › Personvern), `PrivacyInfo.xcprivacy` for app (UserDefaults/CA92.1) + widget (tom, verifisert), G1 omdefinert til et etterprøvbart ASC+dagbok-kriterium med eier-sjekkliste. Beta App Review-innsendingen står igjen som eier-handling |
 | WP-191 | 💰 Juridisk fundament: enhet, Apple-org, varemerke (menneskeoppgave, sekvensert) | 0M | — | planlagt |
-| WP-192 | Kilde-/hosting-risiko sekvensert FØR vekst (WP-20/21-rekkefølgen pinnet) | 0M | — | planlagt |
+| WP-192 | Kilde-/hosting-risiko sekvensert FØR vekst (WP-20/21-rekkefølgen pinnet) | 0M | — | ✅ 22.07 (direkte på main, ren plan/dok — hovedsesjonen) — Fase 1-sekvensen pinnet (WP-20/21 = gate for WP-25, ESPN-proxy inn i WP-21), README fikk ærlig «Android & grensene»-avsnitt (PWA-som-Android-stopgap uten push; ESPN-klientpolling; Pages-ToS) |
 
 ### WP-190 · G1 gjort målbar (bølge 1)
 **Innhold:** (1) personvernerklæring `docs/personvern.html` (norsk, ærlig:
@@ -2697,16 +2697,31 @@ skissere A-utvidelsen (adaptive defaults fra `BehaviorCounter`) som egen WP.
 
 ## FASE 1 · Norge-lansering (Q4 2026, dossier P400/P500) — skisse
 
-- **WP-20 · Kildemigrering til primærkilder** (P400 regel #1): erstatt tvkampen-scraperen
-  med kringkaster-EPG-er (NRK/TV 2/Viaplay/Discovery+); forbunds-terminlister
-  (NHF, FIS, IBU, UCI) som nye fetchere. *Angrefri — styrker hobbyversjonen også.*
-- **WP-21 · 💰 Serverlag → SLA**: GitHub Actions → Cloudflare Workers cron + R2;
-  Max-abonnement → API-nøkkel. Samme statiske JSON-kontrakt (WP-03-manifestet er porten).
+**Sekvens-pinning (WP-192, 22.07):** WP-20 + WP-21 er GATE for markedsføring mot
+fremmede brukere — de ligger FØR WP-25 i rekkefølgen, ikke parallelt med lansering.
+Begrunnelse (kritiker-funn 21.07, verifisert): (a) hver web-klients nettleser
+poller i dag ESPNs uoffisielle API direkte (`docs/js/live.js` — WP-172 reduserer
+flatetrykket til kampvindu-polling, men modellen skalerer ikke til fremmede
+brukere; server-proxy skisseres som del av WP-21); (b) tvkampen-scraping er
+streaming-grunnsannhet uten avtale; (c) GitHub Pages' vilkår tillater ikke
+kommersiell hosting (~100 GB/mnd soft-cap). Alle tre er ufarlige på dogfood-skala
+og uforsvarlige å MARKEDSFØRE seg til vekst på.
+
+- **WP-20 · Kildemigrering til primærkilder** (P400 regel #1) — **FØR WP-25**:
+  erstatt tvkampen-scraperen med kringkaster-EPG-er (NRK/TV 2/Viaplay/Discovery+);
+  forbunds-terminlister (NHF, FIS, IBU, UCI) som nye fetchere. *Angrefri — styrker
+  hobbyversjonen også.*
+- **WP-21 · 💰 Serverlag → SLA** — **FØR WP-25**: GitHub Actions → Cloudflare
+  Workers cron + R2; Max-abonnement → API-nøkkel. Samme statiske JSON-kontrakt
+  (WP-03-manifestet er porten). Inkluderer ESPN-proxy-vurderingen (flytt
+  live-pollingen bak vår kant i stedet for hver klients IP).
 - **WP-22 · CloudKit profil-sync** (P360): SwiftData-speiling, merge-strategiene,
   E2E-felter.
 - **WP-23 · Gap-voting v1** (P330): anonymt signal + server-kø under budsjett.
+  (v0 skipet som WP-165 — offentlige coverage-request-issues + demand[].)
 - **WP-24 · Live Activities** via broadcast-kanaler (P340) — krever WP-17.
 - **WP-25 · Lansering ved vintersesongstart** — Gate G2: 5 000 brukere, D30 > 30 %.
+  **Forutsetter WP-20 + WP-21 grønne.**
 
 ## FASE 2 · Inntekt (vår 2027) — skisse
 Affiliate-avtaler (Viaplay/TV 2/Discovery+) → Pro-tier 59 kr/mnd (frontier-brief,
