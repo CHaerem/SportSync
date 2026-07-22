@@ -14,6 +14,7 @@ beforeAll(() => {
 	loadClientScript(sandbox, "detail.js");
 	loadClientScript(sandbox, "followed.js");
 	loadClientScript(sandbox, "chrome.js");
+	loadClientScript(sandbox, "news-web.js");
 	dash = sandbox.window.dashboard;
 	win = sandbox.window;
 });
@@ -901,5 +902,66 @@ describe("the 'Direkte nå' line (live.js)", () => {
 		} finally {
 			Date.now = realNow;
 		}
+	});
+});
+
+// ── RESULTAT-seksjonen (news-web.js, WP-171) ─────────────────────────────────
+// The section now answers "hva skjedde" for every sport in recent-results.json,
+// renders the goal scorers the fetcher already pays for, stays CAPPED (ro), and
+// puts the remainder in one quiet «Vis alle» disclosure.
+describe("Nyheter · RESULTAT (all sports, goal scorers, cap + disclosure)", () => {
+	const results = {
+		football: [
+			{ homeTeam: "Molde", awayTeam: "SK Brann", homeScore: 1, awayScore: 2, date: "2026-07-18T16:00Z", league: "Eliteserien", goalScorers: [{ player: "Kristian Eriksen", team: "SK Brann", minute: "35'" }] },
+			{ homeTeam: "Lyn", awayTeam: "KFUM", homeScore: 2, awayScore: 1, date: "2026-07-17T16:00Z", league: "OBOS-ligaen" },
+			{ homeTeam: "Rosenborg", awayTeam: "Viking", homeScore: 0, awayScore: 0, date: "2026-07-16T16:00Z", league: "Eliteserien" },
+			{ homeTeam: "Odd", awayTeam: "Sarpsborg", homeScore: 1, awayScore: 3, date: "2026-07-15T16:00Z", league: "Eliteserien" },
+			{ homeTeam: "Tromsø", awayTeam: "Bodø/Glimt", homeScore: 0, awayScore: 2, date: "2026-07-14T16:00Z", league: "Eliteserien" },
+		],
+		golf: { pga: { tournamentName: "The Open", status: "final", topPlayers: [{ position: 1, player: "Ryan Fox", score: "-10" }], norwegianPlayers: [] } },
+		f1: [{ raceName: "Belgian Grand Prix", date: "2026-07-17T11:30Z", circuit: "Spa", topDrivers: [{ position: 1, driver: "Kimi Antonelli" }] }],
+	};
+
+	function renderInto(recentResults) {
+		let html = "";
+		const el = { set innerHTML(v) { html = v; } };
+		const realGet = win.document.getElementById;
+		win.document.getElementById = (id) => (id === "nyheter" ? el : null);
+		try {
+			dash.recentResults = recentResults;
+			dash.news = [];
+			dash.renderNyheter();
+		} finally {
+			win.document.getElementById = realGet;
+		}
+		return html;
+	}
+
+	it("shows golf + F1 results alongside football, with goal scorers and minute", () => {
+		const html = renderInto(results);
+		expect(html).toContain("The Open");
+		expect(html).toContain("Ryan Fox -10");
+		expect(html).toContain("Belgian Grand Prix");
+		expect(html).toContain("35&#039; Kristian Eriksen (SK Brann)"); // escaped apostrophe — escapeHtml, per the client-render rule
+	});
+
+	it("caps the visible rows and puts the rest behind a «Vis alle» disclosure", () => {
+		const html = renderInto(results);
+		const rowsBeforeDisclosure = html.split("<details")[0].split('class="rs-row"').length - 1;
+		expect(rowsBeforeDisclosure).toBe(5);
+		expect(html).toContain("Vis alle");
+		expect(html.split('class="rs-row"').length - 1).toBe(7); // nothing dropped
+	});
+
+	it("escapes every data string in a result row (XSS)", () => {
+		const html = dash.resultRow({
+			sport: "football", title: '<img src=x onerror=alert(1)>', outcome: "1–<b>2</b>",
+			meta: '"><script>bad()</script>', details: ["<i>90'</i> Ond"],
+		});
+		expect(html).not.toContain("<img");
+		expect(html).not.toContain("<script>");
+		expect(html).not.toContain("<b>");
+		expect(html).toContain("&lt;img");
+		expect(html).toContain("&lt;i&gt;90");
 	});
 });

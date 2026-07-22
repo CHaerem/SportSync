@@ -76,6 +76,14 @@ struct DataStore: Sendable {
         return (try? SportivistaJSON.decoder.decode(RecentResults.self, from: data)) ?? RecentResults()
     }
 
+    /// WP-171: the league table / golf leaderboard / F1 championship
+    /// (docs/data/standings.json) the event-detail table surface reads. An empty
+    /// `Standings` when never synced or corrupt — an absent table, never a crash.
+    func loadStandings() -> Standings {
+        guard let data = cache.read("standings.json") else { return Standings() }
+        return (try? SportivistaJSON.decoder.decode(Standings.self, from: data)) ?? Standings()
+    }
+
     /// `nil` means "never synced" — see the type-level doc above for why
     /// this is the flag callers should check, not an empty `loadEvents()`.
     var lastSync: Date? {

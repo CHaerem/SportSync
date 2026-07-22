@@ -4,7 +4,9 @@
 // quiet hero line above, so it isn't repeated here):
 //
 //   1. NYTT     — news.json pointers, lens-matched, newest first (capped).
-//   2. RESULTAT — followed teams' recent football results (or catalog-wide).
+//   2. RESULTAT — recent results for what you follow, ALL sports in
+//                 recent-results.json (WP-171: football with goal scorers, golf
+//                 leaderboards, F1 podiums, tennis), capped + «Vis alle».
 //   3. FREMOVER — forvarsler beyond 14 d (rendered by dashboard.renderFremover
 //                 into #fremover, which now lives inside the Nyheter view).
 //
@@ -31,6 +33,176 @@ function ssNewsRelevant(item, lens) {
 	const ids = Array.isArray(item.entityIds) ? item.entityIds : [];
 	if (ids.some((id) => lens.entityIds.has(id))) return true;
 	return lens.sports.has(ssCanonicalNewsSport(item.sport));
+}
+
+// ── RESULTAT (WP-171): one row DNA for every sport ───────────────────────────
+// «Hva skjedde i går» must be answered for ALL you follow — the board used to
+// read only `recent-results.json`'s `.football` key while The Open's final
+// leaderboard and the F1 podium sat unused in the same file. The sports have
+// different result DNA (golf = leaderboard position/score, F1 = finishing order,
+// tennis = sets), so instead of three special cases each sport is projected onto
+// ONE row shape — the same shape NewsBoard.swift's NewsResultRow carries:
+//
+//   { id, sport, title, outcome, meta, date, details[], names[] }
+//
+//   • title    — WHO/WHAT played (deliberately outcome-neutral: the tennis title
+//                is the two names sorted alphabetically, never "winner – loser").
+//   • outcome  — the spoiler-carrying payload (score / winner + score).
+//   • details  — the extra lines the fetchers already pay for but nobody showed:
+//                football goal scorers with minute, the golf top-3 + Norwegians,
+//                the F1 podium. Outcome-revealing, so they live WITH `outcome`
+//                (iOS masks both behind the same «Vis resultat» shield).
+//   • names    — the participant names the on-device lens matches against.
+
+/** The result cap per section (ro — the RESULTAT section must never become a
+ *  result stream). Everything beyond it is reachable in a «Vis alle» disclosure,
+ *  never dropped. Mirrors NewsBoard.resultCap. */
+const SS_RESULT_CAP = 5;
+
+/** Detail lines per row. Ro again: a 10-goal World Cup match would otherwise
+ *  render eleven scorer lines and turn one row into a wall. Five is the honest
+ *  floor — a golf row's top-3 PLUS both Norwegians must survive it. Mirrors
+ *  NewsBoard.detailCap. */
+const SS_RESULT_DETAIL_CAP = 5;
+
+const SS_GOLF_TOUR_NB = { pga: 'PGA Tour', dpWorld: 'DP World Tour' };
+
+/** Cap the detail lines, saying honestly how many were left out. */
+function ssCapDetails(lines) {
+	const list = (lines || []).filter(Boolean);
+	if (list.length <= SS_RESULT_DETAIL_CAP) return list;
+	return list.slice(0, SS_RESULT_DETAIL_CAP).concat([`+${list.length - SS_RESULT_DETAIL_CAP} til`]);
+}
+
+/** "8' Kristian Eriksen (SK Brann)" — one line per goal, minute first (the data
+ *  fetch-results.js has always carried in `goalScorers` and no surface rendered). */
+function ssGoalScorerLines(result) {
+	const scorers = Array.isArray(result && result.goalScorers) ? result.goalScorers : [];
+	return scorers.map((g) => {
+		const player = String((g && g.player) || '').trim();
+		if (!player) return '';
+		const minute = String((g && g.minute) || '').trim();
+		const team = String((g && g.team) || '').trim();
+		return `${minute ? `${minute} ` : ''}${player}${team ? ` (${team})` : ''}`;
+	}).filter(Boolean);
+}
+
+/** "1. Ryan Fox −10" — a leaderboard/finishing-order line. */
+function ssPositionLine(position, name, score) {
+	const who = String(name || '').trim();
+	if (!who) return '';
+	const pos = position != null && position !== '' ? `${position}. ` : '';
+	const sc = String(score == null ? '' : score).trim();
+	return `${pos}${who}${sc ? ` ${sc}` : ''}`;
+}
+
+/** Project `recent-results.json` onto the shared row DNA — every sport in the
+ *  file, not just football. Pure; the lens filters afterwards. */
+function ssResultRows(recentResults) {
+	const data = recentResults || {};
+	const rows = [];
+
+	for (const r of Array.isArray(data.football) ? data.football : []) {
+		const home = String(r.homeTeam || '').trim(), away = String(r.awayTeam || '').trim();
+		if (!home || !away) continue;
+		const hasScore = Number.isFinite(r.homeScore) && Number.isFinite(r.awayScore);
+		rows.push({
+			id: `football|${home}|${away}|${r.date || ''}`,
+			sport: 'football',
+			title: `${home} – ${away}`,
+			outcome: hasScore ? `${r.homeScore}–${r.awayScore}` : '',
+			meta: String(r.league || ''),
+			date: r.date || '',
+			details: ssCapDetails(ssGoalScorerLines(r)),
+			names: [home, away],
+		});
+	}
+
+	const golf = (data.golf && typeof data.golf === 'object') ? data.golf : {};
+	for (const key of Object.keys(golf)) {
+		const tour = golf[key];
+		// Only a FINISHED tournament is a result; an in-progress leaderboard
+		// belongs to the agenda/live surface, not to «hva skjedde».
+		if (!tour || tour.status !== 'final') continue;
+		const top = Array.isArray(tour.topPlayers) ? tour.topPlayers : [];
+		const norwegians = Array.isArray(tour.norwegianPlayers) ? tour.norwegianPlayers : [];
+		if (!top.length) continue;
+		const winner = top[0];
+		const details = top.slice(0, 3).map((p) => ssPositionLine(p.position, p.player, p.score))
+			.concat(norwegians.map((p) => ssPositionLine(p.position, p.player, p.score)))
+			.filter(Boolean);
+		rows.push({
+			id: `golf|${key}|${tour.tournamentName || ''}`,
+			sport: 'golf',
+			title: String(tour.tournamentName || 'Golfturnering'),
+			outcome: ssPositionLine('', winner.player, winner.score),
+			meta: [SS_GOLF_TOUR_NB[key] || key, 'sluttresultat'].filter(Boolean).join(' · '),
+			date: tour.date || '',
+			details: ssCapDetails(details),
+			names: top.map((p) => p.player).concat(norwegians.map((p) => p.player)).filter(Boolean),
+		});
+	}
+
+	for (const r of Array.isArray(data.f1) ? data.f1 : []) {
+		const drivers = Array.isArray(r.topDrivers) ? r.topDrivers : [];
+		if (!drivers.length) continue;
+		rows.push({
+			id: `f1|${r.raceName || ''}|${r.date || ''}`,
+			sport: 'f1',
+			title: String(r.raceName || 'Grand Prix'),
+			outcome: String(drivers[0].driver || ''),
+			meta: [String(r.circuit || ''), String(r.type || '')].filter(Boolean).join(' · '),
+			date: r.date || '',
+			details: drivers.slice(0, 3).map((d) => ssPositionLine(d.position, d.driver, '')).filter(Boolean),
+			names: drivers.map((d) => d.driver).filter(Boolean),
+		});
+	}
+
+	for (const r of Array.isArray(data.tennis) ? data.tennis : []) {
+		const winner = String(r.winner || '').trim(), loser = String(r.loser || '').trim();
+		if (!winner || !loser) continue;
+		// Outcome-neutral title: the pair sorted alphabetically, so the row itself
+		// never spoils who won (the outcome lives in `outcome`, which iOS masks).
+		const pair = [winner, loser].sort((a, b) => a.localeCompare(b, 'nb'));
+		rows.push({
+			id: `tennis|${winner}|${loser}|${r.date || ''}`,
+			sport: 'tennis',
+			title: `${pair[0]} – ${pair[1]}`,
+			outcome: [winner, String(r.score || '')].filter(Boolean).join(' '),
+			meta: [String(r.tournament || ''), String(r.round || '')].filter(Boolean).join(' · '),
+			date: r.date || '',
+			details: [],
+			names: [winner, loser],
+		});
+	}
+
+	return rows;
+}
+
+/** Order the rows so EVERY sport gets an answer before any sport gets a second
+ *  one: per-sport newest-first, then a round-robin across sports (sports ordered
+ *  by their own newest result). Without it a busy football weekend would push
+ *  The Open's final result out of the capped section entirely. Mirrors
+ *  NewsBoard.interleaveBySport. */
+function ssInterleaveBySport(rows) {
+	const stamp = (r) => { const t = Date.parse((r && r.date) || ''); return Number.isNaN(t) ? -Infinity : t; };
+	const groups = new Map();
+	for (const r of rows || []) {
+		if (!groups.has(r.sport)) groups.set(r.sport, []);
+		groups.get(r.sport).push(r);
+	}
+	for (const list of groups.values()) list.sort((a, b) => stamp(b) - stamp(a));
+	const order = Array.from(groups.keys()).sort((a, b) => stamp(groups.get(b)[0]) - stamp(groups.get(a)[0]));
+	const out = [];
+	for (let i = 0; ; i++) {
+		let took = false;
+		for (const sport of order) {
+			const list = groups.get(sport);
+			if (i < list.length) { out.push(list[i]); took = true; }
+		}
+		if (!took) break;
+	}
+	return out;
 }
 
 // ── Dashboard prototype extension (DOM) ──────────────────────────────────────
@@ -103,13 +275,18 @@ if (typeof Dashboard !== 'undefined') Object.assign(Dashboard.prototype, {
 			: `<div class="nw-row">${inner}</div>`;
 	},
 
-	/** One RESULTAT row: a followed team's recent football result with its score. */
+	/** One RESULTAT row, in the shared per-sport DNA (WP-171): what · quiet meta ·
+	 *  the detail lines the data already carries (goal scorers with minute, the
+	 *  golf top-3 + Norwegians, the F1 podium) · the outcome on the right. Every
+	 *  data string goes through escapeHtml (client-render rule). */
 	resultRow(r) {
-		const title = `${escapeHtml(r.homeTeam || '')} – ${escapeHtml(r.awayTeam || '')}`;
-		const hasScore = Number.isFinite(r.homeScore) && Number.isFinite(r.awayScore);
-		const score = hasScore ? `<span class="rs-score">${r.homeScore}–${r.awayScore}</span>` : '';
-		const meta = r.league ? `<span class="rs-meta">${escapeHtml(r.league)}</span>` : '';
-		return `<div class="rs-row"><span class="rs-main"><span class="rs-title">${title}</span>${meta}</span>${score}</div>`;
+		const title = `<span class="rs-title">${escapeHtml(r.title || '')}</span>`;
+		const outcome = r.outcome ? `<span class="rs-score">${escapeHtml(r.outcome)}</span>` : '';
+		const meta = r.meta ? `<span class="rs-meta">${escapeHtml(r.meta)}</span>` : '';
+		const details = (Array.isArray(r.details) ? r.details : [])
+			.map((line) => `<span class="rs-meta rs-detail">${escapeHtml(line)}</span>`)
+			.join('');
+		return `<div class="rs-row"><span class="rs-main">${title}${meta}${details}</span>${outcome}</div>`;
 	},
 
 	/** The lens-matched news, newest first, capped. */
@@ -122,24 +299,27 @@ if (typeof Dashboard !== 'undefined') Object.assign(Dashboard.prototype, {
 			.slice(0, max);
 	},
 
-	/** Followed teams' recent football results (newest first); catalog-wide when
-	 *  the profile is empty. Matched by an entity NAME hit on either team. */
-	resultItems(max = 8) {
-		const football = (this.recentResults && this.recentResults.football) || [];
+	/** Recent results for what you follow — ALL sports in recent-results.json
+	 *  (WP-171), not just football. A row is in when the profile is empty
+	 *  (catalog-wide, the web's default elsewhere), when its sport is a followed
+	 *  WHOLE-sport, or when a followed entity's name hits one of its
+	 *  participants. Returned interleaved per sport, uncapped — the caller caps
+	 *  the visible part and puts the rest in the «Vis alle» disclosure. */
+	resultItems() {
+		const rows = ssResultRows(this.recentResults);
 		const lens = this.newsLens();
-		let list = football;
+		let list = rows;
 		if (!lens.catalogWide) {
 			const names = [];
 			const live = (this.profile && this.profile.rules || []).filter((r) => !r.deleted).map((r) => r.rule || r);
 			for (const rule of live) if (rule && rule.entityName) names.push(rule.entityName);
-			list = football.filter((r) => {
-				const hay = `${r.homeTeam || ''} ${r.awayTeam || ''}`;
+			list = rows.filter((r) => {
+				if (lens.sports.has(ssCanonicalNewsSport(r.sport))) return true;
+				const hay = (r.names || []).join(' ');
 				return names.some((n) => ssContainsTerm(hay, n));
 			});
 		}
-		return list.slice()
-			.sort((a, b) => (Date.parse(b.date || 0) - Date.parse(a.date || 0)))
-			.slice(0, max);
+		return ssInterleaveBySport(list);
 	},
 
 	/** Render the Nyheter board's NYTT + RESULTAT sections into #nyheter. FREMOVER
@@ -156,8 +336,17 @@ if (typeof Dashboard !== 'undefined') Object.assign(Dashboard.prototype, {
 			: '<p class="nw-empty">Ingen nyheter om det du følger akkurat nå.</p>';
 		html += '</section>';
 		if (results.length) {
+			// Ro: a capped section, with the remainder in one quiet disclosure
+			// («Vis alle») instead of an endless result stream. Same cap the iOS
+			// board uses (NewsBoard.resultCap).
+			const shown = results.slice(0, SS_RESULT_CAP);
+			const rest = results.slice(SS_RESULT_CAP);
 			html += '<section class="nw-section"><h2 class="nw-head">Resultat</h2>';
-			html += results.map((r) => this.resultRow(r)).join('');
+			html += shown.map((r) => this.resultRow(r)).join('');
+			if (rest.length) {
+				html += `<details class="fremover rs-all"><summary>Vis alle <span class="fwd-count">${rest.length}</span></summary>`;
+				html += `<div class="fwd-body">${rest.map((r) => this.resultRow(r)).join('')}</div></details>`;
+			}
 			html += '</section>';
 		}
 		el.innerHTML = html;
@@ -185,5 +374,5 @@ if (typeof Dashboard !== 'undefined') Object.assign(Dashboard.prototype, {
 
 // Node/vitest interop (pure helpers).
 if (typeof module !== 'undefined' && module.exports) {
-	module.exports = { ssNewsRelevant, ssCanonicalNewsSport };
+	module.exports = { ssNewsRelevant, ssCanonicalNewsSport, ssResultRows, ssInterleaveBySport, SS_RESULT_CAP };
 }

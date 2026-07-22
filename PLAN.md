@@ -2011,7 +2011,7 @@ Bølge 1: WP-170 (iOS-klient) ∥ WP-171 (web-klient + pipeline-visning) ∥ WP-
 | WP | Tittel | Fase | Avhenger av | Status |
 |---|---|---|---|---|
 | WP-170 | Entitetssiden: «laget mitt»-objektet (begge flater) | 0K | 0J WP-160 | planlagt |
-| WP-171 | Resultat- og tabelldybde: alle sporter, målscorere, standings på iOS | 0K | — | planlagt |
+| WP-171 | Resultat- og tabelldybde: alle sporter, målscorere, standings på iOS | 0K | — | 🔬 branch wp-171-resultat-tabell — RESULTAT dekker nå ALLE sporter i recent-results.json på begge flater (én rad-DNA per sport: nøytral tittel · utfall · meta · detaljlinjer), målscorere med minutt rendres (web XSS-trygt via escapeHtml), per-sport round robin + cap 5 med «Vis alle»-disclosure, `standings.json` inn i SyncClient + ny TABELL-flate i event-detalj (ligatabell/golf-ledertavle/F1-VM-stilling, kun når det ER eventets tabell) — alt nytt resultatinnhold bak SAMME spoilervern |
 | WP-172 | Live-paritet: iOS-scorepolling + config-drevet ligaliste (nor.1/nor.2) | 0K | — | planlagt |
 | WP-173 | Kvelds-ferskhet: pipeline-cron 22/23/00/03 UTC (BESKYTTET STI — eier merger) | 0K | — | planlagt |
 | WP-174 | «Min brief»: deterministisk personlig brief on-device (begge flater) | 0K | WP-171 | planlagt |
