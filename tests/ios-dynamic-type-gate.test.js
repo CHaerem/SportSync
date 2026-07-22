@@ -32,8 +32,18 @@ const SCAN_DIRS = [
 // for a deliberately non-scaling decorative surface (never body/label text).
 // Empty today — the baseline has no fixed-size text.
 const SYSTEM_SIZE_WHITELIST = [
-	// Example shape (leave commented until a real exception is needed):
-	// { file: "SportivistaWidget/SomeGlyph.swift", needle: ".system(size: 8)", reason: "..." },
+	// WP-182 — the share card (delekort) is a FIXED-SIZE 1200×630 RASTER handed
+	// to the system share sheet, never an on-screen view: it is rendered
+	// off-screen by ImageRenderer inside a hard `.frame(width: 1200, height:
+	// 630)`. Dynamic Type cannot apply to an image, and letting the user's text
+	// size reflow it would break the layout of a file that leaves the device.
+	// Exactly ONE call site: every size in the card goes through the private
+	// `cardFont(_:_:)` helper, so this single entry covers the whole surface.
+	{
+		file: "Sportivista/Share/ShareCard.swift",
+		needle: ".system(size: size, weight: weight)",
+		reason: "Off-screen fixed-size raster (delekort), never displayed as a live view.",
+	},
 ];
 
 /** Recursively collect every .swift file under a directory. */

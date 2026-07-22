@@ -106,6 +106,18 @@ struct EventDetailSheet: View {
                         .foregroundStyle(SportivistaTokens.accent)
                         .sportivistaTapTarget()
                 }
+                // WP-182 — share this event as the branded delekort (rendered
+                // locally by Share/ShareCard.swift; nothing is fetched).
+                ToolbarItem(placement: .primaryAction) {
+                    ShareLink(
+                        item: ShareCardItem(spec: ShareCardSpec.event(row: row, dayLine: ShareCardSpec.dayLine(for: event.time))),
+                        preview: SharePreview(titleText)
+                    ) {
+                        Label("Del", systemImage: "square.and.arrow.up")
+                    }
+                    .foregroundStyle(SportivistaTokens.accent)
+                    .sportivistaTapTarget()
+                }
             }
         }
         .presentationDetents([.medium, .large])

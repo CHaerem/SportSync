@@ -1,5 +1,5 @@
 // Sportivista v2 Service Worker — fresh data always, network-first shell
-const CACHE_NAME = 'sportivista-v1-14';
+const CACHE_NAME = 'sportivista-v1-15';
 const DATA_PATH_FRAGMENT = '/data/';
 
 const SHELL_FILES = [
@@ -7,6 +7,7 @@ const SHELL_FILES = [
     '/index.html',
     '/manifest.webmanifest',
     '/favicon.png',
+    '/og/og-default.png',
     '/icons/icon-180x180.png',
     '/icons/icon-192x192.png',
     '/icons/icon-512x512.png',
@@ -20,6 +21,7 @@ const SHELL_FILES = [
     '/js/assistant.js',
     '/js/sport-icons.js',
     '/js/theme.js',
+    '/js/share-card.js',
     '/js/dashboard.js',
     '/js/live.js',
     '/js/detail.js',
