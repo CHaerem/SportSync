@@ -150,6 +150,31 @@ final class MainFlowsUITests: SportivistaUITestCase {
 		assertExists(app.buttons["assistant.button"], "closing the sheet returns to the agenda")
 	}
 
+	// MARK: - Flow 4b · Delekort (WP-182) — the ShareLink flow out of the detail sheet
+
+	/// Opens an event's detail sheet, taps «Del», and asserts the system share
+	/// sheet actually comes up with the card attached. The RENDERING is unit-
+	/// tested (ShareCardSpecTests); what only a UI test can prove is that the
+	/// `ShareLink` is reachable, is a real tap target, and presents — a
+	/// `Transferable` that fails to produce data shows an empty/failed sheet.
+	func testShareEventOpensShareSheetWithTheCard() {
+		let app = launchApp(state: "agenda")
+
+		let row = agendaRow(UITestFixture.footballTitle, in: app)
+		assertExists(row, "the followed football row should be tappable")
+		row.tap()
+
+		let del = app.buttons["Del"]
+		assertExists(del, "the detail sheet should offer «Del»")
+		XCTAssertTrue(del.isHittable, "«Del» must be a real tap target, not a clipped toolbar glyph")
+		del.tap()
+
+		// UIActivityViewController presents in-process. Its list view is the
+		// stable tell across iOS versions; the localized action titles are not.
+		let activity = app.otherElements["ActivityListView"]
+		assertExists(activity, "tapping «Del» should present the system share sheet")
+	}
+
 	// MARK: - Flow 5 · Theme cycle (WP-83 — moved from the header to Deg › Utseende)
 
 	func testThemeToggleCyclesInDeg() {

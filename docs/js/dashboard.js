@@ -156,6 +156,20 @@ class Dashboard {
 		const el = document.getElementById('hero-headline');
 		if (!el) return;
 		el.innerHTML = this.emphasize(escapeHtml(this.heroHeadline()));
+		this.bindBriefShare();
+	}
+
+	/** WP-182: reveal + wire «Del briefen» when the platform has a share sheet.
+	 *  Hidden entirely otherwise (never a dead button). Bound once. */
+	bindBriefShare() {
+		const wrap = document.getElementById('hero-share-wrap');
+		const btn = document.getElementById('hero-share');
+		if (!wrap || !btn) return;
+		if (typeof navigator === 'undefined' || !navigator.share || typeof this.shareBrief !== 'function') return;
+		wrap.hidden = false;
+		if (this._briefShareBound) return;
+		this._briefShareBound = true;
+		btn.addEventListener('click', () => this.shareBrief());
 	}
 
 	/** The editorial headline when it's fresh, else the calm fallback. `now`

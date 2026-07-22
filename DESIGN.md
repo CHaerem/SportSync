@@ -401,3 +401,15 @@ amber KONTUR uten fyll leste knapt som knapp i lys modus (design-review 🔴, 21
 en fylt amber primærknapp per skjerm er derfor sanksjonert. Regelen «to amber-
 elementer i samme rad» gjelder fortsatt: primærknappen er skjermens ene fylte
 amber-flate, ikke to.
+
+**Presisering — markedsflater vs. produktflater (WP-182):** dette dokumentet
+regulerer PRODUKTFLATENE (appen, widgeten, weben). Et delekort og et
+`og:image` er REKLAME: de rendres til et bilde som forlater enheten og vises
+i iMessage/Slack, aldri i appens eget hierarki. Der er amber-på-svart tillatt
+modigere enn kontrakten ellers tillater — konkret er den store tiden AMBER på
+kortet, mens tidskolonnen i produktet er `label`. Friheten er innelukket ved
+konstruksjon: markedsflatene bor i egne filer (`ios/Sportivista/Share/ShareCard.swift`,
+`docs/js/share-card.js`, `design/brand/generate-og-image.swift`), de rendrer
+off-screen/statisk, og ingen produktvisning importerer dem. Alt annet står:
+merkelåsen (BRAND.md — ordmerket i `label`, kun kolonet amber), norsk stemme,
+og ÆRLIGHET (ukjent kanal er «–», aldri en oppdiktet kanal eller gjettet tid).

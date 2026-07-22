@@ -214,6 +214,10 @@ targets:
       # import" pattern as DesignTokens.swift/ThemeOverride.swift above.
       - path: Sportivista/Interaction.swift
       - path: Sportivista/Agenda
+      # WP-182: the delekort (ShareCardSpec/ShareCardView/ShareCardItem) —
+      # EventDetailSheet's ShareLink references it, and ShareCardSpecTests
+      # drives the pure spec directly. Same "no @testable import" pattern.
+      - path: Sportivista/Share
       - path: Sportivista/Widget
       # WP-16: the FM-lekegrind's sources — the pure pipeline (grounding, diff,
       # persistence, the mock parser) plus the FoundationModels-backed assistant

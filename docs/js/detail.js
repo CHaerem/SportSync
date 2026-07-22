@@ -219,7 +219,12 @@ Object.assign(window.Dashboard.prototype, {
 		return ssParticipantMatchup(e) || e.title || '';
 	},
 
-	/** Native share sheet for an event (when · what · where). */
+	/** Native share sheet for an event (when · what · where).
+	 *  WP-182: shares the branded delekort (share-card.js draws it on a canvas,
+	 *  fully client-side) when the platform accepts files, and falls back to the
+	 *  plain text+URL share otherwise — the card is an enhancement, never a
+	 *  requirement, so a browser without `canShare({files})` behaves exactly as
+	 *  before. The card's channel is the SAME honest value the row shows. */
 	shareEvent(e) {
 		if (!e || typeof navigator === 'undefined' || !navigator.share) return;
 		const d = new Date(e.time);
@@ -227,7 +232,34 @@ Object.assign(window.Dashboard.prototype, {
 		const chan = (Array.isArray(e.streaming) && e.streaming[0] && e.streaming[0].platform) || '';
 		const title = this.eventPlainTitle(e);
 		const text = [title, `${day} ${this.osloTime(d)}`, chan].filter(Boolean).join(' · ');
-		navigator.share({ title, text, url: location.href }).catch(() => {});
+		const payload = { title, text, url: location.href };
+		this.shareWithCard(payload, { kind: 'event', time: this.osloTime(d), day, title, channel: chan });
+	},
+
+	/** Share the day's brief (the hero headline) as a delekort. */
+	shareBrief() {
+		if (typeof navigator === 'undefined' || !navigator.share) return;
+		const headline = typeof this.heroHeadline === 'function' ? this.heroHeadline() : '';
+		if (!headline) return;
+		const day = new Date().toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Oslo' });
+		this.shareWithCard(
+			{ title: 'Sportivista', text: headline, url: location.href },
+			{ kind: 'brief', day, title: headline }
+		);
+	},
+
+	/** Attach the rendered delekort to `payload` when the platform can share
+	 *  files, then open the native sheet. Any failure degrades to the text share. */
+	shareWithCard(payload, spec) {
+		const plain = () => { navigator.share(payload).catch(() => {}); };
+		if (typeof ssShareCardBlob !== 'function' || typeof File === 'undefined' || !navigator.canShare) { plain(); return; }
+		ssShareCardBlob(spec).then((blob) => {
+			if (!blob) { plain(); return; }
+			const file = new File([blob], 'sportivista.png', { type: 'image/png' });
+			const withFile = Object.assign({}, payload, { files: [file] });
+			if (!navigator.canShare(withFile)) { plain(); return; }
+			navigator.share(withFile).catch(() => {});
+		}).catch(plain);
 	},
 
 	/** Report a problem with an event → a prefilled GitHub feedback issue. */
