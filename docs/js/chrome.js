@@ -21,6 +21,50 @@ Object.assign(window.Dashboard.prototype, {
 		el.hidden = false;
 	},
 
+	// ── Kolon-live-signalet (WP-180 — web-paritet med iOS' MastheadColon) ─────
+	// Ordmerkets amber «:» ER live-signaturen: den puster når noe du følger sender
+	// NÅ (CSS-en eier bevegelsen — `.wordmark-colon.is-live` i layout.css, inkl.
+	// den bindende `prefers-reduced-motion`-av-bryteren). Her settes bare
+	// TILSTANDEN, og den leses fra det DELTE live-begrepet (`ssLiveState` via
+	// `directLiveEvents`) — samme kilde som «Direkte nå»-linja, slik at kolonet og
+	// linja aldri kan være uenige. Speiler `MastheadColon`/`mastheadLabel` i
+	// ios/Sportivista/ContentView.swift 1:1.
+
+	/** Sett/fjern live-tilstanden på masthead-kolonet + hold a11y-etiketten i takt. */
+	renderMastheadLive(now = Date.now()) {
+		const lockup = document.getElementById('masthead-lockup');
+		if (!lockup) return;
+		const count = this.mastheadLiveCount(now);
+		const colon = lockup.querySelector('.wordmark-colon');
+		if (colon) colon.classList.toggle('is-live', count > 0);
+		lockup.setAttribute('aria-label', this.mastheadLabel(count));
+	},
+
+	/** Antall ting som sender NÅ — iOS' `agenda.currentLiveRows(now).count`.
+	 *  `?demo=masthead-live` / `?demo=masthead-neutral` tvinger tilstanden
+	 *  deterministisk for skjermbilder/feel-sjekk (web-motstykket til iOS'
+	 *  `SPORTIVISTA_DEMO=masthead-live`-seed) — ellers alltid ekte data. */
+	mastheadLiveCount(now = Date.now()) {
+		const demo = this.demoMode();
+		if (demo === 'masthead-live') return 1;
+		if (demo === 'masthead-neutral') return 0;
+		if (typeof this.directLiveEvents !== 'function') return 0;
+		return this.directLiveEvents(now).length;
+	},
+
+	/** Masthead-etiketten. Når noe sender nå SIER etiketten det (a11y-paritet med
+	 *  den synlige pulsen), med antall når det er mer enn ett — som iOS. */
+	mastheadLabel(liveCount) {
+		if (liveCount <= 0) return 'Sportivista';
+		if (liveCount === 1) return 'Sportivista — sender nå';
+		return `Sportivista — sender nå, ${liveCount} direkte`;
+	},
+
+	/** Den deterministiske demo-bryteren (`?demo=…`), tom streng når den ikke er satt. */
+	demoMode() {
+		try { return new URLSearchParams(window.location.search).get('demo') || ''; } catch { return ''; }
+	},
+
 	renderDate() {
 		const el = document.getElementById('hero-date');
 		if (el) el.textContent = new Date().toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Oslo' });

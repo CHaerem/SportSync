@@ -112,7 +112,11 @@ vertically, on their own.
   separate brand palette.
 - **Never add a gradient, glow, shadow, or outline** to the dots or the
   wordmark. Flat colour on flat background, matching `DESIGN.md`'s
-  forbudsliste (no DIY glass/glow/shadow anywhere in the system).
+  forbudsliste (no DIY glass/glow/shadow anywhere in the system). *Ett
+  sanksjonert unntak (WP-152 iOS / WP-180 web):* det LIVE kolon-signalet bærer en
+  myk amber-glød mens noe du følger sender NÅ — eier-godkjent og normativ i
+  `DESIGN.md` § Bevegelse. Det hvilende merket er fortsatt flatt, og gløden
+  forsvinner igjen når live er over.
 - **Never change the two circles' relative size or spacing** without
   updating `kolonet.svg` AND re-running `generate-icons.swift` against every
   shipped size — a hand-edited one-off icon will drift from the vector.

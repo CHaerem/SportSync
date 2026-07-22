@@ -10,9 +10,14 @@ Object.assign(window.Dashboard.prototype, {
 	// in "Direkte nå" too. 'pågår' multi-day events stay OUT of the line (they
 	// carry their own agenda row).
 	renderLive() {
+		const now = Date.now();
+		// WP-180: masthead-kolonet får live-tilstanden fra SAMME pass som bygger
+		// «Direkte nå»-linja (og samme `ssLiveState`-kilde), så de to kan aldri bli
+		// uenige — web-paritet med iOS' `MastheadColon`. Kjøres FØR box-sjekken, så
+		// kolonet er riktig selv på en side uten live-boks.
+		if (typeof this.renderMastheadLive === 'function') this.renderMastheadLive(now);
 		const box = document.getElementById('live-now');
 		if (!box) return;
-		const now = Date.now();
 		const items = [];
 		const shownIds = new Set();
 		// ESPN football live scores enrich their board row with the running score.
@@ -128,7 +133,13 @@ Object.assign(window.Dashboard.prototype, {
 		return this.allEvents.some((e) => ssLiveState(e, now) === 'direkte');
 	},
 	async pollLiveScores() {
-		if (!this._liveVisible || !this.hasLiveEvents()) return;
+		if (!this._liveVisible) return;
+		// WP-180 — minutt-tikket som holder masthead-kolonet sant mellom
+		// datalastinger (web-motstykket til iOS' TimelineView(.everyMinute)). Kjøres
+		// FØR live-guarden under, så pulsen STARTER det minuttet noe går live, ikke
+		// først ved neste reload. Ingen nye timere: dette er den eksisterende 60s-lørkka.
+		this.renderMastheadLive();
+		if (!this.hasLiveEvents()) return;
 		try {
 			await Promise.all([this.pollFootballScores(), this.pollGolfScores(), this.pollF1Scores()]);
 			this.renderLive();
