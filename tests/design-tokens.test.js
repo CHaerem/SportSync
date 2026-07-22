@@ -247,3 +247,220 @@ describe("red-proof: this suite fails on a real value drift (see PR description 
 		expect(fromMd).toEqual(fromTokens);
 	});
 });
+
+// ---------------------------------------------------------------------------
+// WP-183 — the display font (DESIGN.md § Display-font).
+//
+// The font is a TOKEN, so the same "this file locks shipped reality" rule that
+// governs colour applies here: tokens.json names the family/files/weights, and
+// this block proves the SHIPPED assets and both platforms' wiring agree with it.
+// Crucially it verifies the two properties the choice was made on — TABULAR
+// digits and æøå — mechanically, in the actual font file, rather than trusting
+// a vendor feature list.
+// ---------------------------------------------------------------------------
+
+/** Minimal sfnt (TrueType) reader — just enough to answer "does this glyph
+ *  exist", "how wide is it" and "what is this face called". Deliberately
+ *  dependency-free: pulling a font library into devDependencies to assert three
+ *  facts would cost more than it proves. Handles cmap format 4 and 12. */
+function readTrueType(file) {
+	const buf = fs.readFileSync(file);
+	const numTables = buf.readUInt16BE(4);
+	const tables = {};
+	for (let i = 0; i < numTables; i++) {
+		const rec = 12 + i * 16;
+		tables[buf.toString("ascii", rec, rec + 4)] = {
+			offset: buf.readUInt32BE(rec + 8),
+			length: buf.readUInt32BE(rec + 12),
+		};
+	}
+	const unitsPerEm = buf.readUInt16BE(tables.head.offset + 18);
+	const numberOfHMetrics = buf.readUInt16BE(tables.hhea.offset + 34);
+
+	// cmap → { codepoint: glyphId }, preferring the Windows Unicode subtables.
+	const cmapBase = tables.cmap.offset;
+	const subtables = [];
+	for (let i = 0; i < buf.readUInt16BE(cmapBase + 2); i++) {
+		const rec = cmapBase + 4 + i * 8;
+		subtables.push({
+			platformID: buf.readUInt16BE(rec),
+			encodingID: buf.readUInt16BE(rec + 2),
+			offset: cmapBase + buf.readUInt32BE(rec + 4),
+		});
+	}
+	const codeToGlyph = new Map();
+	const parseSubtable = (off) => {
+		const format = buf.readUInt16BE(off);
+		if (format === 4) {
+			const segCountX2 = buf.readUInt16BE(off + 6);
+			const endBase = off + 14;
+			const startBase = endBase + segCountX2 + 2;
+			const deltaBase = startBase + segCountX2;
+			const rangeBase = deltaBase + segCountX2;
+			for (let s = 0; s < segCountX2 / 2; s++) {
+				const end = buf.readUInt16BE(endBase + s * 2);
+				const start = buf.readUInt16BE(startBase + s * 2);
+				const delta = buf.readInt16BE(deltaBase + s * 2);
+				const rangeOffset = buf.readUInt16BE(rangeBase + s * 2);
+				if (start === 0xffff) continue;
+				for (let c = start; c <= end; c++) {
+					let glyph;
+					if (rangeOffset === 0) {
+						glyph = (c + delta) & 0xffff;
+					} else {
+						glyph = buf.readUInt16BE(rangeBase + s * 2 + rangeOffset + (c - start) * 2);
+						if (glyph !== 0) glyph = (glyph + delta) & 0xffff;
+					}
+					if (glyph !== 0 && !codeToGlyph.has(c)) codeToGlyph.set(c, glyph);
+				}
+			}
+			return;
+		}
+		if (format === 12) {
+			const nGroups = buf.readUInt32BE(off + 12);
+			for (let g = 0; g < nGroups; g++) {
+				const rec = off + 16 + g * 12;
+				const start = buf.readUInt32BE(rec);
+				const end = buf.readUInt32BE(rec + 4);
+				const startGlyph = buf.readUInt32BE(rec + 8);
+				for (let c = start; c <= end; c++) {
+					if (!codeToGlyph.has(c)) codeToGlyph.set(c, startGlyph + (c - start));
+				}
+			}
+		}
+	};
+	for (const sub of subtables) {
+		if (sub.platformID === 3 && (sub.encodingID === 1 || sub.encodingID === 10)) {
+			parseSubtable(sub.offset);
+		}
+	}
+	if (codeToGlyph.size === 0) subtables.forEach((sub) => parseSubtable(sub.offset));
+
+	// name table ID 6 = PostScript name (the string UIFont(name:) is given).
+	const nameBase = tables.name.offset;
+	const stringOffset = nameBase + buf.readUInt16BE(nameBase + 4);
+	let postScriptName = null;
+	for (let i = 0; i < buf.readUInt16BE(nameBase + 2); i++) {
+		const rec = nameBase + 6 + i * 12;
+		if (buf.readUInt16BE(rec + 6) !== 6) continue;
+		const platformID = buf.readUInt16BE(rec);
+		const len = buf.readUInt16BE(rec + 8);
+		const off = stringOffset + buf.readUInt16BE(rec + 10);
+		const raw = Buffer.from(buf.subarray(off, off + len));
+		postScriptName = platformID === 3 ? raw.swap16().toString("utf16le") : raw.toString("latin1");
+		break;
+	}
+
+	return {
+		unitsPerEm,
+		postScriptName,
+		has: (ch) => codeToGlyph.has(ch.codePointAt(0)),
+		advance(ch) {
+			const glyph = codeToGlyph.get(ch.codePointAt(0));
+			if (glyph === undefined) return null;
+			return buf.readUInt16BE(tables.hmtx.offset + Math.min(glyph, numberOfHMetrics - 1) * 4);
+		},
+	};
+}
+
+describe("WP-183 display font (DESIGN.md § Display-font)", () => {
+	const display = tokens.typography.fontStack.display;
+
+	it("tokens.json declares the face on exactly the three sanctioned surfaces", () => {
+		expect(display.surfaces).toEqual(["wordmark", "agenda time column", "share cards"]);
+		expect(display.licence).toMatch(/Open Font License/);
+	});
+
+	it("every declared asset — and its licence — is checked in", () => {
+		for (const rel of [...display.webFiles, ...display.iosFiles]) {
+			const file = path.join(ROOT, rel);
+			expect(fs.existsSync(file), rel).toBe(true);
+			expect(fs.statSync(file).size, rel).toBeGreaterThan(0);
+		}
+		expect(fs.existsSync(path.join(ROOT, "docs", "fonts", "OFL.txt"))).toBe(true);
+		expect(fs.existsSync(path.join(ROOT, "design", "brand", "fonts", "OFL.txt"))).toBe(true);
+	});
+
+	it("the web files are real woff2 and stay small (subset, self-hosted, no CDN)", () => {
+		let total = 0;
+		for (const rel of display.webFiles) {
+			const buf = fs.readFileSync(path.join(ROOT, rel));
+			expect(buf.toString("ascii", 0, 4), `${rel} signature`).toBe("wOF2");
+			total += buf.length;
+		}
+		expect(total).toBeLessThan(60 * 1024);
+	});
+
+	for (const rel of [
+		"design/brand/fonts/SpaceGrotesk-Medium-subset.ttf",
+		"design/brand/fonts/SpaceGrotesk-SemiBold-subset.ttf",
+		"design/brand/fonts/SpaceGrotesk-Bold-subset.ttf",
+	]) {
+		describe(rel, () => {
+			const font = readTrueType(path.join(ROOT, rel));
+
+			it("has TRUE tabular figures — all ten digits share one advance", () => {
+				const widths = new Set("0123456789".split("").map((d) => font.advance(d)));
+				expect(widths.has(null), "a digit is missing from the subset").toBe(false);
+				expect([...widths], "digit advances").toHaveLength(1);
+			});
+
+			it("carries æ ø å (the UI is Norwegian) and the wordmark's own glyphs", () => {
+				for (const ch of "æøåÆØÅ") expect(font.has(ch), ch).toBe(true);
+				for (const ch of "SPORTIVISTA:") expect(font.has(ch), ch).toBe(true);
+			});
+
+			it("its PostScript name is one DesignTokens.swift actually asks for", () => {
+				expect(display.postScriptNames).toContain(font.postScriptName);
+				expect(designTokensSwift).toContain(`"${font.postScriptName}"`);
+			});
+		});
+	}
+
+	it("base.css declares --display and one self-hosted @font-face per web weight", () => {
+		expect(baseCss).toMatch(/--display:\s*"Space Grotesk Subset",\s*var\(--font\)/);
+		for (const rel of display.webFiles) {
+			expect(baseCss, rel).toContain(`url("../fonts/${path.basename(rel)}")`);
+		}
+		// No CDN, ever (DESIGN.md § Display-font + the null-infrastructure rule).
+		expect(baseCss).not.toMatch(/@import\s+url\(|fonts\.googleapis|fonts\.gstatic/);
+		// Every @font-face carries font-display: swap — text stays visible while
+		// the face loads (and falls back to the system stack if it never does).
+		const faces = baseCss.match(/@font-face\s*\{[^}]*\}/gs) || [];
+		expect(faces).toHaveLength(display.webFiles.length);
+		for (const face of faces) expect(face).toMatch(/font-display:\s*swap;/);
+	});
+
+	it("the three surfaces — and only they — use var(--display) on web", () => {
+		const layoutCss = fs.readFileSync(path.join(ROOT, "docs", "css", "layout.css"), "utf-8");
+		const cardsCss = fs.readFileSync(path.join(ROOT, "docs", "css", "cards.css"), "utf-8");
+		const shareCard = fs.readFileSync(path.join(ROOT, "docs", "js", "share-card.js"), "utf-8");
+		expect(layoutCss).toMatch(/\.wordmark\s*\{[^}]*font-family:\s*var\(--display\)/s);
+		expect(layoutCss).toMatch(/\.wordmark-colon\s*\{[^}]*font-family:\s*var\(--display\)/s);
+		expect(cardsCss).toMatch(/\.ev-time\s*\{[^}]*font-family:\s*var\(--display\)/s);
+		expect(shareCard).toContain('"Space Grotesk Subset"');
+		// Body copy stays on the system font — the token swap must not creep.
+		expect(baseCss).toMatch(/body\s*\{[^}]*font-family:\s*var\(--font\)/s);
+		const uses = [layoutCss, cardsCss].flatMap((css) => css.match(/font-family:\s*var\(--display\)/g) || []);
+		expect(uses, "a fourth web surface adopted the display face").toHaveLength(3);
+	});
+
+	it("BRAND.md's lock holds: the colon is one weight step heavier than the wordmark", () => {
+		const layoutCss = fs.readFileSync(path.join(ROOT, "docs", "css", "layout.css"), "utf-8");
+		const wordmark = Number(layoutCss.match(/\.wordmark\s*\{[^}]*font-weight:\s*(\d+)/s)[1]);
+		const colon = Number(layoutCss.match(/\.wordmark-colon\s*\{[^}]*font-weight:\s*(\d+)/s)[1]);
+		expect(colon).toBeGreaterThan(wordmark);
+		expect(display.weights.semibold).toBe(wordmark);
+		expect(display.weights.bold).toBe(colon);
+	});
+
+	it("iOS bundles the face and registers it (UIAppFonts) in every target that renders it", () => {
+		const projectYml = fs.readFileSync(path.join(ROOT, "ios", "project.yml"), "utf-8");
+		for (const rel of display.iosFiles) expect(projectYml, rel).toContain(`../${rel}`);
+		// App, device build AND the widget each register their own fonts — an
+		// extension does not inherit the host app's UIAppFonts.
+		expect((projectYml.match(/UIAppFonts:/g) || []).length).toBe(3);
+		// Dynamic Type is kept via UIFontMetrics, not a fixed point size.
+		expect(designTokensSwift).toContain("UIFontMetrics(forTextStyle: uiStyle).scaledFont(for: face)");
+	});
+});

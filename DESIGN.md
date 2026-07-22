@@ -76,22 +76,56 @@ Apple-system-farger + én amber-aksent. Ved rebrand endres KUN denne tabellen.
 
 ### Typografi (BINDENDE — Dynamic Type)
 
-- **Systemfont** (San Francisco) overalt, via SwiftUIs tekststiler — ALDRI faste
-  `.system(size:)`-punkter. Hver rolle bindes til en tekststil så teksten
-  skalerer med brukerens innstilling.
+- **Systemfont (San Francisco) overalt UNNTATT ordmerke, tidskolonne og
+  delekort** (presisering WP-183, se § Display-font). Brødtekst, radtitler,
+  meta, knapper, lister — alt annet er og forblir systemfont, via SwiftUIs
+  tekststiler / web-systemstacken. ALDRI faste `.system(size:)`-punkter: hver
+  rolle bindes til en tekststil så teksten skalerer med brukerens innstilling.
 - **Tabular tall** (`.monospacedDigit()`) i tidskolonnen og alle steder sifre
-  skal rette seg inn.
+  skal rette seg inn. Display-fonten har tabulære sifre BAKT INN (se under), så
+  tidskolonnen retter seg inn uansett hvilken av de to fontene som rendrer.
 - Bryt aldri til trunkering når teksten vokser — omform kilden.
 
 | Rolle | Tekststil (iOS) | Web |
 |---|---|---|
-| Ordmerke (masthead) | `.title` bold | `1.75rem` |
+| Ordmerke (masthead) | `.title` semibold, **display-font** | `1.75rem` / 600, **display-font** |
 | Seksjonstittel | `.headline` | `1.0rem` semibold |
 | Radtittel | `.body` | `1.0rem` |
-| Tid (rad) | `.body` semibold + `monospacedDigit` | tabular |
+| Tid (rad) | `.body` semibold, **display-font** (tabulær) | tabular, **display-font** |
 | Meta / kanal | `.subheadline`, `secondaryLabel` | `.9rem` dempet |
 | Gruppeoverskrift | `.footnote` uppercase, `secondaryLabel` | `.8rem` |
 | Caption | `.caption` | `.75rem` |
+
+### Display-font (WP-183 — BINDENDE, eier-delegert valg 22.07.2026)
+
+Produktets ansikt er bokstavelig talt KLOKKESLETT — den faste tidskolonnen. Alt
+var systemfont, altså forvekselbart. Én distinkt display-/tallfont gir
+gjenkjennelighet uten å røre lesbarheten på det folk faktisk leser.
+
+- **Fonten:** **Space Grotesk** (Florian Karsten), SIL Open Font License 1.1.
+  Selvhostet subsett — `docs/fonts/*.woff2` (web) og `design/brand/fonts/*.ttf`
+  (iOS-bundle), begge generert av `design/brand/generate-display-font.py`.
+  Lisensen ligger ved siden av assetene (`OFL.txt`).
+- **Nøyaktig TRE flater, aldri en fjerde:** (a) ordmerket, (b) agendaens
+  tidskolonne, (c) delekortene (`ShareCard.swift` / `share-card.js`). Vil du ta
+  den i bruk et fjerde sted, er det en endring av DENNE listen — ikke en
+  komponentavgjørelse.
+- **Tre vekter og ikke flere:** 500 (flerdagsvinduet), 600 (klokka + ordmerket),
+  700 (kolonet + delekortets store tid). Web laster kun 600/700.
+- **Tabulære sifre er bakt inn i fontfila** (`tnum` løst opp i cmap ved
+  subsetting), ikke slått på i CSS/SwiftUI. Derfor retter tidskolonnen seg inn
+  også der `font-variant-numeric` ikke finnes — canvas-delekortet.
+- **Dynamic Type er bevart:** iOS instansierer flata på tekststilens
+  standardstørrelse og skalerer den med `UIFontMetrics` (`Font.sportivistaDisplay`).
+  En fast `.system(size:)` er fortsatt forbudt.
+- **Fail-soft, aldri usynlig tekst:** web bruker `font-display: swap` med
+  systemstacken som fallback; iOS faller tilbake til `sportivistaTabular` om
+  flata mangler i bundelen.
+- **Merkelåsen står:** ordmerket i `label`, kun kolonet amber, null mellomrom,
+  kolonet ETT vekttrinn tyngre (600 → 700), én a11y-etikett. Kolon-live-pulsen
+  er urørt (kun opacity/glød animeres). Se `design/brand/BRAND.md`.
+- **Ingen webfont-CDN.** Selvhostet, samme origin, null eksterne requests
+  (forbudslista + null-infrastruktur-kravet).
 
 ### Rytme & layout
 
@@ -384,7 +418,8 @@ skal likevel bestå denne før merge; håndhev det som kan håndheves i CI:
 - **iOS-app + widget = baseline (nå).** Begge følger denne kontrakten fullt ut;
   widgeten er en miniatyr av samme språk (semantiske farger + Dynamic Type).
 - **Web (docs/) = baseline (nå).** Unntaket er lukket: `docs/`-flaten følger de
-  samme § Tokens-verdiene som appen — system-font-stacken, Apple-system-fargene
+  samme § Tokens-verdiene som appen — system-font-stacken (med display-fonten på
+  de samme tre flatene som iOS, § Display-font), Apple-system-fargene
   (true-black `#000000`-side i mørk, `#F2F2F7` grouped-light) og amber som eneste
   aksent. Verdiene er tokenisert i `base.css` og skal stå verifiserbart mot
   denne tabellen. Web beholder sine egne layout-detaljer (én kolonne maks 640px,

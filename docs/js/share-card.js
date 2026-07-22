@@ -2,9 +2,10 @@
 //
 // Draws a Sportivista-branded share image on a <canvas> for ONE event or for the
 // day's brief, so a share out of the web board carries the identity instead of a
-// bare line of text. Pure client-side: no network, no CDN, no external font —
-// the same null-infrastructure constraint as the rest of docs/ (the CSP would
-// block anything else anyway).
+// bare line of text. Pure client-side: no network, no CDN — the display face
+// (WP-183) is a self-hosted subset served from docs/fonts/, same origin as the
+// page, so the null-infrastructure constraint holds (the CSP would block
+// anything else anyway).
 //
 // MARKETING SURFACE, not product chrome. DESIGN.md regulates the app's own
 // surfaces; a share card is an ad. So amber is used more boldly here than the
@@ -19,6 +20,7 @@
 // API (window globals, no build step — the docs/js convention):
 //   ssShareCardCanvas(spec)      → HTMLCanvasElement (1200×630)
 //   ssShareCardBlob(spec)        → Promise<Blob|null>  (image/png)
+//   ssShareCardFontsReady()      → Promise<void>       (display face loaded)
 // spec = { kind: 'event'|'brief', time, day, title, channel, footer }
 
 (function (global) {
@@ -26,11 +28,15 @@
 
 	var W = 1200;
 	var H = 630;
-	// The web's system stack (docs/css/base.css `--font`). Canvas has no
-	// `font-variant-numeric`, so tabular digits are not opt-in-able here; the
-	// system font's default digits are already near-tabular at this size and the
-	// card shows a single time, so nothing has to line up column-wise.
+	// The web's system stack (docs/css/base.css `--font`) — body copy on the card.
 	var STACK = '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif';
+	// The display font (docs/css/base.css `--display`, WP-183). The card is one of
+	// its exactly three surfaces (wordmark · time column · share cards). Canvas has
+	// no `font-variant-numeric`, but the subset bakes `tnum` into the cmap, so the
+	// big time is genuinely tabular here without any opt-in. The system stack stays
+	// as the fallback so a card still renders if the face never loaded.
+	var DISPLAY_STACK = '"Space Grotesk Subset", ' + STACK;
+	var DISPLAY_FAMILY = '"Space Grotesk Subset"';
 	var AMBER = '#FFB000';
 	var BG = '#000000';
 	var FG = '#FFFFFF';
@@ -39,6 +45,25 @@
 
 	function font(size, weight) {
 		return String(weight || 400) + ' ' + size + 'px ' + STACK;
+	}
+
+	/** The display-font variant of `font()` — used for the wordmark and the big
+	 *  time only (WP-183). Everything else on the card stays on the system stack. */
+	function displayFont(size, weight) {
+		return String(weight || 600) + ' ' + size + 'px ' + DISPLAY_STACK;
+	}
+
+	/** Resolves once the display font is usable on canvas (or immediately when the
+	 *  Font Loading API is absent). `ssShareCardCanvas` is synchronous and will
+	 *  simply fall back to the system stack if called before this settles;
+	 *  `ssShareCardBlob` awaits it, so a SHARED card always carries the face. */
+	function ssShareCardFontsReady() {
+		var fonts = global.document && global.document.fonts;
+		if (!fonts || typeof fonts.load !== 'function') return Promise.resolve();
+		return Promise.all([
+			fonts.load('600 96px ' + DISPLAY_FAMILY),
+			fonts.load('700 96px ' + DISPLAY_FAMILY)
+		]).catch(function () { /* fallback stack renders the card */ });
 	}
 
 	/** Greedy word-wrap to at most `maxLines` lines of `maxWidth`, ellipsising the
@@ -75,14 +100,14 @@
 	 *  and only the colon amber. Returns the drawn width. */
 	function lockup(ctx, x, y, size) {
 		ctx.textBaseline = 'top';
-		ctx.font = font(size, 700);
+		ctx.font = displayFont(size, 600);
 		var word = 'SPORTIVISTA';
 		ctx.fillStyle = FG;
 		if ('letterSpacing' in ctx) ctx.letterSpacing = Math.round(size * 0.06) + 'px';
 		ctx.fillText(word, x, y);
 		var w = ctx.measureText(word).width;
 		if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
-		ctx.font = font(size, 800);
+		ctx.font = displayFont(size, 700);
 		ctx.fillStyle = AMBER;
 		ctx.fillText(':', x + w, y);
 		return w + ctx.measureText(':').width;
@@ -126,7 +151,7 @@
 		} else {
 			// Event: the fixed time column the product is built around, blown up.
 			if (spec.time) {
-				ctx.font = font(96, 700);
+				ctx.font = displayFont(96, 700);
 				ctx.fillStyle = AMBER;
 				ctx.fillText(String(spec.time), padX, y);
 				y += 118;
@@ -158,19 +183,24 @@
 
 	/** PNG blob of the card, or null when canvas/toBlob is unavailable. */
 	function ssShareCardBlob(spec) {
-		return new Promise(function (resolve) {
-			var canvas = ssShareCardCanvas(spec);
-			if (!canvas || typeof canvas.toBlob !== 'function') { resolve(null); return; }
-			try {
-				canvas.toBlob(function (blob) { resolve(blob || null); }, 'image/png');
-			} catch (e) {
-				resolve(null);
-			}
+		// Wait for the display face before rastering (WP-183) — a shared PNG is
+		// permanent, so it must never be the fallback-stack version of the card.
+		return ssShareCardFontsReady().then(function () {
+			return new Promise(function (resolve) {
+				var canvas = ssShareCardCanvas(spec);
+				if (!canvas || typeof canvas.toBlob !== 'function') { resolve(null); return; }
+				try {
+					canvas.toBlob(function (blob) { resolve(blob || null); }, 'image/png');
+				} catch (e) {
+					resolve(null);
+				}
+			});
 		});
 	}
 
 	global.ssShareCardCanvas = ssShareCardCanvas;
 	global.ssShareCardBlob = ssShareCardBlob;
+	global.ssShareCardFontsReady = ssShareCardFontsReady;
 	// Exported for the tests (pure, DOM-free).
 	global.ssShareCardWrap = wrap;
 })(typeof window !== 'undefined' ? window : globalThis);

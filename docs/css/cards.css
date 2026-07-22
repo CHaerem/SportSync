@@ -132,6 +132,11 @@
 }
 
 .ev-time {
+	/* WP-183 — display-fonten (DESIGN.md § Typografi): tidskolonnen er produktets
+	   ansikt, så den (og bare den, av agendaens tekst) bærer merkefonten. Sifrene
+	   er tabulære i selve fonta; `font-variant-numeric` blir stående som belte og
+	   bukseseler for fallback-systemfonten. */
+	font-family: var(--display);
 	font-variant-numeric: tabular-nums;
 	font-size: 16px;
 	font-weight: 600;

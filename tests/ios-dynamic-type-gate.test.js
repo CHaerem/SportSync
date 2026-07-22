@@ -65,6 +65,20 @@ function swiftFiles(dir) {
 const FIXED_SIZE = /(?:\.system\(size:|systemFont\(ofSize:)\s*[^)\s]/;
 const SHIM = /(?:zenji|sportivista)Mono\(size:/;
 
+// WP-183 — the SAME rule for the display face. `UIFont(name:size:)` is a fixed
+// point size that bypasses Dynamic Type exactly like `.system(size:)`; it is
+// legitimate ONLY when the result is handed to `UIFontMetrics.scaledFont(for:)`
+// (the sanctioned custom-font pattern) or on a fixed-size raster. Call sites are
+// therefore confined to the two files below, both of which are read by this gate.
+const CUSTOM_FIXED_SIZE = /UIFont\(name:/;
+const CUSTOM_FONT_CALL_SITES = [
+	// The token layer — wraps the face in UIFontMetrics (asserted below).
+	"Sportivista/DesignTokens.swift",
+	// The share card — an off-screen 1200×630 raster, same whitelist rationale
+	// as its `.system(size:)` entry above.
+	"Sportivista/Share/ShareCard.swift",
+];
+
 // WP-134 — the SIBLING bug class to fixed-size fonts: a scaling SF Symbol or a
 // decorative glyph pinned inside a HARDCODED `.frame(width: <number>)`. The glyph
 // grows with Dynamic Type but its box does NOT, so at Accessibility sizes the
@@ -150,6 +164,31 @@ describe("iOS Dynamic Type HIG gate", () => {
 			});
 		}
 		expect(offenders, `Fixed .system(size:) ignores Dynamic Type — bind to a text style via Font.sportivista(_:weight:), or whitelist with a reason:\n${offenders.join("\n")}`).toEqual([]);
+	});
+
+	// WP-183 — the display-face sibling of the rule above.
+	it("no view instantiates the display face at a fixed size outside the token layer", () => {
+		const offenders = [];
+		for (const file of files) {
+			const rel = path.relative(process.cwd(), file);
+			const allowed = CUSTOM_FONT_CALL_SITES.some((site) => rel.endsWith(site));
+			if (allowed) continue;
+			const lines = fs.readFileSync(file, "utf-8").split("\n");
+			lines.forEach((line, i) => {
+				if (CUSTOM_FIXED_SIZE.test(line)) offenders.push(`${rel}:${i + 1}: ${line.trim()}`);
+			});
+		}
+		expect(offenders, `UIFont(name:size:) is a fixed point size — go through Font.sportivistaDisplay(_:weight:), which scales it with UIFontMetrics:\n${offenders.join("\n")}`).toEqual([]);
+	});
+
+	it("the token layer scales the display face with UIFontMetrics (Dynamic Type preserved)", () => {
+		const tokensFile = files.find((f) => f.endsWith("Sportivista/DesignTokens.swift"));
+		expect(tokensFile, "DesignTokens.swift not found").toBeTruthy();
+		const source = fs.readFileSync(tokensFile, "utf-8");
+		expect(source).toContain("UIFontMetrics(forTextStyle: uiStyle).scaledFont(for: face)");
+		// The base size is resolved against the DEFAULT content size category, so
+		// UIFontMetrics scales once instead of on top of an already-scaled size.
+		expect(source).toContain("UITraitCollection(preferredContentSizeCategory: .large)");
 	});
 
 	// WP-134 — the SF-Symbol/glyph frame-width rule (sibling of the font rule).

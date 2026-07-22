@@ -41,11 +41,18 @@ vertically, on their own.
    { display: inline-flex; align-items: baseline; white-space: nowrap; }` on
    web, which exists *specifically* so a parent flex `gap` can never separate
    them). Never lay them out with a container that could introduce a gap.
-2. **The colon is one step heavier than the wordmark.** iOS renders the
-   wordmark `bold` and the colon `heavy` (`Font.sportivista(.title,
-   weight: .bold)` / `weight: .heavy` — see `ContentView.swift`,
-   `OnboardingView.swift`, `SportivistaWidget.swift`). The colon should always
-   read as the punchiest element in the lockup, never lighter or equal.
+2. **The colon is one step heavier than the wordmark.** Since WP-183 the lockup
+   is set in the DISPLAY face (Space Grotesk — `DESIGN.md` § Display-font), whose
+   shipped range tops out at 700: the wordmark is **SemiBold (600)** and the
+   colon **Bold (700)**, identically on iOS, widget and web
+   (`Font.sportivistaDisplay(.title, weight: .semibold)` / `.bold` in
+   `ContentView.swift`, `OnboardingView.swift`, `SportivistaWidget.swift`,
+   `ShareCard.swift`; `.wordmark { font-weight: 600 }` / `.wordmark-colon
+   { font-weight: 700 }` in `docs/css/layout.css`). Before WP-183 it was
+   SF bold/heavy on iOS and — a small drift — 700/700 on web; the relative rule
+   is the normative one and now holds literally on every surface. The colon
+   should always read as the punchiest element in the lockup, never lighter or
+   equal.
 3. **Tracking.** The wordmark carries letter-spacing so the caps breathe:
    `tracking(2)` at header/onboarding size, `tracking(1)` at widget
    (caption) size — scale tracking down as the type size shrinks, never keep
@@ -67,7 +74,12 @@ vertically, on their own.
    surfaces always used, not an intentional platform variance. It was
    corrected, not left as documented divergence: the shipped-iOS lock is the
    fasit (see `design/tokens.json` and the WP-98 PR).
-6. **No separate image mark next to text.** When the mark appears as *text*
+6. **The mark is set in the display face.** The wordmark and its colon are one
+   of the display font's exactly three sanctioned surfaces (`DESIGN.md`
+   § Display-font — the other two are the agenda's time column and the share
+   cards). Never set the lockup in the system font "just here"; never introduce a
+   second display face for it.
+7. **No separate image mark next to text.** When the mark appears as *text*
    (wordmark contexts), it is always the literal wordmark + `":"` glyph in
    the app's own font — never the `kolonet.svg` dots rendered inline next to
    the word. The dots are for icon contexts only (app icon, favicon, PWA
@@ -120,7 +132,7 @@ vertically, on their own.
 - **Never change the two circles' relative size or spacing** without
   updating `kolonet.svg` AND re-running `generate-icons.swift` against every
   shipped size — a hand-edited one-off icon will drift from the vector.
-- **Never pair the wordmark with the dot-icon inline** (rule 6 above) — pick
+- **Never pair the wordmark with the dot-icon inline** (rule 7 above) — pick
   one form per context, never both stacked together as if they were two
   separate logos.
 

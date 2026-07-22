@@ -16,6 +16,10 @@
 //      every text role to a SwiftUI text style (San Francisco), so text scales
 //      with the user's setting. `Font.sportivistaTabular(...)` adds `.monospacedDigit`
 //      for the time column and other places digits must line up.
+//      `Font.sportivistaDisplay(_:weight:)` (WP-183) is the ONE exception to
+//      "system font everywhere": the display face (Space Grotesk) on exactly
+//      three surfaces — wordmark, agenda time column, share cards — scaled with
+//      `UIFontMetrics` so it keeps Dynamic Type.
 //
 //  The WP-80 migration shims (the legacy fixed-size `sportivistaMono` font and the
 //  pre-baseline colour aliases) were removed in WP-85 once every surface had
@@ -142,5 +146,92 @@ extension Font {
 	/// tall … der sifre skal rette seg inn"). Still San Francisco, still scales.
 	static func sportivistaTabular(_ style: Font.TextStyle = .body, weight: Font.Weight? = nil) -> Font {
 		sportivista(style, weight: weight).monospacedDigit()
+	}
+
+	/// The DISPLAY font (WP-183 — DESIGN.md § Typografi). Space Grotesk, used on
+	/// EXACTLY three surfaces and nowhere else: the wordmark, the agenda's time
+	/// column, and the share cards. Body copy, list rows, meta lines and every
+	/// control stay on San Francisco — this is a voice for the numbers, not a
+	/// re-typesetting of the app.
+	///
+	/// Dynamic Type is preserved the UIKit way: the face is instantiated at the
+	/// text style's DEFAULT point size (resolved against `.large`, so we never
+	/// double-scale) and then handed to `UIFontMetrics.scaledFont(for:)`, which
+	/// grows it with the user's setting exactly like a system text style. This is
+	/// the sanctioned custom-font pattern, not a fixed `.system(size:)` point.
+	///
+	/// Digits are TABULAR IN THE FILE (the subset bakes `tnum` into the cmap —
+	/// see design/brand/generate-display-font.py), so the time column lines up
+	/// without depending on CoreText mapping `.monospacedDigit()` onto a custom
+	/// face. The fallback below re-adds it for the San Francisco path.
+	///
+	/// FAIL-SOFT: if the face is missing (a target that does not bundle it, a
+	/// stripped build), this returns the ordinary tabular system font. Text never
+	/// disappears and nothing crashes — the web's `font-display: swap` sibling.
+	static func sportivistaDisplay(_ style: Font.TextStyle = .body,
+	                               weight: SportivistaDisplayWeight = .semibold) -> Font {
+		let uiStyle = UIFont.TextStyle.sportivista(style)
+		let basePointSize = UIFont.preferredFont(
+			forTextStyle: uiStyle,
+			compatibleWith: UITraitCollection(preferredContentSizeCategory: .large)
+		).pointSize
+		guard let face = UIFont(name: weight.postScriptName, size: basePointSize) else {
+			return sportivistaTabular(style, weight: weight.systemFallback)
+		}
+		return Font(UIFontMetrics(forTextStyle: uiStyle).scaledFont(for: face))
+	}
+}
+
+/// The display font's shipped weights (WP-183). Deliberately three and no more —
+/// every extra weight is another file in the bundle. `postScriptName` is the
+/// name inside the shipped `.ttf` (design/brand/fonts/), so a rename there is a
+/// compile-time-visible change here.
+enum SportivistaDisplayWeight: CaseIterable {
+	/// 500 — the agenda's multi-day date WINDOW (`.footnote`, one step lighter
+	/// than the clock, matching the pre-WP-183 system weight).
+	case medium
+	/// 600 — the clock in the time column, and the wordmark.
+	case semibold
+	/// 700 — the wordmark's colon (BRAND.md rule 2: ALWAYS one step heavier than
+	/// the wordmark) and the share card's big time.
+	case bold
+
+	var postScriptName: String {
+		switch self {
+		case .medium: return "SpaceGrotesk-Medium"
+		case .semibold: return "SpaceGrotesk-SemiBold"
+		case .bold: return "SpaceGrotesk-Bold"
+		}
+	}
+
+	/// What the San Francisco fallback uses when the face is unavailable.
+	var systemFallback: Font.Weight {
+		switch self {
+		case .medium: return .medium
+		case .semibold: return .semibold
+		case .bold: return .bold
+		}
+	}
+}
+
+extension UIFont.TextStyle {
+	/// SwiftUI `Font.TextStyle` → UIKit `UIFont.TextStyle`. Needed because
+	/// `UIFontMetrics` (the Dynamic Type scaler for custom faces) is UIKit-only
+	/// and SwiftUI exposes no conversion.
+	static func sportivista(_ style: Font.TextStyle) -> UIFont.TextStyle {
+		switch style {
+		case .largeTitle: return .largeTitle
+		case .title: return .title1
+		case .title2: return .title2
+		case .title3: return .title3
+		case .headline: return .headline
+		case .subheadline: return .subheadline
+		case .body: return .body
+		case .callout: return .callout
+		case .footnote: return .footnote
+		case .caption: return .caption1
+		case .caption2: return .caption2
+		@unknown default: return .body
+		}
 	}
 }

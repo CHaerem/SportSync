@@ -837,7 +837,10 @@ struct ContentView: View {
                 let liveRows = agenda.currentLiveRows(now: context.date)
                 HStack(alignment: .center, spacing: 0) {
                     Text("SPORTIVISTA")
-                        .font(.sportivista(.title, weight: .bold))
+                        // WP-183: the display face — one of its exactly three
+                        // surfaces. The colon stays ONE step heavier (BRAND.md
+                        // rule 2), now 600 vs 700 within the display family.
+                        .font(.sportivistaDisplay(.title, weight: .semibold))
                         .foregroundStyle(SportivistaTokens.label)
                         .tracking(2)
                     MastheadColon(isLive: !liveRows.isEmpty)
@@ -1009,8 +1012,9 @@ struct ContentView: View {
 ///  • Reduce Motion (BINDING): no motion at all — instead a STATIC "on" tell
 ///    (a steady soft amber glow) so live is still readable without animation.
 ///  • The a11y label is set by the parent masthead («… sender nå»).
-/// It degrades gracefully: not live ⇒ exactly the static amber `.heavy` colon
-/// it was before this prototype (glow clear, full opacity).
+/// It degrades gracefully: not live ⇒ exactly the static amber colon it was
+/// before this prototype (glow clear, full opacity), one weight step heavier
+/// than the wordmark (WP-183: the display face's `.bold` against its `.semibold`).
 private struct MastheadColon: View {
     /// Whether something the user follows is live NOW — the ONE input.
     let isLive: Bool
@@ -1027,7 +1031,10 @@ private struct MastheadColon: View {
 
     var body: some View {
         Text(":")
-            .font(.sportivista(.title, weight: .heavy))
+            // WP-183 — display face, one step heavier than the wordmark's 600.
+            // The pulse below is untouched: only opacity/glow animate, so the
+            // font swap changes the glyph, never the live signature's geometry.
+            .font(.sportivistaDisplay(.title, weight: .bold))
             .foregroundStyle(SportivistaTokens.accent)
             // Opacity breath: ~1.0 ↔ ~0.5. Only ever moves while pulsing (breathing
             // is pinned false otherwise), so the resting/Reduce-Motion colon is solid.
