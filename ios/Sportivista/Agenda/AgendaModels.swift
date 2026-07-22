@@ -47,6 +47,12 @@ struct AgendaEventRow: Identifiable, Equatable {
     /// so the agenda + detail sheet MASK result/score for it. Defaults to `true`
     /// (safe to show) so every existing caller/test is unchanged.
     var spoilerSafe: Bool = true
+    /// WP-185 — the row's ONE entity anchor (flag / colour monogram), resolved
+    /// once per compile from the entity index. `.none` (the default) keeps the
+    /// WP-108 sport symbol, so every existing caller/test renders exactly as
+    /// before. Deliberately a PRESENTATION field computed here, never in
+    /// FeedCompiler — the golden feed vectors must stay bit-identical.
+    var identity: EntityIdentity = .none
 }
 
 /// A folded stage race — dashboard.js `collapseSeries`'s Swift-side output,
@@ -76,6 +82,8 @@ struct AgendaSeriesRow: Identifiable, Equatable {
     /// stage's own channel/venue).
     var stages: [Event]
     var nextStage: Event
+    /// WP-185 — the collapsed race's anchor, resolved from its next stage.
+    var identity: EntityIdentity = .none
 }
 
 /// One quiet "live now" line under the header (DESIGN.md "Agendaens

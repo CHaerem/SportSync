@@ -253,6 +253,7 @@ struct EventRowView: View {
             isMustSee: row.isMustSee,
             timeLabel: row.timeLabel,
             sport: row.event.sport,
+            identity: row.identity,
             reminder: row.mustWatch,
             aiResearch: row.isAIResearch
         ) {
@@ -271,6 +272,7 @@ struct SeriesRowView: View {
             isMustSee: false, // series rows are never visually accented (FeedCompiler.isMustSee)
             timeLabel: row.timeLabel,
             sport: row.nextStage.sport,
+            identity: row.identity,
             reminder: row.mustWatch,
             aiResearch: row.isAIResearch
         ) {
@@ -310,6 +312,8 @@ private struct AgendaRowScaffold<RowBodyContent: View>: View {
     let isMustSee: Bool
     let timeLabel: String
     let sport: String
+    /// WP-185 — the row's entity anchor; `.none` keeps the WP-108 sport symbol.
+    var identity: EntityIdentity = .none
     let reminder: Bool
     let aiResearch: Bool
     @ViewBuilder var rowBody: () -> RowBodyContent
@@ -344,7 +348,7 @@ private struct AgendaRowScaffold<RowBodyContent: View>: View {
             MustSeeDot(on: isMustSee)
             TimeColumn(text: timeLabel)
                 .layoutPriority(1)
-            SportSymbolView(sport: sport)
+            EntityAvatarView(identity: identity, sport: sport)
             rowBody()
             TrailingMarkers(reminder: reminder, aiResearch: aiResearch)
         }
@@ -360,7 +364,7 @@ private struct AgendaRowScaffold<RowBodyContent: View>: View {
             VStack(alignment: .leading, spacing: 4) {
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
                     TimeColumn(text: timeLabel)
-                    SportSymbolView(sport: sport)
+                    EntityAvatarView(identity: identity, sport: sport)
                 }
                 rowBody()
             }
@@ -480,7 +484,9 @@ private struct MustSeeDot: View {
 /// the sport is already carried by the title/meta line, so this is a purely
 /// visual at-a-glance aid (same policy as `MustSeeDot`). One canonical table
 /// (`SportSymbol`) shared with the detail sheet and the Nyheter rows.
-private struct SportSymbolView: View {
+/// WP-185: internal (was `private`) so EntityAvatarView can fall back to it when
+/// an entity has no flag/monogram — one glyph implementation, two call sites.
+struct SportSymbolView: View {
     let sport: String
     // WP-134: the glyph column must scale WITH its `.subheadline` font. A fixed
     // 20 pt frame stayed put while the symbol grew at Accessibility sizes, so the

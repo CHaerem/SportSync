@@ -151,10 +151,10 @@ export function handballAthleteQuery() {
  * handball teams worldwide (Q50808536, notable ones).
  */
 export const HANDBALL_TEAMS_QUERY = `
-SELECT DISTINCT ?t ?tLabel ?countryLabel ?links WHERE {
-  { ?t wdt:P31/wdt:P279* wd:Q108320110 . ?t wdt:P17 wd:Q20 . ?t wikibase:sitelinks ?links . FILTER(?links >= 2) }
+SELECT DISTINCT ?t ?tLabel ?countryLabel ?links ?national WHERE {
+  { ?t wdt:P31/wdt:P279* wd:Q108320110 . ?t wdt:P17 wd:Q20 . ?t wikibase:sitelinks ?links . BIND(false AS ?national) FILTER(?links >= 2) }
   UNION
-  { ?t wdt:P31/wdt:P279* wd:Q50808536 . ?t wikibase:sitelinks ?links . FILTER(?links >= 8) }
+  { ?t wdt:P31/wdt:P279* wd:Q50808536 . ?t wikibase:sitelinks ?links . BIND(true AS ?national) FILTER(?links >= 8) }
   FILTER NOT EXISTS { ?t wdt:P576 ?dissolved }
   OPTIONAL { ?t wdt:P17 ?country }
   SERVICE wikibase:label { bd:serviceParam wikibase:language "nb,en". }
@@ -183,7 +183,13 @@ export function athleteEntities(bindings, sportOf) {
 	return [...byQid.values()];
 }
 
-/** Team bindings (handball) → candidates, deduped by QID. */
+/**
+ * Team bindings (handball) → candidates, deduped by QID. WP-185: the query's
+ * `?national` BIND separates the two UNION branches (Norwegian CLUBS vs. NATIONAL
+ * teams) so the client can tell «Norges kvinnelandslag» (flag) from «Elverum
+ * Håndball» (monogram) — both carry `country: "NO"` via P17, so the country field
+ * alone cannot.
+ */
 export function teamEntities(bindings, sport) {
 	const byQid = new Map();
 	for (const b of bindings) {
@@ -193,6 +199,7 @@ export function teamEntities(bindings, sport) {
 		if (!name || name === qid) continue;
 		const e = { name, aliases: [], sport, type: "team", external: { wikidata: qid } };
 		if (b.countryLabel?.value) e.country = b.countryLabel.value;
+		if (b.national?.value === "true" || b.national?.value === true) e.national = true;
 		byQid.set(qid, e);
 	}
 	return [...byQid.values()];

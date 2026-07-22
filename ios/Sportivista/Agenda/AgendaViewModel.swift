@@ -369,6 +369,12 @@ final class AgendaViewModel {
     /// the output byte-for-byte identical to WP-16.4 — graceful degradation.
     nonisolated static func buildSections(events: [Event], interests: Interests, now: Date, index: EntityIndex = EntityIndex([]), followedIds: Set<String> = [], profile: InterestProfile = InterestProfile(), shield: SpoilerShield = SpoilerShield()) -> [AgendaSection] {
         let _tb = CFAbsoluteTimeGetCurrent()
+        // WP-185 — the row avatar's lookup, built ONCE per compile from the entity
+        // index we already have, and only over entities that carry identity
+        // metadata. O(1) per row afterwards: resolving each row through
+        // EntityIndex's fuzzy scorer instead would be a linear pass over ~3 700
+        // entities PER ROW — the at-scale trap WP-161 already paid for once.
+        let identityIndex = EntityIdentityIndex(index.entities)
         let (feedEvents, lookup) = EventBridge.bridge(events)
         LaunchTrace.mark("compile/bridge", since: _tb)
         let _tf = CFAbsoluteTimeGetCurrent()
@@ -394,7 +400,7 @@ final class AgendaViewModel {
                 guard case .event(let feedEvent, let mustWatch, let mustSee) = compiled else {
                     // Series rows never lens (they are already the collapsed,
                     // athlete-agnostic view) — pass through on their own day.
-                    if let item = makeItem(compiled, lookup: lookup, interests: interests, now: now, index: index, followedIds: followedIds, shield: shield, cache: nameCache) {
+                    if let item = makeItem(compiled, lookup: lookup, interests: interests, now: now, index: index, identityIndex: identityIndex, followedIds: followedIds, shield: shield, cache: nameCache) {
                         placed.append(Placed(dayKey: day.key, sortTime: compiled.time, item: item))
                     }
                     continue
@@ -406,10 +412,10 @@ final class AgendaViewModel {
                     // brief) and re-home to the athlete's effective day/time.
                     for lensRow in lensRows {
                         let (dayKey, sortTime) = place(lensRow, event: feedEvent, compiledDay: day.key, todayKey: todayKey)
-                        let row = makeLensRow(lensRow, event: event, feedEvent: feedEvent, mustWatch: mustWatch, mustSee: mustSee, interests: interests, now: now, index: index, followedIds: followedIds, shield: shield, cache: nameCache)
+                        let row = makeLensRow(lensRow, event: event, feedEvent: feedEvent, mustWatch: mustWatch, mustSee: mustSee, interests: interests, now: now, index: index, identityIndex: identityIndex, followedIds: followedIds, shield: shield, cache: nameCache)
                         placed.append(Placed(dayKey: dayKey, sortTime: sortTime, item: .event(row)))
                     }
-                } else if let item = makeItem(compiled, lookup: lookup, interests: interests, now: now, index: index, followedIds: followedIds, shield: shield, cache: nameCache) {
+                } else if let item = makeItem(compiled, lookup: lookup, interests: interests, now: now, index: index, identityIndex: identityIndex, followedIds: followedIds, shield: shield, cache: nameCache) {
                     // No lens applies → the ordinary WP-16.4 row, untouched.
                     placed.append(Placed(dayKey: day.key, sortTime: feedEvent.time, item: item))
                 }
@@ -567,6 +573,7 @@ final class AgendaViewModel {
         interests: Interests,
         now: Date,
         index: EntityIndex,
+        identityIndex: EntityIdentityIndex = EntityIdentityIndex([]),
         followedIds: Set<String>,
         shield: SpoilerShield,
         cache: NameResolveCache? = nil
@@ -597,7 +604,8 @@ final class AgendaViewModel {
             event: event,
             whyShown: FeedCompiler.whyShown(feedEvent, interests: interests),
             followable: followableEntities(for: event, index: index, followedIds: followedIds, cache: cache),
-            spoilerSafe: spoilerSafe
+            spoilerSafe: spoilerSafe,
+            identity: identityIndex.identity(for: event)
         )
     }
 
@@ -738,6 +746,7 @@ final class AgendaViewModel {
         interests: Interests,
         now: Date,
         index: EntityIndex,
+        identityIndex: EntityIdentityIndex = EntityIdentityIndex([]),
         followedIds: Set<String>,
         shield: SpoilerShield,
         cache: NameResolveCache? = nil
@@ -771,7 +780,8 @@ final class AgendaViewModel {
                 event: event,
                 whyShown: FeedCompiler.whyShown(feedEvent, interests: interests),
                 followable: followableEntities(for: event, index: index, followedIds: followedIds, cache: cache),
-                spoilerSafe: shield.spoilerSafe(event: event)
+                spoilerSafe: shield.spoilerSafe(event: event),
+                identity: identityIndex.identity(for: event)
             ))
 
         case .series(let series):
@@ -796,7 +806,8 @@ final class AgendaViewModel {
                 isAIResearch: nextStage.source == "ai-research",
                 tournament: tournamentName,
                 stages: stages,
-                nextStage: nextStage
+                nextStage: nextStage,
+                identity: identityIndex.identity(for: nextStage)
             ))
         }
     }

@@ -2153,7 +2153,7 @@ Bølge 1: WP-180 (web-header + ikoner) ∥ WP-182 (meta/delekort) ∥ WP-184
 | WP-182 | Delbare flater: og:image + delekort (event/brief) i merkedrakt | 0L | — | planlagt |
 | WP-183 | Typografisk stemme: eie tallene (EIERBESLUTNING — display-font-token) | 0L | — | planlagt |
 | WP-184 | Brand-voice-kodifisering + stale-identitetsrester ryddet | 0L | — | planlagt |
-| WP-185 | Visuell entitets-identitet: flagg + farge-monogrammer per rad (eier-funn 21.07) | 0L | 0J WP-161 (delvis) | planlagt |
+| WP-185 | Visuell entitets-identitet: flagg + farge-monogrammer per rad (eier-funn 21.07) | 0L | 0J WP-161 (delvis) | 🔬 branch wp-185-entitets-identitet — registeret utvidet med ISO-`country` (2 559 entiteter, én kurert tabell folder FIDE-kode/ESPN-engelsk/Wikidata-nb; historiske stater droppes fremfor å gjettes), `colors` (139: ESPN-klubber + F1-konstruktører) og `national` (205 — skiller landslag fra klubb, ellers hadde «Elverum Håndball» fått norsk flagg); identitets-stigen flagg → farge-monogram → sportglyf tvillingimplementert (`docs/js/entity-avatar.js` ↔ `Models/EntityIdentity.swift`) med BEREGNET monogram-blekk (WCAG-luminans) og O(1)-oppslag per rad; DESIGN.md § Entitets-avatar + forbudsliste-presisering; 4 skjermbilder (dark/light × web/iOS). Ikke-mål holdt: ingen crester, ingen fotos, ingen eksterne bilde-requests. 1 017 JS-tester + 703 iOS-tester grønne, 13/13 gylne vektorer bit-like, 4 schemes bygger |
 
 ### WP-180 · Kolonet fullført (bølge 1)
 **Innhold:** (1) web-paritet av kolon-live-pulsen i headeren (dokumentert

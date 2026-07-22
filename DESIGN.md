@@ -187,16 +187,22 @@ Native `List`, inset-gruppert per dag. Bindende semantikk (uendret fra v2):
 ### Radens anatomi (native List-rad)
 
 ```
-[• amber]  [tid]  [⛳︎] [tittel               ] [🔔] [›]
-                       [turnering · runde · kanal]
+[• amber]  [tid]  [🇳🇴 / (AR) / ⛳︎] [tittel        ] [🔔] [›]
+                                    [turnering · runde · kanal]
 ```
 
 - **Must-see:** liten amber-prikk (leading). Prikken er signalet — ingen emoji.
+- **Identitets-kolonnen (rev. 22.07, WP-185):** ÉN kolonne mellom tid og tittel
+  som holder NØYAKTIG ÉN ting, i denne kunnskaps-rekkefølgen: entitetens
+  **flagg**, entitetens **farge-monogram**, eller — når vi ikke vet noen av
+  delene — **sport-symbolet**. Aldri to, aldri tomt. Full spesifikasjon i
+  § Entitets-avatar.
 - **Sport-symbol (rev. 19.07, eier-funn):** ett stille SF-symbol per sport
-  mellom tid og tittel (`tertiaryLabel`, aldri farget) — «hva slags event»
-  lesbart på et blunk uten å lese metateksten. Én kanonisk sport→symbol-tabell
-  (`soccerball`, `figure.outdoor.cycle`, `figure.golf`, `tennisball`, …,
-  fallback `calendar`) delt av rad, detalj og Nyheter. Symbol, aldri emoji/logo.
+  (`tertiaryLabel`, aldri farget) — «hva slags event» lesbart på et blunk uten
+  å lese metateksten. Én kanonisk sport→symbol-tabell (`soccerball`,
+  `figure.outdoor.cycle`, `figure.golf`, `tennisball`, …, fallback `calendar`)
+  delt av rad, detalj og Nyheter. Symbol, aldri emoji/logo. Siden WP-185 er
+  dette identitets-kolonnens NEDERSTE trinn, ikke dens faste innhold.
 - **Tid:** tabular, semibold, fast venstrekolonne. Flerdagsvindu i samme kolonne.
 - **Tittel:** `.body`, inntil to linjer, ALDRI trunkert til «…».
 - **Kanal:** `secondaryLabel` i meta-linjen; ukjent = «–». Krymper aldri tittelen.
@@ -205,6 +211,51 @@ Native `List`, inset-gruppert per dag. Bindende semantikk (uendret fra v2):
 - **Disclosure:** native chevron (`List` gir den) — trykkbarhet er tydelig,
   raden har pressed-state og button-rolle gratis.
 - **Sveip-handlinger:** venstre → Følg / Demp / Påminn der det er meningsfullt.
+
+### Entitets-avatar (WP-185 — eier-funn 21.07: «tavla er anonym»)
+
+Raden var ren tekst, og sport-glyfen navngir SPORTEN, aldri entiteten. Hver rad
+får derfor ett rolig visuelt ANKER for hvem den handler om. Referanse-appene
+bruker ekte klubbcrester; det gjør ikke vi — **crester er varemerker** (eget
+eierspørsmål, ikke denne kontrakten), og **ingen flate henter et bilde**:
+alt tegnes LOKALT (emoji + gradient), null tredjeparts-CDN, null infrastruktur,
+null personvern-lekkasje.
+
+**Stigen (bindende rekkefølge, samme dom på begge flater):**
+
+1. **Flagg** — utøvere og LANDSLAG, utledet av registerets ISO-landkode
+   (`country`). Emoji: null assets, null rettigheter, skalerer med Dynamic Type
+   gratis. De britiske hjemnasjonene har egne flagg (`GB-ENG`/`GB-SCT`/`GB-WLS`)
+   — sport behandler dem som land. Ingen ISO-kode ⇒ INTET flagg (aldri et
+   gjettet nabo-flagg).
+2. **Farge-monogram** — klubber/orgs: entitetens to registrerte farger delt på
+   diagonalen med 1–2 initialer over (Kontakter/Kalender-idiomet).
+3. **Sport-symbolet** — den ærlige fallbacken. Ingen tomme hull, ingen oppfunnet
+   farge: raden ser da ut som før WP-185.
+
+**Regler (BINDENDE):**
+
+- **Maks ÉN farget avatar-flate per rad.** Raden har ett anker, ikke ett per lag.
+  Anker-entiteten er (i tur) serverens stemplede `homeTeamEntityId`, hjemmelagets
+  navn, en norsk deltaker, en navngitt deltaker.
+- **Avataren er ALDRI en aksent.** Amber er fortsatt produktets ENESTE aksent
+  (§ Forbudsliste): monogrammet bærer *entitetens* farger, konkurrerer aldri med
+  must-see-prikken, og ingen avatar-regel rører `--accent`/`SportivistaTokens.accent`.
+- **Størrelse ~24 pt** (`@ScaledMetric` på iOS, 24 px kolonne på web), sirkulær,
+  plassert mellom tidskolonnen og tittelen. Skalerer med Dynamic Type; ved
+  AX-størrelser følger den tid/sport-linja i den vertikale reflowen.
+- **Monogram-blekket BEREGNES** fra fyllets relative luminans (WCAG) — aldri
+  hardkodet hvit. Halve registerets klubber spiller i hvitt.
+- **Mørk vs. lys:** klubbfargen dempes ALLTID et hakk — en 24 pt sirkel skal aldri
+  være det høyeste på en rolig side, og aldri overdøve amber-prikken. Mørk modus
+  demper litt hardere (≈0,85 metning + ≈0,9 opasitet) så en mettet drakt ikke
+  gløder mot true-black; lys modus ≈0,9 metning. En hårlinje-kant holder en helt
+  hvit eller helt svart drakt fra å løse seg opp i flaten i begge temaer.
+- **Dekorativ:** `accessibilityHidden` / `aria-hidden` — tittel og meta navngir
+  allerede entiteten for skjermleser. Avataren legger aldri til en lyd.
+- **Entitetssiden** (0K WP-170) bruker SAMME avatar i stor variant når den lander.
+- **Aldri:** ekte klubblogo/crest, spillerfoto, en ekstern bilde-URL, mer enn én
+  farget flate i raden, eller en avatar som erstatter tekst.
 
 ### Event-detalj (native sheet, detents `[.medium, .large]`)
 
@@ -367,6 +418,13 @@ skal likevel bestå denne før merge; håndhev det som kan håndheves i CI:
   fra SF-tabellen: vintersportene (langrenn/alpint/hopp/kombinert) deler ett
   snøfnugg (en håndtegnet figur per gren er uleselig på 16px), skiskyting beholder
   blinken (`target`).
+- **Entitets-avatar (WP-185 — begge flater fra dag én):** § Entitets-avatar
+  gjelder web og iOS likt. Web tegner flagget som emoji og monogrammet med en
+  `linear-gradient(135deg, …)` i en 24 px sirkel (`js/entity-avatar.js` +
+  `.ev-avatar`/`.ev-mono` i `cards.css`); iOS bruker `EntityIdentity` +
+  `EntityAvatarView`. Beslutnings-logikken (hvilket trinn i stigen, hvilke
+  initialer, hvilket blekk) er TVILLING-implementert og testet case-for-case på
+  begge sider — samme entitet skal alltid gi samme avatar.
 - **Disclosure-chevron (web-paritet, WP-154):** ekspanderbare web-rader bærer nå en
   stille chevron (`--fg-3`, roteres 90° ved åpning under `prefers-reduced-motion`-
   respekt) — samme trykkbarhets-signal som iOS' native `List`-chevron, portert til
@@ -389,7 +447,17 @@ aksentfarge (amber) · to amber-elementer i samme rad · badges med tall ·
 spinnere · haptikk-fest · egendefinerte overgangskurver der Apple har en native ·
 egenlaget blur/glassmorfisme (system-Liquid Glass på kontroll-laget er native og
 påkrevd; DIY-glass — særlig på innhold — er forbudt) ·
-egne ikoner der en SF Symbol finnes · «AI-slop»-estetikk. Ved tvil: fjern.
+egne ikoner der en SF Symbol finnes · ekte klubblogoer/crester og spillerfotos ·
+enhver ekstern bilde-request i en produktflate · «AI-slop»-estetikk.
+Ved tvil: fjern.
+
+**Presisering — entitets-avatar (WP-185):** «Symbol, aldri emoji» er en regel om
+SPORT-glyfen (§ Radens anatomi) og står. Identitets-kolonnens FLAGG er et bevisst
+unntak, og det er et smalt ett: et flagg er et LAND, ikke et ikon, og
+emoji-varianten er den eneste formen som er rettighetsfri, assetløs og skalerer
+med Dynamic Type gratis. Farge-monogrammet er tilsvarende ikke en ny aksentfarge,
+men entitetens egen identitet — regelen «maks én amber-flate per rad» og «maks én
+farget avatar-flate per rad» gjelder side om side.
 
 **Presisering — primær-CTA (WP-149):** «ingen pills» gjelder pille-formede
 SEKUNDÆR-/multi-knapper (Bekreft/Avvis, «mente du»-forslag, «Hopp over» — de

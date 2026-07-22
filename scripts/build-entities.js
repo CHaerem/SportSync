@@ -40,7 +40,13 @@
  *      (tracked's misfiled club-as-league vs. the registry's team) registers
  *      fresh under the registry type and logs the mismatch (WP-160 semantics).
  *
- * Entry shape: { id, name, aliases: [], sport, type, country?, external? }
+ * Entry shape: { id, name, aliases: [], sport, type, country?, national?, colors?, external? }
+ *
+ * WP-185: `country` (ISO 3166-1 alpha-2), `national` (a landslag, not a club) and
+ * `colors` ({primary, secondary} hex) ride along from the world registry — the
+ * per-entity VISUAL IDENTITY both clients draw their row avatar from (flag for
+ * athletes/national teams, colour monogram for clubs, sport glyph when neither is
+ * known). Pure pass-through: this file never invents or guesses them.
  * type ∈ "athlete" | "team" | "tournament" | "league" | "sport" | "category"
  *
  * WP-64: "sport" (one per followBroadly sport) and "category" (umbrella terms
@@ -412,8 +418,8 @@ class EntityIndexBuilder {
 	 *       unique ids (CI-enforced), so registry-vs-registry scanning is
 	 *       skipped and the fold stays linear at world scale.
 	 *   (b) a SAME-type merge also donates the registry's `external` source ids
-	 *       and `country` (existing values win — tracked/curated data is never
-	 *       overwritten).
+	 *       plus the WP-185 identity metadata `country`/`national`/`colors`
+	 *       (existing values win — tracked/curated data is never overwritten).
 	 *   (c) the registry is authoritative on type: when the candidate overlaps
 	 *       an existing entity ONLY across types (the tracked misfiled
 	 *       club-as-league class), it registers fresh under its own type and
@@ -422,7 +428,7 @@ class EntityIndexBuilder {
 	 *       different entity) keeps the first-registered id — tracked wins —
 	 *       and the registry entity gets a suffixed slug, logged.
 	 */
-	upsertRegistry({ id, name, aliases = [], sport, type, country, external }, searchLimit) {
+	upsertRegistry({ id, name, aliases = [], sport, type, country, national, colors, external }, searchLimit) {
 		if (!name) return null;
 		const candidateTerms = [name, ...aliases].filter(Boolean);
 		const scope = this.entities.slice(0, searchLimit);
@@ -438,6 +444,8 @@ class EntityIndexBuilder {
 			}
 			if (external && Object.keys(external).length) existing.external = { ...external, ...(existing.external || {}) };
 			if (country && !existing.country) existing.country = country;
+			if (national && existing.national === undefined) existing.national = true;
+			if (colors && !existing.colors) existing.colors = colors;
 			return existing;
 		}
 		const crossType = scope.find((e) => e.type !== type && sportOk(e) && termsOverlap(candidateTerms, terms(e), this.aliasGroups));
@@ -455,6 +463,8 @@ class EntityIndexBuilder {
 		this.usedSlugs.add(slug);
 		const entity = { id: slug, name, aliases: [...aliases], sport: sport || null, type };
 		if (country) entity.country = country;
+		if (national) entity.national = true;
+		if (colors) entity.colors = { ...colors };
 		if (external && Object.keys(external).length) entity.external = { ...external };
 		this.entities.push(entity);
 		return entity;
@@ -549,6 +559,8 @@ export function buildEntityIndex(configDir = configDirPath(), sportsConfigData =
 	return decorateAliases(builder.entities).map((e) => {
 		const out = { id: e.id, name: e.name, aliases: e.aliases, sport: e.sport, type: e.type };
 		if (e.country) out.country = e.country;
+		if (e.national) out.national = true;
+		if (e.colors) out.colors = e.colors;
 		if (e.external) out.external = e.external;
 		if (e.initials && e.initials.length) out.initials = e.initials;
 		return out;

@@ -24,12 +24,58 @@
 
 import { slugify } from "../build-entities.js";
 import { normalizeText } from "../lib/helpers.js";
+import { toIsoCountry } from "../lib/country.js";
 
 export { slugify };
 
 /** Stable entity key order for serialization. */
-const ENTITY_KEYS = ["id", "name", "aliases", "sport", "type", "country", "external", "notes"];
+const ENTITY_KEYS = ["id", "name", "aliases", "sport", "type", "country", "national", "colors", "external", "notes"];
 const EXTERNAL_KEYS = ["wikidata", "espnId", "fideId", "liquipedia"];
+
+/**
+ * WP-185: a raw colour (ESPN's bare "e20520", a "#RRGGBB", a 3-digit shorthand)
+ * → the canonical lowercase `#rrggbb`, or null when it isn't a hex colour. The
+ * registry stores ONE canonical form so a client can hand it straight to CSS /
+ * `Color(hex:)` without re-parsing dialects.
+ */
+export function normalizeHexColor(raw) {
+	const s = String(raw || "").trim().replace(/^#/, "").toLowerCase();
+	if (/^[0-9a-f]{3}$/.test(s)) return `#${s[0]}${s[0]}${s[1]}${s[1]}${s[2]}${s[2]}`;
+	if (/^[0-9a-f]{6}$/.test(s)) return `#${s}`;
+	return null;
+}
+
+/**
+ * WP-185: `{primary, secondary}` normalised to canonical hex. A missing/invalid
+ * primary drops the whole object (a secondary alone can't anchor a monogram);
+ * a secondary equal to the primary is dropped (the client then draws a flat
+ * fill instead of a pointless gradient).
+ */
+export function normalizeColors(raw) {
+	const primary = normalizeHexColor(raw?.primary);
+	if (!primary) return null;
+	const secondary = normalizeHexColor(raw?.secondary);
+	return secondary && secondary !== primary ? { primary, secondary } : { primary };
+}
+
+/**
+ * WP-185: fold an entity's identity metadata into its canonical form —
+ * `country` to ISO 3166-1 alpha-2 (see lib/country.js; unmappable values, e.g.
+ * historical states, are DROPPED rather than guessed) and `colors` to canonical
+ * hex. Applied to fresh AND existing entities on every merge, so a re-seed
+ * converges the whole file instead of only the rows the source touched.
+ * Returns a new object; never mutates.
+ */
+export function normalizeIdentity(entity) {
+	const out = { ...entity };
+	const iso = toIsoCountry(out.country);
+	if (iso) out.country = iso;
+	else delete out.country;
+	const colors = normalizeColors(out.colors);
+	if (colors) out.colors = colors;
+	else delete out.colors;
+	return out;
+}
 
 function orderedEntity(e) {
 	const out = {};
@@ -41,6 +87,8 @@ function orderedEntity(e) {
 			out.external = ext;
 		} else if (k === "aliases") {
 			out.aliases = [...e.aliases];
+		} else if (k === "colors") {
+			out.colors = e.colors.secondary ? { primary: e.colors.primary, secondary: e.colors.secondary } : { primary: e.colors.primary };
 		} else {
 			out[k] = e[k];
 		}
@@ -89,12 +137,17 @@ function unionAliases(name, ...aliasLists) {
 
 /**
  * Merge a fresh seed (entities WITHOUT ids: {name, aliases?, sport, type,
- * country?, external}) into the existing registry file's entities.
+ * country?, colors?, external}) into the existing registry file's entities.
+ * WP-185: every entity — fresh AND existing — passes through
+ * `normalizeIdentity` (ISO country, canonical hex colours) on the way in.
  * Returns the merged, id-stable entity list (unsorted — serializeRegistry
  * sorts). Deterministic: fresh entities are processed in slug/name order.
  */
 export function mergeRegistry(existingEntities = [], freshEntities = [], reservedSlugs = new Set()) {
-	const merged = existingEntities.map((e) => ({ ...e, aliases: [...(e.aliases || [])], external: { ...(e.external || {}) } }));
+	// WP-185: normalise identity on the EXISTING rows too — a re-seed converges
+	// the whole file to ISO country / canonical hex, not just the rows the
+	// source happened to return this run.
+	const merged = existingEntities.map((e) => normalizeIdentity({ ...e, aliases: [...(e.aliases || [])], external: { ...(e.external || {}) } }));
 	const bySlug = new Map(merged.map((e) => [e.id, e]));
 	const used = new Set([...reservedSlugs, ...merged.map((e) => e.id)]);
 
@@ -106,7 +159,8 @@ export function mergeRegistry(existingEntities = [], freshEntities = [], reserve
 			return String(a.name).localeCompare(String(b.name));
 		});
 
-	for (const f of fresh) {
+	for (const raw of fresh) {
+		const f = normalizeIdentity(raw);
 		const existing =
 			merged.find((e) => externalMatches(e.external, f.external)) ||
 			bySlug.get(slugify(f.name));
@@ -118,6 +172,8 @@ export function mergeRegistry(existingEntities = [], freshEntities = [], reserve
 			existing.sport = f.sport || existing.sport;
 			existing.type = f.type || existing.type;
 			if (f.country) existing.country = f.country;
+			if (f.national) existing.national = true;
+			if (f.colors) existing.colors = f.colors;
 			existing.external = { ...existing.external, ...f.external };
 			continue;
 		}
@@ -130,6 +186,8 @@ export function mergeRegistry(existingEntities = [], freshEntities = [], reserve
 		used.add(slug);
 		const entity = { id: slug, name: f.name, aliases: unionAliases(f.name, f.aliases), sport: f.sport, type: f.type, external: { ...f.external } };
 		if (f.country) entity.country = f.country;
+		if (f.national) entity.national = true;
+		if (f.colors) entity.colors = f.colors;
 		merged.push(entity);
 		bySlug.set(slug, entity);
 	}

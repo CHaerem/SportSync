@@ -402,6 +402,14 @@ struct ContentView: View {
                     AgendaWidthDemoSeed.seed(profileStore: profileStore)
                     agenda.reloadFromCache(now: Date())
                 }
+                // WP-185: the entity-avatar ladder — a white-kitted club (black
+                // computed ink), a contrasting club, an athlete + a landslag flag,
+                // and a row we know nothing about (sport glyph). One board, all
+                // three rungs, offline and deterministic in either appearance.
+                if mode == "identity" {
+                    EntityIdentityDemoSeed.seed(profileStore: profileStore)
+                    agenda.reloadFromCache(now: Date())
+                }
                 // WP-19/WP-83: seed a small profile so the share panel shows a
                 // real QR + link (the export needs a non-empty profile). Rendered
                 // full-screen via demoOverlay (a `.sheet` is a no-op in the launch
