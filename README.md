@@ -169,13 +169,13 @@ replacing workflow YAML only.
 
 ## Frontend
 
-Static PWA, no build step. **Calm design** with a Tekst-TV (teletext) identity —
-monospace type, amber as the single accent, a near-black page; no dashboard grid,
-no competing panels, no logos or emoji. A single day-grouped agenda where every row
+Static PWA, no build step. **Calm design** on the Apple-native baseline (DESIGN.md) —
+the system font, amber as the single accent, a true-black page; no dashboard grid,
+no competing panels. A single day-grouped agenda where every row
 answers only **when · what · where to watch**, with always-Norwegian channels.
 Must-see events (favorite / Norwegian / high importance) get
 the gentlest possible accent; details (standings, results, AI sources) are a tap away,
-never in your face. Near-black dark default with a warm-paper light mode that follows the
+never in your face. True-black dark default with an Apple grouped-light mode that follows the
 system theme, live ESPN score polling (60s), one quiet editorial headline on top, tuned
 to fit iPhone widths, installable on iOS/Android.
 

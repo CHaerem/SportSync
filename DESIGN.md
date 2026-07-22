@@ -5,13 +5,13 @@ Apple-native baselinen: systemfont, semantiske system-farger, SF Symbols, native
 lister/sheets/navigasjon — med **amber som eneste aksent-token**. Web (`docs/`)
 følger nå de samme baseline-tokenene (se § Cross-surface).
 
-> **Om den senere rebrandingen:** Vi kommer sannsynligvis til å gjøre en full
-> rebranding (nytt navn — «Zenji» oppleves for lite intuitivt — og en egen
-> designprofil) på sikt. Dette dokumentet er DERFOR bevisst bygget som et tynt,
-> byttbart token-lag oppå Apples plattform: rebrandingen skal bli en **re-skin**
-> (nye token-verdier, font, ikoner, logo), ikke en ombygging. Alt merkevare-
-> bærende er isolert i § Tokens. Kjernefunksjonaliteten og UX-en mot hovedmålet
-> herdes FØRST, det kosmetiske byttes ETTERPÅ.
+> **Om en mulig senere designprofil:** Navnebyttet er GJORT (Zenji → Sportivista,
+> WP-26/27), og merket, fonten og ikonet er nå egne skall-/token-valg (Kolonet
+> WP-97/180, display-fonten WP-183). Det som eventuelt gjenstår på sikt er en full
+> egen DESIGNPROFIL — ikke navnet. Dette dokumentet er DERFOR bevisst bygget som et
+> tynt, byttbart token-lag oppå Apples plattform: en slik profil skal bli en
+> **re-skin** (nye token-verdier, font, ikoner, logo), ikke en ombygging. Alt
+> merkevare-bærende er isolert i § Tokens.
 
 Normativ kontrakt for alle flater: web (docs/), iOS-app (ios/), widget, ikon.
 Verifisering: HIG-sjekklista (§ HIG-samsvar) + skjermbilder i begge temaer og

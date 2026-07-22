@@ -5,7 +5,7 @@
 //  WP-31 — the calm first-run experience (dossier P310's «definere»-løkke:
 //  "onboarding er en samtale, ikke et skjema — ingen konkurrent lar deg SI hva
 //  du bryr deg om"). Four quiet steps on the Apple-native baseline (system
-//  type, one amber accent, the ensō mark), no hero art, no carousel, no emoji,
+//  type, one amber accent, the Kolonet wordmark), no hero art, no carousel, no emoji,
 //  no exclamation marks. WP-129 — the copy speaks plainly to a non-technical
 //  first-time user (say WHAT the app does before asking for anything) and points
 //  at the assistant BUTTON, never the retired inline command line:
@@ -119,7 +119,7 @@ struct OnboardingView: View {
         .onAppear { if let initialStep { step = initialStep } }
     }
 
-    // MARK: - Brand header (ensō · SPORTIVISTA)
+    // MARK: - Brand header (SPORTIVISTA + amber colon — Kolonet)
 
     private var brandHeader: some View {
         HStack(spacing: 0) {

@@ -539,7 +539,7 @@ struct ContentView: View {
                     agenda.reloadFromCache(now: Date())
                     rootTab = .nyheter
                 }
-                // WP-152 (PROTOTYPE): the masthead colon LIVE signal. Seed a
+                // WP-152 (normativ — eier-godkjent 21.07): the masthead colon LIVE signal. Seed a
                 // deterministically-live event so `agenda.liveNow` (the SAME
                 // signal the ▌ LIVE line uses) is non-empty and the header «:»
                 // pulses — deterministic, offline, reproducible for the feel-test
@@ -849,7 +849,7 @@ struct ContentView: View {
             // time on the board, the app's core answer («når») as the mark.
             // Amber stays accent-only; no separate image mark (ensō retired).
             //
-            // WP-152 (PROTOTYPE — under evaluering): that colon becomes the app's
+            // WP-152 (normativ — eier-godkjent 21.07): that colon becomes the app's
             // LIVE signature. It reads liveness from the EXISTING signal — the same
             // `agenda.currentLiveRows` the ▌ LIVE line uses (`liveNowLine`) — so the
             // colon and the line can NEVER disagree. A minute tick (TimelineView,
@@ -1021,7 +1021,7 @@ struct ContentView: View {
     }
 }
 
-/// WP-152 (PROTOTYPE — under evaluering) — the masthead's amber «:» as the app's
+/// WP-152 (normativ — eier-godkjent 21.07) — the masthead's amber «:» as the app's
 /// LIVE signature. Driven by the EXISTING live signal (ContentView passes
 /// `isLive = !agenda.currentLiveRows.isEmpty`, the same source as the ▌ LIVE
 /// line), so colon and line never disagree.
@@ -1037,7 +1037,7 @@ struct ContentView: View {
 ///    (a steady soft amber glow) so live is still readable without animation.
 ///  • The a11y label is set by the parent masthead («… sender nå»).
 /// It degrades gracefully: not live ⇒ exactly the static amber colon it was
-/// before this prototype (glow clear, full opacity), one weight step heavier
+/// before this signal (glow clear, full opacity), one weight step heavier
 /// than the wordmark (WP-183: the display face's `.bold` against its `.semibold`).
 private struct MastheadColon: View {
     /// Whether something the user follows is live NOW — the ONE input.

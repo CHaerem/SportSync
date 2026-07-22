@@ -66,10 +66,10 @@ vertically, on their own.
    itself is `label` (system text colour, white/black); only the colon is
    amber. This is now identical on iOS, widget, AND web
    (`.wordmark { color: var(--fg); }` / `.wordmark-colon { color: var(--accent);
-   }`, `docs/css/layout.css`) — the wordmark colon is one of web's five
-   explicitly sanctioned amber uses (`docs/css/base.css`: "Amber is the ONLY
-   accent and is used only for: the wordmark colon, day headers, the must-see
-   dot, the clock, selected state"). Before WP-98, web shipped the entire
+   }`, `docs/css/layout.css`) — the wordmark colon is one of web's few
+   sanctioned amber uses (`docs/css/base.css`: "Amber is the ONLY accent and is
+   used only for: the wordmark colon (and its WP-180 live pulse/glow), the
+   must-see dot, and selected state"). Before WP-98, web shipped the entire
    wordmark in amber — a drift from the owner-approved lock the iOS/widget
    surfaces always used, not an intentional platform variance. It was
    corrected, not left as documented divergence: the shipped-iOS lock is the
