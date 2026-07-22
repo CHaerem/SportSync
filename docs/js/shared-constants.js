@@ -214,6 +214,42 @@ function ssLiveState(event, now) {
 	return nowMs <= effectiveEnd ? 'direkte' : null;
 }
 
+// ── Live football leagues (WP-172) ───────────────────────────────────────────
+// The ESPN soccer scoreboards the client live-poll may enrich a board row from.
+// This is a DATA MIRROR of the football leagues in scripts/config/sports-config.js
+// (`sportsConfig.football` ESPN source) — MINUS esp.copa_del_rey (the same set the
+// seed-registry mirror already draws, scripts/seed-registry/espn.js FOOTBALL_LEAGUES:
+// Copa reaches deep into regional Spanish football and is not worth the extra live
+// scoreboard poll). `tests/live-leagues.test.js` PINS this against sports-config so a
+// league added/removed there fails CI until this list follows. Eliteserien (nor.1) +
+// OBOS-ligaen (nor.2) are in the list — the old hardcoded ['eng.1','esp.1','fifa.world']
+// gate meant a Lyn match never got a live score (WP-172). The `name` is the ESPN
+// display name, used to map a board event's `tournament` back to its league code.
+const SS_FOOTBALL_LEAGUES = [
+	{ code: 'eng.1', name: 'Premier League' },
+	{ code: 'esp.1', name: 'La Liga' },
+	{ code: 'nor.1', name: 'Eliteserien' },
+	{ code: 'nor.2', name: 'OBOS-ligaen' },
+	{ code: 'uefa.champions', name: 'Champions League' },
+	{ code: 'fifa.world', name: 'FIFA World Cup' },
+];
+
+/** The SS_FOOTBALL_LEAGUES entry a football event belongs to, matched by its
+ *  `tournament` against the league display name (accent-insensitive containment,
+ *  either direction — "Eliteserien 2026" ⊇ "Eliteserien", "Champions" ⊆ "UEFA
+ *  Champions League"), else null. Lets the live poll target ONLY the league a
+ *  board match is actually in — one scoreboard, not the whole list. Mirrors iOS
+ *  `LiveLeague.forEvent`. */
+function ssFootballLeagueForEvent(event, leagues = SS_FOOTBALL_LEAGUES) {
+	const t = ssNormalize(event && event.tournament).trim();
+	if (!t) return null;
+	for (const league of leagues) {
+		const n = ssNormalize(league.name).trim();
+		if (n && (t.includes(n) || n.includes(t))) return league;
+	}
+	return null;
+}
+
 /** Trim an agent reason to a one-line gist (drops the provenance prefix). */
 function ssShortReason(r, max = 130) {
 	if (!r) return '';
@@ -230,6 +266,8 @@ window.SS_CONSTANTS = Object.freeze({
 });
 
 window.SS_REPO = SS_REPO;
+window.SS_FOOTBALL_LEAGUES = SS_FOOTBALL_LEAGUES;
+window.ssFootballLeagueForEvent = ssFootballLeagueForEvent;
 window.isEventInWindow = isEventInWindow;
 window.ssLiveState = ssLiveState;
 window.ssShortReason = ssShortReason;
