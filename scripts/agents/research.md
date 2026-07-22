@@ -305,6 +305,16 @@ corroborating URLs. Never track something you can't tie back to the catalog's
 coverage promise. (CI enforces this, so a missing pointer fails the run.)
 Keep the top-level shape: `{ lastUpdated, lastUpdatedBy, version, leagues, athletes, tournaments, notes }`.
 
+**Season-proof id roots (WP-162):** recurring leagues/tournaments live in the
+published entity index under a CANONICAL, season-less id (`premier-league`,
+`tour-de-france`, `the-open-championship`) — dated tracked.json ids are fine
+(they carry the edition), but a NEW season's entry MUST keep the SAME season-less
+root as last season's (`premier-league-2027-28`, never `epl-2027` or
+`english-premier-league-2027-28`). The build strips the year/season suffix to
+find the canonical entity; a renamed root would mint a SECOND canonical entity
+next to the existing one, silently splitting follows, logos and coverage between
+them. When in doubt, check the existing root in `docs/data/entities.json` first.
+
 ### Step 5 — Grade your own run (independent grader)
 After all outputs are written: spawn ONE fresh-context grader subagent that
 reads `scripts/agents/rubrics/research-rubric.md` plus your outputs and returns
