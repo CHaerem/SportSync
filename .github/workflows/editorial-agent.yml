@@ -2,7 +2,7 @@ name: Editorial agent
 
 on:
   schedule:
-    - cron: "0 5 * * *"  # 07:00 Oslo (CEST) — morning brief
+    - cron: "30 4 * * *" # 06:30 Oslo (CEST) — morning brief FØR morgensjekket (WP-173; var 05:00 UTC = 07:00 Oslo, etter at mange sjekker tavla)
     - cron: "0 15 * * *" # 17:00 Oslo (CEST) — evening brief
   workflow_dispatch:
     inputs:

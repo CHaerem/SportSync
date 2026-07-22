@@ -2,7 +2,13 @@ name: Static data pipeline
 
 on:
   schedule:
+    # WP-173: kvelds-/natt-dekning — 22/23/00/03 UTC i tillegg til den gamle
+    # 05–21-rekka, så «hva skjedde i går kveld»-vinduet (CL-kamper som ender
+    # ~23 Oslo, sen F1/tennis/CS2) er dekket FØR morgensjekket i stedet for
+    # først 07:00. Actions er gratis på public repo; kvote-guvernøren gjelder
+    # AI-agentene, ikke den statiske pipelinen.
     - cron: "0 5-21 * * *"
+    - cron: "0 22,23,0,3 * * *"
   workflow_dispatch:
   push:
     branches: [main]
