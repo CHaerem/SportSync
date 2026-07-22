@@ -6,7 +6,7 @@ SwiftUI app **Sportivista** + WidgetKit extension
 pure consumer of the same static JSON the web dashboard reads (published to GitHub
 Pages) — no separate backend, per the zero-infrastructure constraint in `CLAUDE.md`.
 It syncs that data into an on-disk cache, compiles a personalised, day-grouped
-Tekst-TV agenda + home-screen widget, sends calm local reminders, and hosts an
+agenda + home-screen widget, sends calm local reminders, and hosts an
 on-device (Foundation Models) assistant that edits *what you follow* and answers
 questions over your own local data.
 
@@ -132,8 +132,8 @@ ios/
 
 `Sportivista/DesignTokens.swift` — the Apple-native baseline token layer: semantic iOS
 system colours + a single amber accent, kept in lock-step with the `DESIGN.md`
-token table. (The web dashboard keeps the Tekst-TV look until the rebrand — see
-`DESIGN.md` § Cross-surface.)
+token table. (The web dashboard now follows the same Apple-native baseline — the
+Tekst-TV exception is closed, see `DESIGN.md` § Cross-surface.)
 
 | Token | Dark (default) | Light |
 |---|---|---|
@@ -271,7 +271,7 @@ to the side that owns it (server and client intentionally differ):
 
 ## Agenda
 
-`Sportivista/Agenda/` is the real, day-grouped Tekst-TV agenda — a pure consumer of Sync's
+`Sportivista/Agenda/` is the real, day-grouped agenda — a pure consumer of Sync's
 cache and Feed's `FeedCompiler`. **`AgendaViewModel`** is `@MainActor @Observable`,
 but its logic is a `nonisolated static` pure function
 `buildSections(events:interests:now:) -> [AgendaSection]` (the codebase's usual
@@ -300,7 +300,7 @@ or `SeriesDetailSheet`
 summary, every stage as its own line).
 
 `ContentView` wraps `AgendaView` in a `NavigationStack` (WP-83): a header with the
-ensō mark + `SPORTIVISTA` wordmark + date and a `gearshape` toolbar button that pushes the
+`SPORTIVISTA` wordmark (label + amber colon — Kolonet) + date and a `gearshape` toolbar button that pushes the
 **Deg** settings screen (`Profile/DegView.swift`); a quiet `▌ LIVE …` line (invisible
 when nothing is on); and the always-present command line at the bottom. The
 assistant's result (a diff or an answer) presents as a native `.sheet`
@@ -558,7 +558,7 @@ Screenshots: i WP-ens PR (bevis-galleriet fjernet 20.07, regel 8; regenerer ved 
 ## Onboarding
 
 `Sportivista/Onboarding/` is the calm first-run experience (dossier P310: "onboarding er
-en samtale, ikke et skjema") — four quiet steps in the Tekst-TV language, no hero
+en samtale, ikke et skjema") — four quiet steps on the Apple-native baseline, no hero
 art, no carousel, no emoji. `OnboardingGate.swift` is the pure, FM-free, I/O-free
 decision layer ("should we show it / where does it start"); `StarterPacks.swift` is
 the quick-picks fallback — Norwegian "startpakker" a first-timer taps to build a

@@ -30,7 +30,8 @@
 //
 //  Usage — regenerate the whole shipped set into a scratch directory (never
 //  writes into ios/ or docs/ directly — copy the outputs yourself after
-//  reviewing them, exactly like the historical enso-icon.swift convention):
+//  reviewing them, the same never-write-into-the-tree convention the icon
+//  tooling has always used):
 //    swift design/brand/generate-icons.swift --all <outDir>
 //  writes, all on #000000 opaque background:
 //    <outDir>/AppIcon-1024.png   (1024 — iOS app icon)

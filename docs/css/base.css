@@ -5,9 +5,11 @@
    no second colour. */
 
 /* Token values are the DESIGN.md § Tokens table verbatim (Apple system colours + one
-   amber accent). Amber is the ONLY accent and is used only for: the wordmark colon,
-   the must-see dot, the clock, selected state. Live is systemGreen, sparse. Day headers
-   are secondaryLabel (grey) — matching iOS's group header (WP-148 — no longer amber).
+   amber accent). Amber is the ONLY accent and is used only for: the wordmark colon
+   (and its WP-180 live pulse/glow), the must-see dot, and selected state. Live is
+   systemGreen, sparse. The web has no clock (WP-128/148 — time lives in the row), and
+   day headers are secondaryLabel (grey), matching iOS's group header (WP-148 — no
+   longer amber).
    Destructive (systemRed) tints the one destructive web action ("Fjern" on rediger).
    Separators are the Apple hairline tokens. */
 :root {
@@ -130,6 +132,11 @@ body.gated .auth-gate {
    er den samme på hver flate ordmerket vises. */
 .auth-gate .wordmark { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; }
 .auth-gate .wordmark-colon { color: var(--accent); }
+/* WP-184: the tagline «Hele sporten. Ett rolig utsyn.» as the web gate's first
+   impression (BRAND.md § Tagline — a marketing surface where it is sanctioned).
+   System font, not the display face: the display face is bound to EXACTLY three
+   surfaces (wordmark, time column, share cards — DESIGN.md § Display-font). */
+.auth-gate-tagline { color: var(--fg); font-size: 17px; line-height: 1.35; margin: 0; }
 .auth-gate-lead { color: var(--fg-2); font-size: 15px; line-height: 1.55; margin: 0; }
 /* CloudKit renders Apple's own Sign in with Apple control into #apple-sign-in-button.
    We show it AS-IS (Apple-sanctioned styling) rather than skinning our own Apple-
