@@ -53,6 +53,55 @@ describe("registry files against registry.schema.json", () => {
 		expect(bad((r) => (r.entities[0].external.hltv = "123"))).toBeGreaterThan(0);
 		expect(bad((r) => (r.entities[0].surprise = true))).toBeGreaterThan(0);
 		expect(bad((r) => delete r.entities)).toBeGreaterThan(0);
+		// WP-185 identity metadata — the `pattern` keyword must actually bite.
+		expect(bad((r) => (r.entities[0].country = "Norge"))).toBeGreaterThan(0);
+		expect(bad((r) => (r.entities[0].country = "GB-XXX"))).toBeGreaterThan(0);
+		expect(bad((r) => (r.entities[0].colors = { primary: "e20520" }))).toBeGreaterThan(0);
+		expect(bad((r) => (r.entities[0].colors = { secondary: "#003399" }))).toBeGreaterThan(0);
+		expect(bad((r) => (r.entities[0].national = "yes"))).toBeGreaterThan(0);
+	});
+});
+
+// WP-185: the row avatar is only as honest as this metadata. These pin the
+// invariants the JSON-Schema keywords can't state.
+describe("WP-185 identity metadata (country / national / colors)", () => {
+	it("every country is ISO 3166 — no source dialect survives the seed", () => {
+		for (const { file, data } of registries) {
+			for (const e of data.entities) {
+				if (!e.country) continue;
+				expect(e.country, `${file}: ${e.id}`).toMatch(/^([A-Z]{2}|GB-(ENG|SCT|WLS|NIR))$/);
+			}
+		}
+	});
+
+	it("colours are canonical lowercase #rrggbb, and a secondary never repeats the primary", () => {
+		for (const { file, data } of registries) {
+			for (const e of data.entities) {
+				if (!e.colors) continue;
+				expect(e.colors.primary, `${file}: ${e.id}`).toMatch(/^#[0-9a-f]{6}$/);
+				if (e.colors.secondary) {
+					expect(e.colors.secondary, `${file}: ${e.id}`).toMatch(/^#[0-9a-f]{6}$/);
+					expect(e.colors.secondary).not.toBe(e.colors.primary);
+				}
+			}
+		}
+	});
+
+	it("`national` is only ever true, and only on teams (a person is not a landslag)", () => {
+		for (const { file, data } of registries) {
+			for (const e of data.entities) {
+				if (e.national === undefined) continue;
+				expect(e.national, `${file}: ${e.id}`).toBe(true);
+				expect(e.type, `${file}: ${e.id}`).toBe("team");
+			}
+		}
+	});
+
+	it("the seed actually delivered identity at scale (the acceptance floor)", () => {
+		const all = registries.flatMap(({ data }) => data.entities);
+		expect(all.filter((e) => e.country).length).toBeGreaterThanOrEqual(2000);  // flags
+		expect(all.filter((e) => e.colors).length).toBeGreaterThanOrEqual(100);    // monograms
+		expect(all.filter((e) => e.national).length).toBeGreaterThanOrEqual(40);
 	});
 });
 

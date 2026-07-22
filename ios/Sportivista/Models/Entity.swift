@@ -27,7 +27,23 @@ struct Entity: Codable, Equatable, Hashable {
     /// one, and only when unambiguous across the index).
     var initials: [String]
 
-    private enum CodingKeys: String, CodingKey { case id, name, aliases, sport, type, initials }
+    /// WP-185 — ISO 3166-1 alpha-2 ("NO"), or a UK home nation as ISO 3166-2
+    /// ("GB-ENG"/"GB-SCT"/"GB-WLS"/"GB-NIR"): sport treats those as countries with
+    /// their own flags. Folded from three source dialects by scripts/lib/country.js;
+    /// nil whenever the source had no confident answer (historical states, FIDE's
+    /// stateless "FID") — the client then shows no flag rather than a wrong one.
+    var country: String?
+
+    /// WP-185 — true only for NATIONAL teams. `country` alone cannot tell a
+    /// landslag from a club: Wikidata stamps P17 on Norwegian handball CLUBS too,
+    /// so without this gate "Elverum Håndball" would fly a Norwegian flag.
+    var national: Bool
+
+    /// WP-185 — the club's own registered colours, the two fills of its monogram
+    /// avatar. Never an accent (amber remains the app's single accent token).
+    var colors: EntityColors?
+
+    private enum CodingKeys: String, CodingKey { case id, name, aliases, sport, type, initials, country, national, colors }
 
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -37,5 +53,17 @@ struct Entity: Codable, Equatable, Hashable {
         type = try c.decode(String.self, forKey: .type)
         aliases = try c.decodeIfPresent([String].self, forKey: .aliases) ?? []
         initials = try c.decodeIfPresent([String].self, forKey: .initials) ?? []
+        country = try c.decodeIfPresent(String.self, forKey: .country)
+        national = try c.decodeIfPresent(Bool.self, forKey: .national) ?? false
+        colors = try c.decodeIfPresent(EntityColors.self, forKey: .colors)
     }
+
+}
+
+/// WP-185 — an entity's two registered colours, canonical `#rrggbb` (the pipeline
+/// normalises; see registry.schema.json). `secondary` is omitted when it equals
+/// the primary, in which case the avatar is a flat fill rather than a split.
+struct EntityColors: Codable, Equatable, Hashable {
+    var primary: String
+    var secondary: String?
 }

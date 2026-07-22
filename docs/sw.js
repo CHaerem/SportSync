@@ -20,6 +20,7 @@ const SHELL_FILES = [
     '/js/profile-sync.js',
     '/js/assistant.js',
     '/js/sport-icons.js',
+    '/js/entity-avatar.js',
     '/js/theme.js',
     '/js/share-card.js',
     '/js/dashboard.js',

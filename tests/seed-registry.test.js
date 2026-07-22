@@ -4,7 +4,8 @@
 // the merge/serialization contract (stable ids across re-seeds, deterministic
 // bytes) is what makes the checked-in registry files reviewable artifacts.
 import { describe, it, expect } from "vitest";
-import { mergeRegistry, serializeRegistry, slugify } from "../scripts/seed-registry/seed-lib.js";
+import { mergeRegistry, serializeRegistry, slugify, normalizeHexColor, normalizeColors, normalizeIdentity } from "../scripts/seed-registry/seed-lib.js";
+import { toIsoCountry, isIsoCountry } from "../scripts/lib/country.js";
 import { footballEntitiesFromTeams, f1EntitiesFromStandings, tennisEntitiesFromRankings, FOOTBALL_LEAGUES } from "../scripts/seed-registry/espn.js";
 import { chessEntitiesFromTopList, flipFideName } from "../scripts/seed-registry/fide.js";
 import { esportsEntitiesFromPortalHtml, decodeHtmlEntities } from "../scripts/seed-registry/liquipedia.js";
@@ -223,5 +224,109 @@ describe("serializeRegistry (deterministic artifact)", () => {
 	it("slugify matches build-entities (one slug algorithm across seed + build)", () => {
 		expect(slugify("Søren Wærenskjold")).toBe("soren-waerenskjold");
 		expect(slugify("Team Visma | Lease a Bike")).toBe("team-visma-lease-a-bike");
+	});
+});
+
+
+// --- WP-185: identity metadata (ISO country, club colours, landslag flag) ---
+
+describe("country normalisation (scripts/lib/country.js)", () => {
+	it("folds all three source dialects into ISO alpha-2", () => {
+		expect(toIsoCountry("NOR")).toBe("NO");      // FIDE federation code
+		expect(toIsoCountry("Norway")).toBe("NO");   // ESPN English name
+		expect(toIsoCountry("Norge")).toBe("NO");    // Wikidata nb label
+		expect(toIsoCountry("Tyskland")).toBe("DE");
+		expect(toIsoCountry("United States")).toBe("US");
+		expect(toIsoCountry("Türkiye")).toBe("TR");  // diacritics stripped
+		expect(toIsoCountry("Sør-Afrika")).toBe("ZA");
+	});
+
+	it("keeps the UK home nations distinct — sport does", () => {
+		expect(toIsoCountry("ENG")).toBe("GB-ENG");
+		expect(toIsoCountry("Scotland")).toBe("GB-SCT");
+		expect(toIsoCountry("Great Britain")).toBe("GB");
+	});
+
+	it("passes an already-ISO value through unchanged (idempotent)", () => {
+		expect(toIsoCountry("NO")).toBe("NO");
+		expect(toIsoCountry("GB-ENG")).toBe("GB-ENG");
+	});
+
+	it("returns null rather than guessing a successor state", () => {
+		// Registered federations/birth states with no ISO code today. A wrong flag
+		// on a person is worse than no flag — the row keeps its sport glyph.
+		for (const v of ["Sovjetunionen", "Jugoslavia", "Tsjekkoslovakia", "Øst-Tyskland", "Serbia og Montenegro", "FID", "", null]) {
+			expect(toIsoCountry(v), String(v)).toBeNull();
+		}
+	});
+
+	it("isIsoCountry accepts exactly what the schema pattern accepts", () => {
+		expect(isIsoCountry("NO")).toBe(true);
+		expect(isIsoCountry("GB-SCT")).toBe(true);
+		expect(isIsoCountry("Norge")).toBe(false);
+		expect(isIsoCountry("nor")).toBe(false);
+	});
+});
+
+describe("colour + identity normalisation (seed-lib)", () => {
+	it("canonicalises ESPN's bare hex", () => {
+		expect(normalizeHexColor("E20520")).toBe("#e20520");
+		expect(normalizeHexColor("#fff")).toBe("#ffffff");
+		expect(normalizeHexColor("chartreuse")).toBeNull();
+	});
+
+	it("drops a secondary identical to the primary (no pointless gradient)", () => {
+		expect(normalizeColors({ primary: "e20520", secondary: "E20520" })).toEqual({ primary: "#e20520" });
+		expect(normalizeColors({ primary: "e20520", secondary: "003399" })).toEqual({ primary: "#e20520", secondary: "#003399" });
+	});
+
+	it("a secondary without a primary is no colour pair at all", () => {
+		expect(normalizeColors({ secondary: "003399" })).toBeNull();
+	});
+
+	it("normalizeIdentity drops what it cannot canonicalise instead of keeping junk", () => {
+		expect(normalizeIdentity({ id: "x", country: "Sovjetunionen", colors: { primary: "nope" } })).toEqual({ id: "x" });
+		expect(normalizeIdentity({ id: "x", country: "NOR" })).toEqual({ id: "x", country: "NO" });
+	});
+
+	it("a re-seed converges EXISTING rows too, not just the ones the source returned", () => {
+		const existing = [{ id: "a", name: "A", aliases: [], sport: "chess", type: "athlete", country: "GER", external: { fideId: "1" } }];
+		const merged = mergeRegistry(existing, []);
+		expect(merged[0].country).toBe("DE");
+	});
+});
+
+describe("ESPN seeds carry the identity the avatar needs", () => {
+	it("club teams get their kit colours", () => {
+		const json = { sports: [{ leagues: [{ teams: [
+			{ team: { id: "359", displayName: "Arsenal", color: "e20520", alternateColor: "003399" } },
+			{ team: { id: "438", displayName: "Rosenborg", color: "ffffff", alternateColor: "ffffff" } },
+			{ team: { id: "1", displayName: "Fargeøs FK" } },
+		] }] }] };
+		const [arsenal, rosenborg, plain] = footballEntitiesFromTeams(json);
+		expect(arsenal.colors).toEqual({ primary: "#e20520", secondary: "#003399" });
+		expect(rosenborg.colors).toEqual({ primary: "#ffffff" });
+		expect(plain.colors).toBeUndefined();     // no colour → the sport glyph, honestly
+		expect(arsenal.national).toBeUndefined(); // a club is not a landslag
+	});
+
+	it("only the fifa.world seed marks a team `national` (the flag gate)", () => {
+		const json = { sports: [{ leagues: [{ teams: [{ team: { id: "464", displayName: "Norway", color: "c8102e" } }] }] }] };
+		const [national] = footballEntitiesFromTeams(json, { national: true });
+		expect(national.national).toBe(true);
+		expect(mergeRegistry([], [national])[0].country).toBe("NO");
+	});
+});
+
+describe("Wikidata handball teams: landslag vs. klubb", () => {
+	it("the ?national BIND separates the two UNION branches", () => {
+		const bindings = [
+			{ t: { value: "http://www.wikidata.org/entity/Q852003" }, tLabel: { value: "Norges herrelandslag i håndball" }, countryLabel: { value: "Norge" }, national: { value: "true" } },
+			{ t: { value: "http://www.wikidata.org/entity/Q1" }, tLabel: { value: "Elverum Håndball" }, countryLabel: { value: "Norge" }, national: { value: "false" } },
+		];
+		const [landslag, klubb] = teamEntities(bindings, "handball");
+		expect(landslag.national).toBe(true);
+		expect(klubb.national).toBeUndefined();   // a club must never fly the flag
+		expect(klubb.country).toBe("Norge");      // ISO-folded by mergeRegistry
 	});
 });

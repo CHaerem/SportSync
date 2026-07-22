@@ -14,6 +14,8 @@
  * network-free with fixtures; only the seed* entry points fetch.
  */
 
+import { normalizeColors } from "./seed-lib.js";
+
 const HOST = "https://site.api.espn.com/apis/site/v2/sports";
 const F1_STANDINGS_URL = "https://site.api.espn.com/apis/v2/sports/racing/f1/standings";
 
@@ -52,9 +54,25 @@ export function footballEntitiesFromTeams(json, { national = false } = {}) {
 			type: "team",
 			external: { espnId: String(t.id) },
 		};
-		if (national) entity.country = t.displayName;
+		if (national) {
+			entity.country = t.displayName;   // normalised to ISO by mergeRegistry
+			entity.national = true;           // WP-185: a landslag flies the FLAG, a club wears the MONOGRAM
+		}
+		const colors = espnColors(t);
+		if (colors) entity.colors = colors;
 		return entity;
 	});
+}
+
+/**
+ * WP-185: ESPN's `color` / `alternateColor` (bare 6-digit hex, no "#") → the
+ * registry's `colors` block, the source of the club MONOGRAM's two tints.
+ * `normalizeColors` (seed-lib) canonicalises and drops a secondary identical to
+ * the primary; a team with no usable colour simply gets no `colors` and the
+ * client degrades to the sport glyph.
+ */
+export function espnColors(team) {
+	return normalizeColors({ primary: team?.color, secondary: team?.alternateColor });
 }
 
 /** The F1 standings response → driver (athlete) + constructor (team) candidates. */
@@ -73,13 +91,16 @@ export function f1EntitiesFromStandings(json) {
 				if (entry.athlete.flag?.alt) e.country = entry.athlete.flag.alt;
 				out.push(e);
 			} else if (entry.team?.displayName) {
-				out.push({
+				const team = {
 					name: entry.team.displayName,
 					aliases: [],
 					sport: "f1",
 					type: "team",
 					external: { espnId: String(entry.team.id) },
-				});
+				};
+				const colors = espnColors(entry.team);
+				if (colors) team.colors = colors;
+				out.push(team);
 			}
 		}
 	}

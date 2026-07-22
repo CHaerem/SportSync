@@ -88,6 +88,7 @@ class Dashboard {
 		this.allEvents = Array.isArray(events) ? events : [];
 		// The followable entity index — a bare array of {id,name,aliases,sport,type}.
 		this.entities = Array.isArray(entities) ? entities : (entities && Array.isArray(entities.entities) ? entities.entities : []);
+		this._identityIndex = null;   // WP-185: rebuilt lazily against the fresh index
 		// news.json may be a bare array or {items:[…]} — normalise to an array.
 		this.news = Array.isArray(news) ? news : (news && Array.isArray(news.items) ? news.items : []);
 		// Prefer the server's stable id (build-events.js, WP-02) — a hash of
@@ -542,6 +543,59 @@ class Dashboard {
 	 *  if sport-icons.js is absent (e.g. the vm-sandbox unit tests). */
 	sportIconCell(sport) { return typeof ssSportIcon === 'function' ? ssSportIcon(sport) : ''; }
 
+	/** WP-185 — the row's ENTITY lookup, built ONCE per data load: normalised
+	 *  name/alias → entity, restricted to entities that actually carry identity
+	 *  metadata (country or colours). O(1) per row. The alternative — reusing
+	 *  `resolveEntity`'s word-boundary scan — is a linear pass over ~3 700 entities
+	 *  PER ROW, i.e. the at-scale trap WP-161 already paid for once. */
+	identityIndex() {
+		if (this._identityIndex) return this._identityIndex;
+		const byName = new Map(), byId = new Map();
+		for (const ent of this.entities || []) {
+			if (!ent || !ent.id) continue;
+			const hasIdentity = (ent.country && (ent.type === 'athlete' || ent.national)) || (ent.colors && ent.colors.primary);
+			if (!hasIdentity) continue;
+			byId.set(ent.id, ent);
+			for (const term of [ent.name, ...(ent.aliases || [])]) {
+				const k = ssNormalize(term || '').trim();
+				if (k && !byName.has(k)) byName.set(k, ent);
+			}
+		}
+		this._identityIndex = { byName, byId };
+		return this._identityIndex;
+	}
+
+	/** The ONE entity an agenda row is anchored on (DESIGN § Entitets-avatar: max
+	 *  one coloured surface per row). Resolution order — the server's own stamped
+	 *  ids first (authoritative), then the team names, then a Norwegian
+	 *  participant, then a named participant. The AWAY team is tried too: on a
+	 *  board built for a Norwegian fan the away side is often the one they came
+	 *  for ("Universitatea Cluj – Brann"). Returns null when nothing resolves; the
+	 *  caller then falls back to the sport glyph. */
+	rowEntity(e) {
+		if (!e) return null;
+		const { byName, byId } = this.identityIndex();
+		if (!byId.size && !byName.size) return null;
+		const look = (name) => (name ? byName.get(ssNormalize(name).trim()) || null : null);
+		return (e.homeTeamEntityId && byId.get(e.homeTeamEntityId))
+			|| (e.awayTeamEntityId && byId.get(e.awayTeamEntityId))
+			|| look(e.homeTeam)
+			|| look(e.awayTeam)
+			|| ((e.norwegianPlayers || []).map((p) => p && p.entityId && byId.get(p.entityId)).find(Boolean) || null)
+			|| ((e.norwegianPlayers || []).map((p) => look(p && (p.name || p))).find(Boolean) || null)
+			|| ((e.participants || []).map((p) => look(p && (p.name || p))).find(Boolean) || null);
+	}
+
+	/** WP-185 — the row's leading identity cell: the entity's flag/monogram when we
+	 *  know it, else the WP-154 sport glyph. Never an empty hole. */
+	identityCell(e, sport) {
+		if (typeof ssEntityIdentity === 'function' && typeof ssEntityAvatar === 'function') {
+			const avatar = ssEntityAvatar(ssEntityIdentity(this.rowEntity(e)));
+			if (avatar) return avatar;
+		}
+		return this.sportIconCell(sport);
+	}
+
 	/** A quiet disclosure chevron (app-parity, WP-154) — shown on expandable rows,
 	 *  rotated 90° when open. Decorative; the row's role="button"/aria-expanded
 	 *  carries the affordance for assistive tech. */
@@ -575,7 +629,7 @@ class Dashboard {
 		return `<div class="ev-wrap"><div class="ev${this.isMustSee(e) ? ' must' : ''}${status ? ' cancelled' : ''}${done ? ' done' : ''}${expandable ? ' expandable' : ''}"${attrs}>
 			${this.dotCell(this.isMustSee(e))}
 			<span class="ev-time">${escapeHtml(this.timeLabel(e))}</span>
-			${this.sportIconCell(e.sport)}
+			${this.identityCell(e, e.sport)}
 			<span class="ev-main"><span class="ev-title">${this.eventTitle(e)}</span>${this.eventMeta(e, trailing)}</span>
 			${this.trailCell(e, expandable, open)}
 		</div><div class="ev-detail"${open ? '' : ' hidden'}>${open ? this.eventDetail(e) : ''}</div></div>`;
@@ -591,7 +645,7 @@ class Dashboard {
 		return `<div class="ev-wrap"><div class="ev expandable series" role="button" tabindex="0" aria-expanded="${open}" data-event-id="${escapeHtml(s.id)}">
 			${this.dotCell(false)}
 			<span class="ev-time">${escapeHtml(this.osloTime(date))}</span>
-			${this.sportIconCell(s.nextStage.sport)}
+			${this.identityCell(s.nextStage, s.nextStage.sport)}
 			<span class="ev-main"><span class="ev-title">${escapeHtml(s.tournament)}</span><span class="ev-meta">${meta}</span></span>
 			${this.trailCell(s.nextStage, true, open)}
 		</div><div class="ev-detail"${open ? '' : ' hidden'}>${open ? this.eventDetail(s) : ''}</div></div>`;

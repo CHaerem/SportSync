@@ -55,7 +55,22 @@
 				},
 				"country": {
 					"type": "string",
-					"description": "Best-effort nasjonstilhørighet slik kilden oppgir den (FIDE-føderasjon som NOR, Wikidata-label som Norge). Normaliseres til ISO i WP-185."
+					"description": "WP-185: ISO 3166-1 alpha-2 (\"NO\", \"DE\", \"US\") — eller en av de fire britiske hjemnasjonene som ISO 3166-2 (\"GB-ENG\", \"GB-SCT\", \"GB-WLS\", \"GB-NIR\"), fordi sport behandler dem som egne land med egne flagg. Kildene leverer tre ulike dialekter (FIDE-føderasjonskode, ESPN-engelsk navn, Wikidata nb-label); `scripts/lib/country.js` folder dem sammen med en KURERT tabell (ingen fuzzy gjetting — feil flagg på en person er verre enn intet flagg). Verdier uten trygt ISO-svar — historiske stater (Sovjetunionen, Jugoslavia, Tsjekkoslovakia, Øst-Tyskland, Serbia og Montenegro) og FIDEs statsløse \"FID\" — SLETTES i stedet for å gjettes; klienten degraderer da til sportglyfen. Bærer FLAGGET på landslags- og utøverrader.",
+					"pattern": "^([A-Z]{2}|GB-(ENG|SCT|WLS|NIR))$"
+				},
+				"national": {
+					"type": "boolean",
+					"description": "WP-185: sant KUN for landslag. Skiller et landslag fra en klubb i SAMME land — begge kan bære `country` (Wikidata gir P17 på norske klubber også), men bare landslaget ER landet. Klienten viser FLAGG for utøvere og landslag, MONOGRAM for klubber; uten dette flagget ville «Elverum Håndball» fått norsk flagg. Utelates for klubber (ingen `false`-støy)."
+				},
+				"colors": {
+					"type": "object",
+					"description": "WP-185: entitetens egne klubb-/lagfarger — grunnlaget for FARGE-MONOGRAMMET (liten avrundet avatar med initialer, à la Kontakter/Kalender) på klubb-/lagrader. Kilde: ESPN teams-API-ets `color`/`alternateColor`. IKKE en aksentfarge: DESIGN.md § Entitets-avatar holder amber som produktets ENESTE aksent — avataren er entitetens identitet, maks én farget flate per rad. Mangler feltet, degraderer klienten til sportglyfen (aldri et tomt hull).",
+					"required": ["primary"],
+					"additionalProperties": false,
+					"properties": {
+						"primary": { "type": "string", "pattern": "^#[0-9a-f]{6}$", "description": "Primærfarge, kanonisk lowercase `#rrggbb`." },
+						"secondary": { "type": "string", "pattern": "^#[0-9a-f]{6}$", "description": "Sekundærfarge (utelates når den er lik primær — klienten tegner da en flat flate i stedet for en meningsløs gradient)." }
+					}
 				},
 				"external": {
 					"type": "object",

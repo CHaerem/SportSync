@@ -628,13 +628,18 @@ extension Entity {
     /// which suppresses Swift's synthesised memberwise init — this restores a
     /// direct constructor so tests and previews can build entities without
     /// round-tripping through JSON.
-    init(id: String, name: String, aliases: [String] = [], sport: String, type: String, initials: [String] = []) {
+    init(id: String, name: String, aliases: [String] = [], sport: String, type: String, initials: [String] = [],
+         country: String? = nil, national: Bool = false, colors: EntityColors? = nil) {
         self.id = id
         self.name = name
         self.aliases = aliases
         self.sport = sport
         self.type = type
         self.initials = initials
+        // WP-185 identity metadata — defaulted so every existing call site is unchanged.
+        self.country = country
+        self.national = national
+        self.colors = colors
     }
 }
 
