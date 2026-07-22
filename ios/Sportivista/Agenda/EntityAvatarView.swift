@@ -19,11 +19,20 @@ import SwiftUI
 struct EntityAvatarView: View {
     let identity: EntityIdentity
     let sport: String
+    /// WP-170 — an ADDITIVE size multiplier. The agenda row keeps `1` (the 24 pt
+    /// column DESIGN.md § Entitets-avatar specifies, byte-for-byte unchanged);
+    /// the entity page passes a larger value, because DESIGN.md § Entitets-avatar
+    /// already reserves «samme avatar i stor variant» for that surface. It is a
+    /// multiplier rather than a raw size so the avatar keeps scaling with Dynamic
+    /// Type — a fixed large point size would be a Forbudsliste violation.
+    var scale: CGFloat = 1
 
     // Matches SportSymbolView's scaled column so titles stay aligned at every
     // Dynamic Type size, and the avatar grows with the text rather than sitting
     // as a fixed dot next to giant type.
-    @ScaledMetric(relativeTo: .subheadline) private var side: CGFloat = 24
+    @ScaledMetric(relativeTo: .subheadline) private var baseSide: CGFloat = 24
+
+    private var side: CGFloat { baseSide * scale }
 
     var body: some View {
         switch identity {
@@ -32,13 +41,15 @@ struct EntityAvatarView: View {
                 .padding(.top, 2)
                 .accessibilityHidden(true)
         case .flag(let emoji):
+            // The glyph steps to a larger TEXT STYLE (never a point size) when the
+            // caller asked for the big variant, so Dynamic Type still drives it.
             Text(emoji)
-                .font(.sportivista(.subheadline))
+                .font(.sportivista(scale > 1 ? .largeTitle : .subheadline))
                 .frame(width: side, alignment: .center)
                 .padding(.top, 2)
                 .accessibilityHidden(true)
         case .monogram(let initials, let primary, let secondary, let inkIsLight):
-            MonogramAvatar(initials: initials, primary: primary, secondary: secondary, inkIsLight: inkIsLight, side: side)
+            MonogramAvatar(initials: initials, primary: primary, secondary: secondary, inkIsLight: inkIsLight, side: side, big: scale > 1)
                 .padding(.top, 2)
                 .accessibilityHidden(true)
         case .none:
@@ -112,6 +123,9 @@ private struct MonogramAvatar: View {
     let secondary: UInt32
     let inkIsLight: Bool
     let side: CGFloat
+    /// WP-170 — the entity page's large variant: the initials step up one text
+    /// style so they fill the bigger circle. A style, never a point size.
+    var big: Bool = false
 
     @Environment(\.colorScheme) private var scheme
 
@@ -126,7 +140,7 @@ private struct MonogramAvatar: View {
                 endPoint: .bottomTrailing
             )
             Text(initials)
-                .font(.sportivista(.caption2, weight: .semibold))
+                .font(.sportivista(big ? .title3 : .caption2, weight: .semibold))
                 .foregroundStyle(inkIsLight ? Color.white : Color.black)
                 .minimumScaleFactor(0.7)
         }

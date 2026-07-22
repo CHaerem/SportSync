@@ -217,16 +217,23 @@ struct FollowedListView: View {
 
 // MARK: - Detail (rad → detalj)
 
-/// One follow's detail. WP-120 adds two value sections ABOVE the descriptive
-/// OM/HVORFOR: KOMMENDE (the entity's next 1–3 events, each tappable → the full
-/// event detail) and SISTE NYTT (the lens-matched news pointers, tapping opens
-/// the source). The device-wide reminder read-out and «Slutt å følge» (behind a
-/// calm confirmation) are unchanged from WP-105.
+/// One follow's detail — since WP-170 the ENTITY PAGE with the follow's own
+/// settings underneath, so the whole «hva skjer med X?» answer is ONE tap from
+/// the follow row and the admin never sits above the value.
+///
+/// The value half (anker · KOMMENDE · SISTE RESULTAT · TABELL · SISTE NYTT ·
+/// MER) is `EntityPageSections`, shared byte-for-byte with the standalone
+/// `EntityPageView` the event detail sheet pushes. WP-120's KOMMENDE + SISTE
+/// NYTT moved INTO that shared page rather than being duplicated here; the
+/// device-wide reminder read-out, the WP-176 fulltidsvarsel switch and «Slutt å
+/// følge» (behind a calm confirmation) are unchanged.
 struct FollowDetailView: View {
     var viewModel: AssistantViewModel
     let rule: InterestRule
 
     @State private var snapshot: AssistantViewModel.FollowSnapshot?
+    /// The composed entity page (WP-170) — loaded off the main actor.
+    @State private var page: EntityPage?
     @State private var detailRow: AgendaEventRow?
     @State private var confirmingStop = false
     @Environment(\.dismiss) private var dismiss
@@ -236,8 +243,12 @@ struct FollowDetailView: View {
     /// WP-176 — this entity's fulltidsvarsel switch (per device, off by default).
     @State private var resultAlertOn = false
 
-    private var upcoming: [FeedQueryEvent] { snapshot?.presenter.nextEvents(for: rule, limit: 3) ?? [] }
-    private var news: [NewsItem] { snapshot?.presenter.newsItems(for: rule, limit: 3) ?? [] }
+    /// The resolved entity behind the rule (or the rule's own stand-in when the
+    /// index hasn't synced) — the entity page's subject.
+    private var entity: Entity {
+        snapshot?.presenter.entity(for: rule)
+            ?? Entity(id: rule.entityId, name: rule.entityName, aliases: [], sport: rule.sport, type: "")
+    }
     /// WP-125: this follow's name resolves to nothing we know — likely mistyped.
     private var isUnresolved: Bool { snapshot?.presenter.matchState(for: rule) == .unresolved }
     /// Nearest real names for an unresolved follow (reuses the index fuzzy).
@@ -295,36 +306,11 @@ struct FollowDetailView: View {
                 }
             }
 
-            if !upcoming.isEmpty {
-                Section {
-                    ForEach(upcoming, id: \.id) { event in
-                        Button {
-                            detailRow = agendaRow(for: event)
-                        } label: {
-                            kommendeRow(event)
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityIdentifier("followed.upcoming.\(event.id)")
-                    }
-                } header: {
-                    groupHeader("KOMMENDE")
-                }
-                .listRowBackground(SportivistaTokens.cell)
-            }
-
-            if !news.isEmpty {
-                Section {
-                    ForEach(news) { item in
-                        newsRow(item)
-                    }
-                } header: {
-                    groupHeader("SISTE NYTT")
-                } footer: {
-                    Text("Pekere til kilden — Sportivista lager aldri egne sammendrag.")
-                        .font(.sportivista(.footnote))
-                        .foregroundStyle(SportivistaTokens.secondaryLabel)
-                }
-                .listRowBackground(SportivistaTokens.cell)
+            // WP-170 — the entity page itself: anker · KOMMENDE · SISTE RESULTAT
+            // · TABELL · SISTE NYTT · MER, in that fixed order, each section
+            // omitted when it has nothing to say.
+            EntityPageSections(entity: entity, page: page) { row in
+                detailRow = agendaRow(for: row)
             }
 
             Section {
@@ -419,6 +405,9 @@ struct FollowDetailView: View {
         .task {
             snapshot = viewModel.followSnapshot()
             resultAlertOn = ResultAlertPreference.isEnabled(entityId: rule.entityId)
+            // The page's own cache reads run OFF the main actor (a navigation,
+            // not a hot path) — the admin sections render immediately meanwhile.
+            page = await EntityPageLoader.page(entity: entity, rule: rule)
         }
         .sheet(item: $detailRow) { row in
             EventDetailSheet(row: row, onFollow: { viewModel.follow($0) })
@@ -437,83 +426,6 @@ struct FollowDetailView: View {
         } message: {
             Text("\(rule.entityName) forsvinner fra det du følger, og agendaen oppdateres. Du kan legge til igjen når som helst.")
         }
-    }
-
-    // MARK: - KOMMENDE row
-
-    private func kommendeRow(_ event: FeedQueryEvent) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: SportSymbol.name(for: event.sport))
-                .font(.sportivista(.body))
-                .foregroundStyle(SportivistaTokens.tertiaryLabel)
-                .frame(width: symbolWidth)
-                .accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(event.title)
-                    .font(.sportivista(.body))
-                    .foregroundStyle(SportivistaTokens.label)
-                    .fixedSize(horizontal: false, vertical: true)
-                Text(whenWhereLabel(event))
-                    .font(.sportivistaTabular(.footnote))
-                    .foregroundStyle(SportivistaTokens.secondaryLabel)
-            }
-            Spacer(minLength: 4)
-            Image(systemName: "chevron.forward")
-                .font(.sportivista(.footnote, weight: .semibold))
-                .foregroundStyle(SportivistaTokens.tertiaryLabel)
-                .accessibilityHidden(true)
-        }
-        .contentShape(Rectangle())
-    }
-
-    /// «lør 25. · 18:00 · TV 2» for a single-day event; the multi-day window
-    /// (already a date range) stands on its own, with the channel appended.
-    private func whenWhereLabel(_ event: FeedQueryEvent) -> String {
-        var parts: [String] = []
-        if event.timeLabel.contains("–") {
-            parts.append(event.timeLabel)
-        } else if let presenter = snapshot?.presenter {
-            parts.append("\(presenter.shortDayLabel(dayKey: event.dayKey)) · \(event.timeLabel)")
-        } else {
-            parts.append(event.timeLabel)
-        }
-        if event.channelLabel != "–" { parts.append(event.channelLabel) }
-        return parts.joined(separator: " · ")
-    }
-
-    // MARK: - SISTE NYTT row
-
-    @ViewBuilder private func newsRow(_ item: NewsItem) -> some View {
-        let content = HStack(spacing: 10) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(item.title)
-                    .font(.sportivista(.subheadline))
-                    .foregroundStyle(SportivistaTokens.label)
-                    .fixedSize(horizontal: false, vertical: true)
-                Text(newsMeta(item))
-                    .font(.sportivista(.caption))
-                    .foregroundStyle(SportivistaTokens.secondaryLabel)
-            }
-            Spacer(minLength: 4)
-            Image(systemName: "arrow.up.forward")
-                .font(.sportivista(.footnote, weight: .semibold))
-                .foregroundStyle(SportivistaTokens.accent)
-                .accessibilityHidden(true)
-        }
-        .contentShape(Rectangle())
-
-        if let url = URL(string: item.link) {
-            Link(destination: url) { content }
-                .accessibilityLabel("Åpne: \(item.title)")
-        } else {
-            content
-        }
-    }
-
-    private func newsMeta(_ item: NewsItem) -> String {
-        let source = item.source.isEmpty ? "kilde" : item.source
-        guard let published = item.publishedAt else { return source }
-        return "\(source) · \(Self.relativeFormatter.localizedString(for: published, relativeTo: Date()))"
     }
 
     // MARK: - Detail rows / helpers
@@ -566,27 +478,20 @@ struct FollowDetailView: View {
     /// event-detail sheet the agenda uses (venue · streaming · AI provenance).
     /// whyShown/followable default empty — this surface is already scoped to a
     /// followed entity.
-    private func agendaRow(for event: FeedQueryEvent) -> AgendaEventRow? {
-        guard let full = snapshot?.eventsById[event.id] else { return nil }
+    private func agendaRow(for row: EntityUpcomingRow) -> AgendaEventRow? {
+        guard let event = row.event else { return nil }
         return AgendaEventRow(
-            id: event.id,
-            timeLabel: event.timeLabel,
-            title: event.title,
-            metaLabel: AgendaFormat.metaLabel(tournament: full.tournament, title: event.title),
-            channelLabel: event.channelLabel,
-            isMustSee: event.isMustSee,
-            mustWatch: event.isMustSee,
-            isAIResearch: full.source == "ai-research",
-            event: full
+            id: row.id,
+            timeLabel: AgendaFormat.timeLabel(time: event.time, endTime: event.endTime),
+            title: row.title,
+            metaLabel: AgendaFormat.metaLabel(tournament: event.tournament, title: row.title),
+            channelLabel: row.channelLabel,
+            isMustSee: row.isMustSee,
+            mustWatch: row.isMustSee,
+            isAIResearch: event.source == "ai-research",
+            event: event
         )
     }
-
-    private static let relativeFormatter: RelativeDateTimeFormatter = {
-        let f = RelativeDateTimeFormatter()
-        f.locale = Locale(identifier: "nb_NO")
-        f.unitsStyle = .short
-        return f
-    }()
 }
 
 // MARK: - Shared Norwegian vocabulary for the follow surfaces

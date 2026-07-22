@@ -36,6 +36,38 @@ final class FollowedListUITests: SportivistaUITestCase {
         assertExists(app.navigationBars["Legg til"], "«+» opens the Legg til-søk")
     }
 
+    // WP-170 — from a follow row to the ENTITY PAGE on ONE tap: the seeded FK Lyn
+    // Oslo follow (football, with the «Lyn mot Sogndal» fixture event) pushes a
+    // page whose anchor + KOMMENDE + specialist hand-off all render, with the
+    // follow admin still underneath.
+    func testFollowRowOpensEntityPage() {
+        let app = launchApp(state: "agenda")
+
+        app.buttons["nav.settings"].tap()
+        let followsRow = app.buttons["deg.follows"]
+        assertExists(followsRow, "Deg should home «Det du følger»")
+        followsRow.tap()
+
+        let row = app.buttons["followed.row.fk-lyn-oslo"]
+        assertExists(row, "the seeded FK Lyn Oslo follow should be a row")
+        row.tap()
+
+        // The page's fixed sections: the pushed title names the entity, the
+        // KOMMENDE header renders (the seeded football fixture falls in-window),
+        // and the MER hand-off (football → FotMob) appears. The follow-admin
+        // «Slutt å følge» is still on the same screen.
+        assertExists(app.navigationBars["FK Lyn Oslo"], "the follow row pushes the entity's page")
+        assertExists(app.staticTexts["KOMMENDE"], "the seeded fixture makes a KOMMENDE section")
+        assertExists(app.buttons["entity.specialist"], "football links out to the specialist (MER)")
+        attachScreenshot(app, name: "wp170-entity-page")
+
+        // The follow's own admin still lives on the SAME screen, below the page
+        // (WP-170 folded the entity page INTO the follow detail) — scroll to it.
+        let stop = app.buttons["followed.stop"]
+        for _ in 0..<6 where !stop.exists { app.swipeUp() }
+        assertExists(stop, "the follow's own «Slutt å følge» stays on the page")
+    }
+
     // WP-164 — søk-miss → «Følg likevel» → rad i «Det du følger» med ærlig status.
     // «Storhamar» is deliberately ASCII (typeText + æøå is flaky) and absent from
     // the seeded entities fixture, so the search genuinely misses.

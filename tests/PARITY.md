@@ -33,6 +33,16 @@ bundle degrades, never crashes) — pinned by coherence tests
 - **Deterministic assistant** — `docs/js/assistant.js` ↔ `Assistant/AgendaFilter.swift`
   + `FeedQuery.swift` + parsers. The web is a deliberate SUBSET (a calm floor); iOS is
   the superset (EntityIndex fuzzy resolution, the Foundation-Models path, memory).
+- **Entity page (WP-170)** — `docs/js/entity-page.js` ↔ `ios/Sportivista/Profile/EntityPage.swift`.
+  A COMPOSITION, not a new algorithm: every section reuses an already-pinned piece
+  (KOMMENDE = the shared next-event matcher; RESULTAT = the WP-171 result rows;
+  TABELL = the entity gate over standings; SISTE NYTT = the news lens; MER = a shared,
+  deliberately narrow specialist map). So there is nothing new to golden-pin — the
+  underlying twins carry the pinning. The two files DO share the MER map (`fotmob` /
+  `procyclingstats` / `liquipedia`, one endpoint per sport) — change it on both sides.
+  One deliberate divergence: the web has no `SpoilerShield` (spoiler policy is an
+  on-device iOS memory fact that never leaves the phone), so the web page shows results
+  plainly exactly as the web Nyheter board already does; iOS keeps the shield.
 
 ## The maintenance rules
 
