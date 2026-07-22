@@ -2355,7 +2355,7 @@ men si det ærlig).
 
 | WP | Tittel | Fase | Avhenger av | Status |
 |---|---|---|---|---|
-| WP-190 | G1 gjort målbar: personvernerklæring + privacy manifest + ekstern TestFlight + målemetode | 0M | — | planlagt |
+| WP-190 | G1 gjort målbar: personvernerklæring + privacy manifest + ekstern TestFlight + målemetode | 0M | — | 🔬 branch wp-190-g1-malbar — personvernerklæring (`docs/personvern.html`, ugatet, lenket fra web-foten + Deg › Personvern), `PrivacyInfo.xcprivacy` for app (UserDefaults/CA92.1) + widget (tom, verifisert), G1 omdefinert til et etterprøvbart ASC+dagbok-kriterium med eier-sjekkliste. Beta App Review-innsendingen står igjen som eier-handling |
 | WP-191 | 💰 Juridisk fundament: enhet, Apple-org, varemerke (menneskeoppgave, sekvensert) | 0M | — | planlagt |
 | WP-192 | Kilde-/hosting-risiko sekvensert FØR vekst (WP-20/21-rekkefølgen pinnet) | 0M | — | planlagt |
 
@@ -2372,6 +2372,11 @@ App Store Connect/TestFlight-metrikker (sessions/installs — IKKE D7-kohorter)
 — eier velger (b-beslutningen over). **Aksept:** Beta App Review godkjent;
 personvernsiden live; privacy manifest bygger; G1-teksten i denne planen
 oppdatert med valgt instrument.
+**Levert 22.07 (branch `wp-190-g1-malbar`):** (1) + (2) + (4) er gjort — se
+`## 🚪 GATE G1` for det valgte instrumentet, hva det IKKE måler, og den
+nummererte eier-sjekklista. (3) **ekstern testergruppe + Beta App Review-
+innsending er per definisjon en eier-handling** (Apple-konto-tilgang) og står
+som punkt 4 i den sjekklista — agenten forbereder, eieren sender.
 
 ### WP-191 · 💰 Juridisk fundament (menneskeoppgave — planen sekvenserer)
 **Innhold (sjekkliste for eier, med bistand):** (0) **KLUBBEMBLEMENE — avklares her**
@@ -2417,9 +2422,90 @@ ingen kodeendring utover ev. kommentarer.
 
 ## 🚪 GATE G1 · Lakmustesten (dossier P500 Fase 0)
 
-Etter ~4 uker TestFlight: åpner folk appen daglig uten push-mas? D7-retention?
 **Beslutning (menneske):** gå til Fase 1, forbli hobbyprodukt, eller avvikle app-sporet.
 Alt under denne linjen er skisse som re-planlegges ved gaten.
+
+### Porten, omdefinert til det som faktisk kan måles (WP-190, 22.07.2026)
+
+Den opprinnelige formuleringen — «etter ~4 uker TestFlight: **D7-retention?**» —
+er **ikke målbar for dette produktet**, og det er ikke en instrumenterings-mangel
+som kan tettes. Tre grunner, i rekkefølge:
+
+1. **Vi har ingen retensjonsdata og skal ikke ha det.** D7-retention forutsetter
+   at man kan følge SAMME bruker over syv dager. Det krever en bruker-id og et
+   telemetri-endepunkt — nøyaktig **B.3** i «BRUKERDATA → PRODUKTFORBEDRING»,
+   som er merket *siste utvei* fordi den bruker opp «dine data rører aldri
+   serveren vår» — tillitskapitalen produktet posisjoneres på. Å måle G1 med
+   telemetri ville koste mer enn porten er verdt.
+2. **App Store Connect gir ikke kohorter for TestFlight.** ASC viser installs,
+   sessions, crashes og «Testers» per bygg. Det er *volum*, ikke *retensjon*:
+   ingen D1/D7/D30-kurve, ingen per-tester-tidsserie du kan dele i kohorter.
+3. **N er encifret.** Med en håndfull testere er enhver prosentsats støy. En
+   D7-prosent av 6 personer er teater, ikke en beslutning.
+
+**Den nye porten (BINDENDE — dette er kriteriet G1 måles mot):**
+
+> **G1 er bestått når, ved slutten av uke 4 med minst 5 eksterne TestFlight-testere:**
+> **(a) ≥ 3 testere har hatt sessions i minst 5 av de 7 siste dagene** (ASC →
+> TestFlight → Sessions, avlest per bygg og notert ukentlig i dagboken),
+> **(b) ≥ 3 av 5 svarer 4 eller 5 på «Hvor lei deg ville du blitt om Sportivista**
+> **forsvant i morgen?» (1–5)** i uke-4-spørsmålet, og
+> **(c) 0 uløste krasj-klynger** i ASC over de to siste ukene.
+>
+> Bestått ⇒ Fase 1. Delvis (a eller b, ikke begge) ⇒ forleng med 4 uker og
+> flere testere FØR beslutningen tas — ikke «bestått med forbehold».
+> Ikke bestått ⇒ hobbyprodukt eller avvikling, etter eierens valg.
+
+**Instrumentet — to deler, ingen ny kode, ingen telemetri:**
+
+- **Del 1 · ASC/TestFlight-metrikker (mekanisk, grovt).** Installs, sessions,
+  crashes per bygg, avlest i App Store Connect. Måler *at* appen brukes og *at*
+  den ikke krasjer. Kan ikke svare på hvem, hvor ofte per person, eller hvorfor.
+- **Del 2 · Strukturert testerdagbok (kvalitativ, men fastspikret).** Samme fire
+  spørsmål til hver tester i uke 1, 2 og 4 — samme ordlyd hver gang, svar
+  noteres ordrett, ikke oppsummert:
+  1. «Når åpnet du den sist, og hva så du etter?»
+  2. «Hva var feil eller manglet — tid, kanal, eller noe som ikke var der?»
+  3. «Hvor lei deg ville du blitt om den forsvant i morgen? (1–5)»
+  4. «Har du fortalt noen om den? Hvem, og hva sa du?»
+  Spørsmål 3 er porten (b); spørsmål 2 mater dekningsløkkene; spørsmål 4 er det
+  eneste ærlige spredningssignalet på denne skalaen.
+
+**Hva instrumentet IKKE kan svare på (skriv det ned, ikke lat som):**
+ekte D1/D7/D30-retensjon · hvilke skjermer folk faktisk bruker · hvor de faller
+av i onboarding · om varsler blir åpnet · om en tester sluttet fordi appen var
+dårlig eller fordi sesongen var død. Del 2 er selvrapportert og har både
+høflighets-skjevhet (testerne kjenner eieren) og et utvalg på 5–10 personer —
+den *beskriver*, den beviser ikke. Porten er derfor bevisst satt som et
+**gulv man enten passerer eller ikke**, ikke som en presisjonsmåling. Trenger
+Fase 1 ekte produktanalyse senere, er det en egen, bevisst B.2/B.3-beslutning
+(opt-in, dokumentert i `docs/personvern.html` FØR den slås på) — ikke noe som
+smugles inn under G1.
+
+### Hva som gjenstår som EIER-HANDLING før klokka på de 4 ukene kan starte
+
+WP-190 har levert forutsetningene (personvernerklæring + privacy manifest +
+porten definert). Resten er handlinger bare eieren kan gjøre — i denne rekkefølgen:
+
+1. **Les gjennom `docs/personvern.html`** og bekreft at den stemmer med det du
+   mener produktet er. Bytt ev. kontakt-e-posten til en du vil ha offentlig.
+   (Anbefalt: ta den samme runden med advokat som WP-191-punktene, inkl.
+   klubbemblem-spørsmålet — én gjennomgang, ikke tre.)
+2. **App Store Connect → App Privacy:** sett personvern-URL til
+   `https://sportivista.com/personvern.html` og fyll «nutrition labels» som
+   **Data Not Collected** (utkastet ligger i WP-190s PR-beskrivelse).
+3. **Verifiser at neste TestFlight-bygg bærer privacy-manifestene** — last opp
+   via release-lanen og sjekk at ASC ikke flagger manglende manifest.
+4. **Opprett en ekstern testergruppe** i TestFlight («Uke 1–4») og send bygget
+   til **Beta App Review**. Dette er innsendingen agenten ikke gjør.
+5. **Verv 5–10 testere** som faktisk følger norsk sport (ikke bare venner som
+   sier ja). Under 5 er porten ikke målbar — da forlenges vervingen, ikke porten.
+6. **Start dagboken** (ett dokument, én seksjon per tester): noter startdato,
+   still de fire spørsmålene i uke 1, 2 og 4, skriv svarene ordrett.
+7. **Les av ASC ukentlig** (installs/sessions/crashes per bygg) og skriv tallet
+   inn i samme dokument samme dag — ASC-vinduer ruller, tall du ikke noterte er borte.
+8. **Ved slutten av uke 4: avgjør mot (a)/(b)/(c) over**, og skriv beslutningen
+   + begrunnelsen inn i denne seksjonen. Porten er ikke bestått før den er skrevet ned.
 
 ---
 

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	<meta name="description" content="Personvern i Sportivista — hva som lagres, hvor det bor, og hva som aldri sendes til oss.">
+	<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+	<meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)">
+	<link rel="icon" type="image/png" href="favicon.png">
+	<title>Sportivista · Personvern</title>
+	<!-- Link preview (WP-182) — same checked-in static card as index.html. -->
+	<meta property="og:type" content="website">
+	<meta property="og:site_name" content="Sportivista">
+	<meta property="og:locale" content="nb_NO">
+	<meta property="og:url" content="https://sportivista.com/personvern.html">
+	<meta property="og:title" content="Sportivista · Personvern">
+	<meta property="og:description" content="Personvern i Sportivista — hva som lagres, hvor det bor, og hva som aldri sendes til oss.">
+	<meta property="og:image" content="https://sportivista.com/og/og-default.png">
+	<meta property="og:image:type" content="image/png">
+	<meta property="og:image:width" content="1200">
+	<meta property="og:image:height" content="630">
+	<meta property="og:image:alt" content="Sportivista — svart kort med ordmerket, amber kolon og en tidskolonne.">
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:title" content="Sportivista · Personvern">
+	<meta name="twitter:description" content="Personvern i Sportivista — hva som lagres, hvor det bor, og hva som aldri sendes til oss.">
+	<meta name="twitter:image" content="https://sportivista.com/og/og-default.png">
+	<meta name="twitter:image:alt" content="Sportivista — svart kort med ordmerket, amber kolon og en tidskolonne.">
+	<!-- Apply the chosen theme before paint (no flash of wrong theme); js/theme.js owns the toggle. -->
+	<script>try { var t = localStorage.getItem('ss-theme'); if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t; } catch (e) {}</script>
+	<link rel="stylesheet" href="css/base.css">
+	<link rel="stylesheet" href="css/layout.css">
+	<style>
+		/* Personvern — a reading page. Same calm tokens as the rest of the site; the
+		   only local rules are prose rhythm (the agenda's CSS is row-shaped and has
+		   nothing to say about running text). Never a legal wall: short sections,
+		   one idea each, plain Norwegian. */
+		.pv-lead { color: var(--fg-2); font-size: 0.95rem; line-height: 1.6; margin: 0 0 10px; max-width: 62ch; }
+		.pv-updated { color: var(--fg-3); font-size: 0.8rem; margin: 0 0 30px; }
+
+		.pv-summary { border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; margin: 0 0 34px; }
+		.pv-summary h2 { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--fg-3); font-weight: 600; margin: 0 0 10px; }
+		.pv-summary ul { margin: 0; padding: 0 0 0 18px; }
+		.pv-summary li { color: var(--fg); font-size: 0.92rem; line-height: 1.55; margin: 0 0 6px; }
+		.pv-summary li:last-child { margin-bottom: 0; }
+
+		.pv-section { margin: 0 0 32px; max-width: 62ch; }
+		.pv-section > h2 {
+			font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em;
+			color: var(--fg-3); font-weight: 600; margin: 0 0 12px; padding-bottom: 6px;
+			border-bottom: 1px solid var(--line);
+		}
+		.pv-section p { color: var(--fg-2); font-size: 0.92rem; line-height: 1.6; margin: 0 0 12px; }
+		.pv-section p:last-child { margin-bottom: 0; }
+		.pv-section strong { color: var(--fg); font-weight: 600; }
+		.pv-section ul { margin: 0 0 12px; padding: 0 0 0 18px; }
+		.pv-section li { color: var(--fg-2); font-size: 0.92rem; line-height: 1.6; margin: 0 0 7px; }
+		.pv-section a { color: var(--fg-2); }
+		.pv-section a:hover { color: var(--accent); }
+		.pv-key { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.86em; color: var(--fg); }
+		.pv-note { color: var(--fg-3); font-size: 0.85rem; line-height: 1.55; }
+	</style>
+</head>
+<!-- NB: denne siden står BEVISST UTENFOR innloggings-gaten (ingen `body.gated`,
+     ingen gate-boot.js). En personvernerklæring må være offentlig lesbar — både
+     for App Store-gjennomgangen og for den som vurderer å ta appen i bruk. Den
+     laster derfor heller ingen CloudKit-JS: siden gjør null nettverkskall utover
+     å hente sine egne CSS-filer fra samme opphav. -->
+<body>
+	<header class="masthead">
+		<div class="wrap masthead-inner">
+			<div class="mast-row mast-row-top">
+				<span class="wordmark-lockup"><span class="wordmark">Sportivista</span><span class="wordmark-colon" aria-hidden="true">:</span></span>
+				<button class="theme-toggle" id="theme-toggle" title="Bytt tema" aria-label="Bytt tema">◐</button>
+			</div>
+			<div class="mast-row mast-row-sub">
+				<p class="mast-date">Personvern</p>
+			</div>
+		</div>
+	</header>
+
+	<main class="wrap">
+		<p class="pv-lead">
+			Sportivista er bygget rundt ett valg: <strong>det vi vet om deg, vet vi ikke.</strong>
+			Profilen din — hva du følger, hva assistenten husker — ligger på enheten din og i
+			<strong>din egen private iCloud</strong>. Det finnes ingen Sportivista-server som
+			kan lese den, fordi det ikke finnes noen Sportivista-server i det hele tatt.
+			Under står det presist hva det betyr, og like presist hva det <em>ikke</em> betyr.
+		</p>
+		<p class="pv-updated">Sist oppdatert 22.07.2026 · gjelder iPhone-appen og sportivista.com</p>
+
+		<div class="pv-summary">
+			<h2>Kort fortalt</h2>
+			<ul>
+				<li>Vi har ingen brukerkonto, ingen database og ingen server som lagrer noe om deg.</li>
+				<li>Profilen din bor på enheten og i din egen private iCloud. Vi har ikke tilgang.</li>
+				<li>Ingen analyseverktøy, ingen sporings-SDK-er, ingen annonser, ingen datasalg.</li>
+				<li>Assistenten kjører på enheten din. Det du skriver til den forlater ikke telefonen.</li>
+				<li>Men: å hente data over nett betyr at leverandørene i mellomleddet (Apple, GitHub, og på nettsiden ESPN) ser IP-adressen din. Det står forklart under.</li>
+			</ul>
+		</div>
+
+		<section class="pv-section">
+			<h2>Hvem er ansvarlig</h2>
+			<p>
+				Sportivista drives i dag av en privatperson, Christopher Hærem, som et
+				personlig prosjekt. Han er behandlingsansvarlig for de få personopplysningene
+				som i det hele tatt oppstår. Kontakt:
+				<a href="mailto:chris.haerem@gmail.com">chris.haerem@gmail.com</a>, eller en
+				<a href="https://github.com/CHaerem/sportivista/issues" target="_blank" rel="noopener">sak i det offentlige kodelageret</a>
+				(husk at en sak der er synlig for alle).
+			</p>
+		</section>
+
+		<section class="pv-section">
+			<h2>Profilen din</h2>
+			<p>Profilen er alt som gjør tavla til <em>din</em>:</p>
+			<ul>
+				<li>hvilke lag, utøvere og turneringer du følger (og hva du har sluttet å følge),</li>
+				<li>preferanser du har satt — varsel før start, tema, hvilke resultater du vil ha varsel om,</li>
+				<li>korte notater assistenten husker fordi du ba den om det («ikke vis resultater før jeg har sett kampen»),</li>
+				<li>enkle tellere for hva du åpner, som brukes til å løfte det du engasjerer deg i litt høyere i lista.</li>
+			</ul>
+			<p>
+				På iPhone lagres dette i appens eget område på enheten, og synkroniseres —
+				hvis du er logget inn med Apple-ID-en din — til <strong>din egen private
+				CloudKit-database</strong> hos Apple. Det er din iCloud, innenfor din
+				lagringskvote. Apple flytter bytene mellom dine egne enheter; vi ser dem aldri.
+			</p>
+			<p>
+				Profilen lagres som <strong>klartekst</strong> i din private iCloud — den er
+				ikke ende-til-ende-kryptert. Det er et bevisst valg: en følgeliste for sport er
+				lite sensitiv, og klartekst er det som gjør at din <em>egen</em> nettleser-
+				innlogging kan lese den. Personverngrensen som faktisk betyr noe — at dataene
+				bare finnes i din private konto, aldri hos oss — er den samme uansett.
+			</p>
+			<p>
+				På nettsiden lagres profilen i nettleserens <span class="pv-key">localStorage</span>
+				under nøklene <span class="pv-key">ss-profile</span>,
+				<span class="pv-key">ss-device-id</span> (en tilfeldig enhets-ID som bare brukes
+				til å slå sammen profiler fra flere enheter), <span class="pv-key">ss-theme</span>,
+				<span class="pv-key">ss-install-hint</span> og <span class="pv-key">ss-app-promo</span>.
+				Ingen av dem sendes til oss.
+			</p>
+		</section>
+
+		<section class="pv-section">
+			<h2>Innlogging med Apple</h2>
+			<p>
+				Nettsiden bruker <strong>Logg inn med Apple</strong> via Apples CloudKit JS.
+				Innloggingen skjer hos Apple; vi ser hverken passordet ditt, Apple-ID-en din
+				eller e-postadressen din. Det eneste innloggingen gir oss er ingenting — den
+				gir <em>deg</em> tilgang til din egen private iCloud-database fra nettleseren.
+				Apples CloudKit-bibliotek lagrer sin egen økt-nøkkel i nettleseren din for å
+				holde deg innlogget.
+			</p>
+			<p class="pv-note">
+				Web-API-nøkkelen som ligger i nettsidens kode er offentlig og opphavs-låst
+				(det er slik CloudKit JS er designet) — den gir ingen tilgang til noens data.
+			</p>
+		</section>
+
+		<section class="pv-section">
+			<h2>Assistenten</h2>
+			<p>
+				Assistenten i iPhone-appen kjører på Apples <strong>on-device-språkmodell</strong>
+				(Apple Intelligence). Det du skriver, og svaret du får, blir behandlet på
+				telefonen din og sendes ikke til oss eller til noen skytjeneste av oss.
+			</p>
+			<p>
+				Appen fører en lokal logg over ytringer den <em>ikke forsto</em> («Det jeg ikke
+				forsto» under Deg), slik at du kan se den. Den ligger bare på enheten. Den
+				forlater telefonen kun hvis du selv trykker del og selv velger hvor den skal.
+			</p>
+			<p>
+				Assistenten på nettsiden er en enklere, regelbasert variant. Den bruker ingen
+				språkmodell og gjør ingen nettverkskall.
+			</p>
+		</section>
+
+		<section class="pv-section">
+			<h2>Ytelsesmålinger på enheten</h2>
+			<p>
+				Appen abonnerer på iOS' innebygde <strong>MetricKit</strong> og lagrer et lite,
+				anonymt sammendrag av oppstartstider og «heng» <em>lokalt på enheten</em>. Det
+				finnes ingen nettverkskode i den delen av appen — sammendraget sendes ingen
+				steder. Eksportknappen som finnes for dette er kun med i utviklerbygg, ikke i
+				appen du laster ned.
+			</p>
+			<p>
+				Uavhengig av oss: hvis du har slått på <em>«Del med apputviklere»</em> i iOS'
+				personverninnstillinger, sender Apple aggregerte krasj- og ytelsesrapporter til
+				utviklere. Det er Apples kanal, ikke vår, og du styrer den i Innstillinger →
+				Personvern og sikkerhet → Analyse og forbedringer.
+			</p>
+		</section>
+
+		<section class="pv-section">
+			<h2>Hva enheten din faktisk kontakter</h2>
+			<p>
+				Vi samler ikke inn noe — men å hente data over internett er ikke usynlig. Dette
+				er hele lista over hvem som kan se at nettopp din enhet var i kontakt (typisk
+				IP-adresse og tidspunkt i deres egne serverlogger):
+			</p>
+			<ul>
+				<li>
+					<strong>sportivista.com</strong> — sportsdataene (kamper, tider, kanaler) er
+					statiske filer som hostes på <strong>GitHub Pages</strong>. GitHub er vår
+					infrastrukturleverandør og fører sine egne tilgangslogger. Vi har ikke
+					tilgang til dem, og vi setter ingen sporings-informasjonskapsler.
+				</li>
+				<li>
+					<strong>Apple</strong> (<span class="pv-key">cdn.apple-cloudkit.com</span> og
+					iCloud-endepunktene) — innlogging og profilsynk.
+				</li>
+				<li>
+					<strong>ESPN</strong> (<span class="pv-key">site.api.espn.com</span>) — kun på
+					<em>nettsiden</em>: live stillinger hentes direkte fra nettleseren din, så ESPN
+					ser IP-adressen din. <strong>iPhone-appen gjør ingen slike kall.</strong>
+				</li>
+				<li>
+					<strong>Kringkastere og kilder</strong> — først når du selv trykker på en lenke
+					ut (NRK, TV 2 Play, Viaplay, og lignende). Da gjelder deres personvernregler.
+				</li>
+			</ul>
+			<p>
+				Klubbmerker og ikoner er <strong>innebygget i appen og nettsiden</strong>; det
+				gjøres aldri en bilde-forespørsel til en tredjepart for å tegne en rad.
+			</p>
+		</section>
+
+		<section class="pv-section">
+			<h2>Varsler</h2>
+			<p>
+				Varsler før start og resultatvarsler planlegges <strong>lokalt på enheten</strong>
+				ut fra det du følger. Appen registrerer seg ikke for push fra en server — det
+				finnes ingen push-server, og vi vet ikke om eller når du fikk et varsel.
+			</p>
+		</section>
+
+		<section class="pv-section">
+			<h2>Når du ber om ny dekning — dette blir offentlig</h2>
+			<p>
+				Både appen og nettsiden har en frivillig «be om dekning»-funksjon. Den
+				<strong>åpner et forslag i det offentlige kodelageret på GitHub som du selv
+				sender inn</strong>. Vi poster aldri noe på dine vegne.
+			</p>
+			<p>
+				Forslaget inneholder kun navnet på det du ønsker dekket og eventuelt hvilken
+				sport — aldri profilen din, følgelista di eller noe om enheten. Men vær klar
+				over at <strong>saken er offentlig og knyttes til GitHub-kontoen din</strong>,
+				med GitHubs egne personvernregler. Vil du ikke det, la være å sende den.
+			</p>
+		</section>
+
+		<section class="pv-section">
+			<h2>Informasjonskapsler</h2>
+			<p>
+				Vi setter ingen informasjonskapsler og bruker ingen analyseverktøy — derfor er
+				det heller ingen samtykkebanner her. Apples CloudKit kan sette sine egne for å
+				holde deg innlogget, og nettleserens <span class="pv-key">localStorage</span>
+				brukes til profilen og temavalget ditt, som beskrevet over.
+			</p>
+		</section>
+
+		<section class="pv-section">
+			<h2>Barn</h2>
+			<p>
+				Sportivista er ikke rettet mot barn, og vi samler ikke inn opplysninger for å
+				identifisere noen — heller ikke alder.
+			</p>
+		</section>
+
+		<section class="pv-section">
+			<h2>Rettighetene dine</h2>
+			<p>
+				Personvernforordningen (GDPR) gir deg rett til innsyn, retting, sletting og
+				dataportabilitet. Her er den praktiske konsekvensen: <strong>vi har ingenting å
+				gi deg innsyn i eller slette, fordi vi ikke har dataene.</strong> Du har dem selv,
+				og du kan gjøre alt selv:
+			</p>
+			<ul>
+				<li><strong>Se</strong> hva appen vet om deg: Deg → «Hva jeg vet om deg».</li>
+				<li><strong>Ta med deg</strong> profilen: Deg → «Del profil» gir deg hele profilen som en kode/QR.</li>
+				<li><strong>Slette</strong> alt i appen: Deg → «Nullstill».</li>
+				<li><strong>Slette</strong> iCloud-kopien: Innstillinger → Apple-ID → iCloud → administrer lagring → Sportivista.</li>
+				<li><strong>Slette</strong> nettleser-profilen: tøm nettstedsdata for sportivista.com.</li>
+			</ul>
+			<p>
+				Har du likevel et spørsmål eller en klage, ta kontakt (over). Du kan også klage
+				til <a href="https://www.datatilsynet.no" target="_blank" rel="noopener">Datatilsynet</a>.
+			</p>
+		</section>
+
+		<section class="pv-section">
+			<h2>Hvis dette endrer seg</h2>
+			<p>
+				«Ingen server» er et arkitekturvalg, ikke bare et løfte — og valget kan i
+				prinsippet endres senere (for eksempel hvis Sportivista en dag trenger en
+				egen tjeneste for å levere data raskt nok). Hvis det skjer, blir denne siden
+				oppdatert <em>før</em> endringen tas i bruk, og datoen øverst forteller deg
+				når. Historikken for hver eneste endring i denne teksten er offentlig i
+				kodelageret.
+			</p>
+			<p class="pv-note">
+				Denne erklæringen beskriver programvaren slik den faktisk er bygget i dag.
+				Den er skrevet for å være etterprøvbar mot koden, ikke for å love mer enn
+				den kan holde.
+			</p>
+		</section>
+
+		<p class="pv-note"><a class="back-link" href="./">← tilbake til oversikten</a></p>
+	</main>
+
+	<footer class="site-footer wrap">
+		<a class="back-link" href="./">← oversikten</a>
+	</footer>
+
+	<!-- Kun tema-toggelen. Ingen CloudKit, ingen gate, ingen datalasting: siden skal
+	     kunne leses av hvem som helst, også før innlogging. -->
+	<script src="js/theme.js"></script>
+</body>
+</html>

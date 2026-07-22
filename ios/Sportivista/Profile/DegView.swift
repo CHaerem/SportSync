@@ -39,6 +39,12 @@ struct DegView: View {
     /// The published app-version truth for the «BYGG … / NYERE FINNES» foot.
     var publishedAppVersion: AppVersion? = nil
 
+    /// WP-190 — the ONE privacy policy, published at sportivista.com/personvern.html
+    /// (deliberately OUTSIDE the site's sign-in gate so it reads without an account).
+    /// Force-unwrapped: a literal, constant URL — a nil here would be a typo caught
+    /// by `PrivacyManifestTests.test_privacyPolicyURL_pointsAtThePublishedPage`.
+    static let privacyURL = URL(string: "https://sportivista.com/personvern.html")!
+
     /// The SAME @AppStorage key ContentView used for the header glyph — the
     /// theme override now lives here (DESIGN § Tema: "en enhets-
     /// preferanse under Deg › Utseende, ikke lenger en header-glyf").
@@ -172,6 +178,17 @@ struct DegView: View {
                 rowLabel("seal", "Merker og kilder", chevron: true)
             }
             .accessibilityIdentifier("deg.marks.link")
+
+            // WP-190: personvernerklæringen (docs/personvern.html) — ÉN rolig rad,
+            // aldri en modal ved oppstart. Den bor på nett fordi den må være
+            // offentlig lesbar (App Store krever en åpen URL, og den som VURDERER
+            // appen skal kunne lese den før nedlasting) — og fordi den da har én
+            // versjon, ikke to som kan drifte fra hverandre. `Link` åpner Safari;
+            // siden står utenfor innloggings-gaten, så den laster uten konto.
+            Link(destination: Self.privacyURL) {
+                rowLabel("hand.raised", "Personvern", chevron: true)
+            }
+            .accessibilityIdentifier("deg.privacy")
 
             NavigationLink {
                 ResetView(onReset: onReset, syncEnabled: syncEnabled)

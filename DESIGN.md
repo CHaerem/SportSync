@@ -400,7 +400,10 @@ verdi + chevron trailing). Grupper:
   «Slutt å følge», + **Legg til**-søk mot entitets-indeksen med Følg-knapper)
   · Sett opp på nytt.
 - **DATA OM MEG:** Hva jeg vet om deg (n) · Det jeg ikke forsto (n) · Del profil (QR).
-- **APP:** Varsel før start (leadMinutes) · Utseende (tema) · Nullstill.
+- **APP:** Varsel før start (leadMinutes) · Utseende (tema) · Merker og kilder ·
+  **Personvern** (WP-190 — én rolig rad som åpner `sportivista.com/personvern.html`
+  i Safari; erklæringen bor på nett fordi den må være offentlig lesbar og finnes i
+  ÉN versjon, aldri som modal ved oppstart) · Nullstill.
 - **FOT:** «BYGG <sha> · dato · SISTE / NYERE FINNES» (dempet).
 - **DEBUG (kun DEBUG-bygg):** Eval · Telemetri (MetricKit).
 
