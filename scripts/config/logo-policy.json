@@ -1,0 +1,11 @@
+{
+	"policy": "editorial",
+	"notes": [
+		"WP-186 — hvilke klubbmerker Sportivista faktisk sender ut. ETT felt styrer det: `policy`.",
+		"free-only  = kun merker der opphavsretten er BEVIST fri (CC0 / public domain inkl. PD-textlogo / CC BY / CC BY-SA), maskinelt avgjort mot Wikimedia Commons' lisensmetadata. Juridisk vanntett.",
+		"editorial  = i tillegg merker som vises for å IDENTIFISERE klubben, hentet fra ESPN (samme leverandør som kampdataene). Eierbeslutning 22.07. Varemerkeretten tillater referansebruk; opphavsretten til selve tegningen er den reelle eksponeringen — det redaksjonelle argumentet er sterkt i USA (fair use) og svakere i Norge/EU, som ikke har en tilsvarende åpen doktrine. Se PLAN.md § WP-186 for den ærlige vurderingen.",
+		"Frie merker har ALLTID forrang: er merket beviselig fritt, brukes det med basis `free-license`, og ESPN-kilden fyller kun hullene.",
+		"Å sette `policy` til \"free-only\" og kjøre `npm run build:entities` fjerner alle `editorial-use`-merker fra entities.json umiddelbart — ingen klientendring, ingen re-seed. Et re-seed (`npm run seed:logos`) rydder i tillegg bort assetene.",
+		"Ukjent verdi, ødelagt fil eller manglende fil ⇒ free-only (fail-closed). Bryteren kan bare åpnes bevisst."
+	]
+}

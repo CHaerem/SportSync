@@ -27,6 +27,10 @@ struct EntityAvatarView: View {
 
     var body: some View {
         switch identity {
+        case .logo(let file):
+            LogoAvatar(file: file, side: side)
+                .padding(.top, 2)
+                .accessibilityHidden(true)
         case .flag(let emoji):
             Text(emoji)
                 .font(.sportivista(.subheadline))
@@ -40,6 +44,59 @@ struct EntityAvatarView: View {
         case .none:
             SportSymbolView(sport: sport)
         }
+    }
+}
+
+/// WP-186 — the club's REAL mark, from a BUNDLED asset (`docs/logos`, a folder
+/// resource in project.yml). Two rules govern this view, and both are about
+/// restraint:
+///
+///  1. **Unmodified.** No `.renderingMode(.template)`, no tint, no clipShape, no
+///     saturation/opacity trim, no background plate. A free mark under CC BY-SA
+///     may not become a derivative, and no licence makes it right to redraw a
+///     club's mark. `.scaledToFit()` inside the SAME box WP-185 defined is the
+///     whole treatment — scaling only, aspect preserved, nothing cropped.
+///  2. **No network.** `UIImage(named:)` reads the bundle. The app has never made
+///     an image request for a row and still doesn't.
+///
+/// A missing asset degrades to the WP-185 sport glyph rather than a blank hole
+/// (the resolver already gates on existence; this is the belt-and-braces half).
+private struct LogoAvatar: View {
+    let file: String
+    let side: CGFloat
+
+    var body: some View {
+        if let image = LogoAssets.image(named: file) {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFit()
+                .frame(width: side, height: side)
+        } else {
+            Color.clear.frame(width: side, height: side)
+        }
+    }
+}
+
+/// Bundle-backed logo loading with a small memory cache.
+///
+/// The agenda re-renders often and the same handful of clubs recur down the
+/// board, so decoding a PNG per row per render is exactly the at-scale trap
+/// WP-161 already paid for once. The cache is bounded implicitly: only the marks
+/// actually on screen in this session are ever decoded, and each is a ~96 px
+/// thumbnail.
+@MainActor
+enum LogoAssets {
+    // Main-actor isolated: the only caller is a SwiftUI `body`, so the cache is
+    // never touched off the main thread and needs no lock of its own.
+    private static let cache = NSCache<NSString, UIImage>()
+
+    static func image(named file: String) -> UIImage? {
+        if let hit = cache.object(forKey: file as NSString) { return hit }
+        let stem = (file as NSString).deletingPathExtension
+        guard let url = Bundle.main.url(forResource: stem, withExtension: "png", subdirectory: "logos"),
+              let image = UIImage(contentsOfFile: url.path) else { return nil }
+        cache.setObject(image, forKey: file as NSString)
+        return image
     }
 }
 

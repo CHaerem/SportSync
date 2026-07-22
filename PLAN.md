@@ -2145,8 +2145,11 @@ live-signalet fra enhver skjerm, og radene fikk nettopp visuell vekt av WP-185s
 avatarer; pulserende amber i en scrollende liste ville brutt ro-grunnloven og tømt
 amber for betydning. Registrert som avgjort i DESIGN.md, ikke som åpen oppfølging.
 (c) brief-navnene — agenten foreslår ved WP-181. (d) EKTE klubblogoer — **eier vil ha
-dem (22.07)**; WP-186 bygger den LISENSBEVISSTE veien (kun beviselig frie merker,
-monogram ellers), se WP-186s juridiske grunnlag.
+dem (22.07)**, og står på det etter å ha fått korrigert premisset (varemerke-
+referansebruk er trygt, men Norge/EU har ingen fair use-doktrin for opphavsretten
+til crest-tegningen). WP-186 implementerer det som en BRYTER med proveniens per
+merke — frie merker først, ESPN-kilden fyller hullene, og ett felt (`free-only`)
+reverserer standpunktet uten klientendring. Se WP-186s juridiske grunnlag.
 
 Bølge 1: WP-180 (web-header + ikoner) ∥ WP-182 (meta/delekort) ∥ WP-184
 (dokumenter/rydding). Bølge 2: WP-181 (rituale — etter 0K WP-174-motoren)
@@ -2160,7 +2163,7 @@ Bølge 1: WP-180 (web-header + ikoner) ∥ WP-182 (meta/delekort) ∥ WP-184
 | WP-183 | Typografisk stemme: eie tallene (EIERBESLUTNING — display-font-token) | 0L | — | 🔬 branch wp-183-typografisk-stemme — **Space Grotesk** (SIL OFL 1.1, Florian Karsten) valgt: eneste kandidat som samtidig er tydelig ANNERLEDES enn SF i sifrene (den ensidige `1`, den åpne `4`), har ekte tabulære sifre (`tnum` verifisert mekanisk: alle ti = 620/1000 em), full æøåÆØÅ i alle tre vekter, og er billig nok subsettet (13,9 kB web totalt). Archivo forkastet (kravene bestått, men grotesk-nøytral — nesten like anonym som SF, altså løser den ikke problemet); Instrument Sans forkastet (smalere/mer redaksjonell, minst særpreg i sifrene); IBM Plex Sans forkastet (tabulær som standard, men repoets forrige, avviklede identitet — et tilbakeskritt, ikke en stemme). Brukt på NØYAKTIG tre flater (ordmerke · tidskolonne · delekort); brødtekst/UI forblir SF. Tabulariteten er BAKT INN i fontfila (tnum løst opp i cmap), så canvas-delekortet får den også. Web: `--display` + selvhostet `@font-face` (`font-display: swap`, null CDN, sw-cache bumpet). iOS: `Font.sportivistaDisplay` med `UIFontMetrics` (Dynamic Type bevart), `UIAppFonts` i app/device/widget. Merkelåsen bevart og nå bokstavelig på web også (ordmerke 600 → kolon 700); kolon-pulsen visuelt verifisert på begge flater. Sammenligningsbilde for billig veto: `design/brand/wp183-font-comparison.png`. Tester: JS 64 filer / 1046 (+17 display-font-gate i `design-tokens.test.js` — den parser den shippede TTF-en dependency-fritt og MÅLER sifferbreddene, +2 i Dynamic-Type-gaten som sperrer `UIFont(name:)` utenfor token-laget), iOS 739 (+6 `DisplayFontTests` som registrerer fontene i test-bundelen og beviser at PostScript-navnene i DesignTokens.swift faktisk løser), 13/13 gylne vektorer bit-like, alle fire schemes bygger |
 | WP-184 | Brand-voice-kodifisering + stale-identitetsrester ryddet | 0L | — | planlagt |
 | WP-185 | Visuell entitets-identitet: flagg + farge-monogrammer per rad (eier-funn 21.07) | 0L | 0J WP-161 (delvis) | ✅ #400 merget 22.07 — branch wp-185-entitets-identitet — registeret utvidet med ISO-`country` (2 559 entiteter, én kurert tabell folder FIDE-kode/ESPN-engelsk/Wikidata-nb; historiske stater droppes fremfor å gjettes), `colors` (139: ESPN-klubber + F1-konstruktører) og `national` (205 — skiller landslag fra klubb, ellers hadde «Elverum Håndball» fått norsk flagg); identitets-stigen flagg → farge-monogram → sportglyf tvillingimplementert (`docs/js/entity-avatar.js` ↔ `Models/EntityIdentity.swift`) med BEREGNET monogram-blekk (WCAG-luminans) og O(1)-oppslag per rad; DESIGN.md § Entitets-avatar + forbudsliste-presisering; 4 skjermbilder (dark/light × web/iOS). Ikke-mål holdt: ingen crester, ingen fotos, ingen eksterne bilde-requests. 1 017 JS-tester + 703 iOS-tester grønne, 13/13 gylne vektorer bit-like, 4 schemes bygger |
-| WP-186 | Ekte klubblogoer — lisensbevisst pipeline (kun beviselig frie merker) | 0L | WP-185 | planlagt (eierbeslutning 22.07: «jeg vil ha ekte klubblogoer») |
+| WP-186 | Ekte klubblogoer — policy-styrt kilde med proveniens | 0L | WP-185 | 🔬 branch wp-186-ekte-klubblogoer — MÅLT dekning: **104 av 1 175 klubber/organisasjoner (8,9 %)** bærer nå et ekte merke — 30 `free-license` (Wikidata P154 → Commons, fail-closed lisens-whitelist) + 74 `editorial-use` (ESPN, eierbeslutning 22.07). Per sport: **fotball 80/80 (100 %)** — 6 frie + 74 editorial; **håndball 10/182 (5 %)**; **esport 12/873 (1 %)**; **sykkel 2/29 (7 %)**; **F1 0/11** (ESPNs F1-endepunkt har ingen `logos` — ingen gjettet URL). Faktisk forekommende frie lisenser: Public domain ×24, CC BY-SA 4.0 ×4, CC BY-SA 3.0 ×1, CC BY 4.0 ×1 (alle CC-merker har navngitt opphavsperson — de uten ble avvist). Byte-kostnad: 797,7 kB for 104 PNG-er (~96 px), samme sett på web (egen origin, `loading=lazy`) og i app-/widget-bundlen (~1,0 MB på disk, ~5,6 % av debug-bundlen). Bryter: `scripts/config/logo-policy.json` (`editorial` aktiv; `free-only` fjerner de 74 fra alle flater ved neste `build:entities` — bevist i test). Landslag beholder bevisst flagget. Ingen eksterne bilde-requests (grep-bevist, 0 off-origin bilde-kall i skjermbilde-kjøringen). 1 082 JS-tester + 746 iOS-tester grønne, gylne vektorer bit-like, 4 schemes bygger |
 
 ### WP-180 · Kolonet fullført (bølge 1)
 **Innhold:** (1) web-paritet av kolon-live-pulsen i headeren (dokumentert
@@ -2259,46 +2262,74 @@ grønne, gylne vektorer urørt (ren presentasjon).
 
 ---
 
-### WP-186 · Ekte klubblogoer — lisensbevisst pipeline (bølge 3, eierbeslutning 22.07)
-**Bakgrunn:** eieren vil ha ekte klubbmerker, ikke bare monogrammer. Det juridiske
-bildet, presist: klubbmerker bærer TO rettigheter samtidig. **Varemerke** — å bruke
-merket for å IDENTIFISERE klubben (referansebruk, slik medier og FotMob-klassen gjør)
-er normalt lovlig; varemerkeretten verner mot forveksling om opphav/tilknytning, ikke
-mot henvisning. **Opphavsrett til selve tegningen** — her finnes INGEN tilsvarende
-unntaksregel, og det er den reelle eksponeringen for en kommersiell app. Wikipedia
-hoster nesten alle crester som `non-free`/fair use, EKSPLISITT ikke gjenbrukbart
-kommersielt — altså ingen kilde. Den rene veien: Wikidata `P154` (logo image) peker
-til Commons-filer, og Commons' `imageinfo`-API oppgir lisensen MASKINELT — så
-«beviselig fritt» kan avgjøres i pipelinen i stedet for å antas.
-**Mål:** ekte merke der det er beviselig fritt, monogram ellers — og en bryter som
-lar en senere lisensiert kilde bytte ut trinnet uten å røre klientene.
-**Innhold:** (1) seed-utvidelse: for hver register-entitet med `external.wikidata`,
-hent `P154` → Commons `imageinfo` → **lisens-whitelist** (`CC0`, `PD`/`public domain`,
-`PD-textlogo`/under verkshøyde, `CC BY`, `CC BY-SA`); ALT annet (non-free, fair use,
-ukjent, manglende lisensfelt) avvises — fail-CLOSED, aldri «antatt fritt»; lagre
-`logo: { file, license, attribution, sourceUrl }` i registeret + `registry.schema.json`;
-(2) asset-pipeline: normalisér de frie merkene til små PNG-er (~96 px) sjekket inn
-under `docs/logos/` (null-infra: ALDRI hotlinking til Commons/CDN fra klienten) +
-regenererings-skript i `scripts/seed-registry/`-mønsteret; (3) klient: avatar-stigen
-i `docs/js/entity-avatar.js` + `ios/.../EntityAvatarView.swift` får et NYTT ØVERSTE
-TRINN — ekte logo → flagg → monogram → sportglyf; samme størrelse/plassering som
-WP-185 (ingen layout-endring, ingen ny aksent); (4) **attribusjonsflate**: CC BY /
-CC BY-SA KREVER kreditering — en stille «Merker og kilder»-liste (web: egen seksjon
-i «Om»/dekker-vi-flaten; iOS: under Deg) som lister merke, opphavsperson og lisens;
-(5) **aldri modifisér et fritt merke** (ingen omfarging, beskjæring eller maskering
-— CC BY-SA er share-alike, og en derivat ville arvet vilkårene): vis det uendret i
-en nøytral beholder; (6) `build-entities.js` fører `logo` videre til entities.json;
-(7) dokumentér i PR-body den MÅLTE dekningen per liga + de tre veiene videre
+### WP-186 · Ekte klubblogoer — policy-styrt kilde med proveniens (bølge 3, eierbeslutning 22.07)
+**Bakgrunn (juridisk grunnlag — les hele, den er skrevet for å kunne stoles på):**
+et klubbmerke bærer TO rettigheter samtidig. **Varemerke** — å bruke merket for å
+IDENTIFISERE klubben (referansebruk, slik medier og FotMob-klassen gjør) er
+normalt lovlig; varemerkeretten verner mot forveksling om opphav/tilknytning,
+ikke mot henvisning. Derfor er den ene tingen vi aldri gjør, å antyde
+tilknytning, sponsing eller godkjenning. **Opphavsrett til selve tegningen** —
+her er bildet ærligere sagt slik: USA har `fair use`, en åpen doktrine der
+redaksjonell/identifiserende bruk står sterkt. Norge og EU har INGEN tilsvarende
+generell doktrine — sitatretten og de spesifikke lånereglene dekker ikke uten
+videre en app som viser et crest ved siden av en kampstart, og kommersialisering
+svekker argumentet ytterligere. Wikipedia hoster nesten alle crester som
+`non-free`/fair use, EKSPLISITT ikke gjenbrukbart kommersielt — altså ingen
+kilde. Wikimedia Commons oppgir derimot lisensen MASKINELT (`imageinfo`), så
+«beviselig fritt» kan AVGJØRES i pipelinen i stedet for å antas.
+**Eieren har fått den korreksjonen og står på sitt** (22.07): han vil ha ekte
+klubbemblemer og vurderer bruken som redaksjonell/identifiserende. Det er hans
+beslutning. Praktisk risiko vurderes som lav (referansebruk, ingen
+merch/salg av merkene, marginal målgruppe, normalreaksjonen fra en klubb er en
+høflig henvendelse, ikke søksmål) — men den er ikke null, og pakken later ikke
+som noe annet. **Bryteren + proveniensen ER risikohåndteringen:** hvert merke sier
+hvor det kom fra og på hvilket grunnlag, og ett konfigurasjonsfelt fjerner en hel
+kategori mekanisk — så en takedown, en App Store-review eller en endret vurdering
+besvares på minutter, ikke ved arkeologi.
+**Mål:** ekte merke der vi kan stå for det, monogram ellers — og en BRYTER som
+gjør standpunktet reverserbart uten å røre klientene.
+**Innhold:** (1) `scripts/config/logo-policy.json` med `policy: free-only |
+editorial` (aktiv verdi: `editorial`); ukjent/ødelagt/manglende verdi ⇒
+`free-only` (fail-closed); (2) fri-kilden: for hver register-entitet med
+`external.wikidata` (eller en KONSERVATIV navne-oppslag som avstår ved tvetydighet)
+hentes `P154` → Commons `imageinfo` → **lisens-whitelist** (`CC0`, `PD`/public
+domain, `PD-textlogo`/under verkshøyde, `CC BY`, `CC BY-SA`); alt annet
+(non-free, fair use, NC, ND, ukjent, manglende felt, CC BY(-SA) uten navngitt
+opphavsperson) avvises — aldri «antatt fritt»; (3) editorial-kilden: ESPNs
+lag-logoer via registerets `external.espnId` (samme leverandør som kampdataene),
+hentet ved BYGGETID til innsjekkede assets — fri lisens har alltid FORRANG, ESPN
+fyller kun hullene; (4) proveniens per merke: `logo: { file, source, basis,
+license?, attribution?, sourceUrl }` i registeret + `registry.schema.json`; et
+merke uten fullstendig proveniens shippes ALDRI; (5) asset-pipeline: ~96 px PNG
+under `docs/logos/` + `npm run seed:logos` (null-infra: ALDRI hotlinking fra
+klienten); (6) klient: avatar-stigen i `docs/js/entity-avatar.js` +
+`ios/.../EntityAvatarView.swift` får et NYTT ØVERSTE TRINN — ekte merke → flagg →
+monogram → sportglyf; samme størrelse/plassering som WP-185 (ingen layout-endring,
+ingen ny aksent); landslag beholder bevisst flagget; (7) **attribusjonsflate**,
+todelt og ærlig (web: «Merker og kilder» under tavla; iOS: Deg › Merker og
+kilder): fritt lisensierte merker krediteres med lisens og opphavsperson (CC BY /
+CC BY-SA KREVER det), editorial-merkene får den nøkterne linja om at klubbmerker
+tilhører sine respektive klubber og vises for å identifisere dem — uten noen
+påstand om tilknytning, sponsing eller godkjenning; (8) `build-entities.js` fører
+`logo` videre til entities.json OG anvender policyen ved publisering, slik at et
+bytte til `free-only` + én pipeline-kjøring fjerner alle editorial-merker fra web,
+app og widget uten klientendring; (9) dokumentér i PR-body den MÅLTE dekningen
+per liga, splittet på `free-license` vs `editorial-use`, + de tre veiene videre
 (lisensiert leverandør, egne geometriske klubbmerker, bli på monogram).
-**Ikke-mål (BINDENDE):** ingen non-free/fair-use-merker uansett hvor tilgjengelige
-de er; ingen hotlinking til tredjepart; ingen spillerfotos; ingen betalt leverandør
-i denne pakken (egen 💰-beslutning); ingen endring i feed-predikatene.
-**Aksept:** kun whitelistede lisenser i registeret (test med et non-free-eksempel
-som MÅ avvises); dekningstall rapportert per sport/liga; attribusjonsflaten viser
-hver brukt lisens; rad med ekte logo + rad med monogram + rad med flagg i samme
-skjermbilde-sett (dark/light, maks ~4 per flate); full iOS-suite + 4 schemes + 13/13
-gylne vektorer bit-like; `npx vitest run --maxWorkers=1` grønn; ingen eksterne
-requests fra klienten (grep-bevis).
+**Ikke-mål (BINDENDE):** **aldri modifisér et merke** — ingen omfarging,
+beskjæring, maskering eller tint (share-alike-derivater OG merkeintegritet);
+skalering er det eneste inngrepet; ingen hotlinking til tredjepart fra klienten;
+ingen spillerfotos; ingen betalt leverandør i denne pakken (egen 💰-beslutning);
+ingen påstand om tilknytning/sponsing/godkjenning noe sted i produktet; ingen
+endring i feed-predikatene.
+**Aksept:** lisensgaten er fail-closed og testet med et non-free-eksempel som MÅ
+avvises; en test beviser at `free-only` faktisk utelukker editorial-merkene
+(bryteren virker, den er ikke dekorativ); dekningstall rapportert per sport/liga
+SPLITTET på grunnlag + byte-kostnad; attribusjonsflaten viser hver brukt lisens;
+rad med ekte merke + rad med monogram + rad med flagg i samme skjermbilde-sett
+(dark/light, maks ~4 per flate); full iOS-suite + 4 schemes + 13/13 gylne vektorer
+bit-like; `npx vitest run --maxWorkers=1` grønn; ingen eksterne requests fra
+klienten (grep-bevis).
 
 ---
 

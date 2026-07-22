@@ -43,7 +43,14 @@ struct Entity: Codable, Equatable, Hashable {
     /// avatar. Never an accent (amber remains the app's single accent token).
     var colors: EntityColors?
 
-    private enum CodingKeys: String, CodingKey { case id, name, aliases, sport, type, initials, country, national, colors }
+    /// WP-186 — the entity's REAL mark, when the pipeline has one it may ship.
+    /// The asset is BUNDLED (docs/logos, added as a folder resource in
+    /// project.yml); this record is only the pointer plus its provenance, and the
+    /// app never fetches an image from anywhere. `nil` for most entities — the
+    /// row then falls back to the WP-185 ladder (flag → monogram → sport glyph).
+    var logo: EntityLogo?
+
+    private enum CodingKeys: String, CodingKey { case id, name, aliases, sport, type, initials, country, national, colors, logo }
 
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -56,6 +63,7 @@ struct Entity: Codable, Equatable, Hashable {
         country = try c.decodeIfPresent(String.self, forKey: .country)
         national = try c.decodeIfPresent(Bool.self, forKey: .national) ?? false
         colors = try c.decodeIfPresent(EntityColors.self, forKey: .colors)
+        logo = try c.decodeIfPresent(EntityLogo.self, forKey: .logo)
     }
 
 }
@@ -66,4 +74,44 @@ struct Entity: Codable, Equatable, Hashable {
 struct EntityColors: Codable, Equatable, Hashable {
     var primary: String
     var secondary: String?
+}
+
+/// WP-186 — an entity's real mark and, inseparably, WHERE it came from.
+///
+/// `basis` is the load-bearing field. `free-license` means the copyright in the
+/// drawing was proven free against Wikimedia Commons' machine-readable licence
+/// metadata; `editorial-use` means the mark is shown to IDENTIFY the club (the
+/// owner's 22.07 decision), with no free licence claimed. The server applies
+/// `scripts/config/logo-policy.json` before publishing, so flipping that one
+/// field removes a whole category from every surface without an app update —
+/// and if anyone ever asks where a specific mark came from, `sourceUrl` answers
+/// it per mark.
+struct EntityLogo: Codable, Equatable, Hashable {
+    var file: String
+    var source: String
+    var basis: String
+    var license: String?
+    var licenseId: String?
+    var licenseUrl: String?
+    var attribution: String?
+    var sourceUrl: String
+    var trademarked: Bool?
+
+    /// Mirrors the server's fail-closed rule rather than trusting the payload: a
+    /// stale or tampered `entities.json` must not be able to point the app at
+    /// something that is not one of our own bundled assets.
+    var isShippable: Bool {
+        guard !source.isEmpty, !sourceUrl.isEmpty else { return false }
+        guard basis == "free-license" || basis == "editorial-use" else { return false }
+        if basis == "free-license", (license ?? "").isEmpty { return false }
+        return EntityLogo.isSafeAssetName(file)
+    }
+
+    /// `aalesund.png` — lowercase, no path, no traversal, no scheme.
+    static func isSafeAssetName(_ file: String) -> Bool {
+        guard file.hasSuffix(".png") else { return false }
+        let stem = String(file.dropLast(4))
+        guard let first = stem.first, first.isNumber || (first.isLowercase && first.isASCII) else { return false }
+        return stem.allSatisfy { $0 == "-" || $0.isNumber || ($0.isASCII && $0.isLowercase) }
+    }
 }

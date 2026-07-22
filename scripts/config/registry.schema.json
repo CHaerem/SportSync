@@ -72,6 +72,23 @@
 						"secondary": { "type": "string", "pattern": "^#[0-9a-f]{6}$", "description": "Sekundærfarge (utelates når den er lik primær — klienten tegner da en flat flate i stedet for en meningsløs gradient)." }
 					}
 				},
+				"logo": {
+					"type": "object",
+					"description": "WP-186: entitetens EKTE merke — et innsjekket asset under `docs/logos/`, aldri en hotlink (klienten gjør null nettverkskall til Commons/ESPN). Feltet bærer sin egen PROVENIENS: `basis` sier hvilket grunnlag merket hviler på, slik at `scripts/config/logo-policy.json` kan slå av én kategori mekanisk (fri-lisens-merker overlever begge policyene; editorial-merker forsvinner under `free-only` uten klientendring). Et merke uten fullstendig proveniens shippes ALDRI (scripts/lib/logo-policy.js, fail-closed). Merket vises UENDRET — ingen omfarging, beskjæring eller maskering; kun skalering til ~96 px. Mangler feltet, degraderer klienten til WP-185-stigen (flagg → monogram → sportglyf).",
+					"required": ["file", "source", "basis", "sourceUrl"],
+					"additionalProperties": false,
+					"properties": {
+						"file": { "type": "string", "description": "Filnavn under `docs/logos/` (= entitetens stabile id + `.png`)." },
+						"source": { "type": "string", "enum": ["wikimedia-commons", "espn"], "description": "Hvor assetet ble hentet ved seed-tid." },
+						"basis": { "type": "string", "enum": ["free-license", "editorial-use"], "description": "`free-license` = opphavsretten er BEVIST fri (whitelistet lisens, maskinelt avgjort mot Commons' `imageinfo`). `editorial-use` = merket vises for å IDENTIFISERE klubben (eierbeslutning 22.07); ingen fri lisens er påstått." },
+						"license": { "type": "string", "description": "Lisensnavnet slik Commons oppgir det. PÅKREVD i praksis for `free-license` (uten den avvises merket); utelates for `editorial-use` — vi later ikke som at det finnes en lisens." },
+						"licenseId": { "type": "string", "enum": ["cc0", "pd", "cc-by", "cc-by-sa"], "description": "Kanonisk lisensfamilie fra whitelisten i scripts/lib/logo-license.js." },
+						"licenseUrl": { "type": "string", "description": "Lenke til lisensteksten." },
+						"attribution": { "type": "string", "description": "Opphavsperson/rettighetshaver slik Commons oppgir den. CC BY og CC BY-SA KREVER kreditering — mangler den, avvises merket i stedet for å shippes ukreditert." },
+						"sourceUrl": { "type": "string", "description": "Nøyaktig hvor merket kom fra (Commons-filsiden eller ESPNs asset-URL) — svaret på «hvor kom DETTE merket fra» ved en takedown eller App Store-review." },
+						"trademarked": { "type": "boolean", "description": "Commons' `Restrictions` flagger varemerke. Ikke en opphavsrettslig hindring — referansebruk av et klubbmerke er lovlig — men registrert for ærlighet." }
+					}
+				},
 				"external": {
 					"type": "object",
 					"description": "Kilde-id-er for re-seeding og dedup. Minst én nøkkel (håndhevet av koherenstesten).",
