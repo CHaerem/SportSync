@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  PrivacyInfo.xcprivacy — widget-utvidelsen. WP-190.
+
+  Apple krever ett manifest per bundle, og widgeten er sin egen bundle. Den er
+  et STRENGERE tilfelle enn appen, ikke et likt: targetets kildeliste i
+  ios/project.yml er bevisst kuttet til lesesiden (Models, Feed, CacheStore,
+  SyncState, DataStore, AppVersion, WidgetTimelineBuilder, WidgetResultSnapshot)
+  — SyncClient.swift er IKKE med, så widgeten har ingen nettverksdyktig kode i
+  det hele tatt.
+
+  Verifisert i koden 22.07.2026: ingen av widget-targetets kilder rører
+  UserDefaults/@AppStorage, fil-tidsstempler, systemoppetid, diskplass eller
+  aktive tastaturer. NSPrivacyAccessedAPITypes står derfor TOMT — ikke fordi det
+  ikke er sjekket, men fordi det er sjekket. Legger noen senere til en
+  UserDefaults-avhengighet her (f.eks. en delt app-group-preferanse), MÅ
+  NSPrivacyAccessedAPICategoryUserDefaults + CA92.1 inn, slik app-manifestet har.
+-->
+<plist version="1.0">
+<dict>
+	<key>NSPrivacyTracking</key>
+	<false/>
+	<key>NSPrivacyTrackingDomains</key>
+	<array/>
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array/>
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array/>
+</dict>
+</plist>

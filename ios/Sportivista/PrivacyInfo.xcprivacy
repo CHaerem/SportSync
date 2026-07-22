@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  PrivacyInfo.xcprivacy — Sportivista (app-targetet). WP-190.
+
+  Dette er den MASKINLESBARE tvillingen til docs/personvern.html, og den skal
+  stemme verdi for verdi med hva koden faktisk gjør. Grunnlaget, verifisert i
+  koden 22.07.2026:
+
+  · NSPrivacyTracking = false. Appen har ingen analyse-/annonse-SDK-er, ber aldri
+    om App Tracking Transparency, og kobler ingenting til data fra andre selskaper.
+  · NSPrivacyTrackingDomains = tomt. Eneste utgående nettverkskall i hele
+    app-targetet er Sync/SyncClient.swift → https://sportivista.com/data/ (statiske
+    JSON-filer på GitHub Pages) pluss CloudKit-rammeverket mot BRUKERENS EGEN
+    private database. Ingen av dem er sporingsdomener.
+  · NSPrivacyCollectedDataTypes = tomt. Ingen data samles inn TIL OSS: profilen
+    ligger på enheten + i brukerens egen private CloudKit-DB (CloudKitProfileSync
+    — «aldri vår server»), MetricKit-sammendragene ligger lokalt (Perf/MetricLog,
+    ingen nettverkskode), og assistenten kjører on-device (FoundationModels).
+    Innsendte dekningsønsker (Profile/CoverageRequest) er et forhåndsutfylt
+    GitHub-issue brukeren sender SELV — ikke innsamling gjort av appen.
+  · NSPrivacyAccessedAPITypes: kun UserDefaults. Grep over ios/Sportivista viser
+    INGEN bruk av fil-tidsstempler (attributesOfItem/contentModificationDate),
+    systemoppetid, diskplass eller aktive tastaturer — de fire andre required-
+    reason-kategoriene er derfor ikke deklarert (å deklarere ubrukte grunner ville
+    vært like unøyaktig som å utelate brukte).
+
+  Grunn-koden CA92.1 = «tilgang til user defaults for å lese/skrive informasjon
+  som kun er tilgjengelig for appen selv». Det er nøyaktig bruken her: appens egne
+  preferanser via UserDefaults.standard (onboarding-flagget i OnboardingGate,
+  temavalget i ThemeOverride, varsel-innstillingene i NotificationLeadPreference /
+  ResultAlertPreference). Ingen delt app-group-suite, ingenting som leses av eller
+  om andre apper.
+-->
+<plist version="1.0">
+<dict>
+	<key>NSPrivacyTracking</key>
+	<false/>
+	<key>NSPrivacyTrackingDomains</key>
+	<array/>
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array/>
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array>
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>CA92.1</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

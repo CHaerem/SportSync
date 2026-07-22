@@ -53,6 +53,12 @@ targets:
     platform: iOS
     deploymentTarget: "26.0"
     sources:
+      # NB (WP-190): Sportivista/PrivacyInfo.xcprivacy — Apples privacy manifest —
+      # ligger i denne mappa og plukkes derfor opp av `path: Sportivista` og havner
+      # automatisk i Copy-Resources (verifisert i generert pbxproj). Den skal ALDRI
+      # ekskluderes: App Store-innsending krever den i bundle-roten, og
+      # docs/personvern.html er dens menneskelesbare tvilling. Widget-targetet har
+      # sin egen (SportivistaWidget/PrivacyInfo.xcprivacy) — ett manifest per bundle.
       - path: Sportivista
       # WP-69: the versioned eval corpus lives with the tests (one source of
       # truth — the CI XCTest loads it from the test bundle), but the DEBUG
@@ -150,6 +156,9 @@ targets:
     platform: iOS
     deploymentTarget: "26.0"
     sources:
+      # Inneholder widgetens EGET privacy manifest (SportivistaWidget/
+      # PrivacyInfo.xcprivacy, WP-190) — én per bundle; plukkes opp som ressurs
+      # av denne mappe-oppføringen, akkurat som app-targetets.
       - path: SportivistaWidget
       - path: Sportivista/DesignTokens.swift
       # WP-14: the widget's own timeline logic (WidgetTimelineBuilder.swift,
