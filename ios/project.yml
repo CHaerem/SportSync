@@ -70,6 +70,18 @@ targets:
       # AssistantVocab.swift decodes it. NOT in the widget (no assistant there).
       - path: ../docs/config/assistant-vocab.json
         buildPhase: resources
+      # WP-183 — the display font (DESIGN.md § Typografi): ONE face on exactly
+      # three surfaces (wordmark, agenda time column, share cards). The .ttf
+      # subsets live in design/brand/fonts/ next to their OFL licence and their
+      # generator (generate-display-font.py); the web serves the .woff2 twins
+      # from docs/fonts/. Same "one shared source, two platforms" pattern as
+      # docs/config/lens-config.json above. `UIAppFonts` (below) registers them.
+      - path: ../design/brand/fonts/SpaceGrotesk-Medium-subset.ttf
+        buildPhase: resources
+      - path: ../design/brand/fonts/SpaceGrotesk-SemiBold-subset.ttf
+        buildPhase: resources
+      - path: ../design/brand/fonts/SpaceGrotesk-Bold-subset.ttf
+        buildPhase: resources
     info:
       path: Sportivista/Info.plist
       properties:
@@ -104,6 +116,13 @@ targets:
           - CFBundleURLName: app.sportivista.ios.profile
             CFBundleURLSchemes:
               - sportivista
+        # WP-183 — registers the bundled display font so `UIFont(name:)` in
+        # DesignTokens.swift can find it. Without this key the file ships but
+        # never loads, and `Font.sportivistaDisplay` silently falls back to SF.
+        UIAppFonts:
+          - SpaceGrotesk-Medium-subset.ttf
+          - SpaceGrotesk-SemiBold-subset.ttf
+          - SpaceGrotesk-Bold-subset.ttf
     settings:
       base:
         PRODUCT_NAME: Sportivista
@@ -143,6 +162,13 @@ targets:
       # bundle too; a ~1KB decode, well inside the WidgetKit memory budget.
       - path: ../docs/config/lens-config.json
         buildPhase: resources
+      # WP-183 — the widget renders the WORDMARK, so it needs the two weights the
+      # brand lock uses (600 wordmark + 700 colon). NOT Medium: the widget has no
+      # time column (its time/channel meta line stays on the system font).
+      - path: ../design/brand/fonts/SpaceGrotesk-SemiBold-subset.ttf
+        buildPhase: resources
+      - path: ../design/brand/fonts/SpaceGrotesk-Bold-subset.ttf
+        buildPhase: resources
     info:
       path: SportivistaWidget/Info.plist
       properties:
@@ -155,6 +181,11 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
+        # WP-183 — an extension registers its own fonts; the host app's
+        # UIAppFonts does not carry into the widget process.
+        UIAppFonts:
+          - SpaceGrotesk-SemiBold-subset.ttf
+          - SpaceGrotesk-Bold-subset.ttf
     settings:
       base:
         PRODUCT_NAME: SportivistaWidget
@@ -306,6 +337,17 @@ targets:
       # AgendaFilterTests/EvalCorpusTests prove the extraction changed nothing.
       - path: ../docs/config/assistant-vocab.json
         buildPhase: resources
+      # WP-183 — the display-font subsets, bundled so DisplayFontTests can
+      # register them (a hostless bundle gets no UIAppFonts) and PROVE the
+      # PostScript names in DesignTokens.swift actually resolve and that the
+      # digits are tabular. A silent name typo would otherwise fall back to San
+      # Francisco forever without a single test going red.
+      - path: ../design/brand/fonts/SpaceGrotesk-Medium-subset.ttf
+        buildPhase: resources
+      - path: ../design/brand/fonts/SpaceGrotesk-SemiBold-subset.ttf
+        buildPhase: resources
+      - path: ../design/brand/fonts/SpaceGrotesk-Bold-subset.ttf
+        buildPhase: resources
     resources:
       - path: SportivistaTests/Fixtures
     info:
@@ -369,6 +411,14 @@ targets:
       # physical iPhone — this is the build the owner actually runs the eval on.
       - path: SportivistaTests/Fixtures/eval-corpus.json
         buildPhase: resources
+      # WP-183 — the display font, same three subsets as the Simulator app
+      # target (this is the build the owner actually runs on device).
+      - path: ../design/brand/fonts/SpaceGrotesk-Medium-subset.ttf
+        buildPhase: resources
+      - path: ../design/brand/fonts/SpaceGrotesk-SemiBold-subset.ttf
+        buildPhase: resources
+      - path: ../design/brand/fonts/SpaceGrotesk-Bold-subset.ttf
+        buildPhase: resources
     dependencies:
       # WP-17: embed the widget on device too (paid team signs both with the
       # same identity; the free-team embed failure is history).
@@ -403,6 +453,11 @@ targets:
           - CFBundleURLName: app.sportivista.ios.profile
             CFBundleURLSchemes:
               - sportivista
+        # WP-183 — register the bundled display font (see the Sportivista target).
+        UIAppFonts:
+          - SpaceGrotesk-Medium-subset.ttf
+          - SpaceGrotesk-SemiBold-subset.ttf
+          - SpaceGrotesk-Bold-subset.ttf
     settings:
       base:
         # Distinct PRODUCT_NAME → distinct `SportivistaDeviceDev.app` output, so it

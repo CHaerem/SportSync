@@ -125,13 +125,13 @@
 		<!-- ── Typografi ───────────────────────────────────────────────────── -->
 		<section class="sg-section">
 			<h2>Typografi</h2>
-			<p class="sg-note">Systemfont-stack overalt (San Francisco-familien), tabulære siffer i tidskolonnen. iOS binder hver rolle til en Dynamic Type-tekststil; web-verdiene under er de faktiske <code>font-size</code>-ene i CSS-en (se <code>design/tokens.json</code> for avvik mot DESIGN.md sin prosa-tabell).</p>
+			<p class="sg-note">Systemfont-stack (San Francisco-familien) overalt <strong>unntatt ordmerket, tidskolonnen og delekortene</strong> — de tre flatene bærer display-fonten Space Grotesk (WP-183, <code>--display</code>; SIL OFL, selvhostet subsett med tabulære sifre bakt inn). iOS binder hver rolle til en Dynamic Type-tekststil; web-verdiene under er de faktiske <code>font-size</code>-ene i CSS-en (se <code>design/tokens.json</code> for avvik mot DESIGN.md sin prosa-tabell).</p>
 
 			<div class="sg-type-row">
 				<span class="sg-type-label">Stor tittel</span>
 				<div class="sg-type-sample">
 					<span class="wordmark-lockup"><span class="wordmark">Sportivista</span><span class="wordmark-colon" aria-hidden="true">:</span></span>
-					<span class="sg-type-meta">.wordmark — 28px/700 · iOS <code>.title</code> bold (harmonisert i WP-98 — shippet iOS er fasit, se design/tokens.json)</span>
+					<span class="sg-type-meta">.wordmark — 28px/600 i display-fonten, kolonet 700 · iOS <code>.title</code> semibold/bold (WP-183; merkelåsens «kolonet ett hakk tyngre» gjelder nå bokstavelig også på web — se design/tokens.json)</span>
 				</div>
 			</div>
 			<div class="sg-type-row">
@@ -194,7 +194,7 @@
 				<img class="sg-icon-demo" src="icons/icon-512x512.png" alt="Sportivista-ikonet: to amber prikker vertikalt (kolonet) på sort bakgrunn" width="72" height="72">
 				<span class="wordmark-lockup sg-wordmark-demo"><span class="wordmark">Sportivista</span><span class="wordmark-colon" aria-hidden="true">:</span></span>
 			</div>
-			<p class="sg-note">Wordmark + kolon: null mellomrom (<code>.wordmark-lockup</code>), kolonet ett hakk tyngre enn ordmerket (iOS: bold ordmerke + heavy kolon), én tilgjengelighets-etikett («Sportivista»). Merkelåsen er nå lik på begge flater (harmonisert i WP-98): ordmerket i tekstfarge (<code>--fg</code> / <code>label</code>), kun kolonet amber (en av de sparsomme amber-aksentene i <code>base.css</code>) — se BRAND.md.</p>
+			<p class="sg-note">Wordmark + kolon: null mellomrom (<code>.wordmark-lockup</code>), kolonet ett hakk tyngre enn ordmerket (WP-183: display-fontens SemiBold 600 + Bold 700, likt på iOS, widget og web), én tilgjengelighets-etikett («Sportivista»). Merkelåsen er nå lik på begge flater (harmonisert i WP-98): ordmerket i tekstfarge (<code>--fg</code> / <code>label</code>), kun kolonet amber (en av de sparsomme amber-aksentene i <code>base.css</code>) — se BRAND.md.</p>
 		</section>
 
 		<!-- ── Knapper / "ingen pills" ─────────────────────────────────────── -->

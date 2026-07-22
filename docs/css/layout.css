@@ -29,7 +29,8 @@
    never opens a gap between "Sportivista" and its colon. */
 .wordmark-lockup { display: inline-flex; align-items: baseline; white-space: nowrap; }
 .wordmark {
-	font-weight: 700;
+	font-family: var(--display);    /* WP-183 — display-fonten, én av dens tre flater */
+	font-weight: 600;               /* WP-183: kolonet er ETT vekttrinn tyngre (700), BRAND.md-regel 2 */
 	font-size: 28px;                /* ~1.75rem — WP-98: matches iOS's shipped .title bold */
 	letter-spacing: 0.02em;
 	color: var(--fg);                /* label — the brand lock: only the colon is amber (WP-98, matches iOS/widget) */
@@ -39,6 +40,7 @@
 /* Kolonet — the brand mark: an amber colon right after the wordmark, echoing
    the app icon (two amber dots stacked, like the colon in a 18:00 clock). */
 .wordmark-colon {
+	font-family: var(--display);    /* WP-183 — samme font som ordmerket; låsen er én enhet */
 	font-weight: 700;
 	font-size: 28px;
 	color: var(--accent);          /* amber — the wordmark colon is one of the sparse amber accents */

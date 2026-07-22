@@ -113,6 +113,18 @@ struct ShareCardView: View {
         .system(size: size, weight: weight)
     }
 
+    /// The DISPLAY face at a fixed card size (WP-183). The card is one of the
+    /// display font's exactly three surfaces; like `cardFont` it is a fixed-size
+    /// raster, so `UIFontMetrics` is deliberately NOT applied — Dynamic Type
+    /// cannot reflow an image that has already left the device. Fails soft to
+    /// `cardFont` if the face is not in the bundle.
+    private func cardDisplayFont(_ size: CGFloat, _ weight: SportivistaDisplayWeight) -> Font {
+        guard let face = UIFont(name: weight.postScriptName, size: size) else {
+            return cardFont(size, weight.systemFallback)
+        }
+        return Font(face)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             lockup
@@ -136,11 +148,11 @@ struct ShareCardView: View {
     private var lockup: some View {
         HStack(spacing: 0) {
             Text("SPORTIVISTA")
-                .font(cardFont(34, .bold))
+                .font(cardDisplayFont(34, .semibold))
                 .tracking(2)
                 .foregroundStyle(.white)
             Text(":")
-                .font(cardFont(34, .heavy))
+                .font(cardDisplayFont(34, .bold))
                 .foregroundStyle(amber)
         }
         .accessibilityElement(children: .ignore)
@@ -151,7 +163,10 @@ struct ShareCardView: View {
         VStack(alignment: .leading, spacing: 0) {
             if let time = spec.time, !time.isEmpty {
                 Text(time)
-                    .font(cardFont(96, .bold).monospacedDigit())
+                    // WP-183 — the card's big time in the display face (digits
+                    // tabular in the file; `.monospacedDigit()` kept so the SF
+                    // fallback path still lines up).
+                    .font(cardDisplayFont(96, .bold).monospacedDigit())
                     .foregroundStyle(amber)
                     .padding(.bottom, 14)
             }

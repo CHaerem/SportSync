@@ -24,7 +24,12 @@
 	--destructive: #FF453A;               /* systemRed (dark) — slett/nullstill, sparse */
 
 	--font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, system-ui, sans-serif;
-	--display: var(--font);
+	/* Display-/tallfont (WP-183 — DESIGN.md § Typografi): Space Grotesk, brukt på
+	   NØYAKTIG tre flater — ordmerket, agendaens tidskolonne og delekortene.
+	   Brødtekst og all UI-tekst er fortsatt `--font` (San Francisco). Selvhostet
+	   subsett (docs/fonts/), null eksterne requests; systemstacken står som
+	   fallback så teksten aldri forsvinner om fila ikke lastes. */
+	--display: "Space Grotesk Subset", var(--font);
 	--max-w: 640px;            /* one column, max 640 on large surfaces, centered */
 	--time-col: 120px;         /* fixed time column so titles align + a date window fits one line */
 }
@@ -56,6 +61,30 @@
 		--live: #34C759;
 		--destructive: #FF3B30;
 	}
+}
+
+/* Den selvhostede display-fonten (WP-183). Space Grotesk, SIL OFL 1.1
+   (docs/fonts/OFL.txt), instansiert + subsettet av
+   design/brand/generate-display-font.py — kun tegnene ordmerket, tidskolonnen og
+   delekortene faktisk bruker (~7 kB per vekt). Sifrene er TABULÆRE I FONTA
+   (`tnum` bakt inn i cmap), så tidskolonnen retter seg inn uten å være avhengig
+   av `font-variant-numeric` — og canvas-delekortet, som ikke HAR den egenskapen,
+   får tabulære sifre gratis.
+   `font-display: swap` — systemfonten viser teksten umiddelbart og byttes når
+   fila er nede; teksten forsvinner aldri. */
+@font-face {
+	font-family: "Space Grotesk Subset";
+	src: url("../fonts/SpaceGrotesk-SemiBold-subset.woff2") format("woff2");
+	font-weight: 600;
+	font-style: normal;
+	font-display: swap;
+}
+@font-face {
+	font-family: "Space Grotesk Subset";
+	src: url("../fonts/SpaceGrotesk-Bold-subset.woff2") format("woff2");
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -97,7 +126,9 @@ body.gated .auth-gate {
 	max-width: 420px; display: flex; flex-direction: column; align-items: center;
 	gap: 20px; text-align: center;
 }
-.auth-gate .wordmark { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; }
+/* WP-183: 600, så kolonet (700) blir ett vekttrinn tyngre også her — merkelåsen
+   er den samme på hver flate ordmerket vises. */
+.auth-gate .wordmark { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; }
 .auth-gate .wordmark-colon { color: var(--accent); }
 .auth-gate-lead { color: var(--fg-2); font-size: 15px; line-height: 1.55; margin: 0; }
 /* CloudKit renders Apple's own Sign in with Apple control into #apple-sign-in-button.

@@ -540,7 +540,11 @@ private struct TimeColumn: View {
 
     var body: some View {
         let label = Text(text)
-            .font(isClock ? .sportivistaTabular(.body, weight: .semibold) : .sportivistaTabular(.footnote, weight: .medium))
+            // WP-183 — the display face (DESIGN.md § Typografi): the time column is
+            // one of its exactly three surfaces. Digits are tabular in the file
+            // itself, so the column still lines up glyph-for-glyph; the fallback
+            // path inside `sportivistaDisplay` re-adds `.monospacedDigit` on SF.
+            .font(isClock ? .sportivistaDisplay(.body, weight: .semibold) : .sportivistaDisplay(.footnote, weight: .medium))
             .foregroundStyle(SportivistaTokens.label)
             // WP-134: at Accessibility sizes the column is on its own line (see
             // AgendaRowScaffold), so a wide window may WRAP to two lines.

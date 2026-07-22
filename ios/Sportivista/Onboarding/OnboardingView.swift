@@ -125,11 +125,12 @@ struct OnboardingView: View {
         HStack(spacing: 0) {
             // Brand lock (designprofil rev 2): wordmark + amber colon.
             Text("SPORTIVISTA")
-                .font(.sportivistaTabular(.title2, weight: .bold))
+                // WP-183 — the display face (wordmark is one of its three surfaces).
+                .font(.sportivistaDisplay(.title2, weight: .semibold))
                 .foregroundStyle(SportivistaTokens.label)
                 .tracking(2)
             Text(":")
-                .font(.sportivistaTabular(.title2, weight: .heavy))
+                .font(.sportivistaDisplay(.title2, weight: .bold))
                 .foregroundStyle(SportivistaTokens.accent)
             Spacer()
         }

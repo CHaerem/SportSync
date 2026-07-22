@@ -81,11 +81,13 @@ struct SportivistaWidgetEntryView: View {
                 // Brand lock (designprofil rev 2): wordmark + amber colon.
                 HStack(spacing: 0) {
                     Text("SPORTIVISTA")
-                        .font(.sportivista(.caption, weight: .bold))
+                        // WP-183 — the display face. ONLY the wordmark: the widget's
+                        // time/channel meta line stays on the system font.
+                        .font(.sportivistaDisplay(.caption, weight: .semibold))
                         .foregroundStyle(SportivistaTokens.label)
                         .tracking(1)
                     Text(":")
-                        .font(.sportivista(.caption, weight: .heavy))
+                        .font(.sportivistaDisplay(.caption, weight: .bold))
                         .foregroundStyle(SportivistaTokens.accent)
                 }
                 .accessibilityElement(children: .ignore)
