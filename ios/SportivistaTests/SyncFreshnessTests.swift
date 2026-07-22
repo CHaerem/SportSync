@@ -166,6 +166,122 @@ final class SyncFreshnessTests: XCTestCase {
         XCTAssertEqual(decide(.changedFiles(["interests.json"])), .init(reloadWidget: false, reconcileNotifications: false))
         // A mixed change reloads (events present) and reconciles (events present).
         XCTAssertEqual(decide(.changedFiles(["events.json", "tracked.json"])), .init(reloadWidget: true, reconcileNotifications: true))
+        // WP-176: recent-results.json is the result signal — it reloads the widget
+        // (which now carries «siste resultat») but never re-plans event reminders.
+        XCTAssertEqual(decide(.changedFiles(["recent-results.json"])),
+                       .init(reloadWidget: true, reconcileNotifications: false, refreshResults: true))
+        XCTAssertEqual(decide(.changedFiles(["events.json"])),
+                       .init(reloadWidget: true, reconcileNotifications: true, refreshResults: false))
+    }
+
+    // MARK: - WP-176: the result half (fulltidsvarsel + the widget's result line)
+
+    private let resultNow = ISO8601DateFormatter().date(from: "2026-07-19T20:00:00Z")!
+
+    private var lynProfile: InterestProfile {
+        InterestProfile(rules: [
+            InterestRule(entityId: "fk-lyn-oslo", entityName: "FK Lyn Oslo", sport: "football",
+                         weight: 0.9, reason: "test", addedAt: resultNow)
+        ])
+    }
+
+    private func resultInputs(optedIn: Set<String>) -> SyncFreshness.ResultInputs {
+        SyncFreshness.ResultInputs(
+            // A non-empty "before" so this isn't read as a seeding sync.
+            previousResults: RecentResults(football: [
+                FootballResult(homeTeam: "Lyn", awayTeam: "Brann", homeScore: 0, awayScore: 0,
+                               date: resultNow.addingTimeInterval(-40 * 3600), league: "OBOS-ligaen")
+            ]),
+            newResults: RecentResults(football: [
+                FootballResult(homeTeam: "Lyn", awayTeam: "Brann", homeScore: 0, awayScore: 0,
+                               date: resultNow.addingTimeInterval(-40 * 3600), league: "OBOS-ligaen"),
+                FootballResult(homeTeam: "Lyn", awayTeam: "Sogndal", homeScore: 2, awayScore: 1,
+                               date: resultNow.addingTimeInterval(-3600), league: "OBOS-ligaen"),
+            ]),
+            profile: lynProfile,
+            entities: [Entity(id: "fk-lyn-oslo", name: "FK Lyn Oslo", aliases: ["Lyn"], sport: "football", type: "team")],
+            shield: SpoilerShield(),
+            optedIn: optedIn
+        )
+    }
+
+    private func makeResultFreshness() -> (SyncFreshness, RecordingNotificationScheduler, RecordingWidgetReloader, RecordingSnapshotWriter, LedgerRecorder) {
+        let scheduler = RecordingNotificationScheduler()
+        let reloader = RecordingWidgetReloader()
+        let writer = RecordingSnapshotWriter()
+        let ledger = LedgerRecorder()
+        let freshness = SyncFreshness(
+            notificationPlanner: NotificationPlanner(scheduler: RecordingNotificationScheduler()),
+            widgetReloader: reloader,
+            resultAlertScheduler: scheduler,
+            snapshotWriter: writer,
+            recordDelivered: { ids in ledger.record(ids) }
+        )
+        return (freshness, scheduler, reloader, writer, ledger)
+    }
+
+    /// The BACKGROUND path's shape: recent-results.json changed and a followed,
+    /// opted-in match finished ⇒ exactly one calm alert, the widget's result line
+    /// written BEFORE the reload, and the ledger updated.
+    func testResultsChanged_optedInEntity_deliversOneAlert_writesSnapshot_reloadsWidget() async {
+        let (freshness, scheduler, reloader, writer, ledger) = makeResultFreshness()
+
+        await freshness.run(
+            result: .changedFiles(["recent-results.json"]),
+            previousEvents: [], newEvents: [], interests: Interests(),
+            lastSync: resultNow, now: resultNow, leadTimeEnabled: true,
+            resultInputs: resultInputs(optedIn: ["fk-lyn-oslo"])
+        )
+
+        XCTAssertEqual(scheduler.scheduledRequests.count, 1)
+        XCTAssertEqual(scheduler.scheduledRequests.first?.title, "Fulltid: Lyn – Sogndal")
+        XCTAssertEqual(scheduler.scheduledRequests.first?.body, "2–1 · OBOS-ligaen")
+        XCTAssertEqual(writer.written.last?.line, "Lyn – Sogndal 2–1")
+        XCTAssertEqual(reloader.reloadCount, 1, "the result line changed ⇒ the widget rebuilds")
+        XCTAssertEqual(ledger.recorded.flatMap { $0 }.count, 1, "a delivered alert is remembered")
+    }
+
+    func testResultsChanged_noOptIn_writesSnapshotButNeverPromptsNorAlerts() async {
+        let (freshness, scheduler, _, writer, ledger) = makeResultFreshness()
+
+        await freshness.run(
+            result: .changedFiles(["recent-results.json"]),
+            previousEvents: [], newEvents: [], interests: Interests(),
+            lastSync: resultNow, now: resultNow, leadTimeEnabled: true,
+            resultInputs: resultInputs(optedIn: [])
+        )
+
+        XCTAssertTrue(scheduler.scheduledRequests.isEmpty)
+        XCTAssertEqual(scheduler.authorizationRequestCount, 0,
+                       "a user who opted nothing in is never asked for notification permission by this path")
+        XCTAssertEqual(writer.written.last?.line, "Lyn – Sogndal 2–1", "the widget line is not gated on the alert opt-in")
+        XCTAssertTrue(ledger.recorded.isEmpty)
+    }
+
+    /// The FOREGROUND cold-start path: refresh the widget's line, but never buzz
+    /// about a result the user is already looking at (and never consume the ledger).
+    func testDeliverResults_withAlertsOff_onlyWritesTheSnapshot() async {
+        let (freshness, scheduler, _, writer, ledger) = makeResultFreshness()
+
+        await freshness.deliverResults(resultInputs(optedIn: ["fk-lyn-oslo"]), now: resultNow, deliverAlerts: false)
+
+        XCTAssertTrue(scheduler.scheduledRequests.isEmpty)
+        XCTAssertTrue(ledger.recorded.isEmpty)
+        XCTAssertEqual(writer.written.count, 1)
+    }
+
+    func testEventsOnlyChange_doesNoResultWork() async {
+        let (freshness, scheduler, _, writer, _) = makeResultFreshness()
+
+        await freshness.run(
+            result: .changedFiles(["events.json"]),
+            previousEvents: [], newEvents: [], interests: Interests(),
+            lastSync: resultNow, now: resultNow, leadTimeEnabled: true,
+            resultInputs: resultInputs(optedIn: ["fk-lyn-oslo"])
+        )
+
+        XCTAssertTrue(scheduler.scheduledRequests.isEmpty)
+        XCTAssertTrue(writer.written.isEmpty, "no results changed ⇒ nothing to re-render")
     }
 
     // MARK: - Part 3: the foreground-sync gate (pure, clock-injected)
@@ -185,5 +301,32 @@ final class SyncFreshnessTests: XCTestCase {
 
     func testForegroundStalenessConstant_isFifteenMinutes() {
         XCTAssertEqual(ForegroundSyncGate.staleness, 15 * 60)
+    }
+}
+
+// MARK: - WP-176 recording doubles
+
+/// Records the widget result snapshots the app would have written to the App
+/// Group cache — no container, no disk.
+final class RecordingSnapshotWriter: WidgetResultSnapshotWriting, @unchecked Sendable {
+    private let lock = NSLock()
+    private var _written: [WidgetResultSnapshot] = []
+    var written: [WidgetResultSnapshot] { lock.lock(); defer { lock.unlock() }; return _written }
+
+    func write(_ snapshot: WidgetResultSnapshot) {
+        lock.lock(); defer { lock.unlock() }
+        _written.append(snapshot)
+    }
+}
+
+/// Records the delivered-alert ledger writes instead of touching UserDefaults.
+final class LedgerRecorder: @unchecked Sendable {
+    private let lock = NSLock()
+    private var _recorded: [[String]] = []
+    var recorded: [[String]] { lock.lock(); defer { lock.unlock() }; return _recorded }
+
+    func record(_ ids: [String]) {
+        lock.lock(); defer { lock.unlock() }
+        _recorded.append(ids)
     }
 }

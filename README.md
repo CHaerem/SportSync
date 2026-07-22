@@ -208,6 +208,52 @@ verified by its own test suite (500+ unit tests, UI flows, and a versioned
 real-model eval corpus), and ships to **TestFlight** through the scripted
 release lane. See [ios/README.md](ios/README.md).
 
+### Notifications: what we do, and what we deliberately don't
+
+**Sportivista does not send live goal alerts. That is a choice, not a gap.**
+
+What the app *does* send, all of it computed on your own device:
+
+- **Påminnelse før start** — a reminder ahead of a must-see event, at the lead
+  time you choose (default 30 minutes). If the kickoff moves, the reminder moves
+  with it.
+- **Fulltidsvarsel** — one calm notification when a contest you follow is over
+  («Fulltid: Lyn – Sogndal · 2–1»). **Off by default and opted in per team or
+  athlete**, from that follow's own page — never a blanket switch. One per
+  finished match, never per goal. If you have spoiler protection on that team,
+  the notification says only that the result is ready; the score stays behind
+  your «Vis resultat» shield.
+- **Widget** — the next must-see event, plus the last result, on the home screen
+  and (since WP-176) on the lock screen / StandBy.
+
+What we don't send, and why:
+
+- **No live goal or in-play alerts.** Real-time push needs a server holding a
+  register of device tokens, pinging Apple's push service the moment something
+  happens. Sportivista has no server — the whole system is GitHub Actions +
+  GitHub Pages — and a scheduled job could realistically deliver a "goal" 15–60
+  minutes late. A goal alert that arrives 40 minutes after the goal is worse
+  than no alert: it teaches you to distrust everything else the app tells you.
+  We would rather be quiet and right.
+- **No device-token register, ever.** Push would mean us holding an identifier
+  for your phone on our side. Today the promise is absolute and easy to verify:
+  **your profile, your follows and your notifications never touch our servers**,
+  because there are none. That is trust capital you spend once. A goal alert is
+  not worth it.
+- **No Live Activities.** A Live Activity that can't be updated in real time is
+  a stale rectangle on your lock screen — the same honesty problem, with more
+  machinery.
+
+The one caveat we state plainly rather than paper over: a fulltidsvarsel arrives
+**when iOS next lets the app look** (background refresh is granted on the
+system's terms, with a floor of a few hours), typically within a few hours of
+full time — never live. The app says this in the same place you turn the
+notification on.
+
+If you want the goal in the second it happens, keep a live-score app for that.
+Sportivista competes on a calm, correct agenda — knowing *what is on, when, and
+where to watch it* — not on being the fastest buzz in your pocket.
+
 ## License
 
 MIT License

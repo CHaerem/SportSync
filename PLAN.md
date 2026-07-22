@@ -1998,12 +1998,14 @@ innholdsdybden rundt det. All data en entitetsside trenger er ALLEREDE publisert
 (events + entityId, news, recent-results, standings, entities) — mye av fasen er
 ren klient-komposisjon.
 
-**Menneskebeslutninger i fasen:** WP-176 varselnivå — velg (a) «vi konkurrerer
-på riktig agenda + ro, ikke på mål-push» (kun on-device-oppdagelse, ærlig
-dokumentert), eller (b) Actions→APNs resultat-push med 15–60 min latens (krever
-device-token-register, f.eks. CloudKit server-to-server + nye secrets — en reell
-arkitekturbeslutning). Mål-push i SANNTID er strukturelt utenfor null-infra og
-anbefales eksplisitt fravalgt.
+**Menneskebeslutninger i fasen — AVGJORT 22.07 (eier delegerte valget):** WP-176
+varselnivå — **(a) valgt**: «vi konkurrerer på riktig agenda + ro, ikke på
+mål-push» (kun on-device-oppdagelse via BGAppRefresh, ærlig dokumentert). **(b)
+Actions→APNs eksplisitt FRAVALGT** og skal ikke bygges: 15–60 min latens gjør et
+målvarsel verre enn ingen (det lærer brukeren å mistro appen), og et
+device-token-register ville brutt personvern-posisjonen «dine data rører aldri
+serveren vår» — tillitskapital man bruker opp én gang. Mål-push i SANNTID er
+strukturelt utenfor null-infra.
 
 Bølge 1: WP-170 (iOS-klient) ∥ WP-171 (web-klient + pipeline-visning) ∥ WP-173
 (workflow-cron, beskyttet sti). Bølge 2: WP-172 ∥ WP-174. Bølge 3: WP-175 ∥ WP-176.
@@ -2016,7 +2018,7 @@ Bølge 1: WP-170 (iOS-klient) ∥ WP-171 (web-klient + pipeline-visning) ∥ WP-
 | WP-173 | Kvelds-ferskhet: pipeline-cron 22/23/00/03 UTC (BESKYTTET STI — eier merger) | 0K | — | planlagt |
 | WP-174 | «Min brief»: deterministisk personlig brief on-device (begge flater) | 0K | WP-171 | planlagt |
 | WP-175 | Nyhetsbredde per fulgt entitet: kilder + register-matching | 0K | 0J WP-161 | planlagt |
-| WP-176 | Varselnivå (EIERBESLUTNING) + widget-løft (resultater, accessory-familier) | 0K | WP-171 | planlagt |
+| WP-176 | Varselnivå (EIERBESLUTNING) + widget-løft (resultater, accessory-familier) | 0K | WP-171 | 🔬 branch wp-176-varsler-widget — **NIVÅ (a) valgt** (eier delegerte 22.07): vi konkurrerer på ro + riktig agenda, ikke på push-hastighet; nivå (b) Actions→APNs eksplisitt fravalgt (40 min forsinket målvarsel er verre enn ingen, og et device-token-register ville brutt «dine data rører aldri serveren vår»). Bygget: (1) **fulltidsvarsel** — ett rolig lokalt varsel når en fulgt kamp er ferdig, **av som default og opt-in per entitet** (`ResultAlertPreference`, per enhet, aldri i synk-profilen; bryteren står i FollowDetailView § VARSEL); **spoilervernet vinner** — en skjermet entitet får varselet, men teksten sier bare «Resultatet er klart», aldri «2–1». FÅ: ett per avsluttet kamp, hard cap per synk, 12t ferskhetsvindu, levert-ledger, og INGEN varsler på en seedende synk (fersk installasjon åpner aldri med en byge). Ren kjerne i `News/ResultDigest.swift` (gjenbruker `NewsBoard.resultRows` + `NewsLens` + `SpoilerShield` — ingen ny fuzzy), utført av `SyncFreshness.deliverResults` (BGAppRefresh + pull-to-refresh; cold start skriver bare widget-linja); (2) **widget-løft** — medium får «siste resultat»-linje (PRE-RENDERET av appen i `widget-result.json`, fordi widget-targetet ikke kompilerer profil/minne og derfor ikke KAN kjenne spoiler-policyen) + nye `accessoryRectangular`/`accessoryInline` (låseskjerm/StandBy, systemets vibrante materiale via per-familie container-bakgrunn); (3) **ærlig dokumentasjon** i README § «Notifications: what we do, and what we deliberately don't» + ios/README. Tester: iOS 742 (+39: ResultDigest/ResultAlertPreference/SyncFreshness/Widget), JS 1 028 uendret, 13/13 gylne vektorer bit-like, alle 4 schemes bygger. Skjermbilder: medium-widget dark+light |
 
 ### WP-170 · Entitetssiden (bølge 1)
 **Mål:** ett sted som svarer «hva skjer med X?» per fulgt entitet: neste event

@@ -84,6 +84,15 @@ struct DataStore: Sendable {
         return (try? SportivistaJSON.decoder.decode(Standings.self, from: data)) ?? Standings()
     }
 
+    /// WP-176: the app-computed, already spoiler-filtered «siste resultat»-linje
+    /// the widget renders (see WidgetResultSnapshot's header on why the widget
+    /// must not compute this itself). An absent/corrupt file is `.empty` — no
+    /// result line, never a stale or unshielded one.
+    func loadWidgetResultSnapshot() -> WidgetResultSnapshot {
+        guard let data = cache.read(WidgetResultSnapshot.filename) else { return .empty }
+        return (try? SportivistaJSON.decoder.decode(WidgetResultSnapshot.self, from: data)) ?? .empty
+    }
+
     /// `nil` means "never synced" — see the type-level doc above for why
     /// this is the flag callers should check, not an empty `loadEvents()`.
     var lastSync: Date? {

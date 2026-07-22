@@ -102,6 +102,9 @@ final class AgendaViewModel {
         // can be diffed after it — pull-to-refresh must keep reminders + the
         // widget as fresh as the cold-start path does.
         let previousEvents = dataStore.loadEvents()
+        // WP-176: the same before/after discipline for results — a contest that
+        // finished between the two snapshots is what a fulltidsvarsel is about.
+        let previousResults = dataStore.loadRecentResults()
         let result = await syncClient.sync()
         // WP-60: a sync may have rewritten entities.json — drop the cached index
         // so the post-sync reload rebuilds it from fresh data.
@@ -118,11 +121,30 @@ final class AgendaViewModel {
             interests: dataStore.loadInterests() ?? Interests(),
             lastSync: dataStore.lastSync,
             now: now,
-            leadTimeEnabled: NotificationLeadPreference.isLeadTimeEnabled()
+            leadTimeEnabled: NotificationLeadPreference.isLeadTimeEnabled(),
+            resultInputs: resultInputs(previousResults: previousResults)
         )
         // Pull-to-refresh awaits this method — end the spinner only once the
         // recompiled board is actually applied (not merely scheduled).
         await awaitReloadsQuiescent()
+    }
+
+    /// WP-176 — the result half of the post-sync freshness step: the profile, the
+    /// entity list, the spoiler shield (from the SAME profile file the board's own
+    /// shield comes from), and the per-device fulltidsvarsel opt-in. Built here
+    /// because the view model already owns the profile store; `SyncFreshness`
+    /// itself stays a pure orchestrator over plain values.
+    private func resultInputs(previousResults: RecentResults) -> SyncFreshness.ResultInputs {
+        let syncState = profileStore.loadSyncState()
+        return SyncFreshness.ResultInputs(
+            previousResults: previousResults,
+            newResults: dataStore.loadRecentResults(),
+            profile: syncState.profile,
+            entities: dataStore.loadEntities(),
+            shield: SpoilerShield(memory: MemoryState(from: syncState)),
+            optedIn: ResultAlertPreference.optedInEntityIds(),
+            alreadyDelivered: Set(ResultAlertPreference.deliveredIds())
+        )
     }
 
     /// Recompiles from whatever DataStore currently has cached, with no network

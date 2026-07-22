@@ -24,6 +24,12 @@
 //  are untouched (WP-121 non-goal): `run` just calls the existing, proven
 //  `reconcile` with the same quality gates the cold-start path uses.
 //
+//  WP-176 adds a THIRD freshness action on the same seam-and-decision shape: when
+//  `recent-results.json` changed, a followed contest may have FINISHED, which
+//  means (a) an opted-in entity may deserve one calm fulltidsvarsel and (b) the
+//  widget's «siste resultat»-linje must be re-rendered. The decision of WHAT to
+//  say stays pure (`ResultDigest`); this file only carries it out.
+//
 
 import Foundation
 
@@ -35,16 +41,72 @@ struct SyncFreshness: Sendable {
     /// The file whose change means reminders must be reconciled: reminders are
     /// keyed off events (their time/streaming/mustWatch), nothing else.
     static let notificationInputs: Set<String> = ["events.json"]
+    /// WP-176 — the file whose change can mean a contest FINISHED: the
+    /// fulltidsvarsel + the widget's «siste resultat»-linje both derive from
+    /// `recent-results.json` and from nothing else.
+    static let resultInputs: Set<String> = ["recent-results.json"]
 
     var notificationPlanner: NotificationPlanner
     var widgetReloader: WidgetReloading
+    /// WP-176 — the OS seam the fulltidsvarsler go through. Shares the
+    /// NotificationPlanner's scheduler by default so both notification kinds
+    /// talk to the same UNUserNotificationCenter.
+    var resultAlertScheduler: NotificationScheduling
+    /// WP-176 — where the widget's pre-rendered result line is persisted.
+    var snapshotWriter: WidgetResultSnapshotWriting
+    /// WP-176 — how a delivered alert is recorded in the ledger. A closure (not a
+    /// UserDefaults property) so this stays unambiguously `Sendable` and a test
+    /// can observe the ledger writes without touching `.standard`.
+    var recordDelivered: @Sendable ([String]) -> Void
 
     init(
         notificationPlanner: NotificationPlanner = NotificationPlanner(),
-        widgetReloader: WidgetReloading = WidgetCenterReloader()
+        widgetReloader: WidgetReloading = WidgetCenterReloader(),
+        resultAlertScheduler: NotificationScheduling = UNUserNotificationScheduler(),
+        snapshotWriter: WidgetResultSnapshotWriting = CacheWidgetResultSnapshotWriter(),
+        recordDelivered: @escaping @Sendable ([String]) -> Void = { ResultAlertPreference.markDelivered($0) }
     ) {
         self.notificationPlanner = notificationPlanner
         self.widgetReloader = widgetReloader
+        self.resultAlertScheduler = resultAlertScheduler
+        self.snapshotWriter = snapshotWriter
+        self.recordDelivered = recordDelivered
+    }
+
+    /// WP-176 — everything the result half of a sync needs, gathered by the
+    /// caller (which owns the profile store + the personal memory) and passed as
+    /// plain values so `run` stays a pure-ish orchestrator. `nil` ⇒ this call
+    /// site does no result work at all (the default, so existing callers and
+    /// tests are untouched).
+    struct ResultInputs: Sendable {
+        var previousResults: RecentResults
+        var newResults: RecentResults
+        var profile: InterestProfile
+        var entities: [Entity]
+        var shield: SpoilerShield
+        /// Entity ids with fulltidsvarsel ON — read from ResultAlertPreference
+        /// by the caller (a device preference, not part of the profile).
+        var optedIn: Set<String>
+        /// The already-alerted ledger (ResultAlertPreference).
+        var alreadyDelivered: Set<String>
+
+        init(
+            previousResults: RecentResults,
+            newResults: RecentResults,
+            profile: InterestProfile,
+            entities: [Entity],
+            shield: SpoilerShield,
+            optedIn: Set<String>,
+            alreadyDelivered: Set<String> = []
+        ) {
+            self.previousResults = previousResults
+            self.newResults = newResults
+            self.profile = profile
+            self.entities = entities
+            self.shield = shield
+            self.optedIn = optedIn
+            self.alreadyDelivered = alreadyDelivered
+        }
     }
 
     // MARK: - Pure decision (unit-testable, no seams needed)
@@ -52,6 +114,9 @@ struct SyncFreshness: Sendable {
     struct Decision: Equatable {
         var reloadWidget: Bool
         var reconcileNotifications: Bool
+        /// WP-176 — recent-results.json changed, so a followed contest may have
+        /// finished (fulltidsvarsel + the widget's result line).
+        var refreshResults: Bool = false
     }
 
     /// What a completed sync should trigger, from the files it actually wrote.
@@ -65,8 +130,11 @@ struct SyncFreshness: Sendable {
         case .upToDate, .failure: changed = []
         }
         return Decision(
-            reloadWidget: !changed.isDisjoint(with: widgetInputs),
-            reconcileNotifications: !changed.isDisjoint(with: notificationInputs)
+            // WP-176: the widget now also carries a «siste resultat»-linje, so a
+            // change to recent-results.json is a widget reload too.
+            reloadWidget: !changed.isDisjoint(with: widgetInputs.union(resultInputs)),
+            reconcileNotifications: !changed.isDisjoint(with: notificationInputs),
+            refreshResults: !changed.isDisjoint(with: resultInputs)
         )
     }
 
@@ -86,9 +154,15 @@ struct SyncFreshness: Sendable {
         interests: Interests,
         lastSync: Date?,
         now: Date = Date(),
-        leadTimeEnabled: Bool
+        leadTimeEnabled: Bool,
+        resultInputs: ResultInputs? = nil
     ) async -> [NotificationOperation] {
         let decision = Self.decide(from: result)
+        // WP-176: the result work runs BEFORE the widget reload, so the timeline
+        // WidgetKit rebuilds already sees the freshly written result line.
+        if decision.refreshResults, let inputs = resultInputs {
+            await deliverResults(inputs, now: now)
+        }
         if decision.reloadWidget {
             widgetReloader.reloadAllTimelines()
         }
@@ -101,6 +175,41 @@ struct SyncFreshness: Sendable {
             lastSync: lastSync,
             leadTimeEnabled: leadTimeEnabled
         )
+    }
+
+    /// WP-176 — the impure half of the result work: plan (pure, ResultDigest),
+    /// persist the widget's line, then deliver the fulltidsvarsler. Permission is
+    /// requested ONLY when there is actually an alert to show (the same lazy rule
+    /// NotificationPlanner.reconcile follows) — a user who never opted an entity
+    /// in is never prompted by this path at all. Returns the delivered ids so the
+    /// caller can record them in the ledger.
+    /// - Parameter deliverAlerts: false ⇒ only re-render the widget's result line
+    ///   and leave the ledger untouched. The FOREGROUND cold-start path passes
+    ///   false: the user is looking at the app, where the result is already on the
+    ///   board — buzzing them about what is on screen would be noise, and consuming
+    ///   the ledger entry would silently swallow the background alert they might
+    ///   still want later.
+    @discardableResult
+    func deliverResults(_ inputs: ResultInputs, now: Date = Date(), deliverAlerts: Bool = true) async -> [String] {
+        let output = ResultDigest.plan(
+            previousResults: inputs.previousResults,
+            newResults: inputs.newResults,
+            profile: inputs.profile,
+            entities: inputs.entities,
+            shield: inputs.shield,
+            optedIn: inputs.optedIn,
+            alreadyDelivered: inputs.alreadyDelivered,
+            now: now
+        )
+        snapshotWriter.write(output.snapshot)
+        guard deliverAlerts, !output.alerts.isEmpty else { return [] }
+        guard await resultAlertScheduler.requestAuthorizationIfNeeded() else { return [] }
+        for alert in output.alerts {
+            await resultAlertScheduler.schedule(alert)
+        }
+        let ids = output.alerts.map(\.id)
+        recordDelivered(ids)
+        return ids
     }
 }
 

@@ -122,7 +122,11 @@ struct NewsBoard: Equatable {
 	///
 	/// Ordering is a per-sport round robin (`interleaveBySport`) so a busy
 	/// football weekend can't push the golf/F1 answer out of the capped section.
-	private static func resultRows(_ results: RecentResults, lens: NewsLens, index: EntityIndex, shield: SpoilerShield) -> [NewsResultRow] {
+	/// WP-176: no longer `private` — `ResultDigest` (the fulltidsvarsel + the
+	/// widget's «siste resultat»-linje) projects the SAME rows through the SAME
+	/// lens and the SAME spoiler shield, rather than growing a second, drifting
+	/// notion of "a result about something you follow".
+	static func resultRows(_ results: RecentResults, lens: NewsLens, index: EntityIndex, shield: SpoilerShield) -> [NewsResultRow] {
 		var rows: [NewsResultRow] = []
 
 		for r in results.football {
@@ -136,7 +140,8 @@ struct NewsBoard: Equatable {
 				meta: r.league,
 				details: capDetails(r.goalScorers.map(\.line)),
 				date: r.date,
-				spoilerSensitive: shield.isSpoilerSensitive(sport: "football", entityIds: ids)
+				spoilerSensitive: shield.isSpoilerSensitive(sport: "football", entityIds: ids),
+				entityIds: ids
 			))
 		}
 
@@ -155,7 +160,8 @@ struct NewsBoard: Equatable {
 				meta: [golfTourLabel(key), "sluttresultat"].joined(separator: " · "),
 				details: capDetails(details),
 				date: nil,
-				spoilerSensitive: shield.isSpoilerSensitive(sport: "golf", entityIds: ids)
+				spoilerSensitive: shield.isSpoilerSensitive(sport: "golf", entityIds: ids),
+				entityIds: ids
 			))
 		}
 
@@ -171,7 +177,8 @@ struct NewsBoard: Equatable {
 				meta: [r.circuit, r.type].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "),
 				details: capDetails(r.topDrivers.prefix(3).map { positionLine(position: $0.position, name: $0.driver, value: nil) }),
 				date: r.date,
-				spoilerSensitive: shield.isSpoilerSensitive(sport: "f1", entityIds: ids)
+				spoilerSensitive: shield.isSpoilerSensitive(sport: "f1", entityIds: ids),
+				entityIds: ids
 			))
 		}
 
@@ -190,7 +197,8 @@ struct NewsBoard: Equatable {
 				meta: [r.tournament, r.round].compactMap { $0 }.filter { !$0.isEmpty }.joined(separator: " · "),
 				details: [],
 				date: r.date,
-				spoilerSensitive: shield.isSpoilerSensitive(sport: "tennis", entityIds: ids)
+				spoilerSensitive: shield.isSpoilerSensitive(sport: "tennis", entityIds: ids),
+				entityIds: ids
 			))
 		}
 
@@ -362,6 +370,11 @@ struct NewsResultRow: Identifiable, Equatable {
 	var details: [String] = []
 	var date: Date?
 	var spoilerSensitive: Bool
+	/// WP-176: the FOLLOWED entity ids this result resolved to (possibly empty
+	/// when it only matched a whole-sport follow). The board itself doesn't
+	/// render them — `ResultDigest` needs them to decide whether the user opted
+	/// this specific entity into a fulltidsvarsel, which is a per-ENTITY choice.
+	var entityIds: Set<String> = []
 }
 
 /// SECTION 4 row — a forvarsel. Non-interactive: a calm date + what + where line

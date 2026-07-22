@@ -15,7 +15,13 @@
 //
 //  The widget shows "the next must-see event (fallback: the next event at
 //  all)" — deliberately simpler than the app's AgendaViewModel: no day
-//  sections, no series collapsing, just one highlight. One entry is computed
+//  sections, no series collapsing, just one highlight.
+//
+//  WP-176: the medium variant additionally carries a «siste resultat»-linje,
+//  handed in pre-rendered by the app (`WidgetResultSnapshot`) — the widget target
+//  compiles no profile/memory and therefore cannot judge spoilers itself.
+//
+//  One entry is computed
 //  per "clock strike" (every full hour) for the rest of today, so the OS can
 //  swap entries on its own schedule with NO further network access — the
 //  widget's `getTimeline` in SportivistaWidget.swift never calls SyncClient, only
@@ -35,6 +41,13 @@ enum WidgetTimelineBuilder {
         var title: String
         var channelLabel: String
         var isMustSee: Bool
+        /// WP-176 — «Lyn – Sogndal 2–1», the app-rendered, already spoiler-safe
+        /// «siste resultat»-linje (WidgetResultSnapshot). Nil ⇒ the widget shows
+        /// no result line at all (the honest quiet state). The widget never
+        /// computes this itself — it cannot see the spoiler policy.
+        var resultLine: String? = nil
+        /// The quiet second half of the result line («OBOS-ligaen»).
+        var resultMeta: String? = nil
     }
 
     private static var oslo: Calendar {
@@ -85,11 +98,21 @@ enum WidgetTimelineBuilder {
     }
 
     /// Builds the full set of pre-computed entries for the rest of the day.
-    static func buildEntries(events: [Event], interests: Interests, now: Date) -> [Entry] {
+    static func buildEntries(
+        events: [Event],
+        interests: Interests,
+        now: Date,
+        // WP-176: pre-rendered by the app (see WidgetResultSnapshot). Defaulted
+        // so every existing caller/test keeps its exact previous behaviour.
+        resultSnapshot: WidgetResultSnapshot = .empty
+    ) -> [Entry] {
         let pairs = zip(events.map { FeedEvent(from: $0) }, events).map { (feed: $0, event: $1) }
         return ticks(from: now).map { tick in
+            let resultLine = resultSnapshot.hasResult ? resultSnapshot.line : nil
+            let resultMeta = resultSnapshot.hasResult ? resultSnapshot.meta : nil
             guard let hit = nextHighlight(pairs: pairs, interests: interests, now: tick) else {
-                return Entry(date: tick, hasHighlight: false, timeLabel: "–", title: "Ingenting i dag", channelLabel: "–", isMustSee: false)
+                return Entry(date: tick, hasHighlight: false, timeLabel: "–", title: "Ingenting i dag", channelLabel: "–", isMustSee: false,
+                             resultLine: resultLine, resultMeta: resultMeta)
             }
             return Entry(
                 date: tick,
@@ -97,7 +120,9 @@ enum WidgetTimelineBuilder {
                 timeLabel: AgendaFormat.timeLabel(time: hit.feed.time, endTime: hit.feed.endTime),
                 title: AgendaFormat.title(homeTeam: hit.feed.homeTeam, awayTeam: hit.feed.awayTeam, participants: hit.feed.participants, fallback: hit.feed.title),
                 channelLabel: AgendaFormat.channelLabel(hit.event.streaming),
-                isMustSee: FeedCompiler.isMustSee(hit.feed, interests: interests)
+                isMustSee: FeedCompiler.isMustSee(hit.feed, interests: interests),
+                resultLine: resultLine,
+                resultMeta: resultMeta
             )
         }
     }

@@ -233,6 +233,8 @@ struct FollowDetailView: View {
     /// The device-wide reminder preference — the only notify signal the on-device
     /// profile carries (there is no per-entity notify field), shown honestly.
     private let leadTimeOn = NotificationLeadPreference.isLeadTimeEnabled()
+    /// WP-176 — this entity's fulltidsvarsel switch (per device, off by default).
+    @State private var resultAlertOn = false
 
     private var upcoming: [FeedQueryEvent] { snapshot?.presenter.nextEvents(for: rule, limit: 3) ?? [] }
     private var news: [NewsItem] { snapshot?.presenter.newsItems(for: rule, limit: 3) ?? [] }
@@ -362,10 +364,33 @@ struct FollowDetailView: View {
                         .foregroundStyle(SportivistaTokens.secondaryLabel)
                 }
                 .padding(.vertical, 2)
+                // WP-176 — fulltidsvarsel: AV som default, valgt PER ENTITET her.
+                // A result notification is by definition a spoiler, so it can never
+                // be a blanket switch; the user turns it on for the one team they
+                // want to be told about. Per device (ResultAlertPreference), like
+                // «Varsel før start» — it never replicates to your other devices.
+                Toggle(isOn: $resultAlertOn) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Fulltidsvarsel")
+                            .font(.sportivista(.body))
+                            .foregroundStyle(SportivistaTokens.label)
+                        Text(resultAlertOn ? "sier fra når kampen er ferdig" : "ingen resultatvarsel")
+                            .font(.sportivista(.caption))
+                            .foregroundStyle(SportivistaTokens.secondaryLabel)
+                    }
+                }
+                .tint(SportivistaTokens.accent)
+                .accessibilityIdentifier("followed.resultAlert.\(rule.entityId)")
+                .onChange(of: resultAlertOn) { _, on in
+                    ResultAlertPreference.setEnabled(on, entityId: rule.entityId)
+                }
             } header: {
                 groupHeader("VARSEL")
             } footer: {
-                Text("Varsel før start styres samlet i Deg › Varsel før start.")
+                // Honest about BOTH limits: iOS decides when a background check
+                // may run (there is no server pushing to this app — see
+                // README § Det vi ikke gjør), and the spoiler shield still wins.
+                Text("Varsel før start styres samlet i Deg › Varsel før start. Fulltidsvarselet kommer når iOS lar appen se etter nytt — vanligvis innen noen timer, aldri live. Har du spoilervern på \(rule.entityName), sier varselet bare at resultatet er klart.")
                     .font(.sportivista(.footnote))
                     .foregroundStyle(SportivistaTokens.secondaryLabel)
             }
@@ -391,7 +416,10 @@ struct FollowDetailView: View {
         .foregroundStyle(SportivistaTokens.label)
         .navigationTitle(rule.entityName)
         .navigationBarTitleDisplayMode(.inline)
-        .task { snapshot = viewModel.followSnapshot() }
+        .task {
+            snapshot = viewModel.followSnapshot()
+            resultAlertOn = ResultAlertPreference.isEnabled(entityId: rule.entityId)
+        }
         .sheet(item: $detailRow) { row in
             EventDetailSheet(row: row, onFollow: { viewModel.follow($0) })
         }
