@@ -64,6 +64,12 @@ struct ContentView: View {
 
     @State private var agenda: AgendaViewModel
     @State private var assistant: AssistantViewModel
+    /// WP-172 — the foreground live-score overlay (running score + match clock per
+    /// event) and its poller. The poller runs ONLY while the app is foregrounded and
+    /// only when a followed/board match is in-window (see `startLivePolling`); it is
+    /// the app's one direct third-party (ESPN) network read.
+    @State private var liveStore: LiveScoreStore
+    @State private var livePoller: LiveScorePoller
     /// WP-107 — the Nyheter board's model, owned HERE (not inside NewsView) so it
     /// survives root-segment switches: the board stays built, and a switch back to
     /// Nyheter is instant instead of re-running the disk-read/decode/compile.
@@ -174,6 +180,17 @@ struct ContentView: View {
         self.freshness = freshness
         self._agenda = State(initialValue: AgendaViewModel(dataStore: dataStore, syncClient: syncClient, profileStore: profileStore, freshness: freshness))
         LaunchTrace.mark("agendaVM init", since: _t0)
+        // WP-172 — the live-score store + poller. The poller loads the board OFF the
+        // main actor each tick (same detached-decode pattern refresh() uses) and only
+        // fetches ESPN when LiveScorePlan says a match is in-window. It is started/
+        // stopped by scenePhase (foreground only), never here.
+        let liveStore = LiveScoreStore()
+        self._liveStore = State(initialValue: liveStore)
+        let liveDataStore = dataStore
+        self._livePoller = State(initialValue: LiveScorePoller(
+            store: liveStore,
+            loadEvents: { await Task.detached { liveDataStore.loadEvents() }.value }
+        ))
         #if DEBUG
         // Screenshot harness: back the assistant with the deterministic mock
         // (so no "Apple Intelligence off" banner) when a demo mode is requested.
@@ -261,7 +278,8 @@ struct ContentView: View {
                 case .uka:
                     liveNowLine
                     filterLine
-                    AgendaView(viewModel: agenda, onFollow: follow, onOpen: { assistant.recordOpened($0) },
+                    AgendaView(viewModel: agenda, liveStore: liveStore, onFollow: follow,
+                               onOpen: { assistant.recordOpened($0) },
                                openEventID: $requestedEventID)
                 case .nyheter:
                     NewsView(news: news, assistant: assistant)
@@ -556,6 +574,14 @@ struct ContentView: View {
                     assistant.reloadProfile()
                     agenda.reloadFromCache(now: Date())
                 }
+                // WP-172: the live-score row. Seeds a live Lyn match + its score in
+                // the store (no ESPN call — the poller stays OFF in a demo run) so the
+                // agenda row shows "2–1 · 67'" in its meta line, deterministically.
+                if mode == "live" {
+                    LiveScoreDemoSeed.seed(profileStore: profileStore, liveStore: liveStore)
+                    assistant.reloadProfile()
+                    agenda.reloadFromCache(now: Date())
+                }
                 assistant.demoSeed(mode)
                 // WP-83: a diff/answer screenshot renders the (slimmed) result
                 // panel full-screen via demoOverlay (a `.sheet` is a no-op in the
@@ -566,6 +592,9 @@ struct ContentView: View {
             await refresh()
             // WP-19 — one profile sync round at launch (no-op on LocalOnly).
             await assistant.runBackgroundSync(using: profileSync)
+            // WP-172 — begin foreground live-score polling (a no-op in a demo run, so
+            // the seeded demo score is never clobbered by a real ESPN fetch).
+            startLivePolling()
         }
         // A fresh assistant result raises the result sheet.
         // WP-31: while onboarding is up it renders its OWN diff/answer inline, so
@@ -600,6 +629,10 @@ struct ContentView: View {
         // return (< 15 min); the in-flight flag + WP-60 coalescing keep a rapid
         // toggle from double-syncing.
         .onChange(of: scenePhase) { oldPhase, phase in
+            // WP-172 — live polling follows the FOREGROUND: resume on active, stop the
+            // moment we leave it (no background polling — a binding non-goal). iOS
+            // suspends the timer anyway; the explicit stop makes the contract exact.
+            if phase == .active { startLivePolling() } else { livePoller.stop() }
             guard phase == .active else { return }
             Task { await assistant.runBackgroundSync(using: profileSync) }
             guard oldPhase == .background else { return }
@@ -737,6 +770,16 @@ struct ContentView: View {
         withAnimation(.easeOut(duration: 0.15)) { sheetShown = false }
     }
 
+    /// WP-172 — start the foreground live-score poller, UNLESS this is a demo run
+    /// (a demo seeds the store directly and must not be clobbered by a real ESPN
+    /// fetch, exactly like the lens/masthead demos skip the live sync). Idempotent.
+    private func startLivePolling() {
+        #if DEBUG
+        if ProcessInfo.processInfo.environment["SPORTIVISTA_DEMO"] != nil { return }
+        #endif
+        livePoller.start()
+    }
+
     private func refresh() async {
         LaunchTrace.point("refresh start")
         agenda.reloadFromCache(now: Date())
@@ -748,7 +791,7 @@ struct ContentView: View {
         // depend on the seeded (deterministically-live) board surviving.
         let demoMode = ProcessInfo.processInfo.environment["SPORTIVISTA_DEMO"]
         if demoMode == "lens" || demoMode == "filter" || demoMode == UITestSeed.demoMode
-            || demoMode == "masthead-live" || demoMode == "masthead-calm" { return }
+            || demoMode == "masthead-live" || demoMode == "masthead-calm" || demoMode == "live" { return }
         #endif
         // WP-107: decode the pre-sync events OFF the main actor. This was a
         // synchronous full-events.json decode ON the main thread, fired right

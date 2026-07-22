@@ -34,6 +34,11 @@ import SwiftUI
 
 struct AgendaView: View {
     var viewModel: AgendaViewModel
+    /// WP-172 — the foreground live-score overlay. Read per event row (by id) so a
+    /// 60 s score update repaints ONLY that row's meta line — never a feed recompile.
+    /// Optional so `#Preview` / the unit tests compile without one (nil ⇒ no scores,
+    /// the pre-WP-172 row). A spoiler-shielded row never shows a score (see EventRowView).
+    var liveStore: LiveScoreStore? = nil
     /// WP-16.4 — a "Følg <entitet>" action (the detail sheet's context action
     /// and now the row's left-swipe); ContentView routes it into the assistant's
     /// diff/confirm flow. Defaults to a no-op so `#Preview` / standalone use compile.
@@ -107,7 +112,7 @@ struct AgendaView: View {
         .sheet(item: $detailTarget) { target in
             switch target {
             case .event(let row):
-                EventDetailSheet(row: row, onFollow: onFollow)
+                EventDetailSheet(row: row, onFollow: onFollow, liveStore: liveStore)
             case .series(let series):
                 SeriesDetailSheet(series: series)
             }
@@ -182,7 +187,7 @@ struct AgendaView: View {
     private func rowView(for item: AgendaItem) -> some View {
         switch item {
         case .event(let row):
-            EventRowView(row: row)
+            EventRowView(row: row, liveStore: liveStore)
         case .series(let row):
             SeriesRowView(row: row)
         }
@@ -247,8 +252,16 @@ struct AgendaView: View {
 /// on AI-research events, then the native-style chevron.
 struct EventRowView: View {
     let row: AgendaEventRow
+    /// WP-172 — the live-score overlay, read here so a score update repaints only
+    /// this row. nil in previews/tests (the pre-WP-172 row).
+    var liveStore: LiveScoreStore? = nil
 
     var body: some View {
+        // WP-172: the running score enriches the meta line — but a spoiler-shielded
+        // row (SpoilerShield, WP-171/176) NEVER gets it forced on it, exactly like
+        // the detail sheet's RESULTAT. `row.spoilerSafe` is the same flag the shield
+        // sets; false ⇒ no live score, the calm neutral row.
+        let live = row.spoilerSafe ? liveStore?.score(for: row.id) : nil
         AgendaRowScaffold(
             isMustSee: row.isMustSee,
             timeLabel: row.timeLabel,
@@ -257,7 +270,7 @@ struct EventRowView: View {
             reminder: row.mustWatch,
             aiResearch: row.isAIResearch
         ) {
-            RowBody(title: row.title, meta: row.metaLabel, channel: row.channelLabel)
+            RowBody(title: row.title, meta: row.metaLabel, channel: row.channelLabel, liveScore: live)
         }
     }
 }
@@ -383,6 +396,9 @@ private struct RowBody: View {
     let title: String
     let meta: String?
     let channel: String
+    /// WP-172 — the running score, shown in the EXISTING meta line (tabular,
+    /// `live`-coloured), never a new row. nil ⇒ the ordinary meta line.
+    var liveScore: LiveScore? = nil
     @Environment(\.horizontalSizeClass) private var sizeClass
 
     var body: some View {
@@ -390,7 +406,7 @@ private struct RowBody: View {
             HStack(alignment: .top, spacing: 12) {
                 VStack(alignment: .leading, spacing: 3) {
                     titleText
-                    if let meta { MetaText(meta) }
+                    regularMetaLine
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 ChannelLabel(text: channel)
@@ -403,6 +419,23 @@ private struct RowBody: View {
                 secondaryLine
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+
+    /// The regular-width meta line: the live score badge (when present) leads —
+    /// a live match's story is the score, not the competition — then the quiet
+    /// tournament meta. Nothing drawn when neither is present.
+    @ViewBuilder private var regularMetaLine: some View {
+        if let liveScore {
+            HStack(spacing: 6) {
+                LiveScoreBadge(score: liveScore)
+                if let meta {
+                    MetaSeparator()
+                    MetaText(meta)
+                }
+            }
+        } else if let meta {
+            MetaText(meta)
         }
     }
 
@@ -442,14 +475,24 @@ private struct RowBody: View {
     /// may be.
     @ViewBuilder
     private var secondaryLine: some View {
-        if let meta {
+        if let liveScore {
+            // WP-172 — a live row: the score leads (the "stilling", `live`-coloured,
+            // tabular), then the channel; the tournament meta is dropped so the line
+            // stays calm (score + where). If even "score · channel" is too wide, the
+            // score alone — never truncated (DESIGN § Typografi).
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 6) {
+                    LiveScoreBadge(score: liveScore).fixedSize()
+                    MetaSeparator()
+                    ChannelLabel(text: channel).fixedSize()
+                }
+                LiveScoreBadge(score: liveScore)
+            }
+        } else if let meta {
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: 6) {
                     MetaText(meta).fixedSize()
-                    Text("·")
-                        .font(.sportivista(.subheadline))
-                        .foregroundStyle(SportivistaTokens.secondaryLabel.opacity(0.6))
-                        .fixedSize()
+                    MetaSeparator()
                     ChannelLabel(text: channel).fixedSize()
                 }
                 ChannelLabel(text: channel)
@@ -457,6 +500,32 @@ private struct RowBody: View {
         } else {
             ChannelLabel(text: channel)
         }
+    }
+}
+
+/// WP-172 — the running score in the agenda row's meta line: "2–1 · 67'" while
+/// live (`live`-coloured), "2–1" once finished (dempet). Tabular so the digits line
+/// up row-to-row; one line, never truncated. The gentlest enrichment — no new row
+/// DNA, no per-update animation (DESIGN § Bevegelse).
+private struct LiveScoreBadge: View {
+    let score: LiveScore
+
+    var body: some View {
+        Text(score.display)
+            .font(.sportivistaTabular(.subheadline, weight: .semibold))
+            .foregroundStyle(score.isLive ? SportivistaTokens.live : SportivistaTokens.secondaryLabel)
+            .lineLimit(1)
+            .accessibilityLabel(score.accessibilityLabel)
+    }
+}
+
+/// The quiet "·" that separates meta-line tokens (score · kanal, turnering · kanal).
+private struct MetaSeparator: View {
+    var body: some View {
+        Text("·")
+            .font(.sportivista(.subheadline))
+            .foregroundStyle(SportivistaTokens.secondaryLabel.opacity(0.6))
+            .fixedSize()
     }
 }
 

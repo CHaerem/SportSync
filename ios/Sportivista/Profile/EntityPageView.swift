@@ -32,13 +32,16 @@ import SwiftUI
 /// actor (a navigation, not a hot path), exactly like `EventStandingsSection`.
 struct EntityPageView: View {
     let entity: Entity
+    /// WP-172 — the live-score overlay (from ContentView via the event sheet), so an
+    /// ongoing match in KOMMENDE shows its running score. nil ⇒ unchanged rows.
+    var liveStore: LiveScoreStore? = nil
 
     @State private var page: EntityPage?
     @State private var loaded = false
 
     var body: some View {
         List {
-            EntityPageSections(entity: entity, page: page)
+            EntityPageSections(entity: entity, page: page, liveStore: liveStore)
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
@@ -66,6 +69,11 @@ struct EntityPageSections: View {
     /// WP-170 — «Det du følger» opens the tapped event in the SAME sheet it
     /// already used. nil (the standalone screen) makes the rows calm, plain lines.
     var onSelectEvent: ((EntityUpcomingRow) -> Void)?
+    /// WP-172 — the live-score overlay, read per KOMMENDE row so an ongoing match
+    /// shows its running score. nil ⇒ no scores (unchanged rows). A spoiler-sensitive
+    /// entity (`page.spoilerSensitive`) never shows one — the same shield the TABELL /
+    /// RESULTAT sections respect.
+    var liveStore: LiveScoreStore? = nil
 
     /// The anchor's avatar is the WP-185/186 one at ~2× (DESIGN.md
     /// § Entitets-avatar already reserves «samme avatar i stor variant» here).
@@ -123,12 +131,15 @@ struct EntityPageSections: View {
         if !page.upcoming.isEmpty {
             Section {
                 ForEach(page.upcoming) { row in
+                    // WP-172 — an ongoing match's running score, spoiler-gated on the
+                    // whole entity (never forced on a shielded follow).
+                    let live = page.spoilerSensitive ? nil : liveStore?.score(for: row.id)
                     if row.event != nil, let onSelectEvent {
-                        Button { onSelectEvent(row) } label: { upcomingRow(row) }
+                        Button { onSelectEvent(row) } label: { upcomingRow(row, liveScore: live) }
                             .buttonStyle(.plain)
                             .accessibilityIdentifier("followed.upcoming.\(row.id)")
                     } else {
-                        upcomingRow(row, chevron: false)
+                        upcomingRow(row, chevron: false, liveScore: live)
                             .accessibilityIdentifier("entity.upcoming.\(row.id)")
                     }
                 }
@@ -139,7 +150,7 @@ struct EntityPageSections: View {
         }
     }
 
-    private func upcomingRow(_ row: EntityUpcomingRow, chevron: Bool = true) -> some View {
+    private func upcomingRow(_ row: EntityUpcomingRow, chevron: Bool = true, liveScore: LiveScore? = nil) -> some View {
         HStack(spacing: 12) {
             SportSymbolView(sport: row.sport)
             VStack(alignment: .leading, spacing: 2) {
@@ -147,9 +158,22 @@ struct EntityPageSections: View {
                     .font(.sportivista(.body))
                     .foregroundStyle(SportivistaTokens.label)
                     .fixedSize(horizontal: false, vertical: true)
-                Text(whenWhere(row))
-                    .font(.sportivistaTabular(.footnote))
-                    .foregroundStyle(SportivistaTokens.secondaryLabel)
+                // WP-172 — for an ongoing match the score + clock leads (live-coloured,
+                // tabular); then the calm when·where line. No score ⇒ the plain line.
+                HStack(spacing: 6) {
+                    if let liveScore {
+                        Text(liveScore.display)
+                            .font(.sportivistaTabular(.footnote, weight: .semibold))
+                            .foregroundStyle(liveScore.isLive ? SportivistaTokens.live : SportivistaTokens.secondaryLabel)
+                            .accessibilityLabel(liveScore.accessibilityLabel)
+                        Text("·")
+                            .font(.sportivista(.footnote))
+                            .foregroundStyle(SportivistaTokens.secondaryLabel.opacity(0.6))
+                    }
+                    Text(whenWhere(row))
+                        .font(.sportivistaTabular(.footnote))
+                        .foregroundStyle(SportivistaTokens.secondaryLabel)
+                }
             }
             Spacer(minLength: 4)
             if chevron {

@@ -239,6 +239,11 @@ Native `List`, inset-gruppert per dag. Bindende semantikk (uendret fra v2):
   dette identitets-kolonnens NEDERSTE trinn, ikke dens faste innhold.
 - **Tid:** tabular, semibold, fast venstrekolonne. Flerdagsvindu i samme kolonne.
 - **Tittel:** `.body`, inntil to linjer, ALDRI trunkert til «…».
+- **Stilling (WP-172):** for en PÅGÅENDE kamp bærer meta-linja stillingen +
+  kampklokka («2–1 · 67'») — tabular, `live`-farge — FORAN kanalen; turneringen
+  vikes for roens skyld. Ingen ny rad-DNA (samme meta-linje), ingen animasjon per
+  oppdatering (kadens 60 s). Spoilervern vinner: en skjermet entitet/sport får
+  ALDRI stillingen påtvunget (`spoilerSafe`), akkurat som RESULTAT i detaljarket.
 - **Kanal:** `secondaryLabel` i meta-linjen; ukjent = «–». Krymper aldri tittelen.
 - **Varsel:** `bell.fill` (amber) trailing KUN når raden armerer en påminnelse.
 - **AI-funn:** `info.circle` trailing; tapp på raden åpner detalj med kilder.

@@ -146,11 +146,34 @@ Object.assign(window.Dashboard.prototype, {
 			this.renderAgenda();
 		} catch { /* live scores are best-effort */ }
 	},
+	/** WP-172 — the ESPN soccer scoreboards to poll THIS minute. Config-driven
+	 *  (`SS_FOOTBALL_LEAGUES`, a mirror of sports-config — so nor.1/nor.2 are in, and
+	 *  a Lyn match finally gets a live score) and per-league GATED to keep the ESPN
+	 *  surface pressure down: a league is polled only when a FULLED-or-board football
+	 *  match in it is inside its match window right now — [kickoff, kickoff + ~3h]
+	 *  (a 2h15 match + a short post-match tail so a just-finished row still resolves
+	 *  its final score via `state: 'post'`). The common single-live-match case fetches
+	 *  ONE scoreboard, not the whole list; an unmapped tournament targets no league
+	 *  (never "poll everything"). `this.footballLeagues` allows the fixture tests to
+	 *  inject a list. Mirrors iOS `LiveScorePlan`. */
+	footballLeaguesToPoll(now = Date.now()) {
+		const leagues = this.footballLeagues || (typeof SS_FOOTBALL_LEAGUES !== 'undefined' ? SS_FOOTBALL_LEAGUES : []);
+		const tail = 3 * SS_CONSTANTS.MS_PER_HOUR;
+		const codes = new Set();
+		for (const e of this.allEvents) {
+			if (!e || e.sport !== 'football') continue;
+			const kickoff = new Date(e.time).getTime();
+			if (!Number.isFinite(kickoff) || kickoff > now || kickoff <= now - tail) continue;
+			const league = ssFootballLeagueForEvent(e, leagues);
+			if (league) codes.add(league.code);
+		}
+		return leagues.filter((l) => codes.has(l.code));
+	},
 	async pollFootballScores() {
 		const now = Date.now();
-		if (!this.allEvents.some((e) => e.sport === 'football' && new Date(e.time).getTime() <= now && new Date(e.time).getTime() > now - 3 * SS_CONSTANTS.MS_PER_HOUR)) return;
-		const leagues = ['eng.1', 'esp.1', 'fifa.world'];
-		const results = await Promise.all(leagues.map((l) => fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${l}/scoreboard`).then((r) => (r.ok ? r.json() : null)).catch(() => null)));
+		const leagues = this.footballLeaguesToPoll(now);
+		if (!leagues.length) return;
+		const results = await Promise.all(leagues.map((l) => fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${l.code}/scoreboard`).then((r) => (r.ok ? r.json() : null)).catch(() => null)));
 		for (const data of results) {
 			for (const ev of data?.events || []) {
 				const comp = ev.competitions?.[0];

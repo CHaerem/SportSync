@@ -316,6 +316,14 @@ targets:
       # models (NewsItem/FeaturedBrief/RecentResults) live in Sportivista/Models
       # instead, so the widget-shared DataStore that loads them still compiles.
       - path: Sportivista/News
+      # WP-172: the live-score module — the pure gate (LiveScorePlan), the ESPN
+      # scoreboard parser/matcher (ESPNScoreboard), the value + store + poller.
+      # Compiled directly into the hostless bundle so LiveScorePlanTests /
+      # ESPNScoreboardTests / LiveScorePollerTests drive them network-free (a mock
+      # LiveScoreTransport — no real ESPN request in any test). App + SportivistaDeviceDev
+      # pick these up via `path: Sportivista`; the widget deliberately does NOT (no
+      # network / live polling in the widget — it renders a pre-computed snapshot).
+      - path: Sportivista/Live
       # WP-115: the shared SFSafariViewController wrapper (SafariView) — NewsView
       # (compiled above) references it, so the hostless bundle needs it too. Its
       # Reader-hint config is unit-tested directly (SafariViewTests) without

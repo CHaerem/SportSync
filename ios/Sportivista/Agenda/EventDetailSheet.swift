@@ -24,6 +24,9 @@ struct EventDetailSheet: View {
     /// no diff round-trip, the tap IS the confirmation and the sheet closes.
     /// No-op default keeps standalone/preview use compiling.
     var onFollow: (Entity) -> Void = { _ in }
+    /// WP-172 — the live-score overlay, forwarded to each entity page so an ongoing
+    /// match in its KOMMENDE section shows its running score. nil ⇒ unchanged.
+    var liveStore: LiveScoreStore? = nil
     @Environment(\.dismiss) private var dismiss
     /// WP-16.4 — the "Hvorfor vises denne?" context action, collapsed by default.
     @State private var whyExpanded = false
@@ -244,7 +247,7 @@ struct EventDetailSheet: View {
             Section {
                 ForEach(row.subjects, id: \.id) { entity in
                     NavigationLink {
-                        EntityPageView(entity: entity)
+                        EntityPageView(entity: entity, liveStore: liveStore)
                     } label: {
                         HStack(spacing: 10) {
                             EntityAvatarView(identity: EntityIdentityResolver.identity(for: entity), sport: entity.sport)

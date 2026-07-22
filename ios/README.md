@@ -106,6 +106,7 @@ ios/
 │   ├── LaunchTrace.swift          DEBUG-only launch-phase timing — the «Henter data …» cold-start measuring stick (no-op in Release)
 │   ├── Models/                    Codable models mirroring the data contract
 │   ├── Sync/                      manifest-diff sync + cache + background refresh
+│   ├── Live/                      WP-172 foreground live scores (ESPN scoreboard, gated)
 │   ├── Feed/                      FeedCompiler + agenda formatting + lens renderer
 │   ├── Agenda/                    the day-grouped agenda UI + detail sheets
 │   ├── News/                      the Nyheter board: client lens + pure four-section builder + off-main model + thin view
@@ -190,9 +191,11 @@ live files and committing the diff, **never** by an automated job.
 
 ## Sync
 
-`Sportivista/Sync/` is the app's **only** networking code — everything else reads from the
-on-disk cache it maintains. **The manifest-diff flow** (`SyncClient.sync() async ->
-SyncResult`):
+`Sportivista/Sync/` is the app's networking to **our own** host (sportivista.com) —
+everything else reads from the on-disk cache it maintains. The ONE other network
+read the app makes is `Sportivista/Live/` (WP-172): a direct ESPN scoreboard fetch, only
+while a followed match is live and only in the foreground — see [Live](#live). **The
+manifest-diff flow** (`SyncClient.sync() async -> SyncResult`):
 
 1. **GET `manifest.json`** from `baseURL` (default `https://sportivista.com/data/`,
    injectable) with `If-None-Match` set to the persisted ETag.
@@ -231,6 +234,39 @@ agent's 4-hourly cadence); `BackgroundRefreshScheduler` is the thin
 `scheduleNextRefresh(...)`). Requires `app.sportivista.refresh` in
 `BGTaskSchedulerPermittedIdentifiers` and `UIBackgroundModes: [fetch]`
 (`project.yml`).
+
+## Live
+
+`Sportivista/Live/` (WP-172) is the app's **only third-party network read** — a direct
+`URLSession` GET of ESPN's public soccer scoreboard, enriching a followed match's
+agenda row with the running score + match clock. It exists because live scores are on
+`site.api.espn.com`, not our static host, and only ESPN has them minute-by-minute.
+**The privacy boundary is exact and stated honestly** (root README + `docs/personvern.html`):
+the fetch happens **only while the app is in the FOREGROUND** and **only when a
+followed/board match is in its match window right now** — never in the background,
+never otherwise. No BGTask, no push, no device token.
+
+- **`LiveLeague`** — the six ESPN leagues polled, the Swift twin of
+  `SS_FOOTBALL_LEAGUES` (docs/js/shared-constants.js, pinned to sports-config by
+  `tests/live-leagues.test.js`): the covered football leagues minus esp.copa_del_rey.
+  nor.1/nor.2 are here, so an Eliteserien/OBOS (Lyn) match finally gets a live score —
+  the old web gate hardcoded only eng.1/esp.1/fifa.world, and iOS polled nothing at all.
+  `forEvent` maps a board event's `tournament` back to its league code.
+- **`LiveScorePlan`** — the PURE surface-pressure gate: which scoreboards to poll THIS
+  minute = the league of any football match whose kickoff sits in `(now - 3h, now]`
+  (live + a short post-match tail). The common single-live-match case fetches ONE
+  scoreboard; nothing on ⇒ zero requests. Twin of `footballLeaguesToPoll` (live.js).
+- **`ESPNScoreboard`** — pure parse (scoreboard JSON → in/post matches) + match (by
+  home AND away team name, the `ssTeamMatch` twin) → `[event id: LiveScore]`.
+- **`LiveScore` / `LiveScoreStore`** — the value (running score + clock + state) and
+  the `@Observable` holding it by event id. The agenda row reads it back in its body,
+  so a score update repaints ONLY that row's meta line — never a feed recompile, never
+  the golden vectors. A **spoiler-shielded** row (`SpoilerShield`, WP-171/176) never
+  shows a score (`spoilerSafe`), exactly like the detail sheet's RESULTAT.
+- **`LiveScorePoller`** — the impure service: a 60 s foreground timer + an in-flight
+  guard, network behind the injected `LiveScoreTransport` (tests drive a recording
+  mock — no real request in any test). `pollOnce` is the static, transport-injected
+  chain; `start()`/`stop()` are wired to scenePhase in `ContentView` (foreground only).
 
 ## Feed
 
