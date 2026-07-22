@@ -44,6 +44,34 @@
 	color: var(--accent);          /* amber — the wordmark colon is one of the sparse amber accents */
 	line-height: 1;
 }
+/* Kolon-live-signalet (WP-180 — web-paritet med iOS' `MastheadColon`, WP-152).
+   NORMATIV i DESIGN.md § Bevegelse (eier-godkjent 21.07.2026): når noe du følger
+   sender NÅ, puster kolonet rolig — ~1,6 s ease-in-out, autoreverserende
+   (`alternate`) opacity ~1,0 ↔ ~0,5 + en myk amber-glød som puster med. Et rolig
+   hjerteslag, ALDRI et blink. Kun `opacity`/`text-shadow` animeres, så ordmerket
+   står bom stille (ingen layout-shift), og fargen forblir den ene amber-aksenten
+   (glød = samme `--accent`, så «amber = eneste aksent»-invarianten holder).
+   Tilstanden settes av `Dashboard.renderMastheadLive` fra det DELTE live-begrepet
+   (`ssLiveState` via `directLiveEvents`) — samme kilde som «Direkte nå»-linja, så
+   kolon og linje kan aldri være uenige.
+   NB: BRAND.md forbyr glød på det HVILENDE merket; live-gløden er det eneste
+   sanksjonerte unntaket (§ Bevegelse-noten), og forsvinner igjen når live er over. */
+.wordmark-colon.is-live {
+	animation: kolon-pust 1.6s ease-in-out infinite alternate;
+}
+@keyframes kolon-pust {
+	from { opacity: 1;   text-shadow: 0 0 5px color-mix(in srgb, var(--accent) 55%, transparent); }
+	to   { opacity: 0.5; text-shadow: 0 0 1px color-mix(in srgb, var(--accent) 15%, transparent); }
+}
+/* Reduce Motion (BINDENDE, samme regel som iOS): ingen bevegelse i det hele tatt —
+   en statisk, litt sterkere amber-glød bærer «på»-tilstanden i stedet. */
+@media (prefers-reduced-motion: reduce) {
+	.wordmark-colon.is-live {
+		animation: none;
+		opacity: 1;
+		text-shadow: 0 0 4px color-mix(in srgb, var(--accent) 60%, transparent);
+	}
+}
 .mast-date {
 	font-size: 13px;
 	color: var(--fg-2);

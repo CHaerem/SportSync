@@ -2148,7 +2148,7 @@ Bølge 1: WP-180 (web-header + ikoner) ∥ WP-182 (meta/delekort) ∥ WP-184
 
 | WP | Tittel | Fase | Avhenger av | Status |
 |---|---|---|---|---|
-| WP-180 | Kolonet fullført: web-live-paritet + ikonvarianter (+ rad-kolon, eierbeslutning) | 0L | — | planlagt (web-pariteten er alt dokumentert forpliktelse i DESIGN.md § Cross-surface) |
+| WP-180 | Kolonet fullført: web-live-paritet + ikonvarianter (+ rad-kolon, eierbeslutning) | 0L | — | 🔬 branch wp-180-kolonet-fullfort — kolon-live-pulsen bygget på web (drives av det delte `ssLiveState` via `directLiveEvents`, samme kilde som «Direkte nå»; ~1,6 s ease-in-out autoreverserende opacity + myk amber-glød, kun opacity/glød ⇒ ingen layout-shift; `prefers-reduced-motion` ⇒ statisk glød; a11y-etikett som iOS; `?demo=masthead-live`/`masthead-neutral` for deterministisk repro) + dark/tinted app-ikonvarianter regenerert fra `kolonet.svg` (piksel-verifisert mot det shippede ikonet) + 10 nye vitest-tester; rad-kolonet BEVISST ikke bygget (eierbeslutning (b)) |
 | WP-181 | Briefen som navngitt rituale («Morgenbriefen»/«Kveldsbriefen») | 0L | 0K WP-174 | planlagt |
 | WP-182 | Delbare flater: og:image + delekort (event/brief) i merkedrakt | 0L | — | planlagt |
 | WP-183 | Typografisk stemme: eie tallene (EIERBESLUTNING — display-font-token) | 0L | — | planlagt |

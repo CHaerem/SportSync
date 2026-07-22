@@ -150,8 +150,9 @@ Apple-system-farger + én amber-aksent. Ved rebrand endres KUN denne tabellen.
 > amber. Drevet av det EKSISTERENDE live-signalet (samme kilde som ▌ LIVE-linja), så
 > kolon og linje er alltid enige. **Reduce Motion:** ingen bevegelse — en statisk
 > amber-glød bærer «på»-tilstanden i stedet. **«Amber = aksent»-invarianten holder**
-> (pulsen puster den samme ene aksenten). Web-paritet (samme kolon-signal i
-> web-headerens ordmerke) er en dokumentert oppfølging (se § Cross-surface).
+> (pulsen puster den samme ene aksenten). **Web-paritet er bygd (WP-180)** — samme
+> kolon-signal i web-headerens ordmerke, samme kadens og samme Reduce-Motion-regel
+> (se § Cross-surface).
 
 ## Navigasjon & informasjonsarkitektur
 
@@ -338,13 +339,21 @@ skal likevel bestå denne før merge; håndhev det som kan håndheves i CI:
   dermed avviklet.
 - **Klokke-paritet (WP-128):** den sekundtikkende amber-klokka i web-headeren er
   **FJERNET** — datoen består, tid bor i raden (samsvar med § Bevegelse og iOS).
-- **Kolon-live-signal (WP-152 — NORMATIV på iOS, web-paritet PENDING):** kolon-som-
-  LIVE-signatur (§ Bevegelse-noten) er eier-godkjent (21.07.2026) og lever på **iOS**.
-  Web-headerens ordmerke har ikke noe amber-kolon i dag; iOS-adferden er ment å
-  speiles i `docs/`-headeren (samme rolige puls, drevet av web-linsens live-tilstand
-  `ssLiveState`, med `prefers-reduced-motion` som den bindende av-bryteren). **Ikke
-  bygd på web ennå** — dokumentert oppfølging (web-flaten eies p.t. av en parallell
-  web-design-agent, så koordiner før du rører `docs/`-headeren).
+- **Kolon-live-signal (WP-152 iOS + WP-180 web — NORMATIV på BEGGE flater):** kolon-som-
+  LIVE-signatur (§ Bevegelse-noten) er eier-godkjent (21.07.2026) og lever nå på både
+  **iOS** (`MastheadColon` i `ContentView.swift`) og **web** (`.wordmark-colon.is-live`
+  i `docs/css/layout.css` + `Dashboard.renderMastheadLive` i `docs/js/chrome.js`).
+  Samme semantikk begge steder: samme kilde (web leser det delte `ssLiveState` via
+  `directLiveEvents` — nøyaktig den linja «Direkte nå» bygges av, så kolon og linje
+  aldri kan være uenige), samme kadens (~1,6 s ease-in-out, autoreverserende opacity
+  ~1,0 ↔ ~0,5 + myk amber-glød), samme minutt-tikk (iOS `TimelineView(.everyMinute)`,
+  web den eksisterende 60s-live-lørkka), samme a11y-etikett («Sportivista — sender nå,
+  N direkte») og samme bindende av-bryter: **Reduce Motion / `prefers-reduced-motion`
+  ⇒ ingen bevegelse, statisk amber-glød bærer «på»-tilstanden**. Deterministisk
+  reproduksjon: iOS `SPORTIVISTA_DEMO=masthead-live`, web `?demo=masthead-live`
+  (`?demo=masthead-neutral` for kontrollen). **Ikke bygd (EIERBESLUTNING):** rad-kolonet
+  — kolonet i agendaens tidskolonne som pulser på LIVE rader — krever først avklaring
+  av «to amber-elementer i samme rad»-regelen (§ Forbudsliste).
 - **Tema-glyf-unntak (WP-128):** web beholder tema-toggle-glyfen ◐ i headeren
   (system → mørk → lys) som et *bevisst* unntak fra § Tema. iOS flyttet temavalget
   til Deg › Utseende, men web har ingen Deg-skjerm, så header-glyfen er den eneste

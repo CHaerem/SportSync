@@ -1,5 +1,5 @@
 // Sportivista v2 Service Worker — fresh data always, network-first shell
-const CACHE_NAME = 'sportivista-v1-13';
+const CACHE_NAME = 'sportivista-v1-14';
 const DATA_PATH_FRAGMENT = '/data/';
 
 const SHELL_FILES = [
