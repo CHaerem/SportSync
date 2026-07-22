@@ -110,6 +110,7 @@ import path from "path";
 import { pathToFileURL } from "url";
 import { readJsonIfExists, rootDataPath, configDirPath, normalizeText, containsName } from "./lib/helpers.js";
 import { sportsConfig as defaultSportsConfig } from "./config/sports-config.js";
+import { readLogoPolicy, isLogoAllowed } from "./lib/logo-policy.js";
 
 /**
  * WP-64: the sports shown broadly on the board even without a specific tracked
@@ -428,7 +429,7 @@ class EntityIndexBuilder {
 	 *       different entity) keeps the first-registered id — tracked wins —
 	 *       and the registry entity gets a suffixed slug, logged.
 	 */
-	upsertRegistry({ id, name, aliases = [], sport, type, country, national, colors, external }, searchLimit) {
+	upsertRegistry({ id, name, aliases = [], sport, type, country, national, colors, logo, external }, searchLimit) {
 		if (!name) return null;
 		const candidateTerms = [name, ...aliases].filter(Boolean);
 		const scope = this.entities.slice(0, searchLimit);
@@ -446,6 +447,7 @@ class EntityIndexBuilder {
 			if (country && !existing.country) existing.country = country;
 			if (national && existing.national === undefined) existing.national = true;
 			if (colors && !existing.colors) existing.colors = colors;
+			if (logo && !existing.logo) existing.logo = logo;
 			return existing;
 		}
 		const crossType = scope.find((e) => e.type !== type && sportOk(e) && termsOverlap(candidateTerms, terms(e), this.aliasGroups));
@@ -465,6 +467,7 @@ class EntityIndexBuilder {
 		if (country) entity.country = country;
 		if (national) entity.national = true;
 		if (colors) entity.colors = { ...colors };
+		if (logo) entity.logo = { ...logo };
 		if (external && Object.keys(external).length) entity.external = { ...external };
 		this.entities.push(entity);
 		return entity;
@@ -556,11 +559,19 @@ export function buildEntityIndex(configDir = configDirPath(), sportsConfigData =
 	// 6. WP-64 — sport-/category-level entities (broad-coverage grounding).
 	addBroadCoverageEntities(builder, configDir);
 
+	// WP-186: the logo POLICY is applied here, at publish time — not only at seed
+	// time. Flipping scripts/config/logo-policy.json to "free-only" and rebuilding
+	// drops every `editorial-use` mark from entities.json on the next pipeline run,
+	// on every surface, with no client change and no re-seed. A record without
+	// complete provenance never ships under either policy (fail-closed).
+	const logoPolicy = readLogoPolicy(configDir);
+
 	return decorateAliases(builder.entities).map((e) => {
 		const out = { id: e.id, name: e.name, aliases: e.aliases, sport: e.sport, type: e.type };
 		if (e.country) out.country = e.country;
 		if (e.national) out.national = true;
 		if (e.colors) out.colors = e.colors;
+		if (isLogoAllowed(e.logo, logoPolicy)) out.logo = e.logo;
 		if (e.external) out.external = e.external;
 		if (e.initials && e.initials.length) out.initials = e.initials;
 		return out;

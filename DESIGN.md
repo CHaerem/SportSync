@@ -249,14 +249,22 @@ Native `List`, inset-gruppert per dag. Bindende semantikk (uendret fra v2):
 ### Entitets-avatar (WP-185 — eier-funn 21.07: «tavla er anonym»)
 
 Raden var ren tekst, og sport-glyfen navngir SPORTEN, aldri entiteten. Hver rad
-får derfor ett rolig visuelt ANKER for hvem den handler om. Referanse-appene
-bruker ekte klubbcrester; det gjør ikke vi — **crester er varemerker** (eget
-eierspørsmål, ikke denne kontrakten), og **ingen flate henter et bilde**:
-alt tegnes LOKALT (emoji + gradient), null tredjeparts-CDN, null infrastruktur,
-null personvern-lekkasje.
+får derfor ett rolig visuelt ANKER for hvem den handler om. **Ingen flate henter
+et bilde over nett**: merkene er innsjekkede/bundlede assets, resten tegnes
+LOKALT (emoji + gradient) — null tredjeparts-CDN, null infrastruktur, null
+personvern-lekkasje.
 
 **Stigen (bindende rekkefølge, samme dom på begge flater):**
 
+0. **Ekte merke** (WP-186, eierbeslutning 22.07) — klubbens eget merke, når
+   pipelinen har ett med fullstendig proveniens OG flaten faktisk har assetet.
+   Asset fra `docs/logos/` (web: samme origin; iOS: app-bundlen), ALDRI en
+   hotlink. Vises **uendret** — ingen omfarging, beskjæring, maskering, tint
+   eller bakgrunnsplate: et fritt merke under CC BY-SA er share-alike, og et
+   omtegnet klubbmerke er uansett feil merke. Landslag har bevisst INTET merke
+   (flagget er det sannere ankeret for et land), så trinn 0 og 1 konkurrerer
+   aldri om samme rad. Hvilke merker som i det hele tatt shippes styres av
+   `scripts/config/logo-policy.json`, ikke av designet.
 1. **Flagg** — utøvere og LANDSLAG, utledet av registerets ISO-landkode
    (`country`). Emoji: null assets, null rettigheter, skalerer med Dynamic Type
    gratis. De britiske hjemnasjonene har egne flagg (`GB-ENG`/`GB-SCT`/`GB-WLS`)
@@ -288,8 +296,18 @@ null personvern-lekkasje.
 - **Dekorativ:** `accessibilityHidden` / `aria-hidden` — tittel og meta navngir
   allerede entiteten for skjermleser. Avataren legger aldri til en lyd.
 - **Entitetssiden** (0K WP-170) bruker SAMME avatar i stor variant når den lander.
-- **Aldri:** ekte klubblogo/crest, spillerfoto, en ekstern bilde-URL, mer enn én
-  farget flate i raden, eller en avatar som erstatter tekst.
+- **Merket tar SAMME plass** som flagget og monogrammet (24 pt-boksen) —
+  WP-186 innførte ingen layout-endring og ingen ny aksentfarge. Et klubbmerke er
+  entitetens farger, aldri produktets.
+- **Aldri:** spillerfoto, en ekstern bilde-URL (heller ikke for merket — det er
+  alltid et lokalt asset), et modifisert klubbmerke, mer enn én farget flate i
+  raden, eller en avatar som erstatter tekst.
+- **Attribusjon er en del av flaten, ikke en fotnote:** CC BY / CC BY-SA KREVER
+  kreditering, så «Merker og kilder» (web: egen disclosure under tavla; iOS:
+  Deg › Merker og kilder) lister hvert fritt merke med lisens og opphavsperson,
+  og gir de editorial-baserte merkene den nøkterne linja om at de tilhører sine
+  respektive klubber og vises for å identifisere dem — uten noen påstand om
+  tilknytning, sponsing eller godkjenning.
 
 ### Event-detalj (native sheet, detents `[.medium, .large]`)
 

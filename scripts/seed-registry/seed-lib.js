@@ -29,8 +29,11 @@ import { toIsoCountry } from "../lib/country.js";
 export { slugify };
 
 /** Stable entity key order for serialization. */
-const ENTITY_KEYS = ["id", "name", "aliases", "sport", "type", "country", "national", "colors", "external", "notes"];
+const ENTITY_KEYS = ["id", "name", "aliases", "sport", "type", "country", "national", "colors", "logo", "external", "notes"];
 const EXTERNAL_KEYS = ["wikidata", "espnId", "fideId", "liquipedia"];
+/** WP-186: the licence provenance travels WITH the asset, in a fixed key order
+ *  so a re-seed of the logos yields a clean diff like every other registry field. */
+const LOGO_KEYS = ["file", "source", "basis", "license", "licenseId", "licenseUrl", "attribution", "sourceUrl", "trademarked"];
 
 /**
  * WP-185: a raw colour (ESPN's bare "e20520", a "#RRGGBB", a 3-digit shorthand)
@@ -87,6 +90,10 @@ function orderedEntity(e) {
 			out.external = ext;
 		} else if (k === "aliases") {
 			out.aliases = [...e.aliases];
+		} else if (k === "logo") {
+			const logo = {};
+			for (const lk of LOGO_KEYS) if (e.logo[lk] !== undefined && e.logo[lk] !== null) logo[lk] = e.logo[lk];
+			out.logo = logo;
 		} else if (k === "colors") {
 			out.colors = e.colors.secondary ? { primary: e.colors.primary, secondary: e.colors.secondary } : { primary: e.colors.primary };
 		} else {

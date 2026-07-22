@@ -1,5 +1,5 @@
 // Sportivista v2 Service Worker — fresh data always, network-first shell
-const CACHE_NAME = 'sportivista-v1-16';
+const CACHE_NAME = 'sportivista-v1-17';
 const DATA_PATH_FRAGMENT = '/data/';
 
 const SHELL_FILES = [
@@ -15,6 +15,7 @@ const SHELL_FILES = [
     '/css/base.css',
     '/css/layout.css',
     '/css/cards.css',
+    '/css/entity-logo.css',
     // Display-fonten (WP-183) — selvhostet subsett, precached så ordmerket og
     // tidskolonnen står riktig også offline.
     '/fonts/SpaceGrotesk-SemiBold-subset.woff2',
@@ -25,6 +26,7 @@ const SHELL_FILES = [
     '/js/assistant.js',
     '/js/sport-icons.js',
     '/js/entity-avatar.js',
+    '/js/logo-attribution.js',
     '/js/theme.js',
     '/js/share-card.js',
     '/js/dashboard.js',

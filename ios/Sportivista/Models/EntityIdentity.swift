@@ -10,6 +10,10 @@
 //  So every row now carries ONE quiet anchor, built from metadata we own and
 //  drawn LOCALLY — no image request, ever:
 //
+//    0. LOGO      — (WP-186) the club's REAL mark, when the pipeline shipped one
+//                   with complete provenance AND this build bundles the asset.
+//                   Still no image REQUEST: the PNG is in the app bundle.
+//                   Displayed unmodified — no tint, no crop, no mask.
 //    1. FLAG      — athletes + national teams, from the registry's ISO country.
 //                   An emoji: zero assets, zero rights, scales with Dynamic Type.
 //    2. MONOGRAM  — clubs/orgs: the club's two registered colours + 1–2 initials
@@ -35,6 +39,10 @@ import Foundation
 
 /// What an agenda row draws in its identity column.
 enum EntityIdentity: Equatable, Hashable, Sendable {
+    /// WP-186 — the club's REAL mark: the file name of a BUNDLED asset
+    /// (`docs/logos/<id>.png`, added as a folder resource). Never a URL: the app
+    /// makes no image request for this, exactly as in WP-185.
+    case logo(file: String)
     /// A country flag emoji ("🇳🇴") — athletes and national teams.
     case flag(String)
     /// 1–2 initials over the entity's own two colours (packed 0xRRGGBB).
@@ -131,8 +139,27 @@ enum EntityIdentityResolver {
     /// flag is the truer anchor. A CLUB with a `country` but no `national` (Wikidata
     /// stamps P17 on Norwegian handball clubs) must NOT fly that flag — hence the
     /// explicit gate.
+    /// WP-186 — is the mark's asset actually IN this build? A logo record can
+    /// arrive from the server for an entity whose PNG this app version does not
+    /// bundle (the registry is re-seeded far more often than the app ships). The
+    /// honest answer is then the WP-185 ladder, not a blank square — so the rung
+    /// is gated on the asset existing. Injectable so the pure tests can drive it.
+    /// `nonisolated(unsafe)`: written only by tests, before they exercise the
+    /// resolver, and read on the main actor at render time — no concurrent
+    /// mutation exists in the app itself.
+    nonisolated(unsafe) static var assetExists: @Sendable (String) -> Bool = { file in
+        let name = (file as NSString).deletingPathExtension
+        return Bundle.main.url(forResource: name, withExtension: "png", subdirectory: "logos") != nil
+    }
+
     static func identity(for entity: Entity?) -> EntityIdentity {
         guard let entity else { return .none }
+        // The real mark is the top rung: it IS the entity's identity, and it is
+        // the whole point of WP-186. National teams never carry one (the seeder
+        // excludes them), so this never quietly demotes a flag.
+        if let logo = entity.logo, logo.isShippable, entity.national == false, assetExists(logo.file) {
+            return .logo(file: logo.file)
+        }
         if entity.type == "athlete" || entity.national, let flag = flagEmoji(entity.country) {
             return .flag(flag)
         }
@@ -164,9 +191,10 @@ struct EntityIdentityIndex: Sendable {
         var ids: [String: Entity] = [:]
         var names: [String: Entity] = [:]
         for e in entities {
+            let hasLogo = e.logo?.isShippable == true
             let hasFlag = e.country != nil && (e.type == "athlete" || e.national)
             let hasColors = e.colors?.primary != nil
-            guard hasFlag || hasColors else { continue }
+            guard hasLogo || hasFlag || hasColors else { continue }
             ids[e.id] = e
             for term in [e.name] + e.aliases {
                 let key = TextMatch.normalize(term)

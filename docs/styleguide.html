@@ -33,6 +33,7 @@
 	<link rel="stylesheet" href="css/base.css">
 	<link rel="stylesheet" href="css/layout.css">
 	<link rel="stylesheet" href="css/cards.css">
+	<link rel="stylesheet" href="css/entity-logo.css">
 	<style>
 		/* Styleguide-only chrome (page layout for this page alone — not design
 		   tokens; every colour below is a var(--x) from base.css, never a literal). */
@@ -46,6 +47,9 @@
 			color: var(--accent); font-weight: 700; margin: 0 0 6px;
 			padding-bottom: 8px; border-bottom: 1px solid var(--line);
 		}
+		.sg-avatars { display: flex; flex-direction: column; gap: 14px; }
+		.sg-avatar-row { display: flex; align-items: center; gap: 12px; }
+		.sg-avatar-label { font-size: 0.9rem; min-width: 130px; }
 		.sg-section > p.sg-note { color: var(--fg-3); font-size: 0.82rem; font-style: italic; margin: 0 0 18px; line-height: 1.5; }
 
 		/* Colour swatches */
@@ -213,6 +217,13 @@
 		</section>
 
 		<!-- ── Agenda-rad-anatomi ──────────────────────────────────────────── -->
+		<!-- ── Entitets-avatar (WP-185 + WP-186) ───────────────────────────── -->
+		<section class="sg-section">
+			<h2>Entitets-avatar</h2>
+			<p class="sg-note">Radens ENE anker for hvem den handler om, rendret med den ekte <code>js/entity-avatar.js</code> — samme 24px-boks på alle fire trinn (DESIGN.md § Entitets-avatar). Rekkefølgen er bindende: ekte merke → flagg → farge-monogram → sportglyf. Merket vises UENDRET (ingen tint, beskjæring eller maske) og lastes fra vår egen origin, aldri et CDN.</p>
+			<div class="sg-avatars" id="sg-avatars"></div>
+		</section>
+
 		<section class="sg-section">
 			<h2>Agenda-rad-anatomi</h2>
 			<p class="sg-note">Nøyaktig samme DOM som <code>docs/js/dashboard.js</code> sin <code>eventRow()</code> bygger — kopiert her, ikke en tilnærming. Ærlighet: ukjent kanal viser et rolig «–», aldri en påstand.</p>
@@ -270,7 +281,28 @@
 		<a href="index.html">Tilbake til agendaen</a>
 	</footer>
 
+	<script src="js/sport-icons.js"></script>
+	<script src="js/entity-avatar.js"></script>
 	<script src="js/theme.js"></script>
+	<script>
+		// Entitets-avatar: the four rungs, drawn by the SHIPPED resolver/renderer.
+		(function () {
+			const rungs = [
+				["Ekte merke", { id: "viking-fk", name: "Viking FK", type: "team", colors: { primary: "#0d2d6c" }, logo: { file: "viking-fk.png", source: "wikimedia-commons", basis: "free-license", license: "Public domain", sourceUrl: "#" } }, "docs/logos/ — fritt lisensiert (Public domain), vist uendret"],
+				["Flagg", { id: "norge", name: "Norge", type: "team", national: true, country: "NO" }, "landslag + utøvere, fra registerets ISO-kode"],
+				["Farge-monogram", { id: "elverum", name: "Elverum Håndball", type: "team", colors: { primary: "#f0f0f0", secondary: "#1b3a6b" } }, "klubb uten merke — beregnet blekk (WCAG-luminans)"],
+				["Sportglyf", null, "den ærlige fallbacken når registeret ikke vet noe"],
+			];
+			const host = document.getElementById("sg-avatars");
+			if (!host) return;
+			host.innerHTML = rungs
+				.map(([label, entity, note]) => {
+					const cell = entity ? ssEntityAvatar(ssEntityIdentity(entity)) : (window.ssSportIcon ? ssSportIcon("football") : "");
+					return `<div class="sg-avatar-row">${cell}<span class="sg-avatar-label">${label}</span><span class="sg-type-meta">${note}</span></div>`;
+				})
+				.join("");
+		})();
+	</script>
 	<script>
 		// Colour swatches — read the REAL computed CSS custom-property values
 		// (getComputedStyle), never a hardcoded hex, so this page cannot drift

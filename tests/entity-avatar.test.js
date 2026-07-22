@@ -242,3 +242,70 @@ describe("amber stays the single accent (DESIGN § Forbudsliste)", () => {
 		for (const [, selector, body] of rules) expect(body, selector.trim()).not.toMatch(/var\(--accent\)/);
 	});
 });
+
+// ── WP-186: the REAL club mark, the new top rung ────────────────────────────
+
+describe("WP-186: the logo rung", () => {
+	const free = {
+		file: "rosenborg.png",
+		source: "wikimedia-commons",
+		basis: "free-license",
+		license: "Public domain",
+		sourceUrl: "https://commons.wikimedia.org/wiki/File:Rosenborg.svg",
+	};
+	const editorial = {
+		file: "arsenal.png",
+		source: "espn",
+		basis: "editorial-use",
+		sourceUrl: "https://a.espncdn.com/i/teamlogos/soccer/500/359.png",
+	};
+
+	it("a real mark OUTRANKS the monogram", () => {
+		const club = { id: "arsenal", name: "Arsenal", type: "team", colors: { primary: "#e20520" }, logo: editorial };
+		expect(S.ssEntityIdentity(club)).toEqual({ kind: "logo", src: "logos/arsenal.png", name: "Arsenal" });
+	});
+
+	it("both bases render — the client does not re-litigate the policy", () => {
+		// build-entities already applied scripts/config/logo-policy.json; if a mark
+		// reached the client at all, it is one we decided to ship.
+		expect(S.ssEntityIdentity({ id: "rosenborg", name: "Rosenborg", type: "team", logo: free }).kind).toBe("logo");
+	});
+
+	it("a mark without PROVENANCE is ignored — the row degrades to the WP-185 ladder", () => {
+		const noBasis = { id: "x", name: "Klubb", type: "team", colors: { primary: "#112233" }, logo: { file: "x.png", source: "espn", sourceUrl: "u" } };
+		expect(S.ssEntityIdentity(noBasis).kind).toBe("monogram");
+		const noSource = { id: "x", name: "Klubb", type: "team", logo: { file: "x.png", basis: "editorial-use", sourceUrl: "u" } };
+		expect(S.ssEntityIdentity(noSource)).toBeNull();
+	});
+
+	it("REFUSES anything that is not a bare local asset name — no URL can reach src", () => {
+		// A stale cache or a tampered response must not be able to point the page at
+		// a third party; the no-external-request property is not negotiable.
+		for (const file of ["https://a.espncdn.com/x.png", "//evil.example/x.png", "../../secret.png", "/etc/passwd.png", "Arsenal.PNG", "x.svg", "javascript:alert(1).png"]) {
+			expect(S.ssEntityLogoSrc({ logo: { ...editorial, file } })).toBe("");
+		}
+		expect(S.ssEntityLogoSrc({ logo: editorial })).toBe("logos/arsenal.png");
+	});
+
+	it("renders a lazy, decorative <img> with NO tint, crop or plate", () => {
+		const html = S.ssEntityAvatar({ kind: "logo", src: "logos/arsenal.png", name: "Arsenal" });
+		expect(html).toContain('class="ev-avatar ev-logo"');
+		expect(html).toContain('src="logos/arsenal.png"');
+		expect(html).toContain('loading="lazy"');
+		expect(html).toContain('aria-hidden="true"');
+		expect(html).toContain('alt=""');
+	});
+
+	it("the logo stylesheet only SIZES the mark — it never modifies it", () => {
+		const css = fs.readFileSync(path.resolve(process.cwd(), "docs", "css", "entity-logo.css"), "utf-8");
+		const logoRules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].filter(([, sel]) => /\.ev-logo/.test(sel));
+		expect(logoRules.length).toBeGreaterThan(0);
+		const body = logoRules.map(([, , b]) => b).join("\n");
+		expect(body).toMatch(/object-fit: contain/);
+		// A recolour/crop/mask of a CC BY-SA mark would be a derivative; of ANY club
+		// mark it would simply be the wrong mark.
+		expect(body).not.toMatch(/\bfilter:|mix-blend-mode|object-fit: cover|border-radius|clip-path|background/);
+		// And no rule here may reach off-origin for an image.
+		expect(css).not.toMatch(/url\(/);
+	});
+});

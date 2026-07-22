@@ -16,6 +16,7 @@
     "fetch:results": "node scripts/fetch-results.js",
     "seed:registry": "node scripts/seed-registry/index.js",
     "seed:registry:normalize": "node scripts/seed-registry/normalize.js",
+    "seed:logos": "node scripts/seed-registry/logos.js",
     "screenshot": "node scripts/screenshot.js",
     "clean": "rm -rf docs/data/*.json docs/data/*.ics",
     "refresh": "npm run clean && npm run build"

@@ -40,6 +40,7 @@
 	<link rel="stylesheet" href="css/base.css">
 	<link rel="stylesheet" href="css/layout.css">
 	<link rel="stylesheet" href="css/cards.css">
+	<link rel="stylesheet" href="css/entity-logo.css">
 </head>
 <body class="gated">
 	<!-- Whole-web-behind-login (eier-beslutning 21.07): nothing renders until Sign
@@ -116,6 +117,15 @@
 				</div>
 				<div class="followed-body" id="followed-body"></div>
 			</details>
+			<!-- WP-186: «Merker og kilder» — the attribution surface. CC BY / CC BY-SA
+			     marks REQUIRE crediting, and every mark we show must be able to say
+			     where it came from and on what basis. Populated lazily from
+			     logos/ATTRIBUTION.json the first time it is opened (the calm board
+			     must not pay for a list nobody asked for). -->
+			<details class="followed marks" id="marks" hidden>
+				<summary><span>Merker og kilder</span></summary>
+				<div class="followed-body" id="marks-body"></div>
+			</details>
 		</div>
 		<div id="view-nyheter" class="root-view" role="tabpanel" hidden>
 			<!-- The four-section Nyheter board (twin of iOS NewsBoard/NewsView): NYTT
@@ -179,6 +189,7 @@
 	<script src="js/assistant.js"></script>
 	<script src="js/sport-icons.js"></script>
 	<script src="js/entity-avatar.js"></script>
+	<script src="js/logo-attribution.js"></script>
 	<script src="js/theme.js"></script>
 	<!-- WP-182: the delekort renderer (canvas-only, no network) — loaded before
 	     dashboard/detail so shareEvent/shareBrief can use it. -->

@@ -629,7 +629,8 @@ extension Entity {
     /// direct constructor so tests and previews can build entities without
     /// round-tripping through JSON.
     init(id: String, name: String, aliases: [String] = [], sport: String, type: String, initials: [String] = [],
-         country: String? = nil, national: Bool = false, colors: EntityColors? = nil) {
+         country: String? = nil, national: Bool = false, colors: EntityColors? = nil,
+         logo: EntityLogo? = nil) {
         self.id = id
         self.name = name
         self.aliases = aliases
@@ -640,6 +641,8 @@ extension Entity {
         self.country = country
         self.national = national
         self.colors = colors
+        // WP-186 — the real mark (and its provenance).
+        self.logo = logo
     }
 }
 

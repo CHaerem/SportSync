@@ -82,6 +82,16 @@ targets:
         buildPhase: resources
       - path: ../design/brand/fonts/SpaceGrotesk-Bold-subset.ttf
         buildPhase: resources
+      # WP-186: the club marks. `type: folder` keeps them as a bundle SUBDIRECTORY
+      # ("logos") — EntityIdentityResolver/LogoAssets look them up with
+      # `subdirectory: "logos"`, and it also stops ~140 PNGs from being flattened
+      # into the bundle root next to the fixtures. Bundled rather than fetched:
+      # the app has never made an image request for a row and still doesn't
+      # (null-infra + privacy). ATTRIBUTION.json rides along in the same folder —
+      # it is what «Deg › Merker og kilder» renders.
+      - path: ../docs/logos
+        buildPhase: resources
+        type: folder
     info:
       path: Sportivista/Info.plist
       properties:
@@ -175,6 +185,10 @@ targets:
         buildPhase: resources
       - path: ../design/brand/fonts/SpaceGrotesk-Bold-subset.ttf
         buildPhase: resources
+      # WP-186: the widget renders the same rows, so it needs the same marks.
+      - path: ../docs/logos
+        buildPhase: resources
+        type: folder
     info:
       path: SportivistaWidget/Info.plist
       properties:
@@ -354,6 +368,11 @@ targets:
         buildPhase: resources
       - path: ../design/brand/fonts/SpaceGrotesk-Bold-subset.ttf
         buildPhase: resources
+      # WP-186: the marks + their attribution manifest, so the tests resolve them
+      # from the test bundle exactly as the app does.
+      - path: ../docs/logos
+        buildPhase: resources
+        type: folder
     resources:
       - path: SportivistaTests/Fixtures
     info:

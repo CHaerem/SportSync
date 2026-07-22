@@ -1,0 +1,31 @@
+/* WP-186 — the real club mark, the top rung of the entity avatar (DESIGN.md
+   § Entitets-avatar). Deliberately its OWN stylesheet: cards.css owns the row,
+   and the one rule that matters here is a rule about NOT styling.
+
+   The mark is shown UNMODIFIED. No filter, no tint, no mix-blend-mode, no
+   border-radius clipping, no background plate, no drop-shadow — a free mark
+   under CC BY-SA may not be turned into a derivative, and a club's mark should
+   not be redrawn by us on any licence. The container therefore only reserves the
+   SAME 24px box WP-185 defined for the flag and the monogram (no layout change)
+   and lets the artwork sit inside it at its own aspect ratio. */
+.ev-logo {
+	/* Inherits .ev-avatar's 24px box; this just governs what sits inside it. */
+	padding: 1px;
+}
+/* «Merker og kilder» (js/logo-attribution.js) — a quiet credit list, borrowing
+   the «Dette dekker vi» disclosure's own chrome (.followed) so it adds no new
+   visual idiom to the page. */
+.marks-lead { color: var(--fg-2); font-size: 13px; margin: 0 0 8px; }
+.marks-note { color: var(--fg-3); font-size: 12.5px; line-height: 1.5; margin: 0 0 6px; }
+.marks-list { list-style: none; margin: 0; padding: 0; font-size: 12.5px; line-height: 1.7; color: var(--fg-3); }
+.marks-list strong { color: var(--fg-2); font-weight: 600; }
+
+.ev-logo img {
+	max-width: 100%;
+	max-height: 100%;
+	width: auto;
+	height: auto;
+	/* contain, never cover: cover would CROP the mark. */
+	object-fit: contain;
+	display: block;
+}

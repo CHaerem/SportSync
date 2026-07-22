@@ -7,6 +7,12 @@
 // entity it is about — and it is built from metadata we own, with NO image
 // requests anywhere (null-infra + privacy + no trademark exposure):
 //
+//   0. LOGO   — (WP-186) the club's REAL mark, when the pipeline has one with
+//               complete provenance. The asset is CHECKED IN under docs/logos/
+//               and served from our own origin: this file never points at
+//               Commons, ESPN or any CDN, so the no-external-request property
+//               below still holds byte for byte. Shown UNMODIFIED — no recolour,
+//               no crop, no mask, no tint (share-alike + mark integrity).
 //   1. FLAG   — athletes and national teams, derived from the registry's ISO
 //               country code. An emoji: zero assets, zero rights, and it scales
 //               with the user's text size for free.
@@ -107,8 +113,34 @@ function ssInkOn(colors) {
  * a `country` but no `national` flag (Wikidata stamps P17 on Norwegian handball
  * clubs) must NOT fly that flag — hence the explicit `national` gate.
  */
+/**
+ * WP-186 — the checked-in asset path for an entity's real mark, or '' when it has
+ * none we may show.
+ *
+ * The client mirrors the SERVER's fail-closed rule instead of trusting what it
+ * was handed: `build-entities.js` already applied the logo policy, but a stale
+ * cache or a tampered response must not be able to put an arbitrary URL in an
+ * `src`. So the file name must be a bare, lowercase asset name — no scheme, no
+ * host, no path, no traversal — and the record must carry its provenance
+ * (`source` + `basis`) or it is ignored.
+ */
+function ssEntityLogoSrc(entity) {
+	const logo = entity && entity.logo;
+	if (!logo || typeof logo !== 'object') return '';
+	if (!/^(free-license|editorial-use)$/.test(String(logo.basis || ''))) return '';
+	if (!String(logo.source || '').trim()) return '';
+	const file = String(logo.file || '');
+	if (!/^[a-z0-9][a-z0-9-]*\.png$/.test(file)) return '';
+	return `logos/${file}`;
+}
+
 function ssEntityIdentity(entity) {
 	if (!entity) return null;
+	// The mark wins when we have one — it is the entity's own identity, and the
+	// whole point of WP-186. National teams never carry one (see the seeder): the
+	// flag stays their anchor, so these two rungs never compete for the same row.
+	const logoSrc = ssEntityLogoSrc(entity);
+	if (logoSrc) return { kind: 'logo', src: logoSrc, name: String(entity.name || '') };
 	const isNational = entity.type === 'athlete' || entity.national === true;
 	if (isNational && entity.country) {
 		const flag = ssFlagEmoji(entity.country);
@@ -135,6 +167,12 @@ function ssEntityIdentity(entity) {
  */
 function ssEntityAvatar(identity) {
 	if (!identity) return '';
+	if (identity.kind === 'logo') {
+		// `loading="lazy"` keeps a long agenda from asking for 60 marks at once;
+		// `alt=""` because the row already names the club for assistive tech. No
+		// filter, no border-radius, no plate — the mark is shown as it is.
+		return `<span class="ev-avatar ev-logo" aria-hidden="true"><img src="${ssAvatarEscape(identity.src)}" alt="" width="24" height="24" loading="lazy" decoding="async"></span>`;
+	}
 	if (identity.kind === 'flag') return `<span class="ev-avatar ev-flag" aria-hidden="true">${identity.flag}</span>`;
 	const style = `--av-a:${identity.primary};--av-b:${identity.secondary};--av-ink:${identity.ink}`;
 	return `<span class="ev-avatar ev-mono" style="${style}" aria-hidden="true">${ssAvatarEscape(identity.initials)}</span>`;
@@ -148,6 +186,7 @@ function ssAvatarEscape(s) {
 }
 
 if (typeof window !== 'undefined') {
+	window.ssEntityLogoSrc = ssEntityLogoSrc;
 	window.ssFlagEmoji = ssFlagEmoji;
 	window.ssMonogramInitials = ssMonogramInitials;
 	window.ssInkOn = ssInkOn;
@@ -155,5 +194,5 @@ if (typeof window !== 'undefined') {
 	window.ssEntityAvatar = ssEntityAvatar;
 }
 if (typeof module !== 'undefined' && module.exports) {
-	module.exports = { ssFlagEmoji, ssMonogramInitials, ssInkOn, ssLuminance, ssEntityIdentity, ssEntityAvatar };
+	module.exports = { ssFlagEmoji, ssMonogramInitials, ssInkOn, ssLuminance, ssEntityLogoSrc, ssEntityIdentity, ssEntityAvatar };
 }

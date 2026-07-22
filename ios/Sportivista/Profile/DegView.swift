@@ -163,6 +163,16 @@ struct DegView: View {
             .accessibilityIdentifier("theme.toggle")
             .accessibilityLabel(theme.accessibilityLabel)
 
+            // WP-186: crediting is a CONDITION of showing a CC BY / CC BY-SA mark,
+            // and the editorial marks need their sober "belongs to the club, shown
+            // to identify it" line. One quiet row, never a banner on the board.
+            NavigationLink {
+                MarksAndSourcesView()
+            } label: {
+                rowLabel("seal", "Merker og kilder", chevron: true)
+            }
+            .accessibilityIdentifier("deg.marks.link")
+
             NavigationLink {
                 ResetView(onReset: onReset, syncEnabled: syncEnabled)
             } label: {
