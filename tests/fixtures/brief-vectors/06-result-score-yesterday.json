@@ -1,0 +1,20 @@
+{
+	"name": "football result (scoreline) yesterday",
+	"description": "A scoreline sport reads «A – B endte 2–1 i går». No upcoming, so the frame leads the result.",
+	"input": {
+		"upcoming": [],
+		"results": [
+			{
+				"title": "Lyn – Sogndal",
+				"outcome": "2–1",
+				"kind": "score",
+				"spoiler": false,
+				"day": "yesterday"
+			}
+		],
+		"newsCount": 0
+	},
+	"expected": {
+		"brief": "I din verden i dag: Lyn – Sogndal endte 2–1 i går."
+	}
+}

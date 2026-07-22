@@ -1,0 +1,35 @@
+{
+	"name": "upcoming + results + news → three sentences",
+	"description": "All three groups present: the frame + upcoming, then a sentence-cased results sentence, then the news sentence. Spoiler mixed with an open result.",
+	"input": {
+		"upcoming": [
+			{
+				"title": "Lyn – Sogndal",
+				"day": "today",
+				"evening": true,
+				"time": "19:00",
+				"weekday": ""
+			}
+		],
+		"results": [
+			{
+				"title": "Rosenborg – Molde",
+				"outcome": "1–1",
+				"kind": "score",
+				"spoiler": false,
+				"day": "yesterday"
+			},
+			{
+				"title": "British Grand Prix",
+				"outcome": "Verstappen",
+				"kind": "winner",
+				"spoiler": true,
+				"day": "yesterday"
+			}
+		],
+		"newsCount": 4
+	},
+	"expected": {
+		"brief": "I din verden i kveld: Lyn – Sogndal 19:00. Rosenborg – Molde endte 1–1 i går og resultatet fra British Grand Prix i går venter på deg. 4 nyheter om det du følger."
+	}
+}

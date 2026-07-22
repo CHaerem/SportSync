@@ -1,0 +1,12 @@
+{
+	"name": "empty context → fallback",
+	"description": "A profile with follows but nothing happening today: no upcoming, no results, no news. The composer returns \"\" so the caller falls back to the editorial line (graceful degradation, never an empty «I din verden»).",
+	"input": {
+		"upcoming": [],
+		"results": [],
+		"newsCount": 0
+	},
+	"expected": {
+		"brief": ""
+	}
+}

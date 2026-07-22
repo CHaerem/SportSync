@@ -1,0 +1,20 @@
+{
+	"name": "one upcoming, today evening → «i kveld»",
+	"description": "The marquee upcoming event is today AND in the evening (evening:true), so the frame is «i kveld». A today-fragment carries only its time (the day word is on the frame).",
+	"input": {
+		"upcoming": [
+			{
+				"title": "Lyn – Sogndal",
+				"day": "today",
+				"evening": true,
+				"time": "19:00",
+				"weekday": ""
+			}
+		],
+		"results": [],
+		"newsCount": 0
+	},
+	"expected": {
+		"brief": "I din verden i kveld: Lyn – Sogndal 19:00."
+	}
+}

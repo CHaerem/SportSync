@@ -1,0 +1,27 @@
+{
+	"name": "two upcoming (today + tomorrow) joined with «og»",
+	"description": "Two upcoming events cap the display; the second carries its own «i morgen» day word while the frame stays «i dag» (from the first, afternoon).",
+	"input": {
+		"upcoming": [
+			{
+				"title": "Hovland i Genesis",
+				"day": "today",
+				"evening": false,
+				"time": "16:40",
+				"weekday": ""
+			},
+			{
+				"title": "Lyn – Bodø/Glimt",
+				"day": "tomorrow",
+				"evening": false,
+				"time": "18:00",
+				"weekday": ""
+			}
+		],
+		"results": [],
+		"newsCount": 0
+	},
+	"expected": {
+		"brief": "I din verden i dag: Hovland i Genesis 16:40 og Lyn – Bodø/Glimt i morgen 18:00."
+	}
+}
