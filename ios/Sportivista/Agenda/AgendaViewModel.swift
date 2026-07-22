@@ -845,14 +845,33 @@ final class AgendaViewModel {
 /// trap for a recorder, so a test can drive the pipeline on the main thread and
 /// assert the guard fired (see AgendaReloadConcurrencyTests). Compiled to a
 /// no-op in release.
+///
+/// The recorder is installed **per thread**, not process-globally. A violation
+/// can only be observed on the thread that is violating (the guard early-returns
+/// off-main), so thread scope is exactly the right scope — and it makes the two
+/// recording tests (AgendaReloadConcurrencyTests + NewsModelTests) incapable of
+/// clobbering each other's recorded state or of flipping each other back into
+/// trapping mode, whatever else is in flight on other threads. The earlier
+/// design used two process-global `nonisolated(unsafe) static var`s (a shared
+/// `violations` array + a shared trap/record mode flag), which any concurrently
+/// running recorder could reset out from under the one being asserted on.
 enum MainThreadGuard {
     #if DEBUG
-    /// Recorded violations while `recordViolationsForTesting` is active. Guarded
-    /// by "only writes when already on the main thread" (see `assertOffMain`), so
-    /// there is no cross-thread access in practice.
-    nonisolated(unsafe) static var violations: [String] = []
-    /// When true (the default), a violation traps; a test flips it to record.
-    nonisolated(unsafe) static var trapsInsteadOfRecording = true
+    /// The violations recorded by ONE `recordViolationsForTesting` call. A
+    /// reference type so the installed recorder and the caller see the same box.
+    /// Only ever touched from the thread it is installed on.
+    final class Recorder {
+        fileprivate(set) var violations: [String] = []
+    }
+
+    /// `threadDictionary` key for the recorder currently installed on this
+    /// thread. Absent (the normal case, and always in the app) ⇒ violations trap.
+    private static let recorderKey = "app.sportivista.MainThreadGuard.recorder"
+
+    /// The recorder installed on the CURRENT thread, if any.
+    private static var currentRecorder: Recorder? {
+        Thread.current.threadDictionary[recorderKey] as? Recorder
+    }
     #endif
 
     /// Trip if called on the main thread. `label` is an autoclosure so building
@@ -861,27 +880,29 @@ enum MainThreadGuard {
         #if DEBUG
         guard Thread.isMainThread else { return }
         let message = "WP-60: \(label()) ran on the main thread — decode/compile must stay off the main actor"
-        if trapsInsteadOfRecording {
-            assertionFailure(message)
+        if let recorder = currentRecorder {
+            recorder.violations.append(message)
         } else {
-            violations.append(message)
+            assertionFailure(message)
         }
         #endif
     }
 
     #if DEBUG
-    /// Run `body` with the guard recording (not trapping) and return whatever it
-    /// recorded, restoring the previous mode afterwards. For tests only.
+    /// Run `body` with the guard recording (not trapping) ON THIS THREAD and
+    /// return what it recorded, restoring any previously installed recorder
+    /// afterwards (so nesting works). For tests only.
+    ///
+    /// `body` must run its violating work synchronously on the calling thread —
+    /// which is the whole point: the returned violations are the ones THIS body
+    /// caused, never a neighbouring test's.
     static func recordViolationsForTesting(_ body: () -> Void) -> [String] {
-        let previous = trapsInsteadOfRecording
-        trapsInsteadOfRecording = false
-        violations = []
-        defer {
-            violations = []
-            trapsInsteadOfRecording = previous
-        }
+        let recorder = Recorder()
+        let previous = Thread.current.threadDictionary[recorderKey]
+        Thread.current.threadDictionary[recorderKey] = recorder
+        defer { Thread.current.threadDictionary[recorderKey] = previous }
         body()
-        return violations
+        return recorder.violations
     }
     #endif
 }

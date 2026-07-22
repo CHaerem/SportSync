@@ -51,10 +51,26 @@ final class AgendaReloadConcurrencyTests: XCTestCase {
 
     // MARK: - Coalescing
 
+    /// The precondition every coalescing assertion below rests on: a burst fired
+    /// from synchronous `@MainActor` code holds the main actor for its whole
+    /// duration, so the reload `Task { @MainActor in … }` cannot have STARTED —
+    /// let alone finished — while the burst is being fired. That is an actor
+    /// guarantee, not a timing hope, and asserting it turns "the in-flight reload
+    /// might already have finished under load" from an unstated assumption into a
+    /// checked, self-describing one: if it ever breaks, this line fails and names
+    /// the reason instead of leaving a bare `== 2` mismatch to interpret.
+    private func assertBurstWasAtomic(_ vm: AgendaViewModel, since before: Int,
+                                      file: StaticString = #filePath, line: UInt = #line) {
+        XCTAssertEqual(vm.recompileCount - before, 0,
+                       "precondition: the burst held the main actor throughout, so no recompile has begun yet",
+                       file: file, line: line)
+    }
+
     func test_singleReload_isOneRecompile() async throws {
         let vm = makeVM(cache: try tempCacheWithFixtures(), profileStore: tempProfileStore())
 
         vm.reloadFromCache(now: iso(now))
+        assertBurstWasAtomic(vm, since: 0)
         await vm.awaitReloadsQuiescent()
 
         XCTAssertEqual(vm.recompileCount, 1, "a single reload recompiles exactly once")
@@ -70,6 +86,7 @@ final class AgendaReloadConcurrencyTests: XCTestCase {
         // more when done", so the whole burst is ≤2 compiles, never N.
         let before = vm.recompileCount
         for _ in 0..<8 { vm.reloadFromCache(now: iso(now)) }
+        assertBurstWasAtomic(vm, since: before)
         await vm.awaitReloadsQuiescent()
 
         XCTAssertLessThanOrEqual(vm.recompileCount - before, 2, "N rapid reloads ⇒ ≤2 recompiles")
@@ -97,6 +114,7 @@ final class AgendaReloadConcurrencyTests: XCTestCase {
         try profileStore.save(InterestProfile(rules: []))  // latest state: empty
         vm.reloadFromCache(now: iso(now))                  // coalesced
         vm.reloadFromCache(now: iso(now))                  // coalesced
+        assertBurstWasAtomic(vm, since: before)
         await vm.awaitReloadsQuiescent()
 
         XCTAssertEqual(vm.recompileCount - before, 2, "the burst still coalesced to two recompiles")
@@ -112,13 +130,41 @@ final class AgendaReloadConcurrencyTests: XCTestCase {
         // This test method runs on the main thread, so invoking the synchronous
         // pipeline directly here is exactly the regression the guard must catch.
         // `recordViolationsForTesting` swaps the trap for a recorder so we can
-        // assert it fired without a (unsupported) death test.
+        // assert it fired without a (unsupported) death test. The recorder is
+        // installed on THIS thread only, so what comes back is what this body
+        // caused — NewsModelTests' identical guard test cannot reset it (nor can
+        // anything else in flight) between the call and the assertion.
         let violations = MainThreadGuard.recordViolationsForTesting {
             _ = AgendaViewModel.computeReloadSync(
                 now: iso(now), dataStore: dataStore, profileStore: profileStore, cachedIndex: nil)
         }
 
         XCTAssertFalse(violations.isEmpty, "decode/compile on the main thread must trip the WP-60 guard")
+        // …and it is OUR pipeline that tripped it, not some neighbouring one.
+        XCTAssertTrue(violations.contains { $0.contains("AgendaViewModel reload") },
+                      "the recorded violation is the agenda reload pipeline's own")
+    }
+
+    /// The recorder must be scoped to ONE `recordViolationsForTesting` call, so a
+    /// second guard test (NewsModelTests has one) can neither see this one's
+    /// violations nor clear them. Nesting is the sharpest form of that: the inner
+    /// recorder captures only the inner violation, and the outer one is intact
+    /// afterwards. The process-global recorder this replaced failed both halves.
+    func test_guardRecorder_isScopedToOneRecordingCall() throws {
+        var inner: [String] = []
+        let outer = MainThreadGuard.recordViolationsForTesting {
+            MainThreadGuard.assertOffMain("outer pipeline")
+            inner = MainThreadGuard.recordViolationsForTesting {
+                MainThreadGuard.assertOffMain("inner pipeline")
+            }
+            MainThreadGuard.assertOffMain("outer pipeline, after the nested recorder")
+        }
+
+        XCTAssertEqual(inner.count, 1, "the nested recorder sees only its own violation")
+        XCTAssertTrue(inner[0].contains("inner pipeline"))
+        XCTAssertEqual(outer.count, 2, "the outer recorder keeps its own violations across the nested one")
+        XCTAssertTrue(outer.allSatisfy { $0.contains("outer pipeline") },
+                      "and none of the inner recorder's leaked into it")
     }
 
     func test_computeReload_runsOffMain_withoutTripping() async throws {
