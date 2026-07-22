@@ -123,4 +123,53 @@ final class WidgetTimelineBuilderTests: XCTestCase {
         XCTAssertTrue(entries.allSatisfy { !$0.hasHighlight })
         XCTAssertEqual(entries.first?.title, "Ingenting i dag")
     }
+
+    // MARK: - WP-176: the «siste resultat»-linje (medium + accessory families)
+
+    func testBuildEntries_withoutASnapshot_carryNoResultLine() {
+        let now = iso("2026-07-13T08:00:00Z")
+        let event = EventBuilder.make(sport: "football", title: "Lyn – Fram", time: "2026-07-13T14:00:00Z", homeTeam: "Lyn", awayTeam: "Fram")
+        let entries = WidgetTimelineBuilder.buildEntries(events: [event], interests: Interests(followBroadly: ["football"]), now: now)
+
+        XCTAssertTrue(entries.allSatisfy { $0.resultLine == nil && $0.resultMeta == nil },
+                      "no snapshot ⇒ the widget shows no result line at all (the honest quiet state)")
+    }
+
+    func testBuildEntries_carryThePreRenderedResultLineOnEveryTick() {
+        let now = iso("2026-07-13T08:00:00Z")
+        let event = EventBuilder.make(sport: "football", title: "Lyn – Fram", time: "2026-07-13T14:00:00Z", homeTeam: "Lyn", awayTeam: "Fram")
+        let snapshot = WidgetResultSnapshot(line: "Brann – Rosenborg 2–1", meta: "Eliteserien", generatedAt: now)
+
+        let entries = WidgetTimelineBuilder.buildEntries(
+            events: [event], interests: Interests(followBroadly: ["football"]), now: now, resultSnapshot: snapshot
+        )
+
+        XCTAssertTrue(entries.allSatisfy { $0.resultLine == "Brann – Rosenborg 2–1" && $0.resultMeta == "Eliteserien" })
+    }
+
+    func testBuildEntries_resultLineSurvivesTheEmptyHighlightState() {
+        // «Ingenting i dag» + gårsdagens resultat is a legitimate, honest widget.
+        let now = iso("2026-07-13T08:00:00Z")
+        let snapshot = WidgetResultSnapshot(line: "Brann – Rosenborg 2–1", meta: nil, generatedAt: now)
+        let entries = WidgetTimelineBuilder.buildEntries(events: [], interests: Interests(), now: now, resultSnapshot: snapshot)
+
+        XCTAssertEqual(entries.first?.title, "Ingenting i dag")
+        XCTAssertEqual(entries.first?.resultLine, "Brann – Rosenborg 2–1")
+    }
+
+    func testEmptySnapshot_isTreatedAsNoLine() {
+        let now = iso("2026-07-13T08:00:00Z")
+        let blank = WidgetResultSnapshot(line: "", meta: "Eliteserien", generatedAt: now)
+        let entries = WidgetTimelineBuilder.buildEntries(events: [], interests: Interests(), now: now, resultSnapshot: blank)
+
+        XCTAssertNil(entries.first?.resultLine)
+        XCTAssertNil(entries.first?.resultMeta, "an empty line never drags its meta along")
+    }
+
+    func testWidgetResultSnapshot_roundTripsThroughTheCacheEncoding() throws {
+        let now = iso("2026-07-13T08:00:00Z")
+        let snapshot = WidgetResultSnapshot(line: "Lyn – Sogndal 2–1", meta: "OBOS-ligaen", generatedAt: now)
+        let data = try SyncState.encoder.encode(snapshot)
+        XCTAssertEqual(try SportivistaJSON.decoder.decode(WidgetResultSnapshot.self, from: data), snapshot)
+    }
 }

@@ -158,6 +158,12 @@ targets:
       # tiny Codable + pure check, no networking, so it stays widget-safe.
       - path: Sportivista/Sync/AppVersion.swift
       - path: Sportivista/Widget/WidgetTimelineBuilder.swift
+      # WP-176: the pre-rendered «siste resultat»-linje the widget RENDERS but
+      # never computes — a Foundation-only Codable, safe here. Its producer
+      # (ResultDigest, in News/) is deliberately NOT in this target: deciding
+      # what is spoiler-safe needs the profile + personal memory, which the
+      # widget has no business compiling.
+      - path: Sportivista/Widget/WidgetResultSnapshot.swift
       # Shared lens tunables — LensConfig (in Feed/) reads it from the widget
       # bundle too; a ~1KB decode, well inside the WidgetKit memory budget.
       - path: ../docs/config/lens-config.json

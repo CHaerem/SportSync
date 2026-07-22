@@ -358,7 +358,20 @@ unread counters, no engagement mechanics (spec § Nyheter-v0, DESIGN § Nyheter)
 one `Entry` per full remaining Europe/Oslo hour, each "the next must-see event as of
 that moment, else the nearest relevant upcoming one, else an honest
 'Ingenting i dag'". `SportivistaWidget.swift` (the `TimelineProvider`) is the thin wrapper
-reading `DataStore` (`systemSmall` + `systemMedium`, same tokens as the app). By
+reading `DataStore`. Families: `systemSmall` + `systemMedium` on the home screen
+(same tokens as the app) and, since **WP-176**, `accessoryRectangular` +
+`accessoryInline` on the lock screen / StandBy — the same one highlight in the
+shapes those families allow (`SportivistaWidgetBackground` keeps the accessory
+families on the system's own vibrant material instead of our page background).
+
+**WP-176 — «siste resultat» (medium only):** the second line under the highlight is
+**pre-rendered by the app** (`Widget/WidgetResultSnapshot.swift`, written to the App
+Group cache as `widget-result.json` by `Sync/WidgetResultSnapshotWriter.swift`) and
+merely rendered here. The reason is structural: the widget target compiles no
+`Profile/` and no `Memory/`, so it **cannot see the user's spoiler policy** — a score
+it rendered on its own could be exactly the spoiler WP-30/WP-171 shield. The app
+decides what is safe (`News/ResultDigest.swift`), the widget renders a string. An
+absent file = no result line, never a stale or unshielded one. By
 construction there is **no network code in the widget target**: `project.yml` gives
 it `Models`/`Feed`/`DesignTokens`/`WidgetTimelineBuilder` and only the **read** half
 of `Sync` — never `SyncClient`/`Checksum` nor the app-only subsystems.
@@ -391,7 +404,31 @@ content = **no operation** (reconciling never re-touches a correct reminder).
 **lazily** in `reconcile(...)`, only when the plan wants to schedule — never at app
 start. The sync hook `ContentView.refresh()` snapshots `loadEvents()` *before*
 `sync()`, then calls `reconcile(...)` with the before/after snapshots — **only** on
-the app-start `.task`, not on pull-to-refresh.
+the app-start `.task`, not on pull-to-refresh (WP-121 added `SyncFreshness`, which
+covers the background + pull paths).
+
+### Fulltidsvarsel (WP-176)
+
+The second notification kind: **one** calm local notification when a contest a user
+follows is **over** («Fulltid: Lyn – Sogndal» / «2–1 · OBOS-ligaen»). Planned by the
+pure `News/ResultDigest.swift` from two `recent-results.json` snapshots taken around
+a sync, executed by `SyncFreshness.deliverResults(...)`.
+
+- **Opt-in per entity, off by default** (`Notifications/ResultAlertPreference.swift`
+  — a per-DEVICE preference like `NotificationLeadPreference`, never part of the
+  synced profile). The switch lives on that follow's own page (`FollowDetailView`
+  § VARSEL).
+- **Spoilervernet vinner.** A shielded entity/sport still gets its alert (the user
+  asked for it) but the body says only «Resultatet er klart. Åpne når du vil se
+  det.» — the score never appears on the lock screen uninvited.
+- **FÅ:** one per finished contest (never per goal), a hard cap per sync
+  (`ResultDigest.maxAlerts`), a 12h recency window, a delivered ledger, and **no
+  alerts at all on a seeding sync** (an empty "before" snapshot ⇒ a fresh install
+  never opens with a burst).
+- **Honest timing:** discovery rides `BGAppRefreshTask`, which iOS grants on its own
+  terms (~4h floor). This is «når iOS lar oss», not a guarantee — and it is stated
+  in the UI footer and in the root README's «what we deliberately don't do» section.
+  There is **no APNs, no server, no device-token register** in this app, by design.
 
 ## Assistant
 

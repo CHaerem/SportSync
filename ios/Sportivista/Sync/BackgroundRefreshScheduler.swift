@@ -32,10 +32,10 @@ enum BackgroundRefreshScheduler {
     /// launching (Apple's own requirement for BGTaskScheduler) — with no
     /// AppDelegate in this pure-SwiftUI app, that means SportivistaApp's `init()`,
     /// not a view's `.task` or `.onAppear`.
-    static func register(syncClient: SyncClient, dataStore: DataStore) {
+    static func register(syncClient: SyncClient, dataStore: DataStore, profileStore: ProfileStore = ProfileStore()) {
         BGTaskScheduler.shared.register(forTaskWithIdentifier: taskIdentifier, using: nil) { task in
             guard let refreshTask = task as? BGAppRefreshTask else { return }
-            handle(task: refreshTask, syncClient: syncClient, dataStore: dataStore)
+            handle(task: refreshTask, syncClient: syncClient, dataStore: dataStore, profileStore: profileStore)
         }
     }
 
@@ -52,11 +52,11 @@ enum BackgroundRefreshScheduler {
         try? BGTaskScheduler.shared.submit(request)
     }
 
-    private static func handle(task: BGAppRefreshTask, syncClient: SyncClient, dataStore: DataStore) {
+    private static func handle(task: BGAppRefreshTask, syncClient: SyncClient, dataStore: DataStore, profileStore: ProfileStore) {
         scheduleNextRefresh(dataStore: dataStore) // line up the next one first, per Apple's guidance
 
         let syncTask = Task {
-            await syncAndFreshen(syncClient: syncClient, dataStore: dataStore)
+            await syncAndFreshen(syncClient: syncClient, dataStore: dataStore, profileStore: profileStore)
             task.setTaskCompleted(success: true)
         }
         task.expirationHandler = {
@@ -77,11 +77,17 @@ enum BackgroundRefreshScheduler {
     static func syncAndFreshen(
         syncClient: SyncClient,
         dataStore: DataStore,
+        profileStore: ProfileStore = ProfileStore(),
         freshness: SyncFreshness = SyncFreshness(),
         now: Date = Date()
     ) async {
         let previousEvents = dataStore.loadEvents()
+        // WP-176: the background wake-up is THE moment a finished match is
+        // discovered (this app has no server push — see README § Det vi ikke
+        // gjør), so snapshot results around the sync too.
+        let previousResults = dataStore.loadRecentResults()
         let result = await syncClient.sync()
+        let syncState = profileStore.loadSyncState()
         await freshness.run(
             result: result,
             previousEvents: previousEvents,
@@ -89,7 +95,16 @@ enum BackgroundRefreshScheduler {
             interests: dataStore.loadInterests() ?? Interests(),
             lastSync: dataStore.lastSync,
             now: now,
-            leadTimeEnabled: NotificationLeadPreference.isLeadTimeEnabled()
+            leadTimeEnabled: NotificationLeadPreference.isLeadTimeEnabled(),
+            resultInputs: SyncFreshness.ResultInputs(
+                previousResults: previousResults,
+                newResults: dataStore.loadRecentResults(),
+                profile: syncState.profile,
+                entities: dataStore.loadEntities(),
+                shield: SpoilerShield(memory: MemoryState(from: syncState)),
+                optedIn: ResultAlertPreference.optedInEntityIds(),
+                alreadyDelivered: Set(ResultAlertPreference.deliveredIds())
+            )
         )
     }
 }

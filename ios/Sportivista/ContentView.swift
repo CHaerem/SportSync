@@ -55,6 +55,12 @@ struct ContentView: View {
     /// WP-19 — offline-first profile sync. LocalOnly by default (a no-op on the
     /// free-account/Simulator build); a paid-account build injects CloudKit.
     let profileSync: ProfileSyncCoordinator
+    /// WP-176 — the shared post-sync freshness step (also handed to the agenda's
+    /// pull-to-refresh). This view uses it for the WIDGET half only: the
+    /// «siste resultat»-linje must be re-rendered after a cold-start sync too,
+    /// while the fulltidsvarsel belongs to the background path (see
+    /// `deliverResults(deliverAlerts:)`).
+    let freshness: SyncFreshness
 
     @State private var agenda: AgendaViewModel
     @State private var assistant: AssistantViewModel
@@ -165,6 +171,7 @@ struct ContentView: View {
         // widget reloader (one SyncFreshness), so every sync path — cold start,
         // background, pull — reconciles reminders + reloads the widget the same way.
         let freshness = SyncFreshness(notificationPlanner: notificationPlanner, widgetReloader: widgetReloader)
+        self.freshness = freshness
         self._agenda = State(initialValue: AgendaViewModel(dataStore: dataStore, syncClient: syncClient, profileStore: profileStore, freshness: freshness))
         LaunchTrace.mark("agendaVM init", since: _t0)
         #if DEBUG
@@ -775,7 +782,24 @@ struct ContentView: View {
         // never sits behind the app's own board (its own reload policy only fires
         // at the Oslo day boundary — the audit's ~24h-stale 🔴). A 304/no-op sync
         // changes neither, so a quiet launch skips it.
-        if !changedFiles.isDisjoint(with: SyncFreshness.widgetInputs) {
+        // WP-176: recent-results.json feeds the widget's «siste resultat»-linje,
+        // so re-render that line (spoiler-filtered, in the app where the profile
+        // lives) BEFORE nudging WidgetKit — and only then reload.
+        if changedFiles.contains("recent-results.json") {
+            let syncState = profileStore.loadSyncState()
+            await freshness.deliverResults(
+                SyncFreshness.ResultInputs(
+                    previousResults: RecentResults(),
+                    newResults: dataStore.loadRecentResults(),
+                    profile: syncState.profile,
+                    entities: dataStore.loadEntities(),
+                    shield: SpoilerShield(memory: MemoryState(from: syncState)),
+                    optedIn: []
+                ),
+                deliverAlerts: false
+            )
+        }
+        if !changedFiles.isDisjoint(with: SyncFreshness.widgetInputs.union(SyncFreshness.resultInputs)) {
             widgetReloader.reloadAllTimelines()
         }
         #if DEBUG
