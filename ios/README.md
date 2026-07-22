@@ -201,7 +201,9 @@ SyncResult`):
    `SyncState.appliedFiles` (a **reconciled** snapshot of what the cache has actually
    applied, *not* a copy of the last server manifest), and fetch only files that
    changed **and** are in `filesOfInterest` (`events`/`entities`/`tracked`/
-   `interests`.json — the ~24 other manifest entries are irrelevant here).
+   `app-version`/`news`/`featured`/`recent-results`/`standings`.json — the ~22 other
+   manifest entries are irrelevant here; `standings.json` joined in WP-171 for the
+   detail sheet's TABELL surface).
 4. Each fetched file is **verified against the manifest's declared sha256**
    (`Checksum.swift`, CryptoKit) before it is trusted, then written **atomically**.
    A mismatch or network hiccup silently discards that one file, leaves the old copy
@@ -289,7 +291,11 @@ varsel state is in the detail sheet); a quiet mono `ⓘ` trails only on
 notification reconcile (see [Notifications](#notifications)). Tapping a row opens
 `EventDetailSheet` (venue, summary, streaming as real `Link`s, the AI-provenance
 block only on `ai-research` rows, a quiet varsel read-out, the spoiler-masked
-`RESULTAT`, and the assistant [context actions](#assistant)) or `SeriesDetailSheet`
+`RESULTAT`, the **`TABELL`** section (WP-171 — `EventStandingsSection`: the league
+table / golf leaderboard / F1 championship from `standings.json`, built by the pure
+`StandingsTable`, shown only when it is genuinely THIS event's table and masked
+behind the same spoiler reveal), and the assistant [context actions](#assistant))
+or `SeriesDetailSheet`
 (the expanded stage race: every Norwegian rider de-duplicated, the next stage's
 summary, every stage as its own line).
 
@@ -313,9 +319,13 @@ unread counters, no engagement mechanics (spec § Nyheter-v0, DESIGN § Nyheter)
   no clock read, so the whole board is unit-testable directly (`NewsBoardTests` /
   `NewsLensTests`) and the view is a thin renderer over it. Four sections: **I DIN
   VERDEN I DAG** (the editorial headline from `featured.json`, one line), **NYTT**
-  (lens-matched `news.json` pointers, newest first, capped 20), **RESULTAT** (followed
-  teams' recent football results, each stamped whether the spoiler shield must mask
-  its score), **FREMOVER** (followed events beyond the 7-day near horizon —
+  (lens-matched `news.json` pointers, newest first, capped 20), **RESULTAT** (recent
+  results for what you follow across EVERY sport in `recent-results.json` — football
+  with goal scorers + minute, a finished golf tournament's leaderboard, the F1
+  finishing order, tennis — projected onto ONE row DNA, ordered by a per-sport round
+  robin (`interleaveBySport`) so every sport gets an answer inside the `resultCap` of
+  5, the rest behind «Vis alle»; each row stamped whether the spoiler shield must
+  mask its outcome AND its detail lines), **FREMOVER** (followed events beyond the 7-day near horizon —
   forvarsler; capped 8, via `FeedCompiler.isEventInWindow`, never a manual `time >= x`
   filter so multi-day events survive).
 - `NewsLens.swift` — the **client-side lens** (the two-layer architecture: the server

@@ -44,6 +44,9 @@ struct NewsView: View {
 	/// each NYTT row presents its own SFSafariViewController; the board owns the
 	/// single sheet, the rows just hand it a URL.
 	@State private var browserTarget: BrowserTarget?
+	/// WP-171 — the RESULTAT section's «Vis alle» disclosure. Collapsed by
+	/// default: a capped section is the calm state, the full list is a choice.
+	@State private var allResultsShown = false
 
 	/// The board the model currently holds — a plain accessor so the section
 	/// builders below read exactly as before.
@@ -164,10 +167,29 @@ struct NewsView: View {
 	@ViewBuilder
 	private var resultatSection: some View {
 		if !board.results.isEmpty {
+			// WP-171: capped (ro — the section must never become a result
+			// stream), with the remainder behind ONE quiet «Vis alle» so nothing
+			// is silently dropped. Same cap the web board uses (SS_RESULT_CAP).
+			let shown = allResultsShown ? board.results : Array(board.results.prefix(NewsBoard.resultCap))
+			let hidden = board.results.count - shown.count
 			Section {
-				ForEach(board.results) { row in
+				ForEach(shown) { row in
 					NewsResultRowView(row: row)
 						.listRowBackground(SportivistaTokens.cell)
+				}
+				if hidden > 0 {
+					Button {
+						allResultsShown = true
+					} label: {
+						Text("Vis alle (\(board.results.count))")
+							.font(.sportivista(.subheadline, weight: .semibold))
+							.foregroundStyle(SportivistaTokens.accent)
+							.frame(minHeight: 44, alignment: .leading)
+							.contentShape(Rectangle())
+					}
+					.buttonStyle(.plain)
+					.accessibilityIdentifier("news.results.showAll")
+					.listRowBackground(SportivistaTokens.cell)
 				}
 			} header: {
 				sectionHeader("RESULTAT", id: "news.section.resultat")
@@ -311,13 +333,21 @@ private struct NewsPointerRow: View {
 
 // MARK: - RESULTAT row (spoiler-masked)
 
-/// A followed team's result. When the spoiler shield applies, the score stays
+/// One recent result about something the user follows — any sport (WP-171).
+/// When the spoiler shield applies, the outcome AND the detail lines (goal
+/// scorers, podium, leaderboard — every one of them reveals the outcome) stay
 /// behind a calm «Vis resultat» (eye.slash) until tapped — the exact same
 /// reveal mechanism the event detail sheet uses (WP-30), so a glance never
-/// spoils a game watched on delay.
+/// spoils a game watched on delay. Only the outcome-neutral title + meta ever
+/// show unmasked.
 private struct NewsResultRowView: View {
 	let row: NewsResultRow
 	@State private var revealed = false
+
+	/// The outcome-revealing content is visible only when the shield doesn't
+	/// apply or the user asked for it. ONE gate for score + details, so a new
+	/// detail line can never leak past the shield.
+	private var outcomeVisible: Bool { !row.spoilerSensitive || revealed }
 
 	var body: some View {
 		VStack(alignment: .leading, spacing: 3) {
@@ -333,17 +363,31 @@ private struct NewsResultRowView: View {
 					.foregroundStyle(SportivistaTokens.secondaryLabel)
 					.lineLimit(1)
 			}
+			if outcomeVisible {
+				ForEach(Array(row.details.enumerated()), id: \.offset) { _, line in
+					Text(line)
+						.font(.sportivista(.caption))
+						.foregroundStyle(SportivistaTokens.secondaryLabel)
+						.fixedSize(horizontal: false, vertical: true)
+						.frame(maxWidth: .infinity, alignment: .leading)
+				}
+			}
 		}
 		.padding(.vertical, 2)
 	}
 
 	@ViewBuilder
 	private var scoreLine: some View {
-		if let score = row.score {
-			if !row.spoilerSensitive || revealed {
-				Text(score)
-					.font(.sportivistaTabular(.subheadline, weight: .semibold))
-					.foregroundStyle(SportivistaTokens.label)
+		// The reveal must also appear for a row whose outcome lives ONLY in the
+		// detail lines (e.g. a golf leaderboard with no single "score"), or the
+		// shield would hide them with no way back.
+		if row.score != nil || !row.details.isEmpty {
+			if outcomeVisible {
+				if let score = row.score {
+					Text(score)
+						.font(.sportivistaTabular(.subheadline, weight: .semibold))
+						.foregroundStyle(SportivistaTokens.label)
+				}
 			} else {
 				Button {
 					revealed = true

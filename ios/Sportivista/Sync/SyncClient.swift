@@ -40,7 +40,10 @@ struct SyncClient: Sendable {
 
     /// The published files this iOS client actually consumes. See the
     /// type-level doc above for why the rest of the manifest is ignored.
-    static let defaultFilesOfInterest: Set<String> = ["events.json", "entities.json", "tracked.json", "app-version.json", "news.json", "featured.json", "recent-results.json"]
+    /// WP-171 adds standings.json — the league table / golf leaderboard / F1
+    /// championship the event-detail table surface reads. The app did not sync
+    /// it at all while the web detail sheet had shown it since WP-14.
+    static let defaultFilesOfInterest: Set<String> = ["events.json", "entities.json", "tracked.json", "app-version.json", "news.json", "featured.json", "recent-results.json", "standings.json"]
 
     private static let manifestFilename = "manifest.json"
 

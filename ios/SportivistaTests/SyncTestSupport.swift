@@ -39,10 +39,13 @@ enum SyncTestSupport {
     /// fixtures. `canonicalManifestData` overrides the manifest's entries for
     /// these to match — the base fixture's featured/recent-results hashes are
     /// stale and it carries no news.json entry.
+    /// WP-171 adds standings.json (the event-detail table surface) the same way:
+    /// the base manifest lists it, but its declared hash predates this fixture.
     static let newFilesOfInterest: [String: Data] = [
         "featured.json": Fixture.data("featured"),
         "recent-results.json": Fixture.data("recent-results"),
         "news.json": Fixture.data("news"),
+        "standings.json": Fixture.data("standings"),
     ]
 
     /// The full manifest fixture with the WP-106 file entries overridden to match
@@ -98,6 +101,7 @@ enum SyncTestSupport {
         "featured.json": Fixture.data("featured"),
         "recent-results.json": Fixture.data("recent-results"),
         "news.json": Fixture.data("news"),
+        "standings.json": Fixture.data("standings"),
     ]
 
     /// The filenames of `baselineFileBodies`, sorted — the expected

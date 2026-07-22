@@ -261,7 +261,10 @@ null personvern-lekkasje.
 
 Seksjoner: Arena · Om · **Hvor ser jeg det** (lenker) · **Funnet av AI**
 (confidence + kilder, kun AI-events) · **Varsel** (stille status) · **Resultat**
-(spoiler-maskert bak tapp når spoilervern er på). Ingen kort-i-kortet.
+(spoiler-maskert bak tapp når spoilervern er på) · **Tabell** (WP-171: ligatabell /
+golf-ledertavle / F1-VM-stilling, rang · navn · verdi, maks 5 rader + de involverte;
+result-avledet, så den ligger bak SAMME spoiler-maskering som Resultat).
+Ingen kort-i-kortet.
 
 ## Hjelperen (ambient, kontekstbevisst)
 

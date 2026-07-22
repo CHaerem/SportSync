@@ -94,6 +94,12 @@ struct EventDetailSheet: View {
                 // The result (spoiler-masked when needed) is the LAST section, so a
                 // glance at the sheet never lands on the outcome first.
                 resultSection
+
+                // WP-171: TABELL last — the league table / golf leaderboard /
+                // F1 championship for this event (web has had it in the detail
+                // sheet since WP-14). One call site; everything it needs lives
+                // in EventStandingsSection, including the spoiler masking.
+                EventStandingsSection(row: row)
             }
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
