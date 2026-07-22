@@ -140,6 +140,10 @@ Object.assign(window.Dashboard.prototype, {
 		}
 		let html = rows.join('');
 		const acts = [];
+		// WP-170 — ONE tap from an event to «hva skjer med X?»: the entity page for
+		// each side this event is about. Flat, dempet links (never pills); absent
+		// entirely when nothing resolves, which is the honest degradation.
+		if (typeof this.entityActionsHtml === 'function') acts.push(this.entityActionsHtml(e));
 		// Follow/unfollow the teams/athletes on this card (personal profile) — the
 		// primary personalisation affordance. Empty when profile-sync isn't loaded.
 		if (typeof this.followButtonsHtml === 'function') acts.push(this.followButtonsHtml(e));

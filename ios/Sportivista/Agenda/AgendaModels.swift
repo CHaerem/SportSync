@@ -53,6 +53,14 @@ struct AgendaEventRow: Identifiable, Equatable {
     /// before. Deliberately a PRESENTATION field computed here, never in
     /// FeedCompiler — the golden feed vectors must stay bit-identical.
     var identity: EntityIdentity = .none
+    /// WP-170 — the entities this event is ABOUT (teams, tournament, Norwegian
+    /// players), followed or not, resolved once per compile from the entity
+    /// index. The detail sheet turns each into ONE tap to that entity's page
+    /// («hva skjer med X?»). Distinct from `followable`, which excludes what you
+    /// already follow because it drives a «Følg X» ACTION; navigating to a page
+    /// must work for the teams you follow most of all. Empty (the default) keeps
+    /// every existing caller/test rendering exactly as before.
+    var subjects: [Entity] = []
 }
 
 /// A folded stage race — dashboard.js `collapseSeries`'s Swift-side output,

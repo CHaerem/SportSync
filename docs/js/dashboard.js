@@ -45,6 +45,7 @@ class Dashboard {
 		if (typeof this.bindAssistant === 'function') this.bindAssistant();
 		if (typeof this.bindFollowSearch === 'function') this.bindFollowSearch();
 		if (typeof this.bindRootTabs === 'function') this.bindRootTabs();
+		if (typeof this.bindEntityPage === 'function') this.bindEntityPage();
 		document.addEventListener('visibilitychange', () => {
 			this._liveVisible = !document.hidden;
 			if (this._liveVisible) this.onResume();

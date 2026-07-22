@@ -498,3 +498,64 @@ main.wrap { padding-bottom: 88px; }
 .rs-title { display: block; font-size: 15px; color: var(--fg); overflow-wrap: break-word; }
 .rs-meta { display: block; margin-top: 3px; font-size: 13px; color: var(--fg-2); }
 .rs-score { font-size: 15px; font-weight: 600; color: var(--fg); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* ── Entitetssiden (WP-170) ───────────────────────────────────────────────────
+   «Hva skjer med X?» som ETT ark: anker · Kommende · Siste resultat · Tabell ·
+   Siste nytt · Mer. Den låner assistent-arkets chrome (.sheet-panel/.sheet-backdrop)
+   i stedet for å innføre et nytt idiom, og seksjonene bruker de EKSISTERENDE
+   rad-klassene (.d-row, .rs-row, .nw-row) — siden er en komposisjon, også visuelt.
+   Ingen faner, ingen uendelig scroll, ingen ny aksentfarge. */
+.entity-page { position: fixed; inset: 0; z-index: 71; }
+.entity-page[hidden] { display: none; }
+.entity-page .sheet-backdrop {
+	position: absolute; inset: 0; background: rgba(0, 0, 0, 0.45);
+	animation: ss-fade 0.18s ease;
+}
+.entity-page .sheet-panel {
+	position: absolute; left: 0; right: 0; bottom: 0;
+	max-width: 640px; margin: 0 auto; box-sizing: border-box;
+	max-height: 85vh; overflow-y: auto; padding: 8px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+	background: var(--bg); border-top-left-radius: 18px; border-top-right-radius: 18px;
+	border-top: 1px solid var(--line); box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.4);
+	animation: ss-rise 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+	.entity-page .sheet-backdrop, .entity-page .sheet-panel { animation: none; }
+}
+/* Ankeret: SAMME avatar som raden (WP-185/186), i stor variant — aldri et nytt
+   merke, aldri en ekstern bilde-request. */
+.ep-head { display: flex; align-items: center; gap: 12px; padding: 4px 0 14px; }
+.ep-avatar { flex: none; display: flex; align-items: center; justify-content: center; }
+.ep-avatar .ev-avatar { width: 44px; height: 44px; margin-top: 0; }
+.ep-avatar .ev-flag { font-size: 32px; }
+.ep-avatar .ev-mono { font-size: 17px; }
+.ep-avatar svg { width: 30px; height: 30px; }
+.ep-id { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.ep-name { font-size: 20px; font-weight: 700; color: var(--fg); line-height: 1.2; overflow-wrap: break-word; }
+.ep-sub { font-size: 13px; color: var(--fg-2); margin-top: 2px; }
+.ep-section { border-top: 1px solid var(--line); padding: 12px 0 4px; }
+.ep-h { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--fg-3); margin: 0 0 8px; }
+.ep-detail { display: grid; gap: 6px; font-size: 13px; }
+.ep-detail .d-row { display: flex; gap: 10px; align-items: baseline; }
+.ep-detail .d-k { color: var(--fg-3); min-width: 52px; flex-shrink: 0; }
+.ep-detail .d-v { color: var(--fg-2); }
+.ep-detail .tbd { color: var(--fg-3); font-style: italic; }
+.ep-detail a { color: var(--accent); }
+.ep-row { display: flex; gap: 10px; align-items: baseline; padding: 8px 0 0; font-size: 13px; }
+.ep-when { color: var(--fg-3); flex: none; min-width: 108px; font-variant-numeric: tabular-nums; }
+.ep-what { color: var(--fg); flex: 1; min-width: 0; overflow-wrap: break-word; }
+.ep-where { color: var(--fg-2); flex: none; }
+/* Tabellrad: rang · navn · verdi. Entiteten settes fra hverandre med VEKT, aldri
+   med en ny farge (amber er sidens ene aksent). */
+.ep-table-row { display: flex; gap: 10px; align-items: baseline; padding: 5px 0; font-size: 14px; }
+.ep-table-row.is-entity { font-weight: 600; }
+.ep-rank { color: var(--fg-3); flex: none; min-width: 34px; font-variant-numeric: tabular-nums; }
+.ep-team { color: var(--fg); flex: 1; min-width: 0; overflow-wrap: break-word; }
+.ep-val { color: var(--fg); flex: none; font-variant-numeric: tabular-nums; }
+.ep-link { display: inline-block; padding: 10px 0; color: var(--accent); text-decoration: none; font-size: 15px; }
+.ep-note { margin: 0 0 6px; font-size: 12.5px; color: var(--fg-3); }
+.ep-empty { color: var(--fg-2); font-size: 14px; line-height: 1.5; padding: 12px 0 4px; border-top: 1px solid var(--line); }
+/* Lenkene i event-detaljen som fører TIL siden (WP-170) — flate og dempede, som
+   de andre detalj-handlingene (.ev-act). Ingen piller: § Forbudsliste holder for
+   sekundærhandlinger. */
+.ev-entity { color: var(--accent); }

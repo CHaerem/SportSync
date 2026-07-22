@@ -155,13 +155,20 @@ Object.assign(window.Dashboard.prototype, {
 	},
 
 	/** One row in the "neste" index: name + next event (or an honest gap). Flat —
-	 *  no logo/badge, no bell, no chevron; the row's rhythm signals tappability. */
+	 *  no logo/badge, no bell, no chevron; the row's rhythm signals tappability.
+	 *  WP-170: ONE tap opens that entity's PAGE («hva skjer med X?») instead of
+	 *  expanding a next-event blurb in place. The blurb is not lost — it is the
+	 *  page's KOMMENDE section (the same `followDetail`, tee time and all) — and a
+	 *  row with nothing scheduled is now tappable too, because the page can still
+	 *  answer with a result, a table position or news. */
 	followRow(entry, notifyDefault) {
 		const name = escapeHtml(ssEntityName(entry));
 		void notifyDefault; // notify state lives in the detail, not the row chrome
+		const key = this.rememberEntity ? this.rememberEntity(entry) : '';
+		const open = ` role="button" tabindex="0" data-entity-key="${escapeHtml(key)}"`;
 		const next = this.nextEventForEntity(entry);
 		if (!next) {
-			return `<li class="fn-item no-event"><div class="fn-row"><span class="fn-name">${name}<span class="fn-sub">ikke satt opp ennå</span></span></div></li>`;
+			return `<li class="fn-item no-event"><div class="fn-row"${open}><span class="fn-name">${name}<span class="fn-sub">ikke satt opp ennå</span></span></div></li>`;
 		}
 		const status = this.golfPlayerStatus(next, entry);
 		const tee = this.golfTeeForEntity(next, entry);
@@ -171,10 +178,10 @@ Object.assign(window.Dashboard.prototype, {
 		const when = status
 			? status
 			: (tee ? `${this.relDay(next)} · ${tee.tee}` : this.relDay(next));
-		return `<li class="fn-item has-event"><div class="fn-row" role="button" tabindex="0" aria-expanded="false">
+		return `<li class="fn-item has-event"><div class="fn-row"${open}>
 			<span class="fn-name">${name}</span>
 			<span class="fn-when">${escapeHtml(when)}</span>
-		</div><div class="fn-detail" hidden>${this.followDetail(next, entry)}</div></li>`;
+		</div></li>`;
 	},
 
 	/** The expanded when·what·where for a followed entity's next event.
@@ -207,17 +214,15 @@ Object.assign(window.Dashboard.prototype, {
 		return rows.join('');
 	},
 
-	/** Tap/keyboard expand for the "neste" index rows in BOTH the top "Dine
-	 *  neste" section and the bottom disclosure (delegated, survives re-render). */
+	/** Tap/keyboard open for the "neste" index rows in BOTH the top "Dine neste"
+	 *  section and the bottom disclosure (delegated, survives re-render). WP-170:
+	 *  the tap opens the entity PAGE — one tap from a follow row to the answer. */
 	bindFollowed() {
 		if (this._followedBound) return;
 		this._followedBound = true;
-		const toggle = (row) => {
-			const detail = row.parentElement.querySelector('.fn-detail');
-			if (!detail) return;
-			const open = row.getAttribute('aria-expanded') === 'true';
-			row.setAttribute('aria-expanded', String(!open));
-			detail.hidden = open;
+		const open = (row) => {
+			const entry = this.entityForKey ? this.entityForKey(row.dataset.entityKey) : null;
+			if (entry && typeof this.openEntityPage === 'function') this.openEntityPage(entry);
 		};
 		const onClick = (evt) => {
 			if (evt.target.closest('a')) return; // let channel/source links work
@@ -226,13 +231,13 @@ Object.assign(window.Dashboard.prototype, {
 				if (d) { d.open = true; d.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
 				return;
 			}
-			const row = evt.target.closest('.fn-item.has-event .fn-row');
-			if (row) toggle(row);
+			const row = evt.target.closest('.fn-item .fn-row[data-entity-key]');
+			if (row) open(row);
 		};
 		const onKey = (evt) => {
 			if (evt.key !== 'Enter' && evt.key !== ' ') return;
-			const row = evt.target.closest('.fn-item.has-event .fn-row');
-			if (row) { evt.preventDefault(); toggle(row); }
+			const row = evt.target.closest('.fn-item .fn-row[data-entity-key]');
+			if (row) { evt.preventDefault(); open(row); }
 		};
 		for (const id of ['next-up', 'followed-body']) {
 			const c = document.getElementById(id);

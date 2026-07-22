@@ -47,6 +47,12 @@ struct EventDetailSheet: View {
 
                 contextActionsSection
 
+                // WP-170 — ONE tap from an event to «hva skjer med X?»: the
+                // entity page for each side this event is about. Placed high,
+                // right under HANDLINGER, because "who is this about" is the
+                // question a tapped row raises before "where do I watch it".
+                entityPagesSection
+
                 Section {
                     if event.streaming.isEmpty {
                         Text("Kanal ukjent")
@@ -222,6 +228,39 @@ struct EventDetailSheet: View {
                 }
             } header: {
                 header("HANDLINGER")
+            }
+        }
+    }
+
+    // MARK: - Entity pages (WP-170)
+
+    /// One row per side this event is about, each pushing that entity's page
+    /// (next event · last result · table · news). Absent entirely when the
+    /// entity index hasn't synced or resolved nothing — the honest degradation
+    /// is no section, never an empty list of names we can't stand behind.
+    @ViewBuilder
+    private var entityPagesSection: some View {
+        if !row.subjects.isEmpty {
+            Section {
+                ForEach(row.subjects, id: \.id) { entity in
+                    NavigationLink {
+                        EntityPageView(entity: entity)
+                    } label: {
+                        HStack(spacing: 10) {
+                            EntityAvatarView(identity: EntityIdentityResolver.identity(for: entity), sport: entity.sport)
+                            Text(entity.name)
+                                .font(.sportivista(.subheadline))
+                                .foregroundStyle(SportivistaTokens.label)
+                            Spacer(minLength: 4)
+                        }
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
+                    }
+                    .accessibilityIdentifier("detail.entity.\(entity.id)")
+                    .listRowBackground(SportivistaTokens.cell)
+                }
+            } header: {
+                header("LAG OG UTØVERE")
             }
         }
     }

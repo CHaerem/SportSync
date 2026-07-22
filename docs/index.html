@@ -137,6 +137,19 @@
 		</div>
 	</main>
 
+	<!-- Entitetssiden (WP-170) — «hva skjer med X?» for ett lag/én utøver: neste
+	     kamp, siste resultat, tabellplassering, nyheter, og til slutt én lenke ut
+	     til spesialisten. Nås med ÉTT trykk fra en følge-rad («Det du følger» /
+	     «Neste opp») og fra entitetsnavnene i event-detaljen. Én skjerm, faste
+	     seksjoner, ingen faner — se js/entity-page.js. -->
+	<div id="entity-page" class="entity-page" hidden role="dialog" aria-modal="true" aria-label="Entitetsside">
+		<div class="sheet-backdrop" data-entity-close></div>
+		<div class="sheet-panel">
+			<div class="sheet-grabber" aria-hidden="true"></div>
+			<div id="entity-page-body"></div>
+		</div>
+	</div>
+
 	<!-- Assistent-inngang (app-parity, WP-154): a compact floating bottom-trailing
 	     button — sparkles + «Assistent» — that reads unmistakably as a button (never a
 	     dead field), collapsing to the bare glyph while the board scrolls (mirrors the
@@ -201,6 +214,10 @@
 	<script src="js/followed.js"></script>
 	<script src="js/profile-ui.js"></script>
 	<script src="js/news-web.js"></script>
+	<!-- WP-170 — the entity page. Loads AFTER news-web.js (entityPageHtml reuses
+	     its ssResultRows/resultRow/newsRow) and after followed.js (whose rows call
+	     openEntityPage). -->
+	<script src="js/entity-page.js"></script>
 	<script src="js/chrome.js"></script>
 	<script>
 		// Whole-web-behind-login boot: dashboard.js's DOMContentLoaded calls

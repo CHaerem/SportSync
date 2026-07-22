@@ -635,7 +635,10 @@ final class AgendaViewModel {
             whyShown: FeedCompiler.whyShown(feedEvent, interests: interests),
             followable: followableEntities(for: event, index: index, followedIds: followedIds, cache: cache),
             spoilerSafe: spoilerSafe,
-            identity: identityIndex.identity(for: event)
+            identity: identityIndex.identity(for: event),
+            // WP-170: the SAME resolution with nothing filtered out — the entity
+            // page must be reachable for a team you already follow too.
+            subjects: followableEntities(for: event, index: index, followedIds: [], cache: cache)
         )
     }
 
@@ -811,7 +814,8 @@ final class AgendaViewModel {
                 whyShown: FeedCompiler.whyShown(feedEvent, interests: interests),
                 followable: followableEntities(for: event, index: index, followedIds: followedIds, cache: cache),
                 spoilerSafe: shield.spoilerSafe(event: event),
-                identity: identityIndex.identity(for: event)
+                identity: identityIndex.identity(for: event),
+                subjects: followableEntities(for: event, index: index, followedIds: [], cache: cache)
             ))
 
         case .series(let series):

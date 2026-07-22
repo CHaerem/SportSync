@@ -15,6 +15,7 @@ beforeAll(() => {
 	loadClientScript(sandbox, "followed.js");
 	loadClientScript(sandbox, "chrome.js");
 	loadClientScript(sandbox, "news-web.js");
+	loadClientScript(sandbox, "entity-page.js");
 	dash = sandbox.window.dashboard;
 	win = sandbox.window;
 });
@@ -472,21 +473,28 @@ describe("followed 'neste' index — answers 'when's X next?'", () => {
 		expect(dash.nextEventForEntity({ name: "Barcelona", sport: "football" })).toBe(null);
 	});
 
-	it("renders an honest 'ikke satt opp ennå' when nothing is scheduled", () => {
+	// WP-170: the follow row no longer carries an inline expandable detail — a tap
+	// opens the ENTITY PAGE (data-entity-key). A row with nothing scheduled is
+	// tappable too (the page can still answer with a result/table/news).
+	it("renders an honest 'ikke satt opp ennå' when nothing is scheduled — still tappable (WP-170)", () => {
 		dash.allEvents = [];
 		const html = dash.followRow({ name: "Aryan Tari", aliases: ["Tari"], sport: "chess" }, true);
 		expect(html).toContain("no-event");
 		expect(html).toContain("ikke satt opp ennå");
 		expect(html).not.toContain("fn-detail");
+		expect(html).toContain("data-entity-key");   // opens the page
 	});
 
-	it("renders a tappable row with a relative 'neste' + expandable detail when scheduled", () => {
+	it("renders a tappable row with a relative 'neste' opening the entity page (WP-170)", () => {
 		dash.allEvents = [{ sport: "esports", title: "BLAST Bounty – 100 Thieves", time: inDays(13), streaming: [{ platform: "Twitch" }] }];
 		const html = dash.followRow({ name: "100 Thieves", aliases: ["100T"], sport: "esports" }, true);
 		expect(html).toContain("has-event");
 		expect(html).toMatch(/om \d+ dager/);
-		expect(html).toContain("fn-detail");
-		expect(html).toContain("Twitch");
+		expect(html).toContain('role="button"');
+		expect(html).toContain("data-entity-key");
+		// The when·what·where blurb is no longer inline — it is the page's KOMMENDE
+		// section (followDetail), reachable by the tap.
+		expect(html).not.toContain("fn-detail");
 	});
 
 	it("escapes HTML in entity names", () => {
@@ -495,7 +503,7 @@ describe("followed 'neste' index — answers 'when's X next?'", () => {
 		expect(html).not.toContain("<script>x");
 	});
 
-	it("surfaces a golfer's own tee time in the 'neste' row + detail", () => {
+	it("surfaces a golfer's own tee time inline in the row (WP-170)", () => {
 		dash.allEvents = [{
 			sport: "golf", title: "Genesis Scottish Open", time: inDays(2),
 			norwegianPlayers: [{ name: "Viktor Hovland", teeTime: "09:39" }],
@@ -503,14 +511,6 @@ describe("followed 'neste' index — answers 'when's X next?'", () => {
 		}];
 		const html = dash.followRow({ name: "Viktor Hovland", aliases: ["Hovland"], sport: "golf" }, true);
 		expect(html).toContain("09:39");        // tee time inline in the when-label
-		expect(html).toContain("Tee-tid");      // and as a detail row
-		expect(html).toContain("Wyndham Clark"); // marquee groupmate
-	});
-
-	it("omits the tee-tid row for a golfer with no tee time yet", () => {
-		dash.allEvents = [{ sport: "golf", title: "US Open", time: inDays(3), norwegianPlayers: [{ name: "Kristoffer Ventura" }] }];
-		const html = dash.followRow({ name: "Kristoffer Ventura", sport: "golf" }, true);
-		expect(html).not.toContain("Tee-tid");
 	});
 
 	it("shows a cut golfer's status instead of «pågår nå» for the ongoing tournament (WP-95)", () => {
@@ -523,8 +523,65 @@ describe("followed 'neste' index — answers 'when's X next?'", () => {
 		const html = dash.followRow({ name: "Viktor Hovland", aliases: ["Hovland"], sport: "golf" }, true);
 		expect(html).toContain("røk cutten");
 		expect(html).not.toContain("pågår nå");
-		expect(html).not.toContain("Tee-tid");
-		expect(html).toContain("Status"); // and a calm status row in the detail
+	});
+});
+
+describe("entity page — «hva skjer med X?» (WP-170)", () => {
+	const inDays = (n) => new Date(Date.now() + n * 86400000).toISOString();
+
+	const hovland = { id: "viktor-hovland", name: "Viktor Hovland", aliases: ["Hovland"], sport: "golf" };
+
+	it("composes KOMMENDE (with tee time) + MER, omitting sections with no data", () => {
+		dash.allEvents = [{
+			sport: "golf", title: "Genesis Scottish Open", time: inDays(2),
+			norwegianPlayers: [{ name: "Viktor Hovland", teeTime: "09:39" }],
+			featuredGroups: [{ player: "Viktor Hovland", teeTime: "09:39", groupmates: [{ name: "Wyndham Clark" }] }],
+			streaming: [{ platform: "Discovery+" }],
+		}];
+		dash.recentResults = {};
+		dash.standings = {};
+		dash.news = [];
+		dash.entities = [];
+		dash._identityIndex = null;
+		const html = dash.entityPageHtml(hovland);
+		expect(html).toContain("Kommende");
+		expect(html).toContain("Tee-tid");        // followDetail's tee-time row
+		expect(html).toContain("Wyndham Clark");
+		expect(html).not.toContain("Siste resultat"); // no results data → omitted
+		expect(html).not.toContain("Tabell");          // golf has no leaderboard here
+	});
+
+	it("shows the honest empty line when nothing is known", () => {
+		dash.allEvents = [];
+		dash.recentResults = {};
+		dash.standings = {};
+		dash.news = [];
+		const html = dash.entityPageHtml({ name: "Ukjent IL", sport: "handball" });
+		expect(html).toContain("Ingenting på tavla");
+		expect(html).not.toContain("Kommende");
+	});
+
+	it("shows a football team its OWN league table, and never another's (WP-171 gate)", () => {
+		dash.standings = {
+			football: {
+				premierLeague: [
+					{ position: 1, team: "Liverpool", points: 30 },
+					{ position: 2, team: "Arsenal", points: 28 },
+					{ position: 14, team: "Everton", points: 13 },
+				],
+			},
+		};
+		const table = win.ssEntityStandingsTable(dash.standings, { name: "Everton", sport: "football" });
+		expect(table.title).toBe("Premier League");
+		expect(table.rows.some((r) => r.name === "Everton" && r.highlighted)).toBe(true);
+		// A club we publish no table for gets nothing — not the PL table.
+		expect(win.ssEntityStandingsTable(dash.standings, { name: "Lyn", sport: "football" })).toBe(null);
+	});
+
+	it("links to the specialist only for sports with a verified endpoint", () => {
+		expect(win.ssSpecialistLink("football", "FK Lyn Oslo").url).toContain("fotmob.com");
+		expect(win.ssSpecialistLink("football", "A & B").url).not.toContain("&B");
+		expect(win.ssSpecialistLink("chess", "Magnus Carlsen")).toBe(null);
 	});
 });
 

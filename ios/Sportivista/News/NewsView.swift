@@ -340,7 +340,9 @@ private struct NewsPointerRow: View {
 /// reveal mechanism the event detail sheet uses (WP-30), so a glance never
 /// spoils a game watched on delay. Only the outcome-neutral title + meta ever
 /// show unmasked.
-private struct NewsResultRowView: View {
+/// WP-170: no longer `private` — the entity page renders the SAME row, so the
+/// «Vis resultat» shield exists once and can never drift between the two.
+struct NewsResultRowView: View {
 	let row: NewsResultRow
 	@State private var revealed = false
 
