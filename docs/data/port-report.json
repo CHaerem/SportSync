@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-07-22T07:32:42.050Z",
+  "generatedAt": "2026-07-22T10:23:01.433Z",
   "windowDays": 14,
   "ports": {
     "coverage": "green",
-    "amendRate": "red",
+    "amendRate": "green",
     "silentStops": "yellow",
     "participantStatus": "green"
   },
@@ -32,12 +32,12 @@
     "gaps": []
   },
   "amendRate": {
-    "nearTermRate": 0.6,
-    "nearTermChecked": 5,
-    "nearTermAmended": 3,
-    "verifyRunAt": "2026-07-21T07:47:58.000Z",
-    "windowRate": 0.21,
-    "windowChecks": 56,
+    "nearTermRate": 0,
+    "nearTermChecked": 13,
+    "nearTermAmended": 0,
+    "verifyRunAt": "2026-07-22T07:48:02.000Z",
+    "windowRate": 0.2,
+    "windowChecks": 61,
     "windowAmendments": 12,
     "windowCorrections": 2,
     "byDay": [
@@ -131,28 +131,37 @@
         "amendments": 0,
         "corrections": 2,
         "rate": 0
+      },
+      {
+        "date": "2026-07-22",
+        "checks": 5,
+        "amendments": 0,
+        "corrections": 0,
+        "rate": 0
       }
     ]
   },
   "silentStops": {
     "buildOk": true,
-    "buildCheckedAt": "2026-07-22T07:32:41.847Z",
+    "buildCheckedAt": "2026-07-22T10:23:01.235Z",
     "buildAgeHours": 0,
-    "manifestGeneratedAt": "2026-07-21T21:05:21.469Z",
-    "manifestAgeHours": 10.46,
+    "manifestGeneratedAt": "2026-07-22T07:32:43.387Z",
+    "manifestAgeHours": 2.84,
     "staleFiles": [
       {
         "file": "football.json",
         "sourceLastUpdated": "2026-07-19T17:56:30.377Z",
-        "ageHours": 61.6
+        "ageHours": 64.44
       }
     ]
   },
   "participantStatus": {
-    "checkedAt": "2026-07-21T07:47:58.000Z",
-    "verifyAgeHours": 23.75,
-    "corrections": 0,
+    "checkedAt": "2026-07-22T07:48:02.000Z",
+    "verifyAgeHours": 2.58,
+    "corrections": 1,
     "unresolved": 0,
-    "signals": []
+    "signals": [
+      "WP-95 deltakelsessjekk (Tour de France in-progress): ingen av de 6 norske Uno-X-rytterne har brutt (uttreksliste brujulabike.com). Kun Torstein Traeen ute - …"
+    ]
   }
 }
