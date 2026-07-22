@@ -2341,7 +2341,24 @@ personvernsiden live; privacy manifest bygger; G1-teksten i denne planen
 oppdatert med valgt instrument.
 
 ### WP-191 · 💰 Juridisk fundament (menneskeoppgave — planen sekvenserer)
-**Innhold (sjekkliste for eier, med bistand):** (1) juridisk enhet
+**Innhold (sjekkliste for eier, med bistand):** (0) **KLUBBEMBLEMENE — avklares her**
+(eierbeslutning 22.07: «kjører på med logoer, finner ut av lisensspørsmål senere» —
+dette ER «senere», og det inntreffer FØR betalt lansering, ikke ved første klage).
+Grunnlaget som skal prøves: emblemene vises for å IDENTIFISERE klubben i en
+agenda-/nyhetskontekst (referansebruk — varemerkerettslig trygt), mens opphavsretten
+til selve tegningen hviler på et redaksjonelt argument som er sterkt i USA og svakere
+i Norge/EU (ingen åpen fair use-doktrin). Verifisert 22.07: å KJØPE seg ut er ikke et
+tilgjengelig alternativ — selv betalte leverandører (Sportmonks €29–249/mnd) leverer
+bildestien men skriver eksplisitt at «you have to arrange proof of intellectual
+property yourself»; ekte logorettigheter går direkte til klubb/liga, én avtale om
+gangen (det Sofascore gjør med EuroLeague/Saudi Pro League). Konkret spørsmål til
+advokat: «holder referansebruk-argumentet for emblemer i en betalt norsk sportsapp?»
+Risikohåndteringen som ALLEREDE er bygget (WP-186): proveniens per merke
+(`basis: free-license | editorial-use`) + en `logoPolicy`-bryter som fjerner én hel
+kategori uten klientendring — så et nei fra advokaten er en konfigendring, ikke en
+omskriving. NB: kampterminlistene selv — produktets kjerne — er trygge (EU-domstolen,
+Football Dataco mot Yahoo!: terminlister er ikke opphavsrettsbeskyttet).
+(1) juridisk enhet
 (ENK/AS-vurdering — affiliate-avtaler og Apple-org krever det); (2) Apple
 Developer personlig → organisasjon (app-transfer FØR eksterne brukere — ellers
 flyttes brukerne med); (3) varemerkesøk/-registrering «Sportivista» (NO/EU-
