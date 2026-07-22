@@ -1,0 +1,358 @@
+{
+	"$schema": "WP-161 verdensregister — F1 — feltets førere og team. OPPSLAG, ikke dekningsløfte (catalog.json styrer dekning/kost). Deterministisk artefakt: sortert på id, stabil serialisering — re-seed (npm run seed:registry) gir rene diffs. Id-er er varige kebab-slugs; external-id-ene (wikidata/espnId/fideId/liquipedia) er re-seed-nøklene. Vedlikeholdes ukentlig av research/improve-agentene (opprykk/nedrykk, overganger, navnebytter, nye orgs) — se registry.schema.json.",
+	"source": "espn-standings: racing/f1 (førere + konstruktører)",
+	"entities": [
+		{
+			"id": "alexander-albon",
+			"name": "Alexander Albon",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "Thailand",
+			"external": {
+				"espnId": "5592"
+			}
+		},
+		{
+			"id": "alpine",
+			"name": "Alpine",
+			"aliases": [],
+			"sport": "f1",
+			"type": "team",
+			"external": {
+				"espnId": "106922"
+			}
+		},
+		{
+			"id": "arvid-lindblad",
+			"name": "Arvid Lindblad",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "Britain",
+			"external": {
+				"espnId": "5855"
+			}
+		},
+		{
+			"id": "aston-martin",
+			"name": "Aston Martin",
+			"aliases": [],
+			"sport": "f1",
+			"type": "team",
+			"external": {
+				"espnId": "123986"
+			}
+		},
+		{
+			"id": "audi",
+			"name": "Audi",
+			"aliases": [],
+			"sport": "f1",
+			"type": "team",
+			"external": {
+				"espnId": "132212"
+			}
+		},
+		{
+			"id": "cadillac",
+			"name": "Cadillac",
+			"aliases": [],
+			"sport": "f1",
+			"type": "team",
+			"external": {
+				"espnId": "132211"
+			}
+		},
+		{
+			"id": "carlos-sainz",
+			"name": "Carlos Sainz",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "Spain",
+			"external": {
+				"espnId": "4686"
+			}
+		},
+		{
+			"id": "charles-leclerc",
+			"name": "Charles Leclerc",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "Monaco",
+			"external": {
+				"espnId": "5498"
+			}
+		},
+		{
+			"id": "esteban-ocon",
+			"name": "Esteban Ocon",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "France",
+			"external": {
+				"espnId": "4678"
+			}
+		},
+		{
+			"id": "fernando-alonso",
+			"name": "Fernando Alonso",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "Spain",
+			"external": {
+				"espnId": "348"
+			}
+		},
+		{
+			"id": "ferrari",
+			"name": "Ferrari",
+			"aliases": [],
+			"sport": "f1",
+			"type": "team",
+			"external": {
+				"espnId": "106842"
+			}
+		},
+		{
+			"id": "franco-colapinto",
+			"name": "Franco Colapinto",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "Argentina",
+			"external": {
+				"espnId": "5823"
+			}
+		},
+		{
+			"id": "gabriel-bortoleto",
+			"name": "Gabriel Bortoleto",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "Brazil",
+			"external": {
+				"espnId": "5835"
+			}
+		},
+		{
+			"id": "george-russell",
+			"name": "George Russell",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "Britain",
+			"external": {
+				"espnId": "5503"
+			}
+		},
+		{
+			"id": "haas",
+			"name": "Haas",
+			"aliases": [],
+			"sport": "f1",
+			"type": "team",
+			"external": {
+				"espnId": "111427"
+			}
+		},
+		{
+			"id": "isack-hadjar",
+			"name": "Isack Hadjar",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "France",
+			"external": {
+				"espnId": "5790"
+			}
+		},
+		{
+			"id": "kimi-antonelli",
+			"name": "Kimi Antonelli",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "Italy",
+			"external": {
+				"espnId": "5829"
+			}
+		},
+		{
+			"id": "lance-stroll",
+			"name": "Lance Stroll",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "Canada",
+			"external": {
+				"espnId": "4775"
+			}
+		},
+		{
+			"id": "lando-norris",
+			"name": "Lando Norris",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "Britain",
+			"external": {
+				"espnId": "5579"
+			}
+		},
+		{
+			"id": "lewis-hamilton",
+			"name": "Lewis Hamilton",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "Britain",
+			"external": {
+				"espnId": "868"
+			}
+		},
+		{
+			"id": "liam-lawson",
+			"name": "Liam Lawson",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "New Zealand",
+			"external": {
+				"espnId": "5741"
+			}
+		},
+		{
+			"id": "max-verstappen",
+			"name": "Max Verstappen",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "Netherlands",
+			"external": {
+				"espnId": "4665"
+			}
+		},
+		{
+			"id": "mclaren",
+			"name": "McLaren",
+			"aliases": [],
+			"sport": "f1",
+			"type": "team",
+			"external": {
+				"espnId": "106892"
+			}
+		},
+		{
+			"id": "mercedes",
+			"name": "Mercedes",
+			"aliases": [],
+			"sport": "f1",
+			"type": "team",
+			"external": {
+				"espnId": "106893"
+			}
+		},
+		{
+			"id": "nico-hulkenberg",
+			"name": "Nico Hülkenberg",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "Germany",
+			"external": {
+				"espnId": "4396"
+			}
+		},
+		{
+			"id": "oliver-bearman",
+			"name": "Oliver Bearman",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "Britain",
+			"external": {
+				"espnId": "5789"
+			}
+		},
+		{
+			"id": "oscar-piastri",
+			"name": "Oscar Piastri",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "Australia",
+			"external": {
+				"espnId": "5752"
+			}
+		},
+		{
+			"id": "pierre-gasly",
+			"name": "Pierre Gasly",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "France",
+			"external": {
+				"espnId": "5501"
+			}
+		},
+		{
+			"id": "racing-bulls",
+			"name": "Racing Bulls",
+			"aliases": [],
+			"sport": "f1",
+			"type": "team",
+			"external": {
+				"espnId": "123988"
+			}
+		},
+		{
+			"id": "red-bull",
+			"name": "Red Bull",
+			"aliases": [],
+			"sport": "f1",
+			"type": "team",
+			"external": {
+				"espnId": "106921"
+			}
+		},
+		{
+			"id": "sergio-perez",
+			"name": "Sergio Pérez",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "Mexico",
+			"external": {
+				"espnId": "4472"
+			}
+		},
+		{
+			"id": "valtteri-bottas",
+			"name": "Valtteri Bottas",
+			"aliases": [],
+			"sport": "f1",
+			"type": "athlete",
+			"country": "Finland",
+			"external": {
+				"espnId": "4520"
+			}
+		},
+		{
+			"id": "williams",
+			"name": "Williams",
+			"aliases": [],
+			"sport": "f1",
+			"type": "team",
+			"external": {
+				"espnId": "106967"
+			}
+		}
+	]
+}

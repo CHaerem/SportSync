@@ -1,7 +1,7 @@
 // WP-05: docs/data/entities.json — a stable-id index of athletes/teams/
 // tournaments/leagues, built from tracked.json + norwegian-golfers.json +
 // sports-config.js, deduped across sources.
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { execFileSync } from "child_process";
 import fs from "fs";
 import os from "os";
@@ -191,7 +191,7 @@ describe("buildEntityIndex", () => {
 		expect(national.map((e) => e.id)).toEqual(["norge"]);
 		expect(entities.find((e) => e.id === "norge").aliases).toContain("Norway");
 		expect(entities.find((e) => e.id === "norway")).toBeUndefined();
-	});
+	}, 30_000); // real-config build at world-registry scale: ~3s locally, >10s on a cold CI runner
 
 	it("guards the built index against same-type nickname/initial-form duplicates (normalized comparison)", () => {
 		// Independent (normalized) mirror of the relation the generator now folds,
@@ -211,6 +211,13 @@ describe("buildEntityIndex", () => {
 		// Run over the REAL default config (docs/data/entities.json's source), so a
 		// production regression — e.g. a new 100T-style pair the generator fails to
 		// fold — trips this. The generator guarantees the invariant by construction.
+		// WP-161 refinement: at world-registry scale, two GENUINELY DIFFERENT
+		// entities can coincide as nickname-forms (the CS2 org "OG" vs "OpTic
+		// Gaming"/"OneTap Gaming" — three real orgs). A pair whose entities carry
+		// DISTINCT external source ids is provably two real-world things, not a
+		// fold failure — only pairs without that proof count as dupes.
+		const provablyDistinct = (a, b) =>
+			a.external && b.external && JSON.stringify(a.external) !== JSON.stringify(b.external);
 		const entities = buildEntityIndex();
 		const byGroup = new Map();
 		for (const e of entities) {
@@ -222,7 +229,7 @@ describe("buildEntityIndex", () => {
 		for (const group of byGroup.values()) {
 			for (let i = 0; i < group.length; i++) {
 				for (let j = i + 1; j < group.length; j++) {
-					if (isNickname(group[i].name, group[j].name)) {
+					if (isNickname(group[i].name, group[j].name) && !provablyDistinct(group[i], group[j])) {
 						dupes.push(`${group[i].name} ⇄ ${group[j].name} (${group[i].sport}/${group[i].type})`);
 					}
 				}
@@ -234,7 +241,7 @@ describe("buildEntityIndex", () => {
 		expect(hundred).toHaveLength(1);
 		expect(hundred[0].aliases).toContain("100T");
 		expect(entities.find((e) => e.id === "100t")).toBeUndefined();
-	});
+	}, 30_000); // real-config build at world-registry scale (see the production guard above)
 
 	it("generates a stable, readable kebab-case slug for a free-text name with no existing id", () => {
 		const fakeSportsConfig = { cycling: { sport: "cycling", norwegian: { players: ["Søren Wærenskjold"] } } };
@@ -493,6 +500,113 @@ describe("buildEntityIndex", () => {
 		expect(teams).toHaveLength(1);
 		expect(teams[0].id).toBe("norge");
 		expect(teams[0].aliases).toContain("Norway");
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+});
+
+// WP-161: the world registry (configDir/registry/*.json) folds in LAST among
+// the entity sources — merges donate external/country/aliases, fresh entities
+// keep their stable registry ids, and the registry is authoritative on type.
+describe("buildEntityIndex — world registry fold (WP-161)", () => {
+	function withRegistry(configDir, filesByName) {
+		fs.mkdirSync(path.join(configDir, "registry"), { recursive: true });
+		for (const [name, entities] of Object.entries(filesByName)) {
+			fs.writeFileSync(path.join(configDir, "registry", name), JSON.stringify({ entities }));
+		}
+	}
+
+	it("a registry entity merges into an existing same-type entity, donating aliases + external + country (id/name kept)", () => {
+		const configDir = tmpDir("ss-entities-reg-merge-");
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({ athletes: [{ id: "magnus-carlsen", name: "Magnus Carlsen", sport: "chess" }] })
+		);
+		withRegistry(configDir, {
+			"chess.json": [{ id: "magnus-carlsen-fide", name: "Magnus Carlsen", aliases: ["Carlsen"], sport: "chess", type: "athlete", country: "NOR", external: { fideId: "1503014" } }],
+		});
+		const entities = buildEntityIndex(configDir, {});
+		const carlsen = entities.filter((e) => e.type === "athlete" && e.sport === "chess");
+		expect(carlsen).toHaveLength(1); // merged, not duplicated
+		expect(carlsen[0].id).toBe("magnus-carlsen"); // tracked wins the id
+		expect(carlsen[0].aliases).toContain("Carlsen");
+		expect(carlsen[0].external).toEqual({ fideId: "1503014" });
+		expect(carlsen[0].country).toBe("NOR");
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("a fresh registry entity registers under its own stable id with external/country passed through", () => {
+		const configDir = tmpDir("ss-entities-reg-fresh-");
+		withRegistry(configDir, {
+			"football.json": [{ id: "liverpool", name: "Liverpool", aliases: [], sport: "football", type: "team", external: { espnId: "364" } }],
+		});
+		const entities = buildEntityIndex(configDir, {});
+		const liv = entities.find((e) => e.id === "liverpool");
+		expect(liv).toMatchObject({ name: "Liverpool", sport: "football", type: "team", external: { espnId: "364" } });
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("registry is authoritative on type: a cross-type overlap registers fresh AND logs the mismatch (tracked keeps its entry)", () => {
+		const configDir = tmpDir("ss-entities-reg-type-");
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({ leagues: [{ id: "fc-barcelona", name: "FC Barcelona", sport: "football" }] })
+		);
+		withRegistry(configDir, {
+			"football.json": [{ id: "barcelona-registry", name: "Barcelona", aliases: ["FC Barcelona"], sport: "football", type: "team", external: { espnId: "83" } }],
+		});
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		const entities = buildEntityIndex(configDir, {});
+		expect(warn.mock.calls.some((c) => String(c[0]).includes("type-mismatch"))).toBe(true);
+		warn.mockRestore();
+		expect(entities.find((e) => e.id === "fc-barcelona")).toMatchObject({ type: "league" }); // tracked untouched
+		expect(entities.find((e) => e.id === "barcelona-registry")).toMatchObject({ type: "team", external: { espnId: "83" } });
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("an id collision keeps the first-registered id (tracked wins) and suffixes the registry entity", () => {
+		const configDir = tmpDir("ss-entities-reg-collide-");
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({ athletes: [{ id: "lyn", name: "Kari Lyn", sport: "golf" }] })
+		);
+		withRegistry(configDir, {
+			"football.json": [{ id: "lyn", name: "Lyn 1896", aliases: [], sport: "football", type: "team", external: { espnId: "9" } }],
+		});
+		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		const entities = buildEntityIndex(configDir, {});
+		warn.mockRestore();
+		expect(entities.find((e) => e.id === "lyn")).toMatchObject({ name: "Kari Lyn", type: "athlete" });
+		expect(entities.find((e) => e.id === "lyn-2")).toMatchObject({ name: "Lyn 1896", type: "team", external: { espnId: "9" } });
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("registry entities are NOT dedup-scanned against each other (pre-deduped artifacts — both register)", () => {
+		const configDir = tmpDir("ss-entities-reg-boundary-");
+		withRegistry(configDir, {
+			// Deliberately overlapping names in the same file: the fold must trust
+			// the artifact (CI enforces uniqueness/dedup at seed level) and keep both.
+			"football.json": [
+				{ id: "real-sociedad", name: "Real Sociedad", aliases: [], sport: "football", type: "team", external: { espnId: "1" } },
+				{ id: "real-sociedad-b", name: "Real Sociedad B", aliases: [], sport: "football", type: "team", external: { espnId: "2" } },
+			],
+		});
+		const entities = buildEntityIndex(configDir, {});
+		expect(entities.find((e) => e.id === "real-sociedad")).toBeTruthy();
+		expect(entities.find((e) => e.id === "real-sociedad-b")).toBeTruthy();
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("files are read in sorted name order and a missing registry dir is a no-op", () => {
+		const configDir = tmpDir("ss-entities-reg-order-");
+		// no registry dir at all → still builds (existing behaviour untouched)
+		expect(() => buildEntityIndex(configDir, {})).not.toThrow();
+		withRegistry(configDir, {
+			"b.json": [{ id: "bbb", name: "BBB", aliases: [], sport: "football", type: "team", external: { espnId: "2" } }],
+			"a.json": [{ id: "aaa", name: "AAA", aliases: [], sport: "football", type: "team", external: { espnId: "1" } }],
+		});
+		const entities = buildEntityIndex(configDir, {});
+		const ids = entities.filter((e) => ["aaa", "bbb"].includes(e.id)).map((e) => e.id);
+		expect(ids).toEqual(["aaa", "bbb"]); // a.json folded before b.json
 		fs.rmSync(configDir, { recursive: true, force: true });
 	});
 });

@@ -90,6 +90,19 @@ struct EntityIndex: Sendable {
     /// `byId`'s de-dup.
     private let sourceRank: [String: Int]
 
+    /// WP-161 — a token → entity-index inverted index for `detectEntities`. A
+    /// mention match by EITHER signal (`containsName` or significant-token subset)
+    /// requires every token of some term to be present in the utterance, so an
+    /// entity sharing NO token with the utterance can never match. At world-
+    /// registry scale (3 661 entities) scanning them all per utterance turned the
+    /// parser-heavy paths (bulk-fangst, the eval corpus, the assistant at runtime)
+    /// into an O(entities) hot loop; this map lets `detectEntities` score only the
+    /// handful of candidates that share a token — same results, O(candidates).
+    /// Keyed by the SAME `Self.tokens` the scorer reads, over non-bare-sport terms
+    /// of non-sport/category entities (both are skipped by the scorer, so indexing
+    /// them would only add candidates that score 0).
+    private let mentionIndex: [String: [Int]]
+
     init(_ entities: [Entity]) {
         self.entities = entities
         self.byId = Dictionary(entities.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
@@ -111,9 +124,20 @@ struct EntityIndex: Sendable {
             if map[key]?.contains(id) == true { return }
             map[key, default: []].append(id)
         }
+        var mention: [String: [Int]] = [:]
         var preppedEntries: [PreppedEntity] = []
         preppedEntries.reserveCapacity(entities.count)
-        for e in entities {
+        for (entityIndex, e) in entities.enumerated() {
+            // WP-161 mention index: register this entity under every token of its
+            // non-bare-sport name/alias terms (the tokens `detectEntities` reads).
+            if e.type != "sport", e.type != "category" {
+                var seenTok = Set<String>()
+                for term in [e.name] + e.aliases where !Self.isBareSportWord(term) {
+                    for t in Self.tokens(term) where seenTok.insert(t).inserted {
+                        mention[t, default: []].append(entityIndex)
+                    }
+                }
+            }
             var terms = [e.name] + e.aliases
             terms.append(e.id.replacingOccurrences(of: "-", with: " "))
             var preppedTerms: [PreppedTerm] = []
@@ -147,6 +171,7 @@ struct EntityIndex: Sendable {
         }
         self.exactTermIds = exact
         self.initialsIds = inits
+        self.mentionIndex = mention
         self.prepped = Prepped(entries: preppedEntries)
     }
 
@@ -407,22 +432,37 @@ struct EntityIndex: Sendable {
     /// (`containsName`), or (2) every significant token of the name (years and
     /// parenthetical qualifiers dropped) is present — so a year-suffixed
     /// tournament name like "Tour de France 2026" still matches "Tour de
-    /// France". Only the highest-confidence tier is returned. WP-166 adds two
-    /// full-long-tail guards: a bare sport-word term is ignored (a whole-sport
-    /// signal, not a target), and a co-mentioned competition drops out when a
-    /// specific team/athlete is present — so a scope phrase ("i OBOS-ligaen")
-    /// never competes with the real target ("Lyn").
+    /// France". Only the highest-confidence tier is returned. WP-166/161 add
+    /// three full-long-tail guards: a bare sport-word term is ignored (a
+    /// whole-sport signal, not a target); a sub-span match is dropped (a
+    /// single-word entity like the national side "France" that only matches a
+    /// word INSIDE a longer matched name, "Tour de France", is not a separate
+    /// mention); and a co-mentioned competition drops out when a specific
+    /// team/athlete is the target — so a scope phrase ("i OBOS-ligaen") never
+    /// competes with the real target ("Lyn").
     func detectEntities(in utterance: String) -> [Entity] {
         let hayTokens = Set(Self.tokens(utterance))
-        var scored: [(entity: Entity, score: Int)] = []
-        for e in entities {
+        // WP-161: only score entities that share a token with the utterance — a
+        // match by either signal requires all of some term's tokens to be present,
+        // so a non-sharing entity can never match. O(candidates), not O(all).
+        var candidateIndices = Set<Int>()
+        for token in hayTokens {
+            if let ids = mentionIndex[token] { candidateIndices.formUnion(ids) }
+        }
+        // Track, per matched entity, the token-set of EVERY term that matched —
+        // the sub-span guard needs the spans, not just a scalar score.
+        var scored: [(entity: Entity, score: Int, matchTokenSets: [Set<String>])] = []
+        for idx in candidateIndices {
+            let e = entities[idx]
             // WP-64: sport-/category-level entities are NOT matched as explicit
             // targets here — a whole-sport command ("mer langrenn") routes
             // through sportKeyword → representativeEntity, and an umbrella term
             // ("vintersport") through categoryKeyword, so the plain sport word
             // never out-competes the real tournament/team for that sport.
+            // (Already excluded from mentionIndex; kept for clarity.)
             if e.type == "sport" || e.type == "category" { continue }
             var score = 0
+            var matchTokenSets: [Set<String>] = []
             for term in [e.name] + e.aliases {
                 // WP-166: a term that is nothing but bare sport vocabulary ("F1",
                 // "Formel 1") is a WHOLE-SPORT signal, not an explicit target — it
@@ -431,14 +471,32 @@ struct EntityIndex: Sendable {
                 // (f1-world-championship-2026 ↔ "F1") never steals "litt F1" from
                 // sport-f1. The entity's real, descriptive NAME still matches.
                 if Self.isBareSportWord(term) { continue }
-                if TextMatch.containsName(utterance, term) { score = max(score, 3) }
+                var termMatched = false
+                if TextMatch.containsName(utterance, term) { score = max(score, 3); termMatched = true }
                 let sig = Set(Self.significantTokens(term))
-                if !sig.isEmpty, sig.isSubset(of: hayTokens) { score = max(score, 2) }
+                if !sig.isEmpty, sig.isSubset(of: hayTokens) { score = max(score, 2); termMatched = true }
+                if termMatched {
+                    let tokenSet = Set(Self.tokens(term))
+                    if !tokenSet.isEmpty { matchTokenSets.append(tokenSet) }
+                }
             }
-            if score > 0 { scored.append((e, score)) }
+            if score > 0 { scored.append((e, score, matchTokenSets)) }
         }
         guard let best = scored.map(\.score).max() else { return [] }
-        var winners = scored.filter { $0.score == best }.map(\.entity)
+        var winners = scored.filter { $0.score == best }
+        // WP-161: at register scale a single-word entity name ("France", "Norge")
+        // spuriously matches a word INSIDE a longer matched name ("Tour de
+        // France") — a sub-span, not a separate mention. Drop an entity whose
+        // EVERY matched-term span is a STRICT subset of another winner's matched
+        // span. An entity with any span of its own that no other winner subsumes
+        // (a genuinely-separate mention like "Lyn" beside "OBOS-ligaen") survives.
+        let allSpans = winners.flatMap(\.matchTokenSets)
+        winners = winners.filter { w in
+            w.matchTokenSets.contains { mine in
+                !allSpans.contains { other in other.count > mine.count && mine.isSubset(of: other) }
+            }
+        }
+        var result = winners.map(\.entity)
         // WP-166: within ONE clause a specific team/athlete is the follow-target
         // and a co-mentioned competition (league/tournament) is its SCOPE — "Lyn i
         // OBOS-ligaen" follows Lyn, not the 1. divisjon. So when a team/athlete is
@@ -446,11 +504,11 @@ struct EntityIndex: Sendable {
         // ALONE (no team/athlete) stays a legitimate target ("Følg Tour de
         // France"); clause-splitting already separates a genuine multi-follow
         // ("Barcelona og La Liga") into its own clauses before this runs.
-        if winners.contains(where: { $0.type == "team" || $0.type == "athlete" }) {
-            winners.removeAll { $0.type == "league" || $0.type == "tournament" }
+        if result.contains(where: { $0.type == "team" || $0.type == "athlete" }) {
+            result.removeAll { $0.type == "league" || $0.type == "tournament" }
         }
         var seen = Set<String>()
-        return winners.filter { seen.insert($0.id).inserted }.sorted { $0.name < $1.name }
+        return result.filter { seen.insert($0.id).inserted }.sorted { $0.name < $1.name }
     }
 
     /// WP-166: is a name/alias term nothing but bare sport vocabulary — "F1",

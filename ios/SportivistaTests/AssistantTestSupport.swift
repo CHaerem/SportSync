@@ -13,12 +13,19 @@
 import Foundation
 
 enum AssistantTestSupport {
-    /// EntityIndex over the real, checked-in entities fixture.
-    static func liveIndex() -> EntityIndex {
+    /// EntityIndex over the real, checked-in entities fixture — built ONCE and
+    /// shared (immutable, read-only in tests). WP-161 lesson: XCTest creates one
+    /// test-case instance per test METHOD at discovery, so an instance-property
+    /// `liveIndex()` used to rebuild the index hundreds of times; at world-
+    /// registry scale (3 661 entities) that exceeded the runner's preparation
+    /// timeout before a single test ran.
+    private static let cachedLiveIndex: EntityIndex = {
         // swiftlint:disable:next force_try
         let entities = try! SportivistaJSON.decoder.decode([Entity].self, from: Fixture.data("entities"))
         return EntityIndex(entities)
-    }
+    }()
+
+    static func liveIndex() -> EntityIndex { cachedLiveIndex }
 
     /// A ProfileStore in a fresh, unique temp directory.
     static func tempProfileStore() -> ProfileStore {
