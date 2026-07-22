@@ -311,7 +311,7 @@ final class AgendaViewModel {
         // `MemoryStore(profileStore:).load()`, each decoding the same file).
         let events: [Event]
         let baseInterests: Interests
-        let syncState: ProfileSyncState
+        var syncState: ProfileSyncState
         do {
             let loadState = signposter.beginInterval("load")
             let _tl = CFAbsoluteTimeGetCurrent()
@@ -320,8 +320,6 @@ final class AgendaViewModel {
             baseInterests = dataStore.loadInterests() ?? Interests()
             syncState = profileStore.loadSyncState()
         }
-        let profile = syncState.profile
-
         // WP-63 `index` — the EntityIndex build (entities.json decode + resolver
         // substrate). WP-60: reuse the cached entity index when present
         // (entities.json only changes on a sync, which invalidates the cache)
@@ -334,6 +332,16 @@ final class AgendaViewModel {
             defer { signposter.endInterval("index", indexState); LaunchTrace.mark("reload/index (cached=\(cachedIndex != nil))", since: _ti) }
             index = cachedIndex ?? EntityIndex(dataStore.loadEntities())
         }
+
+        // WP-162 — re-ground rules still frozen on a FORMER (edition-stamped)
+        // entity id onto the canonical one, once, the moment the new index
+        // arrives. Idempotent and lossless: a normal reload finds nothing to do
+        // and writes nothing (see ProfileIdMigration).
+        if let migrated = ProfileIdMigration.migrate(syncState, index: index, now: now, deviceID: profileStore.deviceID) {
+            try? profileStore.saveSyncState(migrated)
+            syncState = migrated
+        }
+        let profile = syncState.profile
 
         // WP-16.4: fold the local profile in, so the board reflects what the
         // assistant just changed — this is the visible half of "Bekreft →

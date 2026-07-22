@@ -286,6 +286,69 @@ function ssInferKind(entityId) {
 }
 
 // ---------------------------------------------------------------------------
+// WP-162 — one-time re-grounding of edition-stamped rule ids.
+// ---------------------------------------------------------------------------
+
+/** Map every published `altIds` entry → its canonical entity. The server keeps a
+ *  renamed competition's former ids on the entity (build-entities.js
+ *  `canonicalizeEditions`), so an existing rule can be re-pointed instead of
+ *  quietly dying when next season's id lands. */
+function ssCanonicalIdMap(entities) {
+	const map = new Map();
+	for (const e of entities || []) {
+		for (const alt of (e && e.altIds) || []) if (alt && alt !== e.id) map.set(alt, e);
+	}
+	return map;
+}
+
+/** WP-162 — re-ground the profile's rules against the CURRENT entity index.
+ *  A rule whose entityId is now an `altIds` entry is moved onto the canonical id
+ *  (tombstoning the old id so the move REPLICATES rather than duplicating across
+ *  devices — the CRDT keys on entityId, and iOS `ProfileIdMigration` performs the
+ *  byte-same move, so two devices converge on one rule instead of two).
+ *
+ *  Contract, deliberately conservative:
+ *    • LOSSLESS  — a rule that cannot be re-grounded is left EXACTLY as it is
+ *                  (it keeps working as a name-based follow); nothing is dropped.
+ *    • IDEMPOTENT— a second run finds nothing to do and returns null.
+ *    • MERGING   — if the canonical id is already followed, the old rule is only
+ *                  tombstoned (no duplicate row), keeping the existing follow.
+ *  Returns the new state, or null when nothing changed. */
+function ssMigrateProfileIds(state, entities, nowIso, deviceID) {
+	const canonical = ssCanonicalIdMap(entities);
+	if (!canonical.size) return null;
+	const live = ssLiveRules(state);
+	if (!live.length) return null;
+	const liveIds = new Set(live.map((r) => r.entityId));
+	let changed = false;
+	const next = [];
+	for (const rule of live) {
+		const target = canonical.get(rule.entityId);
+		if (!target) { next.push(rule); continue; }
+		changed = true;
+		if (liveIds.has(target.id)) continue; // already followed under the canonical id → just drop the stale one
+		next.push(Object.assign({}, rule, {
+			entityId: target.id,
+			entityName: target.name || rule.entityName,
+			sport: target.sport || rule.sport,
+			kind: rule.kind || target.type || ssInferKind(target.id),
+		}));
+		liveIds.add(target.id);
+	}
+	if (!changed) return null;
+	const now = nowIso || ssIsoSeconds(new Date().toISOString());
+	return ssUpdatingRules(state, next, now, deviceID || 'web-migration');
+}
+
+/** Load → migrate → persist, once per page load. Returns the (possibly migrated)
+ *  state; a no-op migration performs no write and causes no merge churn. */
+function ssProfileMigrateStored(entities, nowIso) {
+	const state = ssProfileLoad();
+	const migrated = ssMigrateProfileIds(state, entities, nowIso, ssDeviceId());
+	return migrated ? ssProfileSave(migrated) : state;
+}
+
+// ---------------------------------------------------------------------------
 // Store — localStorage-backed (ss-profile / ss-device-id).
 // ---------------------------------------------------------------------------
 
@@ -469,6 +532,7 @@ if (typeof module !== 'undefined' && module.exports) {
 		ssRulePayloadKey, ssFactPayloadKey, ssLensToken, ssStableStringify, ssDeepEqual,
 		ssUpdatingRules, ssLiveRules, ssProfileToInterests, ssInferKind,
 		ssProfileLoad, ssProfileSave, ssDeviceId, ssStateIsEmpty,
+		ssCanonicalIdMap, ssMigrateProfileIds, ssProfileMigrateStored,
 		ssProfileFollow, ssProfileUnfollow, ssProfileFollows,
 		ssProfileEncode, ssProfileDecode, ssProfileParseLink, ssProfileImport,
 		ssBase64UrlEncode, ssBase64UrlDecode, ssIsoSeconds,

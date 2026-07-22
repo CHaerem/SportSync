@@ -66,10 +66,10 @@ final class ProfileStoreTests: XCTestCase {
     func test_lensSurvivesRoundTrip() throws {
         let now = Date(timeIntervalSince1970: 1_700_000_000)
         let profile = InterestProfile()
-            .applying(GroundedMutation(kind: .add, entity: index.entity(id: "tour-de-france-2026")!,
+            .applying(GroundedMutation(kind: .add, entity: index.entity(id: "tour-de-france")!,
                                        scope: nil, weight: 0.5, reason: "norsk fokus",
                                        previousRule: nil, lens: .throughNorwegians), now: now)
-            .applying(GroundedMutation(kind: .add, entity: index.entity(id: "esports-world-cup-2026-chess")!,
+            .applying(GroundedMutation(kind: .add, entity: index.entity(id: "esports-world-cup-chess")!,
                                        scope: nil, weight: 0.5, reason: "utvalgte",
                                        previousRule: nil,
                                        lens: .throughAthletes([LensAthlete(entityId: "magnus-carlsen", name: "Magnus Carlsen")])),
@@ -78,7 +78,7 @@ final class ProfileStoreTests: XCTestCase {
         try store.save(profile)
         let loaded = store.load()
         XCTAssertEqual(loaded, profile, "the lens (both cases) round-trips through JSON unchanged")
-        XCTAssertEqual(loaded.rule(for: "tour-de-france-2026")?.lens, .throughNorwegians)
+        XCTAssertEqual(loaded.rule(for: "tour-de-france")?.lens, .throughNorwegians)
     }
 
     func test_papersOverPreLensProfile_defaultsToSportAsSuch() throws {

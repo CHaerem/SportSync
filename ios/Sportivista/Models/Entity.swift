@@ -50,7 +50,18 @@ struct Entity: Codable, Equatable, Hashable {
     /// row then falls back to the WP-185 ladder (flag → monogram → sport glyph).
     var logo: EntityLogo?
 
-    private enum CodingKeys: String, CodingKey { case id, name, aliases, sport, type, initials, country, national, colors, logo }
+    /// WP-162 — the edition this record currently books ("2026/27"), when the
+    /// entity is a RECURRING competition. Pure metadata: it is never part of the
+    /// `id`, precisely so a follow survives the season change.
+    var edition: String?
+
+    /// WP-162 — every id this entity has previously been published under
+    /// (`premier-league-2026-27` → `premier-league`). A profile rule frozen on an
+    /// old id resolves through these, so a follow keeps working even before
+    /// `ProfileIdMigration` has re-pointed it.
+    var altIds: [String]
+
+    private enum CodingKeys: String, CodingKey { case id, name, aliases, sport, type, initials, country, national, colors, logo, edition, altIds }
 
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
@@ -64,6 +75,8 @@ struct Entity: Codable, Equatable, Hashable {
         national = try c.decodeIfPresent(Bool.self, forKey: .national) ?? false
         colors = try c.decodeIfPresent(EntityColors.self, forKey: .colors)
         logo = try c.decodeIfPresent(EntityLogo.self, forKey: .logo)
+        edition = try c.decodeIfPresent(String.self, forKey: .edition)
+        altIds = try c.decodeIfPresent([String].self, forKey: .altIds) ?? []
     }
 
 }

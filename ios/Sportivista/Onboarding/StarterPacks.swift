@@ -31,6 +31,14 @@
 //  Ingebrigtsen directly. WP-133 also consolidated the Norway/Norge national-team
 //  duplicate into a single `norge` entity (curated known-alias in build-entities).
 //
+//  WP-162 — every pack id is now the CANONICAL, SEASONLESS entity id
+//  (`premier-league`, not `premier-league-2026-27`). An edition-stamped id is a
+//  ship-dated follow: it dies the moment next season's bookkeeping publishes a
+//  new one, silently, for every user who tapped the pack. The `tests/
+//  starter-packs.test.js` CI guard checks these ids against the LIVE published
+//  index (docs/data/entities.json), not the test fixture — the drift that hid
+//  here before was invisible precisely because only the fixture was checked.
+//
 //  Grounding notes (why some owner-named entities aren't literal ids):
 //    • Grand Slams / golf majors beyond The Open have no entities — following
 //      Ruud/Hovland already surfaces their matches in those tournaments.
@@ -130,7 +138,7 @@ enum StarterPacks {
                 // owner's club): the top league + the national team. Both are now
                 // grounded server-side (WP-133 seeded Eliteserien as an entity and
                 // consolidated the Norway/Norge national-team duplicate to `norge`).
-                StarterRule("eliteserien-2026", "Eliteserien", sport: "football", type: "league"),
+                StarterRule("eliteserien", "Eliteserien", sport: "football", type: "tournament"),
                 StarterRule("norge", "Norge", sport: "football", type: "team"),
             ]
         ),
@@ -168,7 +176,7 @@ enum StarterPacks {
             reason: "Lagt til fra startpakken «Sykkel».",
             rules: [
                 StarterRule("uno-x-mobility", "Uno-X Mobility", sport: "cycling", type: "team"),
-                StarterRule("tour-de-france-2026", "Tour de France 2026", sport: "cycling", type: "tournament", lens: .throughNorwegians),
+                StarterRule("tour-de-france", "Tour de France", sport: "cycling", type: "tournament", lens: .throughNorwegians),
             ]
         ),
         StarterPack(
@@ -208,9 +216,9 @@ enum StarterPacks {
             subtitle: "Premier League, La Liga og VM",
             reason: "Lagt til fra startpakken «Internasjonal toppfotball».",
             rules: [
-                StarterRule("premier-league-2026-27", "Premier League 2026/27", sport: "football", type: "league"),
-                StarterRule("la-liga-2026-27", "La Liga 2026/27", sport: "football", type: "league"),
-                StarterRule("fifa-world-cup-2026", "FIFA World Cup 2026", sport: "football", type: "tournament"),
+                StarterRule("premier-league", "Premier League", sport: "football", type: "tournament"),
+                StarterRule("la-liga", "La Liga", sport: "football", type: "tournament"),
+                StarterRule("fifa-world-cup", "FIFA World Cup", sport: "football", type: "tournament"),
             ]
         ),
         StarterPack(
@@ -219,7 +227,7 @@ enum StarterPacks {
             subtitle: "Hele sesongen",
             reason: "Lagt til fra startpakken «Formel 1».",
             rules: [
-                StarterRule("f1-world-championship-2026", "Formula 1 World Championship 2026", sport: "f1", type: "tournament"),
+                StarterRule("f1-world-championship", "Formula 1 World Championship", sport: "f1", type: "tournament"),
             ]
         ),
         StarterPack(
@@ -230,7 +238,7 @@ enum StarterPacks {
             rules: [
                 // Generalised (WP-132): the marquee tournament, not the owner's
                 // 100 Thieves / rain. Following it shows the whole event.
-                StarterRule("esports-world-cup-2026-cs2", "Esports World Cup 2026 – CS2", sport: "esports", type: "tournament"),
+                StarterRule("esports-world-cup-cs2", "Esports World Cup – CS2", sport: "esports", type: "tournament"),
             ]
         ),
     ]

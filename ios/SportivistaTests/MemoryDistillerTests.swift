@@ -25,7 +25,7 @@ final class MemoryDistillerTests: XCTestCase {
         let note2 = try! XCTUnwrap(note)
         XCTAssertEqual(note2.kind, .spoilerPolicy)
         XCTAssertTrue(note2.summary.hasPrefix("Lærte:"), "the note is a compact learned line, not a transcript")
-        XCTAssertTrue(note2.entityRefs.contains("tour-de-france-2026") || note2.entityRefs.contains("cycling"),
+        XCTAssertTrue(note2.entityRefs.contains("tour-de-france") || note2.entityRefs.contains("cycling"),
                       "entityRefs are grounded through the index")
     }
 

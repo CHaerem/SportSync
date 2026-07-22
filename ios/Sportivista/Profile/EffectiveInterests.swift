@@ -46,7 +46,7 @@ enum EffectiveInterests {
         for rule in profile.rules {
             let entity = index.entity(id: rule.entityId)
             let name = entity?.name ?? rule.entityName
-            let aliases = entity?.aliases ?? []
+            let aliases = Self.seasonProof(name: name, aliases: entity?.aliases ?? [])
             let sport = entity?.sport ?? rule.sport
             let type = entity?.type ?? ""
             let merged = Interests.Entity(name: name, aliases: aliases, sport: sport, notify: nil)
@@ -74,5 +74,27 @@ enum EffectiveInterests {
             alwaysTrack: Interests.AlwaysTrack(athletes: athletes, teams: teams, tournaments: tournaments),
             notify: base.notify
         )
+    }
+
+    /// WP-162 — the SEASON-PROOF alias set for a followed entity: its aliases
+    /// plus the edition-stripped form of the display name / of any alias that
+    /// carries one ("Premier League 2026/27" → "Premier League").
+    ///
+    /// A profile rule freezes the entity NAME at follow time. Without this, a
+    /// rule created against one edition word-boundary-matches NOTHING once the
+    /// next edition's title reaches the board — the follow dies with no signal.
+    /// The stripped form is a full, yearless name, so it is a legitimate
+    /// word-boundary term (never an acronym-style near-collision), and it is
+    /// purely ADDITIVE: a name with no edition token contributes nothing. Mirrors
+    /// `ssWithEditionlessTerms` in docs/js/lens.js.
+    static func seasonProof(name: String, aliases: [String]) -> [String] {
+        var out = aliases
+        var seen = Set(([name] + aliases).map { TextMatch.normalize($0) })
+        for raw in [name] + aliases {
+            let stripped = EntityIndex.editionStripped(TextMatch.normalize(raw))
+            guard !stripped.isEmpty, seen.insert(stripped).inserted else { continue }
+            out.append(stripped)
+        }
+        return out
     }
 }

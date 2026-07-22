@@ -66,6 +66,21 @@ function ssEntityName(entry) {
 	return typeof entry === 'string' ? entry : (entry && entry.name) || '';
 }
 
+/** WP-162 — a name with its EDITION noise removed: a trailing "(…)" annotation
+ *  and any 4-digit year / "2026/27" season token. "Tour de France 2026" → "Tour
+ *  de France"; "The Open Championship 2026 (Royal Birkdale)" → "The Open
+ *  Championship". The JS twin of build-entities.js `editionStrippedName` and
+ *  iOS `EntityIndex.editionStripped` — a follow frozen against one edition must
+ *  keep matching the next one. Returns '' when nothing meaningful remains. */
+function ssEditionStripped(name) {
+	return String(name || '')
+		.replace(/\s*\([^)]*\)\s*$/g, ' ')
+		.replace(/\b(?:19|20)\d{2}(?:\s*\/\s*\d{2})?\b/g, ' ')
+		.replace(/\s{2,}/g, ' ')
+		.replace(/^[\s–—-]+|[\s–—-]+$/g, '')
+		.trim();
+}
+
 /** Flatten alwaysTrack entries into match terms (name + aliases), string or object. */
 function trackedTerms(entries) {
 	const out = [];
@@ -228,3 +243,4 @@ window.ssContainsTerm = ssContainsTerm;
 window.ssNormalize = ssNormalize;
 window.ssCoreName = ssCoreName;
 window.ssNextEventForEntity = ssNextEventForEntity;
+window.ssEditionStripped = ssEditionStripped;

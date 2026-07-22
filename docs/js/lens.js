@@ -80,7 +80,29 @@ function ssLensEntity(raw, defaultNotify) {
 	if (!raw.name) return null;
 	const terms = [raw.name];
 	if (Array.isArray(raw.aliases)) for (const a of raw.aliases) if (a) terms.push(a);
-	return { terms, sport: raw.sport || null, notify: raw.notify == null ? defaultNotify : !!raw.notify };
+	return { terms: ssWithEditionlessTerms(terms), sport: raw.sport || null, notify: raw.notify == null ? defaultNotify : !!raw.notify };
+}
+
+/** WP-162 — the SEASON-PROOF term set: every term plus its edition-stripped form.
+ *  A follow freezes the entity NAME at follow time ("Premier League 2026/27"),
+ *  so without this a rule created against one edition word-boundary-matches
+ *  NOTHING once the next edition's title lands on the board — a follow that dies
+ *  silently. The stripped form is a full, yearless name ("Premier League"), so it
+ *  is a legitimate word-boundary term and never an acronym-style near-collision.
+ *  Additive and idempotent: a term with no edition token contributes nothing. */
+function ssWithEditionlessTerms(terms) {
+	if (typeof ssEditionStripped !== 'function') return terms;
+	const out = terms.slice();
+	const seen = new Set(out.map((t) => ssNormalize(t)));
+	for (const t of terms) {
+		const stripped = ssEditionStripped(t);
+		if (!stripped) continue;
+		const key = ssNormalize(stripped);
+		if (!key || seen.has(key)) continue;
+		seen.add(key);
+		out.push(stripped);
+	}
+	return out;
 }
 
 /** Port of server matchInterest (helpers.js:120) / FeedCompiler.matchInterest:

@@ -108,7 +108,7 @@ final class MockInterestAssistantTests: XCTestCase {
 
     func test08_følgTourDeFrance() {
         let p = parse("Følg Tour de France")
-        XCTAssertEqual(p.map(\.entityId), ["tour-de-france-2026"])
+        XCTAssertEqual(p.map(\.entityId), ["tour-de-france"])
         XCTAssertEqual(p[0].kind, .add)
         XCTAssertNil(p[0].scope)
     }
@@ -139,7 +139,7 @@ final class MockInterestAssistantTests: XCTestCase {
         let p = parse("Følg Tour de France med fokus på norske utøvere")
         XCTAssertEqual(p.count, 1)
         XCTAssertEqual(p[0].kind, .add)
-        XCTAssertEqual(p[0].entityId, "tour-de-france-2026")
+        XCTAssertEqual(p[0].entityId, "tour-de-france")
         XCTAssertEqual(p[0].lens, .throughNorwegians, "«med fokus på norske» must become the Norwegian lens")
         XCTAssertNil(p[0].scope)
         XCTAssertTrue(p[0].reason.contains("norske"), "the reason names the perspective")
@@ -300,7 +300,7 @@ final class MockInterestAssistantTests: XCTestCase {
         // No connector → exactly one clause → identical to the pre-WP-65 path.
         XCTAssertEqual(parse("Følg Casper Ruud bare i Grand Slams").map(\.entityId), ["casper-ruud"])
         XCTAssertEqual(parse("Følg Tour de France med fokus på norske utøvere").map(\.entityId),
-                       ["tour-de-france-2026"])
+                       ["tour-de-france"])
     }
 
     // MARK: - Availability + async surface

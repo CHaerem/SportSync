@@ -202,6 +202,40 @@ The porter's contract is unchanged: reproduce `relevant` as the personal lens.
 `isCovered` has no client mirror (clients never see the catalog) and is not part
 of the cross-platform vector suite.
 
+## 7. WP-162 — edition-stripped matching terms; the vectors are NOT re-frozen
+
+WP-162 makes a follow survive a season/edition change: a rule frozen on last
+season's entity (id `premier-league-2026-27`, name "Premier League 2026/27")
+must keep matching next season's edition. Two of its three defences touch the
+matching path the vectors pin:
+
+- the term set an interest entity is matched by now ALSO carries the
+  edition-stripped form of its name/aliases (JS `ssWithEditionlessTerms` in
+  `docs/js/lens.js`, Swift `EffectiveInterests.seasonProof`), and
+- the resolver resolves a former id through the published `altIds`.
+
+**Decision: the golden vectors are NOT re-frozen — and a re-freeze here would have
+been a red flag, not a fix.** The rule is that the vectors are re-frozen only if
+the vector INPUTS actually carry an edition token on the *interest/profile* side,
+because that is the only side the new term-stripping reads. They do not:
+
+- No `interests`/profile entity in ANY vector has a `name` (or alias) carrying a
+  4-digit year or `YYYY/YY` season token — verified by grep over every fixture.
+  (Events carry years in their *titles/tournaments*, but a title is haystack, not
+  a matched term, so stripping never runs on it.)
+- Edition stripping is strictly ADDITIVE and never *shortens* a name into a
+  different entity: "Tour de France Femmes 2026" strips to "Tour de France
+  Femmes", never to "Tour de France" (a full word-boundary term, not a
+  substring). So it cannot change an existing expected set even in principle.
+
+Consequently every `relevant` / `mustWatch` / `mustSee` expected set is
+bit-identical, and `feed-vectors.test.js` passes unchanged against both the
+shipped `lens.js` and the Swift `FeedCompiler`. The new behaviour is proven by
+its OWN dedicated suite instead — `tests/season-proof-follows.test.js` and
+`SportivistaTests/SeasonProofFollowsTests.swift` ("a 2026 rule matches the 2027
+edition") — exactly because it is a *new* capability over *new* inputs, not a
+change to the frozen semantics.
+
 ## Summary for the porter
 
 - Implement **three** predicates, not one. Keep the bell sport-scoped +

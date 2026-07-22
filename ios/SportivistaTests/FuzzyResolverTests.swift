@@ -28,18 +28,18 @@ final class FuzzyResolverTests: XCTestCase {
 
     func test_resolve_lowercaseYearlessName_servesTdF() {
         let r = index.resolve("tour de france")
-        XCTAssertEqual(r.served?.id, "tour-de-france-2026", "the bare, yearless name resolves via the year-strip alias")
+        XCTAssertEqual(r.served?.id, "tour-de-france", "the bare, yearless name resolves via the year-strip alias")
     }
 
     func test_resolve_initials_servesTdF() {
         let r = index.resolve("tdf")
-        XCTAssertEqual(r.served?.id, "tour-de-france-2026", "the acronym resolves via the stored initials")
+        XCTAssertEqual(r.served?.id, "tour-de-france", "the acronym resolves via the stored initials")
     }
 
     func test_resolve_typo_servesTdF() {
         // "Farnce" is edit-distance 2 from "France" inside a full 3-word phrase.
         let r = index.resolve("Tour de Farnce")
-        XCTAssertEqual(r.served?.id, "tour-de-france-2026", "a same-shape typo still resolves unambiguously")
+        XCTAssertEqual(r.served?.id, "tour-de-france", "a same-shape typo still resolves unambiguously")
     }
 
     func test_resolve_absent_isEmpty() {
@@ -72,8 +72,8 @@ final class FuzzyResolverTests: XCTestCase {
     // MARK: - searchEntities tool quality (the model's first line of defence)
 
     func test_searchTool_findsByYearlessNameAndInitials() {
-        XCTAssertTrue(index.search("tour de france").contains { $0.id == "tour-de-france-2026" })
-        XCTAssertTrue(index.search("tdf").contains { $0.id == "tour-de-france-2026" })
+        XCTAssertTrue(index.search("tour de france").contains { $0.id == "tour-de-france" })
+        XCTAssertTrue(index.search("tdf").contains { $0.id == "tour-de-france" })
         // Sport-word expansion still works alongside the fuzzy hits.
         XCTAssertTrue(index.search("tennis").contains { $0.id == "casper-ruud" })
     }
@@ -90,24 +90,24 @@ final class FuzzyResolverTests: XCTestCase {
     func test_ground_tourDeFrance_isServedNotRejected() {
         let result = groundFreeText("tour de france")
         XCTAssertTrue(result.rejected.isEmpty, "«tour de france» must never reach the rejection path again")
-        XCTAssertEqual(result.grounded.map(\.entity.id), ["tour-de-france-2026"])
+        XCTAssertEqual(result.grounded.map(\.entity.id), ["tour-de-france"])
     }
 
     func test_ground_tdf_isServed() {
-        XCTAssertEqual(groundFreeText("tdf").grounded.map(\.entity.id), ["tour-de-france-2026"])
+        XCTAssertEqual(groundFreeText("tdf").grounded.map(\.entity.id), ["tour-de-france"])
     }
 
     func test_ground_typo_isServed() {
         let result = groundFreeText("Tour de Farnce")
         XCTAssertTrue(result.rejected.isEmpty)
-        XCTAssertEqual(result.grounded.map(\.entity.id), ["tour-de-france-2026"])
+        XCTAssertEqual(result.grounded.map(\.entity.id), ["tour-de-france"])
     }
 
     func test_ground_servedMutation_keepsTheLens() {
         // The exact first-user-test intent: the resolved entity carries the
         // «med fokus på norske utøvere» lens through the rescue.
         let result = groundFreeText("tour de france", lens: .throughNorwegians)
-        XCTAssertEqual(result.grounded.first?.entity.id, "tour-de-france-2026")
+        XCTAssertEqual(result.grounded.first?.entity.id, "tour-de-france")
         XCTAssertEqual(result.grounded.first?.lens, .throughNorwegians)
     }
 

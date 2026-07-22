@@ -29,7 +29,7 @@ final class EntityIndexTests: XCTestCase {
         let tennis = index.search("tennis").map(\.id)
         XCTAssertTrue(tennis.contains("casper-ruud"))
         let sykkel = index.search("sykkel").map(\.id)
-        XCTAssertTrue(sykkel.contains("tour-de-france-2026"))
+        XCTAssertTrue(sykkel.contains("tour-de-france"))
     }
 
     func test_nearestMatches_typo() {
@@ -48,7 +48,7 @@ final class EntityIndexTests: XCTestCase {
     }
 
     func test_detectEntities_yearSuffixedTournament() {
-        XCTAssertEqual(index.detectEntities(in: "Følg Tour de France").map(\.id), ["tour-de-france-2026"])
+        XCTAssertEqual(index.detectEntities(in: "Følg Tour de France").map(\.id), ["tour-de-france"])
     }
 
     func test_detectEntities_noFalsePositiveOnParentheticalName() {
@@ -59,7 +59,7 @@ final class EntityIndexTests: XCTestCase {
     func test_representativeEntity_prefersTournament() {
         XCTAssertEqual(
             index.representativeEntity(forSport: "cycling", preferredIn: InterestProfile())?.id,
-            "tour-de-france-2026"
+            "tour-de-france"
         )
     }
 
@@ -80,11 +80,11 @@ final class EntityIndexTests: XCTestCase {
         // tier2 cycling tournament that sorts BEFORE "Tour de France" by name — so
         // an alphabetical tie-break would flip the representative to it. Source
         // priority (build-entities' fold order) keeps the tracked flagship.
-        XCTAssertNotNil(index.entity(id: "arctic-race-of-norway-2026"),
+        XCTAssertNotNil(index.entity(id: "arctic-race-of-norway"),
                         "the tier2 long-tail tournament is present in the full index")
         XCTAssertEqual(
             index.representativeEntity(forSport: "cycling", preferredIn: InterestProfile())?.id,
-            "tour-de-france-2026",
+            "tour-de-france",
             "the tracked flagship represents cycling, not the alphabetically-first tier2 entry"
         )
     }
@@ -97,7 +97,7 @@ final class EntityIndexTests: XCTestCase {
         // tour-saint-louis-2026) rather than an alphabetically-earlier tier2 one.
         XCTAssertNil(index.entity(id: "sport-chess"), "chess is entity-gated — no sport-level entity")
         let rep = index.representativeEntity(forSport: "chess", preferredIn: InterestProfile())
-        XCTAssertEqual(rep?.id, "grand-chess-tour-saint-louis-2026")
+        XCTAssertEqual(rep?.id, "grand-chess-tour-saint-louis")
         XCTAssertEqual(rep?.type, "tournament")
     }
 
@@ -106,12 +106,12 @@ final class EntityIndexTests: XCTestCase {
         // an alphabetical tie-break floods the top-N with the earliest long-tail
         // and drops the flagship. Source priority keeps it in the default top-N…
         let sykkel = index.search("sykkel").map(\.id)
-        XCTAssertTrue(sykkel.contains("tour-de-france-2026"),
+        XCTAssertTrue(sykkel.contains("tour-de-france"),
                       "the flagship survives the top-N of a large sport match set")
         // …and ranks the tracked flagship ahead of the tier2 long-tail entry.
         let ranked = index.search("sykkel", limit: 100).map(\.id)
-        let tdf = try? XCTUnwrap(ranked.firstIndex(of: "tour-de-france-2026"))
-        let arctic = try? XCTUnwrap(ranked.firstIndex(of: "arctic-race-of-norway-2026"))
+        let tdf = try? XCTUnwrap(ranked.firstIndex(of: "tour-de-france"))
+        let arctic = try? XCTUnwrap(ranked.firstIndex(of: "arctic-race-of-norway"))
         if let tdf, let arctic {
             XCTAssertLessThan(tdf, arctic, "the tracked flagship ranks ahead of the tier2 long-tail")
         }

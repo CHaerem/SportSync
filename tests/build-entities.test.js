@@ -6,7 +6,7 @@ import { execFileSync } from "child_process";
 import fs from "fs";
 import os from "os";
 import path from "path";
-import { buildEntityIndex, writeEntities } from "../scripts/build-entities.js";
+import { buildEntityIndex, writeEntities, seasonlessId, editionOfId } from "../scripts/build-entities.js";
 import { entityTerms } from "../scripts/lib/helpers.js";
 
 function tmpDir(prefix) {
@@ -34,9 +34,9 @@ describe("buildEntityIndex", () => {
 
 		const entities = buildEntityIndex(configDir, fakeSportsConfig);
 
-		expect(entities.find((e) => e.id === "premier-league-2026-27")).toMatchObject({ type: "league", sport: "football" });
+		expect(entities.find((e) => e.id === "premier-league")).toMatchObject({ type: "league", sport: "football" });
 		expect(entities.find((e) => e.id === "viktor-hovland")).toMatchObject({ type: "athlete", sport: "golf" });
-		expect(entities.find((e) => e.id === "the-open-2026")).toMatchObject({ type: "tournament", sport: "golf" });
+		expect(entities.find((e) => e.id === "the-open")).toMatchObject({ type: "tournament", sport: "golf" });
 		expect(entities.find((e) => e.name === "Kris Ventura")).toMatchObject({ type: "athlete", sport: "golf", aliases: ["Ventura"] });
 		// sports-config's free-text team list, deduped down to one entity (Lyn merges as an alias of FK Lyn Oslo).
 		const lynTeam = entities.find((e) => e.name === "FK Lyn Oslo");
@@ -115,7 +115,7 @@ describe("buildEntityIndex", () => {
 		const fakeSportsConfig = { football: { sport: "football", norwegian: { teams: ["FK Lyn Oslo", "Lyn"] } } };
 		const entities = buildEntityIndex(configDir, fakeSportsConfig);
 
-		const league = entities.find((e) => e.id === "obos-ligaen-2026");
+		const league = entities.find((e) => e.id === "obos-ligaen");
 		expect(league.name).toBe("OBOS-ligaen 2026"); // annotation stripped from the match/display name
 		expect(league.aliases).not.toContain("Lyn");
 
@@ -264,11 +264,11 @@ describe("buildEntityIndex", () => {
 			})
 		);
 		const entities = buildEntityIndex(configDir, {});
-		expect(entities.find((e) => e.id === "tour-de-france-2026").aliases).toContain("Tour de France");
+		expect(entities.find((e) => e.id === "tour-de-france").aliases).toContain("Tour de France");
 		// Trailing parenthetical + year both stripped.
-		expect(entities.find((e) => e.id === "the-open-2026").aliases).toContain("The Open Championship");
+		expect(entities.find((e) => e.id === "the-open").aliases).toContain("The Open Championship");
 		// Season token "2026/27" stripped too.
-		expect(entities.find((e) => e.id === "la-liga-2026-27").aliases).toContain("La Liga");
+		expect(entities.find((e) => e.id === "la-liga").aliases).toContain("La Liga");
 		fs.rmSync(configDir, { recursive: true, force: true });
 	});
 
@@ -284,10 +284,10 @@ describe("buildEntityIndex", () => {
 			})
 		);
 		const entities = buildEntityIndex(configDir, {});
-		const tdf = entities.find((e) => e.id === "tour-de-france-2026");
+		const tdf = entities.find((e) => e.id === "tour-de-france");
 		expect(tdf.initials).toEqual(["TdF"]);
 		// A 2-word name gets no acronym (would be too collision-prone).
-		expect(entities.find((e) => e.id === "the-open-2026").initials).toBeUndefined();
+		expect(entities.find((e) => e.id === "the-open").initials).toBeUndefined();
 		fs.rmSync(configDir, { recursive: true, force: true });
 	});
 
@@ -316,7 +316,7 @@ describe("buildEntityIndex", () => {
 			JSON.stringify({ tournaments: [{ id: "tour-de-france-2026", name: "Tour de France 2026", sport: "cycling" }] })
 		);
 		const entities = buildEntityIndex(configDir, {});
-		const tdf = entities.find((e) => e.id === "tour-de-france-2026");
+		const tdf = entities.find((e) => e.id === "tour-de-france");
 		// The acronym exists as resolver data …
 		expect(tdf.initials).toEqual(["TdF"]);
 		// … but is NOT in `aliases`, and NOT in the terms server matching reads.
@@ -437,7 +437,7 @@ describe("buildEntityIndex", () => {
 		const entities = buildEntityIndex(configDir, {});
 		const tdf = entities.filter((e) => e.sport === "cycling" && e.type === "tournament");
 		expect(tdf).toHaveLength(1); // one entity, not two
-		expect(tdf[0].id).toBe("tour-de-france-2026"); // tracked's id wins (folded first)
+		expect(tdf[0].id).toBe("tour-de-france"); // tracked's record wins (folded first), under the CANONICAL seasonless id (WP-162)
 		expect(tdf[0].aliases).toContain("TdF"); // the catalog alias folds in
 		fs.rmSync(configDir, { recursive: true, force: true });
 	});
@@ -608,6 +608,135 @@ describe("buildEntityIndex — world registry fold (WP-161)", () => {
 		const ids = entities.filter((e) => ["aaa", "bbb"].includes(e.id)).map((e) => e.id);
 		expect(ids).toEqual(["aaa", "bbb"]); // a.json folded before b.json
 		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+});
+
+// WP-162 — canonical, seasonless competition ids. A profile rule freezes
+// entityId at follow time, so an edition-stamped id is a follow with an expiry
+// date; these tests pin the mapping, the metadata, the merge and — crucially —
+// the two things that must NEVER happen (silent id theft, lost fields).
+describe("buildEntityIndex — seasonless competition ids (WP-162)", () => {
+	it("seasonlessId/editionOfId strip an edition SEGMENT, never a digit inside a name", () => {
+		expect(seasonlessId("premier-league-2026-27")).toBe("premier-league");
+		expect(seasonlessId("tour-de-france-2026")).toBe("tour-de-france");
+		expect(seasonlessId("esports-world-cup-2026-cs2")).toBe("esports-world-cup-cs2");
+		expect(seasonlessId("blast-bounty-2026-s2")).toBe("blast-bounty-s2");
+		expect(editionOfId("premier-league-2026-27")).toBe("2026/27");
+		expect(editionOfId("tour-de-france-2026")).toBe("2026");
+		// Not an edition: a digit run that is part of the identity itself.
+		expect(seasonlessId("100-thieves")).toBe("100-thieves");
+		expect(seasonlessId("f1")).toBe("f1");
+		expect(editionOfId("100-thieves")).toBeNull();
+	});
+
+	it("publishes a dated tracked competition under its CANONICAL id, with edition + altIds as metadata", () => {
+		const configDir = tmpDir("ss-entities-canonical-");
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({
+				tournaments: [{ id: "tour-de-france-2026", name: "Tour de France 2026", sport: "cycling" }],
+				leagues: [{ id: "premier-league-2026-27", name: "Premier League 2026/27", sport: "football" }],
+			})
+		);
+		const entities = buildEntityIndex(configDir, {});
+		const tdf = entities.find((e) => e.id === "tour-de-france");
+		expect(tdf).toMatchObject({ type: "tournament", edition: "2026", altIds: ["tour-de-france-2026"] });
+		const pl = entities.find((e) => e.id === "premier-league");
+		expect(pl).toMatchObject({ type: "league", edition: "2026/27", altIds: ["premier-league-2026-27"] });
+		// The dated id is GONE as a primary id — it lives on only as an altId, so
+		// an existing profile rule still resolves (belt) while the client-side
+		// migration re-points it (braces).
+		expect(entities.find((e) => e.id === "tour-de-france-2026")).toBeUndefined();
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("MERGES the dated tracked record with the catalog's seasonless one — one competition, one id, nothing lost", () => {
+		const configDir = tmpDir("ss-entities-canonical-merge-");
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({ leagues: [{ id: "premier-league-2026-27", name: "Premier League 2026/27", sport: "football" }] })
+		);
+		fs.writeFileSync(
+			path.join(configDir, "catalog.json"),
+			JSON.stringify({ tier2: { tournaments: [{ name: "Premier League", aliases: ["EPL"], sport: "football" }] } })
+		);
+		const entities = buildEntityIndex(configDir, {});
+		const pl = entities.filter((e) => e.sport === "football" && ["league", "tournament"].includes(e.type));
+		expect(pl).toHaveLength(1); // the league/tournament split collapses into ONE record
+		expect(pl[0].id).toBe("premier-league");
+		expect(pl[0].name).toBe("Premier League"); // the seasonless display name wins
+		expect(pl[0].type).toBe("tournament"); // the type the canonical id already published
+		expect(pl[0].aliases).toEqual(expect.arrayContaining(["Premier League 2026/27", "EPL"]));
+		expect(pl[0].altIds).toContain("premier-league-2026-27");
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("never steals a canonical id from a DIFFERENT entity (the misfiled club «Rosenborg BK» keeps its dated id)", () => {
+		const configDir = tmpDir("ss-entities-canonical-collision-");
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({ leagues: [{ id: "rosenborg-2026", name: "Rosenborg BK", sport: "football" }] })
+		);
+		fs.mkdirSync(path.join(configDir, "registry"));
+		fs.writeFileSync(
+			path.join(configDir, "registry", "football.json"),
+			JSON.stringify({
+				entities: [{
+					id: "rosenborg", name: "Rosenborg", aliases: ["RBK"], sport: "football", type: "team",
+					colors: { primary: "#ffffff" }, external: { espnId: "438" },
+				}],
+			})
+		);
+		const entities = buildEntityIndex(configDir, {});
+		const club = entities.find((e) => e.id === "rosenborg");
+		expect(club).toMatchObject({ type: "team", colors: { primary: "#ffffff" }, external: { espnId: "438" } });
+		// The misfiled tracked "league" is NOT renamed onto the club's id.
+		expect(entities.find((e) => e.id === "rosenborg-2026")).toMatchObject({ type: "league" });
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("preserves identity metadata through a canonical merge (logo/colors/country/external survive)", () => {
+		const configDir = tmpDir("ss-entities-canonical-meta-");
+		fs.writeFileSync(
+			path.join(configDir, "tracked.json"),
+			JSON.stringify({ leagues: [{ id: "eliteserien-2026", name: "Eliteserien", sport: "football" }] })
+		);
+		fs.mkdirSync(path.join(configDir, "registry"));
+		fs.writeFileSync(
+			path.join(configDir, "registry", "football.json"),
+			JSON.stringify({
+				entities: [{
+					id: "eliteserien", name: "Eliteserien", aliases: ["Eliteserien 2026"], sport: "football",
+					type: "tournament", country: "NO", colors: { primary: "#123456" }, external: { wikidata: "Q123" },
+				}],
+			})
+		);
+		const entities = buildEntityIndex(configDir, {});
+		const es = entities.filter((e) => e.id === "eliteserien");
+		expect(es).toHaveLength(1);
+		expect(es[0]).toMatchObject({
+			country: "NO", colors: { primary: "#123456" }, external: { wikidata: "Q123" }, edition: "2026",
+		});
+		expect(es[0].altIds).toContain("eliteserien-2026");
+		fs.rmSync(configDir, { recursive: true, force: true });
+	});
+
+	it("is idempotent and total: every published altId is unique and no id is both primary and alt", () => {
+		const live = JSON.parse(fs.readFileSync(new URL("../docs/data/entities.json", import.meta.url), "utf8"));
+		const primary = new Set(live.map((e) => e.id));
+		const seenAlt = new Set();
+		for (const e of live) {
+			for (const alt of e.altIds || []) {
+				expect(primary.has(alt)).toBe(false); // an altId is never ALSO a live id
+				expect(seenAlt.has(alt)).toBe(false); // and never claimed twice
+				seenAlt.add(alt);
+			}
+		}
+		// No live COMPETITION id still carries an edition segment.
+		for (const e of live) {
+			if (!["league", "tournament"].includes(e.type)) continue;
+			if (e.altIds) expect(seasonlessId(e.id)).toBe(e.id);
+		}
 	});
 });
 
