@@ -240,15 +240,15 @@ final class AssistantViewModelTests: XCTestCase {
 
         // A confirmable change — NOT the old dead-end "fant ingen endringer".
         XCTAssertNil(vm.explanation)
-        XCTAssertEqual(vm.pending.map(\.entity.id), ["tour-de-france-2026"])
+        XCTAssertEqual(vm.pending.map(\.entity.id), ["tour-de-france"])
         XCTAssertEqual(vm.pending.first?.lens, .throughNorwegians)
 
         vm.confirm(vm.pending[0])
-        XCTAssertEqual(vm.profile.rule(for: "tour-de-france-2026")?.lens, .throughNorwegians)
+        XCTAssertEqual(vm.profile.rule(for: "tour-de-france")?.lens, .throughNorwegians)
 
         // The perspective survives a persistence round-trip.
         let reloaded = makeVM(store: store)
-        XCTAssertEqual(reloaded.profile.rule(for: "tour-de-france-2026")?.lens, .throughNorwegians)
+        XCTAssertEqual(reloaded.profile.rule(for: "tour-de-france")?.lens, .throughNorwegians)
     }
 
     // MARK: - Always-explain (WP-16.1) — no bare "fant ingen endringer"

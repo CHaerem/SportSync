@@ -105,7 +105,18 @@ struct EntityIndex: Sendable {
 
     init(_ entities: [Entity]) {
         self.entities = entities
-        self.byId = Dictionary(entities.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        var ids = Dictionary(entities.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        // WP-162 — a FORMER id (`premier-league-2026-27`) resolves to the entity
+        // that now carries it as an `altIds` entry, so a profile rule frozen on
+        // last season's id keeps working the moment the new index syncs — before
+        // (and independently of) `ProfileIdMigration` re-pointing it. A live
+        // primary id ALWAYS wins: alt ids only fill gaps, never shadow.
+        var alts: [String: Entity] = [:]
+        for e in entities {
+            for alt in e.altIds where ids[alt] == nil && alts[alt] == nil { alts[alt] = e }
+        }
+        for (alt, e) in alts { ids[alt] = e }
+        self.byId = ids
         var rankMap: [String: Int] = [:]
         rankMap.reserveCapacity(entities.count)
         for (i, e) in entities.enumerated() where rankMap[e.id] == nil { rankMap[e.id] = i }
@@ -630,7 +641,11 @@ extension Entity {
     /// round-tripping through JSON.
     init(id: String, name: String, aliases: [String] = [], sport: String, type: String, initials: [String] = [],
          country: String? = nil, national: Bool = false, colors: EntityColors? = nil,
-         logo: EntityLogo? = nil) {
+         logo: EntityLogo? = nil, edition: String? = nil, altIds: [String] = []) {
+        // WP-162 — the edition metadata + former ids (defaulted, so every
+        // existing call site is unchanged).
+        self.edition = edition
+        self.altIds = altIds
         self.id = id
         self.name = name
         self.aliases = aliases

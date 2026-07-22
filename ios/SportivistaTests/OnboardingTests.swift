@@ -122,7 +122,7 @@ final class OnboardingTests: XCTestCase {
     func test_cyclingPack_followsTourThroughNorwegians() {
         let vm = makeVM()
         vm.toggleStarterPack(pack("norsk-sykkel"))
-        XCTAssertEqual(vm.profile.rule(for: "tour-de-france-2026")?.lens, .throughNorwegians)
+        XCTAssertEqual(vm.profile.rule(for: "tour-de-france")?.lens, .throughNorwegians)
     }
 
     // WP-132: the generic packs ground on broadly-meaningful, real entities.
@@ -137,7 +137,7 @@ final class OnboardingTests: XCTestCase {
     func test_footballPack_isEliteserienAndTheNationalTeam_notTheOwnersClub() {
         let vm = makeVM()
         vm.toggleStarterPack(pack("norsk-fotball"))
-        XCTAssertEqual(vm.profile.rules.map(\.entityId), ["eliteserien-2026", "norge"],
+        XCTAssertEqual(vm.profile.rules.map(\.entityId), ["eliteserien", "norge"],
                        "«Norsk fotball» follows Eliteserien + the national team, not the owner's club (WP-132 de-personalisation, WP-133 grounds Eliteserien)")
     }
 
@@ -145,7 +145,7 @@ final class OnboardingTests: XCTestCase {
         let vm = makeVM()
         vm.toggleStarterPack(pack("cs2"))
         let ids = Set(vm.profile.rules.map(\.entityId))
-        XCTAssertEqual(ids, ["esports-world-cup-2026-cs2"], "CS2 grounds on the marquee tournament")
+        XCTAssertEqual(ids, ["esports-world-cup-cs2"], "CS2 grounds on the marquee tournament")
         XCTAssertFalse(ids.contains("100-thieves"), "the owner's team is no longer a starter pack")
         XCTAssertFalse(ids.contains("havard-rain-nygaard"), "the owner's player is no longer a starter pack")
     }

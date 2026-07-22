@@ -47,6 +47,10 @@ struct NewsLens: Equatable {
 		for rule in profile.rules {
 			ids.insert(rule.entityId)
 			let entity = index.entity(id: rule.entityId)
+			// WP-162: a rule still frozen on a FORMER (edition-stamped) id also
+			// matches pointers stamped with the canonical one — the lens follows
+			// the entity, not the id string it happened to be followed under.
+			if let canonical = entity?.id, canonical != rule.entityId { ids.insert(canonical) }
 			switch entity?.type {
 			case "sport":
 				sports.insert(Self.canonicalSport(entity?.sport ?? rule.sport))

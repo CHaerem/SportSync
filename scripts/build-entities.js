@@ -259,6 +259,146 @@ function editionStrippedName(name) {
 }
 
 /**
+ * WP-162: the edition token inside an ID — "-2026" or "-2026-27", anchored so it
+ * only fires on a whole segment ("premier-league-2026-27", "blast-bounty-2026-s2").
+ * A bare 4-digit year that is part of a NAME ("100 Thieves") can never match: the
+ * hyphen prefix plus the segment lookahead require it to be its own id segment.
+ */
+const EDITION_ID_SEGMENT = /-((?:19|20)\d{2})(?:-(\d{2}))?(?=-|$)/g;
+
+/**
+ * WP-162: the SEASONLESS form of an entity id — every edition segment removed.
+ * "premier-league-2026-27" → "premier-league"; "esports-world-cup-2026-cs2" →
+ * "esports-world-cup-cs2"; "tour-de-france-2026" → "tour-de-france". Returns the
+ * input unchanged when it carries no edition segment.
+ */
+export function seasonlessId(id) {
+	const raw = String(id || "");
+	const stripped = raw.replace(EDITION_ID_SEGMENT, "").replace(/-{2,}/g, "-").replace(/^-+|-+$/g, "");
+	return stripped || raw;
+}
+
+/**
+ * WP-162: the edition an id names, as human metadata — "2026-27" → "2026/27",
+ * "2026" → "2026". null when the id carries no edition segment. The LAST segment
+ * wins (ids put the edition last: "blast-bounty-2026-s2" → "2026").
+ */
+export function editionOfId(id) {
+	let out = null;
+	for (const m of String(id || "").matchAll(EDITION_ID_SEGMENT)) {
+		out = m[2] ? `${m[1]}/${m[2]}` : m[1];
+	}
+	return out;
+}
+
+/** WP-162: competition entities — the recurring things an edition applies to. */
+const COMPETITION_TYPES = new Set(["league", "tournament"]);
+
+/**
+ * WP-162 — CANONICAL, SEASONLESS IDS. A profile rule freezes `entityId` at
+ * follow time, so an edition-stamped id (`premier-league-2026-27`) is a follow
+ * with an expiry date: next season's bookkeeping publishes a NEW id, the old
+ * rule matches nothing, and the follow dies SILENTLY. tracked.json may keep
+ * booking dated editions (it is the flyktige bokføring) — this step maps them
+ * onto one durable id per competition, with the edition kept as METADATA:
+ *
+ *   • `id`      → the seasonless form ("premier-league")
+ *   • `edition` → the edition it currently books ("2026/27")
+ *   • `altIds`  → every id this entity has been published under, so an EXISTING
+ *                 profile rule still resolves even before the client-side
+ *                 migration has run (belt and braces — see ProfileIdMigration /
+ *                 ssMigrateProfileIds).
+ *
+ * When the canonical id is ALREADY taken by another competition of the same
+ * sport (the tracked dated league vs. the catalog's seasonless tournament — two
+ * records for ONE competition, kept apart today only by the league/tournament
+ * type split), the two are MERGED rather than renamed around each other: the
+ * earlier-registered entity survives (source priority is load-bearing, WP-166),
+ * takes the canonical id, the seasonless display name and the type the canonical
+ * id already published, and unions aliases/altIds/identity metadata. When the
+ * canonical id is taken by something that is NOT the same competition (a club
+ * misfiled in tracked's league bucket vs. the registry's team — "rosenborg"),
+ * NOTHING is renamed: the dated id is left alone and the collision logged.
+ * Mutates + returns the array.
+ */
+function canonicalizeEditions(entities) {
+	const byId = new Map();
+	for (const e of entities) if (!byId.has(e.id)) byId.set(e.id, e);
+	const dropped = new Set();
+
+	const addAltId = (e, id) => {
+		if (!id || id === e.id) return;
+		e.altIds = e.altIds || [];
+		if (!e.altIds.includes(id)) e.altIds.push(id);
+	};
+
+	for (const e of entities) {
+		if (dropped.has(e)) continue;
+		if (!COMPETITION_TYPES.has(e.type)) continue;
+		const canon = seasonlessId(e.id);
+		if (canon === e.id) continue;
+		const edition = editionOfId(e.id);
+		const other = byId.get(canon);
+		if (!other) {
+			const oldId = e.id;
+			byId.delete(oldId);
+			e.id = canon;
+			addAltId(e, oldId);
+			if (edition && !e.edition) e.edition = edition;
+			byId.set(canon, e);
+			continue;
+		}
+		if (other === e) continue;
+		const sameSport = !e.sport || !other.sport || normalizeText(e.sport) === normalizeText(other.sport);
+		if (!COMPETITION_TYPES.has(other.type) || !sameSport) {
+			console.warn(
+				`build-entities: canonical id "${canon}" is taken by "${other.name}" (${other.type}); leaving "${e.name}" as "${e.id}".`
+			);
+			continue;
+		}
+		// One competition, two records → merge into the EARLIER one (source
+		// priority), under the canonical id + the seasonless name/type.
+		const ei = entities.indexOf(e);
+		const oi = entities.indexOf(other);
+		const survivor = ei < oi ? e : other;
+		const merged = survivor === e ? other : e;
+		const oldSurvivorId = survivor.id;
+		survivor.id = canon;
+		survivor.type = other.type;                      // the type the canonical id already published
+		if (editionStrippedName(merged.name) === merged.name.trim() && merged.name !== survivor.name) {
+			// the merged record carries the SEASONLESS display name — prefer it
+			if (editionStrippedName(survivor.name) !== survivor.name.trim()) {
+				survivor.aliases.push(survivor.name);
+				survivor.name = merged.name;
+			}
+		}
+		for (const t of [merged.name, ...(merged.aliases || [])]) {
+			const norm = normalizeText(t).trim();
+			if (!norm || normalizeText(survivor.name).trim() === norm) continue;
+			if (survivor.aliases.some((a) => normalizeText(a).trim() === norm)) continue;
+			survivor.aliases.push(t);
+		}
+		addAltId(survivor, oldSurvivorId);
+		addAltId(survivor, merged.id);
+		for (const id of merged.altIds || []) addAltId(survivor, id);
+		if (edition && !survivor.edition) survivor.edition = edition;
+		if (merged.edition && !survivor.edition) survivor.edition = merged.edition;
+		if (merged.country && !survivor.country) survivor.country = merged.country;
+		if (merged.national && survivor.national === undefined) survivor.national = merged.national;
+		if (merged.colors && !survivor.colors) survivor.colors = merged.colors;
+		if (merged.logo && !survivor.logo) survivor.logo = merged.logo;
+		if (merged.external) survivor.external = { ...merged.external, ...(survivor.external || {}) };
+		dropped.add(merged);
+		byId.set(canon, survivor);
+	}
+
+	const out = entities.filter((e) => !dropped.has(e));
+	entities.length = 0;
+	entities.push(...out);
+	return entities;
+}
+
+/**
  * WP-16.2: the initial-alias for a multi-word name ("Tour de France" → "TdF").
  * Only generated for names with 3+ letter-initial words (so it is a real,
  * memorable acronym, not a two-letter near-collision like "PL"). First letter
@@ -566,8 +706,15 @@ export function buildEntityIndex(configDir = configDirPath(), sportsConfigData =
 	// complete provenance never ships under either policy (fail-closed).
 	const logoPolicy = readLogoPolicy(configDir);
 
+	// 7. WP-162 — canonical, seasonless competition ids (edition → metadata).
+	// Runs BEFORE decorateAliases so the year-strip/initial aliases are derived
+	// from the merged, canonical records.
+	canonicalizeEditions(builder.entities);
+
 	return decorateAliases(builder.entities).map((e) => {
 		const out = { id: e.id, name: e.name, aliases: e.aliases, sport: e.sport, type: e.type };
+		if (e.edition) out.edition = e.edition;
+		if (e.altIds && e.altIds.length) out.altIds = e.altIds;
 		if (e.country) out.country = e.country;
 		if (e.national) out.national = true;
 		if (e.colors) out.colors = e.colors;

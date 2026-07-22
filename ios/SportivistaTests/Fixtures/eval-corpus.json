@@ -29,7 +29,7 @@
       "category": "canon",
       "utterance": "Mer sykkel i juli",
       "kind": "mutation",
-      "note": "Bare sport word → the SPORT-LEVEL entity (WP-65 principle). Re-calibrated from tour-de-france-2026: 'mer sykkel' means the whole sport, not one flagship race.",
+      "note": "Bare sport word → the SPORT-LEVEL entity (WP-65 principle). Re-calibrated from tour-de-france: 'mer sykkel' means the whole sport, not one flagship race.",
       "expect": { "mutationEntityIds": ["sport-cycling"] }
     },
     {
@@ -60,7 +60,7 @@
       "utterance": "Følg Tour de France",
       "kind": "mutation",
       "note": "A SPECIFIC named tournament → the specific entity (not sport-cycling).",
-      "expect": { "mutationEntityIds": ["tour-de-france-2026"] }
+      "expect": { "mutationEntityIds": ["tour-de-france"] }
     },
     {
       "id": "intro-01-norske-tour-de-france",
@@ -68,7 +68,7 @@
       "utterance": "bare de norske i Tour de France",
       "kind": "mutation",
       "note": "WP-132 onboarding assistant-intro example: a lens scope on a named tournament — follows Tour de France THROUGH the Norwegians (throughNorwegians), still the specific tournament entity. Pins the intro's «bare de norske i Tour de France» promise so a shown example can never drift from a real, tested arm.",
-      "expect": { "mutationEntityIds": ["tour-de-france-2026"] }
+      "expect": { "mutationEntityIds": ["tour-de-france"] }
     },
     {
       "id": "canon-09-prioriter-100thieves",
@@ -91,7 +91,7 @@
       "utterance": "Følg Tour de France med fokus på norske utøvere",
       "kind": "mutation",
       "note": "The lens case (WP-16.1). Scored on the entity id-set only; the Norwegian lens itself is covered by MutationGrounderTests.",
-      "expect": { "mutationEntityIds": ["tour-de-france-2026"] }
+      "expect": { "mutationEntityIds": ["tour-de-france"] }
     },
     {
       "id": "canon-12-mer-sykkel-norske",
@@ -136,16 +136,16 @@
       "category": "multiPart",
       "utterance": "Jeg følger Viktor Hovland og Casper Ruud, og vil gjerne ha med litt sjakk og F1 også",
       "kind": "mutation",
-      "note": "Declarative «jeg følger …» phrasing routed to the mutation arm (WP-65), mixing named athletes with bare sports. 'F1' is a tier1 sport → sport-f1. WP-166: 'sjakk' is entity-gated (chess is NOT in catalog.tier1, so no sport-chess entity is published) → it grounds to the sport's representative entity, the tracked/current chess tournament grand-chess-tour-saint-louis-2026 (source-priority: tracked flagship over the tier2 long-tail).",
-      "expect": { "mutationEntityIds": ["viktor-hovland", "casper-ruud", "grand-chess-tour-saint-louis-2026", "sport-f1"] }
+      "note": "Declarative «jeg følger …» phrasing routed to the mutation arm (WP-65), mixing named athletes with bare sports. 'F1' is a tier1 sport → sport-f1. WP-166: 'sjakk' is entity-gated (chess is NOT in catalog.tier1, so no sport-chess entity is published) → it grounds to the sport's representative entity, the tracked/current chess tournament grand-chess-tour-saint-louis (source-priority: tracked flagship over the tier2 long-tail).",
+      "expect": { "mutationEntityIds": ["viktor-hovland", "casper-ruud", "grand-chess-tour-saint-louis", "sport-f1"] }
     },
     {
       "id": "multi-06-golf-og-sjakk",
       "category": "multiPart",
       "utterance": "Følg golf og sjakk",
       "kind": "mutation",
-      "note": "Two bare sports. 'golf' is tier1 → the sport-level entity sport-golf. WP-166: 'sjakk' is entity-gated (chess is NOT in catalog.tier1, so no sport-chess entity exists) → it grounds to the sport's representative entity, the tracked/current chess tournament grand-chess-tour-saint-louis-2026.",
-      "expect": { "mutationEntityIds": ["sport-golf", "grand-chess-tour-saint-louis-2026"] }
+      "note": "Two bare sports. 'golf' is tier1 → the sport-level entity sport-golf. WP-166: 'sjakk' is entity-gated (chess is NOT in catalog.tier1, so no sport-chess entity exists) → it grounds to the sport's representative entity, the tracked/current chess tournament grand-chess-tour-saint-louis.",
+      "expect": { "mutationEntityIds": ["sport-golf", "grand-chess-tour-saint-louis"] }
     },
     {
       "id": "multi-07-tre-utovere",
@@ -177,7 +177,7 @@
       "utterance": "Følg Tour de France og Magnus Carlsen",
       "kind": "mutation",
       "note": "A specific tournament + a specific athlete — both specific, both kept.",
-      "expect": { "mutationEntityIds": ["tour-de-france-2026", "magnus-carlsen"] }
+      "expect": { "mutationEntityIds": ["tour-de-france", "magnus-carlsen"] }
     },
     {
       "id": "multi-11-declarative-tre-utovere",

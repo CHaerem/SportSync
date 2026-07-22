@@ -215,11 +215,16 @@ if (typeof Dashboard !== 'undefined') Object.assign(Dashboard.prototype, {
 		if (!this.hasProfile || !profile || !Array.isArray(profile.rules)) return { catalogWide: true };
 		const live = profile.rules.filter((r) => !r.deleted).map((r) => r.rule || r);
 		const entityIds = new Set(), sports = new Set();
+		const canonical = (typeof ssCanonicalIdMap === 'function') ? ssCanonicalIdMap(this.entities) : null;
 		const catMembers = (this.assistantVocab && this.assistantVocab.categories && this.assistantVocab.categories.members) || {};
 		for (const rule of live) {
 			const id = rule && rule.entityId;
 			if (!id) continue;
 			entityIds.add(id);
+			// WP-162: a rule still frozen on a FORMER (edition-stamped) id also
+			// matches news stamped with the canonical one — the lens follows the
+			// entity, not the id string it was followed under.
+			if (canonical && canonical.has(id)) entityIds.add(canonical.get(id).id);
 			if (id.indexOf('sport-') === 0) sports.add(ssCanonicalNewsSport(id.slice('sport-'.length)));
 			else if (id.indexOf('category-') === 0) {
 				const cat = id.slice('category-'.length);

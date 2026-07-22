@@ -115,7 +115,13 @@ class Dashboard {
 		// utøvere", and why-shown. An EMPTY profile == today's catalog-wide board,
 		// byte-for-byte (feed-vectors prove the equivalence). The web thus has NO
 		// account requirement — it personalises only once you follow something.
-		const profile = (typeof ssProfileLoad === 'function') ? ssProfileLoad() : null;
+		// WP-162: re-ground edition-stamped rule ids against the CURRENT index
+		// FIRST — a follow made against `premier-league-2026-27` moves onto the
+		// canonical `premier-league` (and its iOS twin does the byte-same move, so
+		// the CRDT converges on one rule). No-op when nothing needs moving.
+		const profile = (typeof ssProfileMigrateStored === 'function')
+			? ssProfileMigrateStored(this.entities)
+			: ((typeof ssProfileLoad === 'function') ? ssProfileLoad() : null);
 		this.profile = profile;
 		this.hasProfile = !!(profile && typeof ssStateIsEmpty === 'function' && !ssStateIsEmpty(profile));
 		// WP-163 layering: the CATALOG (what we cover, ~130 names) is ALWAYS the base
