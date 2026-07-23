@@ -2028,7 +2028,12 @@
     "homeTeam": "Union Saint-Gilloise",
     "awayTeam": "Bodø/Glimt",
     "norwegianPlayers": [],
-    "streaming": [],
+    "streaming": [
+      {
+        "platform": "TV 2 Play",
+        "url": "https://play.tv2.no/sport"
+      }
+    ],
     "source": "ai-research",
     "researchedAt": "2026-07-22T14:30:00Z",
     "confidence": "medium",
@@ -2403,8 +2408,8 @@
     "norwegianPlayers": [],
     "streaming": [
       {
-        "platform": "Direktesport / Avisa Nordland",
-        "url": "https://www.direktesport.no"
+        "platform": "TV 2 Play",
+        "url": "https://play.tv2.no/sport"
       }
     ],
     "source": "ai-research",
@@ -2560,6 +2565,39 @@
   },
   {
     "sport": "football",
+    "tournament": "FA Community Shield 2026",
+    "title": "Arsenal – Manchester City",
+    "time": "2026-08-16T14:00:00Z",
+    "endTime": null,
+    "venue": "Principality Stadium, Cardiff",
+    "norwegian": false,
+    "homeTeam": "Arsenal",
+    "awayTeam": "Manchester City",
+    "norwegianPlayers": [],
+    "participants": [],
+    "streaming": [
+      {
+        "platform": "Viaplay",
+        "url": "https://viaplay.no/no-no/sport"
+      }
+    ],
+    "source": "ai-research",
+    "researchedAt": "2026-07-23T04:00:00Z",
+    "confidence": "high",
+    "evidence": [
+      "catalog.json#tier2.teams",
+      "https://en.wikipedia.org/wiki/2026_FA_Community_Shield",
+      "https://www.thefa.com/news/2026/jun/04/2026-fa-community-shield",
+      "https://www.principalitystadium.wales/2026/06/04/arsenal-and-manchester-city-set-for-2026-fa-community-shield-at-principality-stadium-as-3pm-kick-off-is-confirmed/",
+      "https://commercial.viaplaygroup.com/partners/norway/sportsrights"
+    ],
+    "summary": "FA Community Shield 2026 – den engelske sesongåpningen mellom seriemester Arsenal og FA-cupvinner Manchester City.\n\nAvspark søndag 16. august kl. 15.00 BST (14.00 UTC / 16.00 CEST) på Principality Stadium i Cardiff – første gang kampen spilles i Cardiff siden 2006 (Wembley er opptatt denne helgen).\n\nNorsk visning Viaplay (som har Community Shield sammen med FA-cupen og Premier League).",
+    "homeTeamEntityId": "arsenal",
+    "awayTeamEntityId": "manchester-city",
+    "id": "b75e008cb344"
+  },
+  {
+    "sport": "football",
     "tournament": "OBOS-ligaen",
     "title": "Åsane – Lyn",
     "time": "2026-08-26T17:00:00Z",
@@ -2650,35 +2688,5 @@
     ],
     "summary": "Lyns bortekamp mot Kongsvinger søndag 30. august kl. 17.00 på Gjemselund (OBOS-ligaen). Avsparkstid nå berammet – dato/tid/arena bekreftet 17. juli mot obos-ligaen.no + fotball.no + FotMob (tre kilder enige). TV-valg kan fortsatt flytte avspark 30–60 min; verify følger. Norsk visning TV 2 Play.",
     "id": "79642cacdcbf"
-  },
-  {
-    "sport": "football",
-    "tournament": "FA Community Shield 2026",
-    "title": "Arsenal – Manchester City",
-    "time": "2026-08-16T14:00:00Z",
-    "endTime": null,
-    "venue": "Principality Stadium, Cardiff",
-    "norwegian": false,
-    "homeTeam": "Arsenal",
-    "awayTeam": "Manchester City",
-    "norwegianPlayers": [],
-    "participants": [],
-    "streaming": [
-      {
-        "platform": "Viaplay",
-        "url": "https://viaplay.no/no-no/sport"
-      }
-    ],
-    "source": "ai-research",
-    "researchedAt": "2026-07-23T04:00:00Z",
-    "confidence": "high",
-    "evidence": [
-      "catalog.json#tier2.teams",
-      "https://en.wikipedia.org/wiki/2026_FA_Community_Shield",
-      "https://www.thefa.com/news/2026/jun/04/2026-fa-community-shield",
-      "https://www.principalitystadium.wales/2026/06/04/arsenal-and-manchester-city-set-for-2026-fa-community-shield-at-principality-stadium-as-3pm-kick-off-is-confirmed/",
-      "https://commercial.viaplaygroup.com/partners/norway/sportsrights"
-    ],
-    "summary": "FA Community Shield 2026 – den engelske sesongåpningen mellom seriemester Arsenal og FA-cupvinner Manchester City.\n\nAvspark søndag 16. august kl. 15.00 BST (14.00 UTC / 16.00 CEST) på Principality Stadium i Cardiff – første gang kampen spilles i Cardiff siden 2006 (Wembley er opptatt denne helgen).\n\nNorsk visning Viaplay (som har Community Shield sammen med FA-cupen og Premier League)."
   }
 ]
