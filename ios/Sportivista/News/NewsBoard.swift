@@ -60,11 +60,36 @@ struct NewsBoard: Equatable {
 			.prefix(maxNews)
 
 		return NewsBoard(
-			headline: freshHeadline(featured, now: now),
+			// WP-174: the DETERMINISTIC personal brief («I din verden i dag …»,
+			// composed on-device from your feed) fills the brief slot when the
+			// profile has follows; it falls back — gracefully, never an empty
+			// «I din verden» — to the editorial headline when there is nothing
+			// personal to say, and the whole branch is skipped for an EMPTY profile
+			// so the slot shows the editorial line byte-for-byte as before.
+			headline: brief(profile: profile, events: events, results: results, news: news,
+			                lens: lens, index: index, shield: shield, now: now)
+				?? freshHeadline(featured, now: now),
 			news: Array(matchedNews),
 			results: resultRows(results, lens: lens, index: index, shield: shield),
 			forward: forwardRows(events, lens: lens, index: index, now: now, max: maxForward)
 		)
+	}
+
+	// MARK: - Section 1 personal brief (WP-174)
+
+	/// The deterministic personal brief for the brief slot, or nil when there is
+	/// nothing personal to say. An EMPTY profile returns nil (the slot then shows
+	/// the editorial headline byte-for-byte). Twin of the web hero — the
+	/// COMPOSITION is `MinBrief.compose`, pinned bit-for-bit by the shared
+	/// brief-vectors; only the SELECTION (context building) is platform-side.
+	private static func brief(profile: InterestProfile, events: [Event], results: RecentResults,
+	                          news: [NewsItem], lens: NewsLens, index: EntityIndex,
+	                          shield: SpoilerShield, now: Date) -> String? {
+		guard !profile.rules.isEmpty else { return nil }
+		let context = MinBrief.build(events: events, results: results, news: news,
+		                             lens: lens, index: index, shield: shield, now: now)
+		let text = MinBrief.compose(context)
+		return text.isEmpty ? nil : text
 	}
 
 	// MARK: - Section 1 day-gate (brief freshness, WP-136)

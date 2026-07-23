@@ -1,0 +1,20 @@
+{
+	"name": "golf result (winner) today",
+	"description": "A winner sport reads «Turneringen ble vunnet av X». The outcome carries the winner + score.",
+	"input": {
+		"upcoming": [],
+		"results": [
+			{
+				"title": "The Open",
+				"outcome": "Ryan Fox −10",
+				"kind": "winner",
+				"spoiler": false,
+				"day": "today"
+			}
+		],
+		"newsCount": 0
+	},
+	"expected": {
+		"brief": "I din verden i dag: The Open ble vunnet av Ryan Fox −10 i dag."
+	}
+}

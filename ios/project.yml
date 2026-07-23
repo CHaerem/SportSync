@@ -364,6 +364,14 @@ targets:
       - path: ../tests/fixtures/feed-vectors
         buildPhase: resources
         type: folder
+      # WP-174: the SAME golden brief-vectors the JS reference test
+      # (tests/brief.test.js) replays — referenced directly at the repo root,
+      # never copied, so the two composer runners can never drift. Same
+      # `type: folder` bundle-subdirectory ("brief-vectors") pattern as the
+      # feed-vectors above; MinBriefTests loads them from the test bundle.
+      - path: ../tests/fixtures/brief-vectors
+        buildPhase: resources
+        type: folder
       # Shared lens tunables (docs/config/lens-config.json) — bundled so
       # LensConfig (Feed/) resolves it in the test bundle exactly as in the app,
       # and FeedVectorTests prove the extraction is byte-identical to the old

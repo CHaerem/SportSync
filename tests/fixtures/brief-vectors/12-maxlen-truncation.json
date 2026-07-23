@@ -1,0 +1,35 @@
+{
+	"name": "max-length enforced by word-boundary truncation",
+	"description": "Two very long titles overflow the 220-char ceiling as a single first sentence; the composer truncates at a word boundary and appends «…». Pins the exact truncation on both platforms.",
+	"input": {
+		"upcoming": [
+			{
+				"title": "Verdensmesterskapet i landeveissykling for herrer med den lange fellesstarten gjennom fjellene",
+				"day": "today",
+				"evening": false,
+				"time": "12:00",
+				"weekday": ""
+			},
+			{
+				"title": "Verdensmesterskapet i landeveissykling for herrer med den lange fellesstarten gjennom fjellene",
+				"day": "tomorrow",
+				"evening": false,
+				"time": "12:00",
+				"weekday": ""
+			}
+		],
+		"results": [
+			{
+				"title": "Lyn – Sogndal",
+				"outcome": "2–1",
+				"kind": "score",
+				"spoiler": false,
+				"day": "yesterday"
+			}
+		],
+		"newsCount": 2
+	},
+	"expected": {
+		"brief": "I din verden i dag: Verdensmesterskapet i landeveissykling for herrer med den lange fellesstarten gjennom fjellene 12:00 og Verdensmesterskapet i landeveissykling for herrer med den lange fellesstarten gjennom fjellene…"
+	}
+}

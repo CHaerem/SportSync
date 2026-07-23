@@ -1,0 +1,27 @@
+{
+	"name": "spoiler-screened result → no outcome",
+	"description": "A screened entity's result is named WITHOUT its outcome — «resultatet fra X i går venter på deg». The spoiler branch wins for BOTH scoreline and winner sports.",
+	"input": {
+		"upcoming": [],
+		"results": [
+			{
+				"title": "Lyn – Sogndal",
+				"outcome": "2–1",
+				"kind": "score",
+				"spoiler": true,
+				"day": "yesterday"
+			},
+			{
+				"title": "The Open",
+				"outcome": "Ryan Fox −10",
+				"kind": "winner",
+				"spoiler": true,
+				"day": "earlier"
+			}
+		],
+		"newsCount": 0
+	},
+	"expected": {
+		"brief": "I din verden i dag: resultatet fra Lyn – Sogndal i går venter på deg og resultatet fra The Open venter på deg."
+	}
+}

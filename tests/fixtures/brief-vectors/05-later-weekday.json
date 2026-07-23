@@ -1,0 +1,27 @@
+{
+	"name": "upcoming later → weekday, no time redundancy",
+	"description": "An event further out is placed by weekday («lørdag»), no clock. A multi-day event with an empty time also degrades to just its title.",
+	"input": {
+		"upcoming": [
+			{
+				"title": "Lyn – Start",
+				"day": "later",
+				"evening": false,
+				"time": "",
+				"weekday": "lørdag"
+			},
+			{
+				"title": "The Open",
+				"day": "today",
+				"evening": false,
+				"time": "",
+				"weekday": ""
+			}
+		],
+		"results": [],
+		"newsCount": 0
+	},
+	"expected": {
+		"brief": "I din verden i dag: Lyn – Start lørdag og The Open."
+	}
+}

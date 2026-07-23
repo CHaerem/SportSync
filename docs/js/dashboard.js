@@ -180,10 +180,19 @@ class Dashboard {
 		btn.addEventListener('click', () => this.shareBrief());
 	}
 
-	/** The editorial headline when it's fresh, else the calm fallback. `now`
-	 *  injectable so a foreground/day-rollover re-render (and the tests) can prove
-	 *  the day-gate at a chosen instant. */
+	/** The hero line. WP-174: when the profile has follows, the DETERMINISTIC
+	 *  personal brief («I din verden i dag …», composed on-device from your feed)
+	 *  leads. It falls back — gracefully, never an empty «I din verden» — to the
+	 *  editorial headline when there is nothing personal to say, and the whole
+	 *  branch is skipped for an EMPTY profile, so a catalog-wide visitor sees the
+	 *  editorial line byte-for-byte as before. `now` injectable so a foreground/
+	 *  day-rollover re-render (and the tests) can prove the day-gate at a chosen
+	 *  instant. */
 	heroHeadline(now = Date.now()) {
+		if (this.hasProfile && typeof this.personalBrief === 'function') {
+			const brief = this.personalBrief(now);
+			if (brief) return brief;
+		}
 		const headline = this.featuredIsFresh(now)
 			? this.featured?.blocks?.find((b) => b.type === 'headline')?.text
 			: null;

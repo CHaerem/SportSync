@@ -1,0 +1,12 @@
+{
+	"name": "news only → count sentence under the frame",
+	"description": "With no upcoming and no results, the news count leads: «I din verden i dag: 3 nyheter om det du følger.»",
+	"input": {
+		"upcoming": [],
+		"results": [],
+		"newsCount": 3
+	},
+	"expected": {
+		"brief": "I din verden i dag: 3 nyheter om det du følger."
+	}
+}
