@@ -17,6 +17,16 @@
 // Pure `ssNewsRelevant` / `ssCanonicalNewsSport` are unit-tested; the DOM wiring
 // (renderNyheter / bindRootTabs) is a thin Dashboard prototype extension.
 
+/** Norwegian display label for a news pointer's story-kind (WP-175). Only the
+ *  four server-classified types render; an unknown or absent `type` yields no
+ *  label, so the row's type slot stays empty — additive, and a pointer the server
+ *  didn't classify looks exactly as it did before WP-175. Allowlist lookup: an
+ *  attacker-supplied `type` value never reaches the DOM (unknown key → ''). */
+const SS_NEWS_TYPE_LABELS = { kamprapport: 'Kamprapport', overgang: 'Overgang', skade: 'Skade', intervju: 'Intervju' };
+function ssNewsTypeLabel(type) {
+	return SS_NEWS_TYPE_LABELS[String(type || '').toLowerCase()] || '';
+}
+
 /** Normalise a news item's sport tag so "formula1" ≡ "f1" etc (mirrors
  *  NewsLens.canonicalSport). Lowercased; a few common aliases folded in. */
 function ssCanonicalNewsSport(sport) {
@@ -268,7 +278,12 @@ if (typeof Dashboard !== 'undefined') Object.assign(Dashboard.prototype, {
 		// or empty — the source + time already carry the row (avoids "general ·" noise).
 		const canon = ssCanonicalNewsSport(item.sport);
 		const sport = (canon && canon !== 'general') ? `<span class="nw-sport">${escapeHtml(this.sportLabel(item.sport))}</span>` : '';
+		// WP-175: the story-kind as a quiet grey tag, first in the meta line. Absent
+		// for pointers the server didn't classify (the slot simply stays empty).
+		const typeLabel = ssNewsTypeLabel(item.type);
+		const type = typeLabel ? `<span class="nw-type">${escapeHtml(typeLabel)}</span>` : '';
 		const meta = [
+			type,
 			sport,
 			`<span class="nw-source">${escapeHtml(item.source || '')} ↗</span>`,
 			rel ? `<span class="nw-time">${escapeHtml(rel)}</span>` : '',
@@ -379,5 +394,5 @@ if (typeof Dashboard !== 'undefined') Object.assign(Dashboard.prototype, {
 
 // Node/vitest interop (pure helpers).
 if (typeof module !== 'undefined' && module.exports) {
-	module.exports = { ssNewsRelevant, ssCanonicalNewsSport, ssResultRows, ssInterleaveBySport, SS_RESULT_CAP };
+	module.exports = { ssNewsRelevant, ssCanonicalNewsSport, ssNewsTypeLabel, ssResultRows, ssInterleaveBySport, SS_RESULT_CAP };
 }

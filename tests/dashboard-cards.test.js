@@ -1022,3 +1022,28 @@ describe("Nyheter · RESULTAT (all sports, goal scorers, cap + disclosure)", () 
 		expect(html).toContain("&lt;i&gt;90");
 	});
 });
+
+// ── NYTT · type-tag (WP-175) ─────────────────────────────────────────────────
+// The server's story-kind renders as a quiet grey tag in the row's type slot —
+// but only for the four known types, and only when the server classified the
+// pointer (absent otherwise, so the row looks exactly as before).
+describe("Nyheter · NYTT type tag (WP-175)", () => {
+	const soon = () => new Date().toISOString();
+
+	it("renders the story-kind as a quiet grey tag when the pointer is classified", () => {
+		const html = dash.newsRow({ title: "Arsenal sign keeper Rodriguez", link: "https://ex.com/a", source: "guardian-football", sport: "football", type: "overgang", publishedAt: soon() });
+		expect(html).toContain('class="nw-type"');
+		expect(html).toContain("Overgang");
+	});
+
+	it("shows NO type tag for an unclassified pointer (the slot stays empty)", () => {
+		const html = dash.newsRow({ title: "Helgens kamper", link: "https://ex.com/b", source: "nrk-sport", sport: "general", publishedAt: soon() });
+		expect(html).not.toContain("nw-type");
+	});
+
+	it("ignores an unknown/garbage type value (allowlist — it never reaches the DOM)", () => {
+		const html = dash.newsRow({ title: "x", link: "https://ex.com/c", source: "s", sport: "football", type: '<script>alert(1)</script>' });
+		expect(html).not.toContain("nw-type");
+		expect(html).not.toContain("<script>");
+	});
+});

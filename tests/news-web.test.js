@@ -4,7 +4,7 @@
 // prototype extension covered by the client render tests; here we pin the lens.
 
 import { describe, it, expect } from "vitest";
-import { ssNewsRelevant, ssCanonicalNewsSport, ssResultRows, ssInterleaveBySport, SS_RESULT_CAP } from "../docs/js/news-web.js";
+import { ssNewsRelevant, ssCanonicalNewsSport, ssNewsTypeLabel, ssResultRows, ssInterleaveBySport, SS_RESULT_CAP } from "../docs/js/news-web.js";
 
 describe("ssCanonicalNewsSport", () => {
 	it("folds aliases and lowercases", () => {
@@ -18,6 +18,22 @@ describe("ssCanonicalNewsSport", () => {
 		expect(ssCanonicalNewsSport("")).toBe("");
 		expect(ssCanonicalNewsSport(null)).toBe("");
 		expect(ssCanonicalNewsSport(undefined)).toBe("");
+	});
+});
+
+describe("ssNewsTypeLabel (WP-175)", () => {
+	it("maps each known server type to its Norwegian label", () => {
+		expect(ssNewsTypeLabel("kamprapport")).toBe("Kamprapport");
+		expect(ssNewsTypeLabel("overgang")).toBe("Overgang");
+		expect(ssNewsTypeLabel("skade")).toBe("Skade");
+		expect(ssNewsTypeLabel("intervju")).toBe("Intervju");
+		expect(ssNewsTypeLabel("OVERGANG")).toBe("Overgang"); // case-insensitive
+	});
+	it("returns '' for an unknown/absent type (allowlist — no tag rendered)", () => {
+		expect(ssNewsTypeLabel("")).toBe("");
+		expect(ssNewsTypeLabel(undefined)).toBe("");
+		expect(ssNewsTypeLabel("nonsense")).toBe("");
+		expect(ssNewsTypeLabel("<script>")).toBe("");
 	});
 });
 

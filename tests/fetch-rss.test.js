@@ -1,7 +1,12 @@
 // fetch-rss: pure-function coverage — RSS parsing, recency filter, per-sport cap,
-// Norwegian relevance. House style: import the exports, inline fixtures, no network.
+// Norwegian relevance, and the WP-175 entity-relevance for the curated en feeds.
+// House style: import the exports, inline fixtures, no network.
 import { describe, it, expect } from "vitest";
-import { parseRssItems, filterRecent, applyPerSportCap, isNorwegianRelevant } from "../scripts/fetch-rss.js";
+import fs from "fs";
+import os from "os";
+import path from "path";
+import { parseRssItems, filterRecent, applyPerSportCap, isNorwegianRelevant, isEntityRelevant, loadEntityPool } from "../scripts/fetch-rss.js";
+import { newsEntityPool } from "../scripts/lib/news.js";
 
 // --- parseRssItems ---
 
@@ -181,5 +186,105 @@ describe("isNorwegianRelevant", () => {
 	it("matches Norwegian characters in keywords (ødegaard, klæbo)", () => {
 		expect(isNorwegianRelevant(mk("Ødegaard tilbake fra skade"), "en")).toBe(true);
 		expect(isNorwegianRelevant(mk("Klæbo dominates sprint"), "en")).toBe(true);
+	});
+});
+
+// --- isEntityRelevant (WP-175: entity-mode for the curated en feeds) ---
+
+describe("isEntityRelevant", () => {
+	// A tiny registry in the entities.json shape, filtered through the same
+	// newsEntityPool the server uses (server-inert sport/category types dropped).
+	const POOL = newsEntityPool([
+		{ id: "liverpool", name: "Liverpool", aliases: ["Liverpool FC"], sport: "football", type: "team" },
+		{ id: "uno-x", name: "Uno-X Mobility", aliases: ["Uno-X"], sport: "cycling", type: "team" },
+		{ id: "sport-football", name: "Fotball", aliases: [], sport: "football", type: "sport" }, // inert
+	]);
+	const mk = (title, description = "") => ({ title, description });
+
+	it("keeps an item that word-boundary-matches a tracked entity (title or description)", () => {
+		expect(isEntityRelevant(mk("Liverpool primed for a busy window"), POOL)).toBe(true);
+		expect(isEntityRelevant(mk("Transfer latest", "Uno-X confident of a strong Tour"), POOL)).toBe(true);
+	});
+	it("drops an item that mentions no tracked entity", () => {
+		expect(isEntityRelevant(mk("Chelsea appoint a new manager"), POOL)).toBe(false);
+	});
+	it("does not match a substring (the Brooklyn/Lyn trap, inherited from matchEntityIds)", () => {
+		expect(isEntityRelevant(mk("Overpool overrated, say pundits"), POOL)).toBe(false);
+	});
+	it("fail-open: an empty/missing pool is never entity-relevant", () => {
+		expect(isEntityRelevant(mk("Liverpool win"), [])).toBe(false);
+		expect(isEntityRelevant(mk("Liverpool win"), undefined)).toBe(false);
+	});
+});
+
+// --- loadEntityPool (fail-open registry load) ---
+
+describe("loadEntityPool", () => {
+	it("reads a bare-array entities.json and returns the news pool", () => {
+		const dir = fs.mkdtempSync(path.join(os.tmpdir(), "ss-entities-"));
+		fs.writeFileSync(path.join(dir, "entities.json"), JSON.stringify([
+			{ id: "liverpool", name: "Liverpool", aliases: [], sport: "football", type: "team" },
+			{ id: "sport-football", name: "Fotball", aliases: [], sport: "football", type: "sport" },
+		]));
+		const pool = loadEntityPool(dir);
+		expect(pool.map((e) => e.id)).toEqual(["liverpool"]); // inert 'sport' type filtered out
+	});
+	it("fail-open: a missing entities.json yields an empty pool (never throws)", () => {
+		const dir = fs.mkdtempSync(path.join(os.tmpdir(), "ss-entities-"));
+		expect(loadEntityPool(dir)).toEqual([]);
+	});
+	it("fail-open: a { entities: [...] } wrapper is also accepted", () => {
+		const dir = fs.mkdtempSync(path.join(os.tmpdir(), "ss-entities-"));
+		fs.writeFileSync(path.join(dir, "entities.json"), JSON.stringify({ entities: [{ id: "arsenal", name: "Arsenal", aliases: [], sport: "football", type: "team" }] }));
+		expect(loadEntityPool(dir).map((e) => e.id)).toEqual(["arsenal"]);
+	});
+});
+
+// --- new-feed parser fixtures (WP-175) ---
+// Guard the parser against the exact XML shapes the curated feeds serve, so a
+// format quirk (plain vs CDATA title, a <guid>/<enclosure> sibling, whitespace
+// inside a CDATA title) is caught network-free rather than in production.
+
+describe("parseRssItems — curated WP-175 feed shapes", () => {
+	it("Guardian: plain (non-CDATA) title + HTML-encoded description", () => {
+		const xml = `<rss><channel><item>
+			<title>‘A surprising success’: US, Mexico and Canada fans on hosting the World Cup</title>
+			<link>https://www.theguardian.com/football/2026/jul/23/surprising-success</link>
+			<description>&lt;p&gt;The joy and fun provided by fans&lt;/p&gt;</description>
+			<pubDate>Wed, 23 Jul 2026 06:00:00 GMT</pubDate>
+			<category>World Cup</category>
+		</item></channel></rss>`;
+		const [it] = parseRssItems(xml);
+		expect(it.title).toContain("A surprising success");
+		expect(it.link).toBe("https://www.theguardian.com/football/2026/jul/23/surprising-success");
+		expect(it.description).toBe("The joy and fun provided by fans"); // HTML stripped
+		expect(it.pubDate).toBe("Wed, 23 Jul 2026 06:00:00 GMT");
+		expect(it.categories).toEqual(["World Cup"]);
+	});
+
+	it("Aftenposten: CDATA title + a <guid> sibling before <pubDate>", () => {
+		const xml = `<rss><channel><item>
+			<title><![CDATA[John Arne Riise flytter til Dubai – søker tiårsvisum]]></title>
+			<link>https://www.aftenposten.no/sport/i/WvJqyj/riise-dubai</link>
+			<guid>https://www.aftenposten.no/i/WvJqyj</guid>
+			<pubDate>Thu, 23 Jul 2026 07:05:16 GMT</pubDate>
+			<description><![CDATA[John Arne Riise (45) har planer om et langvarig opphold.]]></description>
+		</item></channel></rss>`;
+		const [it] = parseRssItems(xml);
+		expect(it.title).toBe("John Arne Riise flytter til Dubai – søker tiårsvisum");
+		expect(it.link).toBe("https://www.aftenposten.no/sport/i/WvJqyj/riise-dubai");
+		expect(it.pubDate).toBe("Thu, 23 Jul 2026 07:05:16 GMT");
+	});
+
+	it("Cyclingnews: whitespace-padded CDATA title is trimmed", () => {
+		const xml = `<rss><channel><item>
+			<title><![CDATA[  Change to calendar sets Tour de Pologne Women up as tune-up  ]]></title>
+			<link>https://www.cyclingnews.com/pro-cycling/womens/change-to-calendar/</link>
+			<pubDate>Wed, 23 Jul 2026 05:00:00 GMT</pubDate>
+			<description><![CDATA[ List of challengers ]]></description>
+		</item></channel></rss>`;
+		const [it] = parseRssItems(xml);
+		expect(it.title).toBe("Change to calendar sets Tour de Pologne Women up as tune-up");
+		expect(it.description).toBe("List of challengers");
 	});
 });

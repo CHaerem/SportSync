@@ -5,7 +5,7 @@
 // substring trap (feed-vectors/DIVERGENCES.md §2) is avoided here too.
 import { describe, it, expect } from "vitest";
 import crypto from "crypto";
-import { buildNews, matchEntityIds, newsEntityPool, NEWS_MAX_ITEMS } from "../scripts/lib/news.js";
+import { buildNews, matchEntityIds, newsEntityPool, NEWS_MAX_ITEMS, classifyNewsType, NEWS_TYPES } from "../scripts/lib/news.js";
 
 const NOW = Date.parse("2026-07-19T12:00:00Z");
 
@@ -87,6 +87,89 @@ describe("entity matching (word-boundary, reused from helpers)", () => {
 			{ id: "team:og", name: "OG", aliases: ["OG Esports"], sport: "esports", type: "team" },
 		]);
 		expect(matchEntityIds("OG Esports vant finalen", poolWithAlias)).toContain("team:og");
+	});
+});
+
+describe("classifyNewsType (WP-175 — conservative, rule-based)", () => {
+	const t = (title, link = "") => classifyNewsType({ title, link });
+
+	it("classifies a match report by an en-dash scoreline", () => {
+		expect(t("Glimt-oppvisning på Aspmyra: Slo HamKam 3–0")).toBe("kamprapport");
+	});
+	it("classifies a match report by a Norwegian result verb", () => {
+		expect(t("Helmersen-dobbel da Glimt valset over HamKam")).toBe("kamprapport");
+		expect(t("Viking-juvel herjet igjen")).toBe("kamprapport");
+	});
+	it("classifies a transfer (Norwegian + English signals)", () => {
+		expect(t("Medier: Monsterbud på Tromsø-spillere")).toBe("overgang");
+		expect(t("Sjokkrykter: Vurderer salg av Ødegaard")).toBe("overgang");
+		expect(t("Tottenham sign France defender Sombath from Lyon")).toBe("overgang");
+		expect(t("Australia striker McNamara joins Everton")).toBe("overgang");
+	});
+	it("classifies an injury (accent-insensitive: 'korsbånd' → matches)", () => {
+		expect(t("Saliba to miss extended period with back injury")).toBe("skade");
+		expect(t("Ødegaard ute med korsbånd-skade")).toBe("skade");
+	});
+	it("classifies an interview only on an explicit marker", () => {
+		expect(t("Stort intervju: Carlsen om comebacket")).toBe("intervju");
+		expect(t("Hovland opens up in exclusive interview")).toBe("intervju");
+	});
+
+	it("does NOT call an ownership takeover a transfer", () => {
+		// "join consortium" / "stake" are club-ownership, not a player move.
+		expect(t("Amazon founder Jeff Bezos in talks to join consortium seeking 30% stake")).toBeNull();
+	});
+	it("does NOT call a contract renewal a transfer", () => {
+		// The player is STAYING — "signs new contract" is the opposite of a move.
+		expect(t("Phil Foden signs new four-year Manchester City contract")).toBeNull();
+	});
+	it("does NOT treat a Norwegian quote-dash headline as an interview (never guess)", () => {
+		// A leading "– …" is a QUOTE, not necessarily an interview — the heuristic
+		// over-fired on human-interest/political quotes, so it is deliberately absent.
+		expect(t("– Jeg har ingen livsgnist")).toBeNull();
+		expect(t("Trump vil ha Infantino som ny FN-topp: – Helt parodisk")).toBeNull();
+	});
+	it("uses an unambiguous URL section slug", () => {
+		expect(t("Weekend wrap", "https://www.theguardian.com/football/2026/jul/20/match-report-arsenal")).toBe("kamprapport");
+		expect(t("Latest gossip", "https://example.com/football/transfer/window-latest")).toBe("overgang");
+	});
+	it("omits the type when uncertain (returns null, never a guess)", () => {
+		expect(t("Premier League preview: what to watch this weekend")).toBeNull();
+		expect(t("Kvinnetennisen innfører kjønnstest for alle spillere")).toBeNull();
+		expect(t("")).toBeNull();
+		expect(classifyNewsType()).toBeNull();
+	});
+	it("only ever returns a known type or null", () => {
+		for (const title of ["Slo Brann 2–0", "signs from Ajax", "back injury", "big intervju", "nothing here"]) {
+			const type = classifyNewsType({ title });
+			expect(type === null || NEWS_TYPES.includes(type)).toBe(true);
+		}
+	});
+});
+
+describe("buildNews — additive `type` field (WP-175)", () => {
+	it("stamps `type` on a classifiable pointer", () => {
+		const news = buildNews({
+			digest: { items: [item({ link: "https://ex.com/tr", title: "Arsenal sign Spain goalkeeper Rodriguez on free" })] },
+			entities: ENTITIES,
+			now: NOW,
+		});
+		expect(news.items[0].type).toBe("overgang");
+	});
+	it("OMITS `type` entirely on an unclassifiable pointer (additive — no key)", () => {
+		const news = buildNews({
+			digest: { items: [item({ link: "https://ex.com/x", title: "Arsenal preview: a look ahead to the weekend" })] },
+			entities: ENTITIES,
+			now: NOW,
+		});
+		expect(news.items[0]).not.toHaveProperty("type");
+	});
+	it("keeps byte-idempotency (type is deterministic, no run-timestamp)", () => {
+		const digest = { items: [item({ link: "https://ex.com/1", title: "Chelsea sign Rogers", pubDate: "Sun, 19 Jul 2026 10:00:00 GMT" })] };
+		const a = JSON.stringify(buildNews({ digest, entities: ENTITIES, now: NOW }), null, 2);
+		const b = JSON.stringify(buildNews({ digest, entities: ENTITIES, now: NOW }), null, 2);
+		expect(a).toBe(b);
+		expect(a).toContain('"type": "overgang"');
 	});
 });
 
