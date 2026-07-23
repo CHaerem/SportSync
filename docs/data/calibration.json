@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-07-23T07:31:17.759Z",
+  "generatedAt": "2026-07-23T08:18:40.770Z",
   "windowDays": 180,
   "records": {
-    "used": 93,
+    "used": 97,
     "skipped": 0
   },
   "sources": {
@@ -541,26 +541,26 @@
       "reliability": null
     },
     "hltv.org": {
-      "checks": 6,
-      "agreed": 6,
+      "checks": 7,
+      "agreed": 7,
       "corrections": 0,
       "bySport": {
         "esports": {
-          "checks": 6,
-          "agreed": 6
+          "checks": 7,
+          "agreed": 7
         }
       },
       "byField": {
         "existence": {
-          "checks": 2,
-          "agreed": 2
+          "checks": 3,
+          "agreed": 3
         },
         "time": {
           "checks": 4,
           "agreed": 4
         }
       },
-      "lastChecked": "2026-07-22T07:48:02.000Z",
+      "lastChecked": "2026-07-23T07:55:46Z",
       "reliability": 1
     },
     "atptour.com": {
@@ -659,22 +659,26 @@
       "reliability": null
     },
     "liquipedia.net": {
-      "checks": 2,
-      "agreed": 2,
+      "checks": 3,
+      "agreed": 3,
       "corrections": 0,
       "bySport": {
         "esports": {
-          "checks": 2,
-          "agreed": 2
+          "checks": 3,
+          "agreed": 3
         }
       },
       "byField": {
         "existence": {
           "checks": 2,
           "agreed": 2
+        },
+        "time": {
+          "checks": 1,
+          "agreed": 1
         }
       },
-      "lastChecked": "2026-07-20T08:22:52.000Z",
+      "lastChecked": "2026-07-23T07:55:46Z",
       "reliability": null
     },
     "olympics.com": {
@@ -850,6 +854,44 @@
         }
       },
       "lastChecked": "2026-07-22T07:48:02.000Z",
+      "reliability": null
+    },
+    "cykelkalenderen.dk": {
+      "checks": 1,
+      "agreed": 1,
+      "corrections": 0,
+      "bySport": {
+        "cycling": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "byField": {
+        "time": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "lastChecked": "2026-07-23T07:55:46Z",
+      "reliability": null
+    },
+    "dr.dk": {
+      "checks": 1,
+      "agreed": 1,
+      "corrections": 0,
+      "bySport": {
+        "cycling": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "byField": {
+        "streaming": {
+          "checks": 1,
+          "agreed": 1
+        }
+      },
+      "lastChecked": "2026-07-23T07:55:46Z",
       "reliability": null
     }
   }
