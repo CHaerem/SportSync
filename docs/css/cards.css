@@ -491,6 +491,10 @@ main.wrap { padding-bottom: 88px; }
 .nw-sep { color: var(--fg-3); }
 .nw-source { color: var(--accent); }
 .nw-time, .nw-sport { color: var(--fg-2); }
+/* WP-175: the story-kind (Kamprapport/Overgang/Skade/Intervju) — a quiet grey
+   label, never an accent (amber stays the one accent). Uppercase micro-caps read
+   as a tag without a box, keeping the row calm. */
+.nw-type { color: var(--fg-2); font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; }
 /* RESULTAT row — team – team on the left, the score (tabular) on the right. */
 .rs-row { display: flex; align-items: baseline; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
 .rs-row:last-child { border-bottom: none; }
