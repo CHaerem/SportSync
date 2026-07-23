@@ -23,6 +23,23 @@ struct NotificationRequest: Equatable {
     var fireDate: Date
 }
 
+/// WP-181 — a REPEATING daily local notification fired at a fixed wall-clock
+/// time (the brief ritual ping). Distinct from `NotificationRequest`, whose
+/// `fireDate` is a one-shot instant: this one recurs every day until cancelled,
+/// so it is carried by its Oslo `hour`/`minute` (interpreted in `timeZone`)
+/// rather than a concrete Date. Equatable so the planner + its tests can assert
+/// on the exact scheduled content.
+struct DailyNotificationRequest: Equatable {
+    var id: String
+    var title: String
+    var body: String
+    var hour: Int
+    var minute: Int
+    /// The zone `hour`/`minute` are read in (Europe/Oslo), so the ping lands at
+    /// the same Norwegian wall-clock time regardless of where the device is.
+    var timeZoneIdentifier: String
+}
+
 /// One instruction for a single event id. `scheduleNew` and `reschedule`
 /// carry the same payload shape (a stable id + same-identifier request always
 /// replaces a pending one at the OS level — see NotificationScheduling) but

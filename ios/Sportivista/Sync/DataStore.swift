@@ -93,6 +93,14 @@ struct DataStore: Sendable {
         return (try? SportivistaJSON.decoder.decode(WidgetResultSnapshot.self, from: data)) ?? .empty
     }
 
+    /// WP-181: the app-composed morning brief line the widget mirrors (see
+    /// WidgetBriefSnapshot's header on why the widget cannot compose it itself).
+    /// An absent/corrupt file is `.empty` — no brief line, never a stale one.
+    func loadWidgetBriefSnapshot() -> WidgetBriefSnapshot {
+        guard let data = cache.read(WidgetBriefSnapshot.filename) else { return .empty }
+        return (try? SportivistaJSON.decoder.decode(WidgetBriefSnapshot.self, from: data)) ?? .empty
+    }
+
     /// `nil` means "never synced" — see the type-level doc above for why
     /// this is the flag callers should check, not an empty `loadEvents()`.
     var lastSync: Date? {

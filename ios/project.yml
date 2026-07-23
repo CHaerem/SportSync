@@ -183,6 +183,13 @@ targets:
       # what is spoiler-safe needs the profile + personal memory, which the
       # widget has no business compiling.
       - path: Sportivista/Widget/WidgetResultSnapshot.swift
+      # WP-181: the pre-rendered morning brief line the widget RENDERS but never
+      # composes — a Foundation-only Codable, safe here. Its producer (MinBrief,
+      # in News/) is deliberately NOT in this target for the same reason
+      # WidgetResultSnapshot's is: composing the personal brief needs the profile +
+      # lens the widget has no business compiling. BriefRitual (the morning gate)
+      # rides in via Feed/, already listed below.
+      - path: Sportivista/Widget/WidgetBriefSnapshot.swift
       # Shared lens tunables — LensConfig (in Feed/) reads it from the widget
       # bundle too; a ~1KB decode, well inside the WidgetKit memory budget.
       - path: ../docs/config/lens-config.json

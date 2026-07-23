@@ -100,7 +100,7 @@ struct NewsView: View {
 		}
 	}
 
-	// MARK: - 1 · I DIN VERDEN I DAG
+	// MARK: - 1 · MORGENBRIEFEN / KVELDSBRIEFEN (WP-181)
 
 	@ViewBuilder
 	private var briefSection: some View {
@@ -134,7 +134,13 @@ struct NewsView: View {
 				.padding(.vertical, 2)
 				.listRowBackground(SportivistaTokens.cell)
 			} header: {
-				sectionHeader("I DIN VERDEN I DAG", id: "news.section.brief")
+				// WP-181: the ritual name replaces the old «I DIN VERDEN I DAG»
+				// label — «MORGENBRIEFEN» before the Oslo afternoon, «KVELDSBRIEFEN»
+				// after (BriefRitual, computed at board-build time). Same quiet
+				// footnote-semibold section header; falls back defensively to the
+				// old label if a board predates the field.
+				sectionHeader((board.briefTitle ?? "Morgenbriefen").uppercased(with: Locale(identifier: "nb_NO")),
+				              id: "news.section.brief")
 			}
 		}
 	}

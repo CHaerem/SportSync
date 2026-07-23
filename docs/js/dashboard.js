@@ -160,11 +160,47 @@ class Dashboard {
 
 	// ── Hero (the editorial brief) ────────────────────────────────────────────
 	/** The hero headline — the editorial brief, set large in the display serif. */
-	renderTodayLine() {
+	renderTodayLine(now = Date.now()) {
 		const el = document.getElementById('hero-headline');
 		if (!el) return;
-		el.innerHTML = this.emphasize(escapeHtml(this.heroHeadline()));
+		this.renderBriefTitle(now);
+		el.innerHTML = this.emphasize(escapeHtml(this.heroHeadline(now)));
 		this.bindBriefShare();
+	}
+
+	/** WP-181: the ritual NAME over the hero brief — «Morgenbriefen» before the
+	 *  Oslo afternoon boundary, «Kveldsbriefen» after (ssBriefRitualName, the
+	 *  cross-surface twin of iOS BriefRitual). A quiet section header in the same
+	 *  grey footnote-semibold as the board's other headers; shown ONLY when the
+	 *  hero actually carries a brief (a personal brief or a fresh editorial line),
+	 *  never over the generic fallback — parity with iOS, where the brief section
+	 *  is hidden then. */
+	renderBriefTitle(now = Date.now()) {
+		const el = document.getElementById('hero-brief-title');
+		if (!el) return;
+		const title = this.heroBriefTitle(now);
+		if (title) {
+			el.textContent = title;
+			el.hidden = false;
+		} else {
+			el.textContent = '';
+			el.hidden = true;
+		}
+	}
+
+	/** The ritual name when the hero shows a real brief, else null. */
+	heroBriefTitle(now = Date.now()) {
+		return this.heroHasBrief(now) ? ssBriefRitualName(now) : null;
+	}
+
+	/** Whether the hero line is a real brief (personal or fresh editorial) rather
+	 *  than the calm generic fallback — the same branch heroHeadline() takes. */
+	heroHasBrief(now = Date.now()) {
+		if (this.hasProfile && typeof this.personalBrief === 'function' && this.personalBrief(now)) return true;
+		const editorial = this.featuredIsFresh(now)
+			? this.featured?.blocks?.find((b) => b.type === 'headline')?.text
+			: null;
+		return !!editorial;
 	}
 
 	/** WP-182: reveal + wire «Del briefen» when the platform has a share sheet.

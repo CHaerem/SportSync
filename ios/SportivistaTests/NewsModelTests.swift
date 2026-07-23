@@ -130,7 +130,8 @@ final class NewsModelTests: XCTestCase {
 		// This test runs on the main thread, so calling the synchronous core here
 		// is exactly the regression the guard must catch.
 		let violations = MainThreadGuard.recordViolationsForTesting {
-			_ = NewsModel.computeBoardSync(dataStore: dataStore, profileStore: profileStore, now: now)
+			_ = NewsModel.computeBoardSync(dataStore: dataStore, profileStore: profileStore,
+			                               briefWriter: RecordingWidgetBriefSnapshotWriter(), now: now)
 		}
 		XCTAssertFalse(violations.isEmpty, "the Nyheter build on the main thread must trip the WP-107 guard")
 	}
@@ -142,7 +143,31 @@ final class NewsModelTests: XCTestCase {
 		// The default guard mode TRAPS on a main-thread violation. `computeBoard`
 		// is nonisolated async, so awaiting it from this @MainActor test hops off
 		// the main actor — reaching the assertion (no crash) proves it ran off-main.
-		let board = await NewsModel.computeBoard(dataStore: dataStore, profileStore: profileStore, now: now)
+		let board = await NewsModel.computeBoard(dataStore: dataStore, profileStore: profileStore,
+		                                         briefWriter: RecordingWidgetBriefSnapshotWriter(), now: now)
 		_ = board // content is covered by NewsBoardTests; here we only prove it ran.
+	}
+
+	// MARK: - WP-181 — the app mirrors the brief to the widget cache
+
+	func test_computeBoard_writesTheBriefToTheWidgetSnapshot() async throws {
+		let dataStore = DataStore(cache: try tempCacheWithFixtures())
+		let profileStore = tempProfileStore()
+		let briefWriter = RecordingWidgetBriefSnapshotWriter()
+
+		// Use the async entry (hops off the main actor) so the WP-107 guard doesn't
+		// trap; the write goes through the recording writer off-main.
+		let board = await NewsModel.computeBoard(dataStore: dataStore, profileStore: profileStore,
+		                                         briefWriter: briefWriter, now: now)
+
+		// Whatever the brief slot shows (headline), the widget copy mirrors it — so
+		// the widget can never drift from the app's own Nyheter board.
+		XCTAssertEqual(briefWriter.last?.line, board.headline,
+		               "the widget brief snapshot mirrors the board's headline")
+		if board.headline != nil {
+			XCTAssertEqual(briefWriter.last?.generatedAt, now, "a written brief is stamped with the build now")
+		} else {
+			XCTAssertNil(briefWriter.last?.generatedAt, "no brief ⇒ an empty snapshot clears any stale line")
+		}
 	}
 }

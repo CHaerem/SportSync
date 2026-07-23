@@ -99,6 +99,17 @@ main { padding: 6px 0 72px; }
 /* Hero — one quiet editorial line under the header (a "nice extra", never loud).
    No amber here: amber is reserved for the five chrome uses in DESIGN.md. */
 .hero { padding: 16px 0 6px; }
+/* WP-181: the brief ritual name — a quiet grey section header (same footnote-
+   semibold uppercase treatment as the board's .nw-head / .day-name), never amber. */
+.hero-brief-title {
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--fg-2);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	margin: 0 0 6px;
+}
+.hero-brief-title[hidden] { display: none; }
 .hero-headline {
 	font-weight: 400;
 	font-size: 15px;

@@ -38,6 +38,12 @@ final class NewsModel {
 
 	private let dataStore: DataStore
 	private let profileStore: ProfileStore
+	/// WP-181 — where the widget's morning brief line is persisted. The board build
+	/// is the ONE place the app composes «Min brief» (NewsBoard.headline), so it is
+	/// also where the widget's pre-rendered copy is written (the widget target can't
+	/// run the brief engine — see WidgetBriefSnapshot). A seam so NewsModelTests can
+	/// record the write without a real App Group container.
+	private let briefSnapshotWriter: WidgetBriefSnapshotWriting
 
 	/// True until the first build, then flipped back to true only by `markStale`
 	/// (a profile change / a completed sync). `rebuildIfStale` — the tab-switch
@@ -55,9 +61,11 @@ final class NewsModel {
 	private(set) var buildCount = 0
 	#endif
 
-	init(dataStore: DataStore = DataStore(), profileStore: ProfileStore = ProfileStore()) {
+	init(dataStore: DataStore = DataStore(), profileStore: ProfileStore = ProfileStore(),
+	     briefSnapshotWriter: WidgetBriefSnapshotWriting = CacheWidgetBriefSnapshotWriter()) {
 		self.dataStore = dataStore
 		self.profileStore = profileStore
+		self.briefSnapshotWriter = briefSnapshotWriter
 	}
 
 	// MARK: - Triggers
@@ -104,7 +112,7 @@ final class NewsModel {
 				#if DEBUG
 				self.buildCount &+= 1
 				#endif
-				let result = await Self.computeBoard(dataStore: self.dataStore, profileStore: self.profileStore, now: current)
+				let result = await Self.computeBoard(dataStore: self.dataStore, profileStore: self.profileStore, briefWriter: self.briefSnapshotWriter, now: current)
 				if let next = self.pendingNow {
 					self.pendingNow = nil
 					current = next
@@ -121,8 +129,9 @@ final class NewsModel {
 
 	/// The off-main entry: `nonisolated async` so awaiting it from the main actor
 	/// runs the body on the cooperative pool and transfers the fresh board back.
-	nonisolated static func computeBoard(dataStore: DataStore, profileStore: ProfileStore, now: Date) async -> sending NewsBoard {
-		computeBoardSync(dataStore: dataStore, profileStore: profileStore, now: now)
+	nonisolated static func computeBoard(dataStore: DataStore, profileStore: ProfileStore,
+	                                     briefWriter: WidgetBriefSnapshotWriting, now: Date) async -> sending NewsBoard {
+		computeBoardSync(dataStore: dataStore, profileStore: profileStore, briefWriter: briefWriter, now: now)
 	}
 
 	/// The five cache reads + decodes + EntityIndex build + NewsBoard.build — the
@@ -130,10 +139,15 @@ final class NewsModel {
 	/// OFF the main actor; the shared `MainThreadGuard` (WP-60) trips in DEBUG if a
 	/// regression ever runs it on main. Reads the profile + spoiler shield from the
 	/// SAME on-disk sync-state NewsView.rebuild read, so the board is identical.
-	nonisolated static func computeBoardSync(dataStore: DataStore, profileStore: ProfileStore, now: Date) -> sending NewsBoard {
+	/// WP-181: while it holds the freshly composed brief (`board.headline`), it also
+	/// writes the widget's pre-rendered copy — the ONE place the app composes the
+	/// brief is the natural place to mirror it to the widget cache (off main, so the
+	/// tiny write never touches the main actor either).
+	nonisolated static func computeBoardSync(dataStore: DataStore, profileStore: ProfileStore,
+	                                         briefWriter: WidgetBriefSnapshotWriting, now: Date) -> sending NewsBoard {
 		MainThreadGuard.assertOffMain("NewsModel build (cache read + JSON decode + NewsBoard.build)")
 		let syncState = profileStore.loadSyncState()
-		return NewsBoard.build(
+		let board = NewsBoard.build(
 			news: dataStore.loadNews(),
 			featured: dataStore.loadFeatured(),
 			results: dataStore.loadRecentResults(),
@@ -143,5 +157,9 @@ final class NewsModel {
 			shield: SpoilerShield(memory: MemoryState(from: syncState)),
 			now: now
 		)
+		// Mirror the brief to the widget cache (nil headline ⇒ .empty clears any
+		// stale line). The widget then day-gates + morning-gates it (WidgetBriefSnapshot).
+		briefWriter.write(WidgetBriefSnapshot(line: board.headline, generatedAt: board.headline == nil ? nil : now))
+		return board
 	}
 }

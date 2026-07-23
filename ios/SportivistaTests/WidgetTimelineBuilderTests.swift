@@ -172,4 +172,62 @@ final class WidgetTimelineBuilderTests: XCTestCase {
         let data = try SyncState.encoder.encode(snapshot)
         XCTAssertEqual(try SportivistaJSON.decoder.decode(WidgetResultSnapshot.self, from: data), snapshot)
     }
+
+    // MARK: - WP-181: the morning brief line (medium widget)
+
+    private let briefText = "I din verden i dag: Lyn – Fram 14:00."
+
+    func testBuildEntries_withoutASnapshot_carryNoBriefLine() {
+        let now = iso("2026-07-13T06:00:00Z") // Oslo 08:00 — a morning tick
+        let entries = WidgetTimelineBuilder.buildEntries(events: [], interests: Interests(), now: now)
+        XCTAssertTrue(entries.allSatisfy { $0.briefLine == nil }, "no snapshot ⇒ no brief line")
+    }
+
+    func testBuildEntries_freshBrief_showsOnMorningTicksOnly() {
+        // 06:00Z = Oslo 08:00 (CEST) — the timeline spans the rest of today, so it
+        // crosses the 15:00-Oslo boundary. Morning ticks carry the brief; from
+        // 15:00 Oslo on, the brief line drops (the widget mirrors Morgenbriefen only).
+        let now = iso("2026-07-13T06:00:00Z")
+        let brief = WidgetBriefSnapshot(line: briefText, generatedAt: now)
+        let entries = WidgetTimelineBuilder.buildEntries(events: [], interests: Interests(), now: now, briefSnapshot: brief)
+
+        let morning = entries.filter { BriefRitual.phase(at: $0.date) == .morning }
+        let evening = entries.filter { BriefRitual.phase(at: $0.date) == .evening }
+        XCTAssertFalse(morning.isEmpty)
+        XCTAssertFalse(evening.isEmpty)
+        XCTAssertTrue(morning.allSatisfy { $0.briefLine == briefText }, "morning ticks carry the brief")
+        XCTAssertTrue(evening.allSatisfy { $0.briefLine == nil }, "afternoon/evening ticks never do (om morgenen)")
+    }
+
+    func testBuildEntries_staleBrief_neverShows() {
+        // Snapshot composed YESTERDAY (Oslo), opened this morning: a day-relative
+        // brief must not survive its own Oslo day on the widget (WP-136 discipline).
+        let now = iso("2026-07-13T06:00:00Z")
+        let yesterday = iso("2026-07-12T06:00:00Z")
+        let brief = WidgetBriefSnapshot(line: briefText, generatedAt: yesterday)
+        let entries = WidgetTimelineBuilder.buildEntries(events: [], interests: Interests(), now: now, briefSnapshot: brief)
+        XCTAssertTrue(entries.allSatisfy { $0.briefLine == nil }, "a stale brief is dropped even in the morning window")
+    }
+
+    func testBuildEntries_afterFifteenOslo_noBriefLine() {
+        let now = iso("2026-07-13T14:00:00Z") // Oslo 16:00 — past the boundary
+        let brief = WidgetBriefSnapshot(line: briefText, generatedAt: now)
+        let entries = WidgetTimelineBuilder.buildEntries(events: [], interests: Interests(), now: now, briefSnapshot: brief)
+        XCTAssertTrue(entries.allSatisfy { $0.briefLine == nil }, "opened in the evening ⇒ no morning brief line")
+    }
+
+    func testWidgetBriefSnapshot_roundTripsThroughTheCacheEncoding() throws {
+        let now = iso("2026-07-13T06:00:00Z")
+        let snapshot = WidgetBriefSnapshot(line: briefText, generatedAt: now)
+        let data = try SyncState.encoder.encode(snapshot)
+        XCTAssertEqual(try SportivistaJSON.decoder.decode(WidgetBriefSnapshot.self, from: data), snapshot)
+    }
+
+    func testWidgetBriefSnapshot_freshnessAndEmptiness() {
+        let now = iso("2026-07-13T06:00:00Z")
+        XCTAssertTrue(WidgetBriefSnapshot(line: briefText, generatedAt: now).isFresh(now: now))
+        XCTAssertFalse(WidgetBriefSnapshot(line: "", generatedAt: now).isFresh(now: now), "empty line is never fresh")
+        XCTAssertFalse(WidgetBriefSnapshot(line: briefText, generatedAt: nil).isFresh(now: now), "no stamp ⇒ not fresh")
+        XCTAssertFalse(WidgetBriefSnapshot.empty.hasBrief)
+    }
 }

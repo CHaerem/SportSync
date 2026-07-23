@@ -28,6 +28,12 @@ protocol NotificationScheduling: Sendable {
     /// standard `UNUserNotificationCenter` behaviour) a local notification.
     func schedule(_ request: NotificationRequest) async
 
+    /// WP-181 — schedules (or replaces) a REPEATING daily local notification at a
+    /// fixed wall-clock time. A calendar trigger with `repeats: true`, distinct
+    /// from `schedule`'s one-shot interval trigger — the brief ritual ping fires
+    /// every day until cancelled via `cancel(id:)`.
+    func scheduleRepeatingDaily(_ request: DailyNotificationRequest) async
+
     /// Cancels a pending notification by id. A no-op if nothing with that id
     /// is pending.
     func cancel(id: String) async
@@ -83,6 +89,25 @@ final class UNUserNotificationScheduler: NotificationScheduling, @unchecked Send
         // but UNTimeIntervalNotificationTrigger requires > 0.
         let interval = max(request.fireDate.timeIntervalSinceNow, 1)
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: interval, repeats: false)
+        let osRequest = UNNotificationRequest(identifier: request.id, content: content, trigger: trigger)
+        try? await resolveCenter().add(osRequest)
+    }
+
+    func scheduleRepeatingDaily(_ request: DailyNotificationRequest) async {
+        let content = UNMutableNotificationContent()
+        content.title = request.title
+        content.body = request.body
+        content.sound = .default
+
+        // A calendar trigger keyed on hour+minute in the request's own zone, so
+        // the ping fires at the same Oslo wall-clock time every day. `repeats:
+        // true` requires the components to be a recurring set (hour+minute),
+        // which is exactly what we hand it.
+        var components = DateComponents()
+        components.hour = request.hour
+        components.minute = request.minute
+        components.timeZone = TimeZone(identifier: request.timeZoneIdentifier)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
         let osRequest = UNNotificationRequest(identifier: request.id, content: content, trigger: trigger)
         try? await resolveCenter().add(osRequest)
     }
