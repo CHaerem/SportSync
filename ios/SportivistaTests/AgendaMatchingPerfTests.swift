@@ -143,8 +143,26 @@ final class AgendaMatchingPerfTests: XCTestCase {
         // attempt breaches the ceiling. A real quadratic regression is
         // deterministic — it breaches on every attempt — whereas a one-off runner
         // hiccup that skews a single attempt is absorbed by the next clean one.
+        //
+        // WP-187 — the RATIO is the sole hard port; the absolute wall-clock is a
+        // logged ADVISORY, never a failing assertion. Why: the ratio (large/small
+        // for a 2× scale) is machine-INDEPENDENT — a slower host lifts both scales
+        // together and it cancels, while a genuine O(n²) regression makes the ratio
+        // ~4× on ANY host. The absolute compile time is the opposite: it is pure
+        // hardware. PR #410 (a documentation-only PR) failed this test with a
+        // "496 ms > 150 ms" absolute breach on GitHub's macOS runner — the 150 ms
+        // cap had been sized to a local M-series Mac (~50 ms target × 3 slack), and
+        // the runner is simply several times slower. A hard absolute assertion
+        // cannot tell "slow/loaded runner" from "real regression", so it flakes
+        // exactly on the shared runners this suite must be green on. It is therefore
+        // printed (per attempt, above) and — below — checked only against a
+        // catastrophic soft bound that logs, never fails. The < 50 ms dev-Mac
+        // acceptance target is read from the printed figure and documented in the
+        // PR; a constant-factor (linear-but-slow) regression that the ratio can't
+        // see still shows up in the `measure {}` baselines and in these printed ms.
         let maxAttempts = 3
         let ceiling = 3.0
+        let softCatastrophicSeconds = 1.0  // ~20× the dev target; advisory only
         var attempts: [(small: TimeInterval, large: TimeInterval, ratio: Double)] = []
         for attempt in 1...maxAttempts {
             let (s, l) = interleavedMinTimes(small: small, large: large)
@@ -152,13 +170,14 @@ final class AgendaMatchingPerfTests: XCTestCase {
             attempts.append((s, l, ratio))
             print("WP-61 buildSections attempt \(attempt)/\(maxAttempts): small(250ev/2500ent)=\(ms(s)) ms, large(500ev/5000ent)=\(ms(l)) ms, ratio=\(fmt(ratio))")
             if ratio < ceiling {
-                // A clean attempt clears the guard — stop retrying. Also read the
-                // generous absolute sanity cap off this clean attempt so a
-                // catastrophic regression fails even if the ratio somehow doesn't.
-                // The tight < 50 ms acceptance target is read from the printed
-                // figure and documented in the PR (a hard 50 ms CI assertion would
-                // flake under concurrent xcodebuild load).
-                XCTAssertLessThan(l, 0.15, "scaled compile ran in \(ms(l)) ms — far above the < 50 ms target, likely a matching regression")
+                // A clean attempt clears the guard — stop retrying. The absolute
+                // time is a LOGGED advisory only (see the block comment): warn if
+                // the scaled compile is catastrophically slow (>~20× the dev
+                // target), but do not fail on it — that is the hardware-dependent
+                // measure that flaked PR #410, and the ratio above is the real gate.
+                if l > softCatastrophicSeconds {
+                    print("WP-187 ADVISORY (non-failing): scaled compile ran in \(ms(l)) ms — far above the < 50 ms dev-Mac target. On a slow/loaded runner this is expected; if it persists on fast hardware, inspect for a constant-factor matching regression (the ratio guard only sees SUPER-linear ones).")
+                }
                 return
             }
         }

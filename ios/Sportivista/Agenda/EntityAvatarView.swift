@@ -81,6 +81,16 @@ private struct LogoAvatar: View {
             Image(uiImage: image)
                 .resizable()
                 .scaledToFit()
+                // WP-187 — a little air inside the SAME slot (WP-186's 24 pt box is
+                // unchanged). `.scaledToFit` already aspect-fits the WHOLE mark into
+                // the frame — bounded, never cropped, never overflowing — so a wide
+                // oval (Brann) fills the width and a round crest (Man Utd) fills the
+                // square; this proportional inset just keeps either off the slot
+                // edges so it never reads as a sliver jammed against the title. The
+                // inset is a fraction of `side` (not a fixed point size) so it tracks
+                // Dynamic Type; the outer `.frame` keeps the footprint the flag and
+                // monogram use — no layout change in the row.
+                .padding(side * 0.08)
                 .frame(width: side, height: side)
         } else {
             Color.clear.frame(width: side, height: side)

@@ -34,9 +34,42 @@ final class AgendaReloadConcurrencyTests: XCTestCase {
             .appendingPathComponent("sportivista-wp60-\(UUID().uuidString)", isDirectory: true))
         try cache.write(Fixture.data("events"), filename: "events.json")
         try cache.write(Fixture.data("interests"), filename: "interests.json")
-        try cache.write(Fixture.data("entities"), filename: "entities.json")
+        try cache.write(Self.smallEntitiesData, filename: "entities.json")
         return cache
     }
+
+    // WP-187 — a DELIBERATELY small entities fixture for THIS class only. What
+    // these tests prove — WHERE the reload compute runs (off-main) and HOW OFTEN
+    // (the ≤2-recompile coalescing + "siste vinner") — is entirely independent of
+    // how many entities the index holds: the burst is fired synchronously while
+    // the main actor is held, so it coalesces structurally (the `reloadTask != nil`
+    // guard), never on a timing window, and the main-thread guard fires on WHERE
+    // the code ran, not on what it computed. The shared `Fixture.data("entities")`
+    // is the full 3 659-entity world register (~800 KB), and `EntityIndex.init`
+    // compiles an `NSRegularExpression` per term over it — thousands of regex
+    // compiles that made a SINGLE `computeReloadSync` take ~9 s in the simulator
+    // (measured: `test_guard_trips…` at 9.2 s), ballooning to tens of seconds and
+    // occasional simulator timeouts under the parallel-xcodebuild load these tests
+    // run under (the noise WP-187 removes). That cost has nothing to do with the
+    // concurrency guarantees under test, so it is not paid here. A handful of real
+    // entities still exercises the same decode→index→compile pipeline off-main and
+    // still compiles the events fixture into a non-empty board — the compile core
+    // and the golden vectors are frozen bit-for-bit in AgendaViewModelTests /
+    // FeedVectorTests, over the FULL data, exactly where dataset size matters.
+    private static let smallEntitiesData: Data = {
+        let entities = """
+        [
+          {"id":"lyn","name":"Lyn","aliases":["FK Lyn Oslo"],"sport":"football","type":"team"},
+          {"id":"birmingham-city","name":"Birmingham City","aliases":[],"sport":"football","type":"team"},
+          {"id":"england-national","name":"England","aliases":[],"sport":"football","type":"team","national":true,"country":"GB-ENG"},
+          {"id":"tour-de-france","name":"Tour de France","aliases":["TdF"],"sport":"cycling","type":"tournament"},
+          {"id":"wimbledon","name":"Wimbledon","aliases":[],"sport":"tennis","type":"tournament"},
+          {"id":"casper-ruud","name":"Casper Ruud","aliases":[],"sport":"tennis","type":"athlete","country":"NO"},
+          {"id":"sjakk-nm","name":"Sjakk-NM","aliases":["Landsturneringen"],"sport":"chess","type":"tournament"}
+        ]
+        """
+        return Data(entities.utf8)
+    }()
 
     private func tempProfileStore() -> ProfileStore {
         ProfileStore(directory: FileManager.default.temporaryDirectory
