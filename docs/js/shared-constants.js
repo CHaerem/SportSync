@@ -188,6 +188,29 @@ function ssOsloHour(ms) {
 	return parseInt(s, 10) % 24;
 }
 
+// ── Brief ritual boundary (WP-181) ───────────────────────────────────────────
+// The Oslo wall-clock split that NAMES the personal brief («Min brief», WP-174):
+// «Morgenbriefen» before this hour, «Kveldsbriefen» at/after. ONE shared
+// definition across every surface — the web hero title, the iOS Nyheter brief
+// header, and the widget's morning brief line — twinned bit-for-bit with
+// ios/Sportivista/Feed/BriefRitual.swift. 15: «før ~12» is trivially morning and
+// «etter ~15» flips to evening; the 12–15 afternoon resolves to morning (the
+// evening editorial content doesn't refresh until 17:00 Oslo anyway). It names
+// the RITUAL only — the brief TEXT is WP-174's frozen composer, untouched here.
+const SS_BRIEF_EVENING_HOUR = 15;
+
+/** 'morning' | 'evening' for the given instant, in Oslo time. `now` is a ms
+ *  number or a Date (defaults to now). */
+function ssBriefRitual(now = Date.now()) {
+	const ms = now instanceof Date ? now.getTime() : now;
+	return ssOsloHour(ms) >= SS_BRIEF_EVENING_HOUR ? 'evening' : 'morning';
+}
+
+/** The ritual's Norwegian name in bestemt form: «Morgenbriefen» / «Kveldsbriefen». */
+function ssBriefRitualName(now = Date.now()) {
+	return ssBriefRitual(now) === 'evening' ? 'Kveldsbriefen' : 'Morgenbriefen';
+}
+
 /** The ONE shared live definition — see the block comment above. Returns
  *  'direkte' | 'pågår' | null. `now` is a ms number or a Date (defaults to now). */
 function ssLiveState(event, now) {
@@ -270,6 +293,8 @@ window.SS_FOOTBALL_LEAGUES = SS_FOOTBALL_LEAGUES;
 window.ssFootballLeagueForEvent = ssFootballLeagueForEvent;
 window.isEventInWindow = isEventInWindow;
 window.ssLiveState = ssLiveState;
+window.ssBriefRitual = ssBriefRitual;
+window.ssBriefRitualName = ssBriefRitualName;
 window.ssShortReason = ssShortReason;
 window.escapeHtml = escapeHtml;
 window.ssShortName = ssShortName;

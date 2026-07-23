@@ -18,6 +18,8 @@ import Foundation
 
 final class RecordingNotificationScheduler: NotificationScheduling, @unchecked Sendable {
     private(set) var scheduledRequests: [NotificationRequest] = []
+    /// WP-181 — the repeating daily pings scheduled (the brief ritual).
+    private(set) var scheduledDailyRequests: [DailyNotificationRequest] = []
     private(set) var cancelledIDs: [String] = []
     private(set) var authorizationRequestCount = 0
     var authorizationResult = true
@@ -29,6 +31,10 @@ final class RecordingNotificationScheduler: NotificationScheduling, @unchecked S
 
     func schedule(_ request: NotificationRequest) async {
         scheduledRequests.append(request)
+    }
+
+    func scheduleRepeatingDaily(_ request: DailyNotificationRequest) async {
+        scheduledDailyRequests.append(request)
     }
 
     func cancel(id: String) async {

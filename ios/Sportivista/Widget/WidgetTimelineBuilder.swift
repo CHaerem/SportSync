@@ -48,6 +48,13 @@ enum WidgetTimelineBuilder {
         var resultLine: String? = nil
         /// The quiet second half of the result line («OBOS-ligaen»).
         var resultMeta: String? = nil
+        /// WP-181 — «I din verden i dag: …», the app-composed morning brief line
+        /// (WidgetBriefSnapshot), set ONLY on morning ticks of the current Oslo day
+        /// (the Morgenbriefen window). Nil the rest of the day. Like resultLine it
+        /// is pre-rendered by the app — the widget cannot run the brief engine.
+        /// The medium widget prefers this over resultLine when both could show:
+        /// the brief already summarises recent results in its own text.
+        var briefLine: String? = nil
     }
 
     private static var oslo: Calendar {
@@ -104,15 +111,23 @@ enum WidgetTimelineBuilder {
         now: Date,
         // WP-176: pre-rendered by the app (see WidgetResultSnapshot). Defaulted
         // so every existing caller/test keeps its exact previous behaviour.
-        resultSnapshot: WidgetResultSnapshot = .empty
+        resultSnapshot: WidgetResultSnapshot = .empty,
+        // WP-181: the app-composed morning brief line (see WidgetBriefSnapshot),
+        // shown only on the morning ticks of the current Oslo day. Defaulted so
+        // every existing caller/test is unaffected.
+        briefSnapshot: WidgetBriefSnapshot = .empty
     ) -> [Entry] {
         let pairs = zip(events.map { FeedEvent(from: $0) }, events).map { (feed: $0, event: $1) }
+        // The brief is day-relative: only mirror it while it is from today (its
+        // own Oslo day), and only on morning ticks (the Morgenbriefen window).
+        let briefFresh = briefSnapshot.isFresh(now: now)
         return ticks(from: now).map { tick in
             let resultLine = resultSnapshot.hasResult ? resultSnapshot.line : nil
             let resultMeta = resultSnapshot.hasResult ? resultSnapshot.meta : nil
+            let briefLine = (briefFresh && BriefRitual.phase(at: tick) == .morning) ? briefSnapshot.line : nil
             guard let hit = nextHighlight(pairs: pairs, interests: interests, now: tick) else {
                 return Entry(date: tick, hasHighlight: false, timeLabel: "–", title: "Ingenting i dag", channelLabel: "–", isMustSee: false,
-                             resultLine: resultLine, resultMeta: resultMeta)
+                             resultLine: resultLine, resultMeta: resultMeta, briefLine: briefLine)
             }
             return Entry(
                 date: tick,
@@ -122,7 +137,8 @@ enum WidgetTimelineBuilder {
                 channelLabel: AgendaFormat.channelLabel(hit.event.streaming),
                 isMustSee: FeedCompiler.isMustSee(hit.feed, interests: interests),
                 resultLine: resultLine,
-                resultMeta: resultMeta
+                resultMeta: resultMeta,
+                briefLine: briefLine
             )
         }
     }

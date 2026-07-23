@@ -150,4 +150,45 @@ describe("Dashboard personal brief — selection + hero fallback", () => {
 		expect(ctx.upcoming.length).toBe(2);        // capped
 		expect(ctx.upcoming[0].title).toBe("Lyn – A"); // nearest first
 	});
+
+	// ── WP-181: the ritual name over the hero brief ──────────────────────────
+	// A morning instant (Oslo 08:00) and the evening default clock (Oslo 17:00).
+	const MORNING = Date.parse("2026-07-22T06:00:00Z");
+
+	it("WP-181: ssBriefRitualName flips at 15:00 Oslo (shared cross-surface twin)", () => {
+		expect(win.ssBriefRitualName(Date.parse("2026-07-22T12:59:00Z"))).toBe("Morgenbriefen"); // Oslo 14:59
+		expect(win.ssBriefRitualName(Date.parse("2026-07-22T13:00:00Z"))).toBe("Kveldsbriefen"); // Oslo 15:00
+	});
+
+	it("WP-181: names the ritual over a real personal brief, by Oslo time", () => {
+		followLyn();
+		dash.allEvents = [{
+			id: "e1", sport: "football", homeTeam: "Bodø/Glimt", awayTeam: "Lyn",
+			awayTeamEntityId: "team-lyn", tournament: "Eliteserien", time: "2026-07-22T17:30:00Z",
+		}];
+		dash.recentResults = {};
+		dash.news = [];
+		expect(dash.personalBrief(NOW)).toBeTruthy();
+		expect(dash.heroBriefTitle(NOW)).toBe("Kveldsbriefen");     // Oslo 17:00
+		expect(dash.heroBriefTitle(MORNING)).toBe("Morgenbriefen"); // Oslo 08:00
+	});
+
+	it("WP-181: names the ritual over a fresh editorial line (empty profile)", () => {
+		clearProfile();
+		dash.featured = { generatedAt: "2026-07-22T06:00:00Z", blocks: [{ type: "headline", text: "Katalog-bred linje." }] };
+		dash.allEvents = [];
+		dash.news = [];
+		dash.recentResults = {};
+		expect(dash.heroBriefTitle(NOW)).toBe("Kveldsbriefen");
+	});
+
+	it("WP-181: NO title over the generic fallback (parity with iOS' hidden section)", () => {
+		clearProfile();
+		dash.featured = null;
+		dash.allEvents = [];
+		dash.news = [];
+		dash.recentResults = {};
+		expect(dash.heroHeadline(NOW)).toBe(dash.heroFallback());
+		expect(dash.heroBriefTitle(NOW)).toBe(null);
+	});
 });

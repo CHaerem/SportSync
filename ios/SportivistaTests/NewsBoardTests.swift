@@ -47,6 +47,29 @@ final class NewsBoardTests: XCTestCase {
 		XCTAssertEqual(board.headline, "Hei")
 	}
 
+	// MARK: - Section 1 ritual title (WP-181)
+
+	func testBriefTitle_namesTheRitual_whenAHeadlineShows() {
+		let brief = FeaturedBrief(generatedAt: now, mode: "morning", blocks: [FeaturedBrief.Block(type: "headline", text: "Hei")])
+		// `now` = 2026-07-19T12:00:00Z = Oslo 14:00 (CEST) → morning.
+		let morning = NewsBoard.build(news: [], featured: brief, results: RecentResults(), events: [], entities: [], profile: followProfile, shield: SpoilerShield(), now: now)
+		XCTAssertEqual(morning.briefTitle, "Morgenbriefen")
+
+		// Same headline, opened in the evening (Oslo 18:00) → Kveldsbriefen.
+		let eveningNow = date("2026-07-19T16:00:00Z")
+		let eveningBrief = FeaturedBrief(generatedAt: eveningNow, mode: "evening", blocks: [FeaturedBrief.Block(type: "headline", text: "Hei")])
+		let evening = NewsBoard.build(news: [], featured: eveningBrief, results: RecentResults(), events: [], entities: [], profile: followProfile, shield: SpoilerShield(), now: eveningNow)
+		XCTAssertEqual(evening.briefTitle, "Kveldsbriefen")
+	}
+
+	func testBriefTitle_nilWhenNoHeadline() {
+		// No featured brief, no personal brief → no headline → no title (the whole
+		// section is hidden), so the ritual name and the line vanish together.
+		let board = NewsBoard.build(news: [], featured: nil, results: RecentResults(), events: [], entities: [], profile: followProfile, shield: SpoilerShield(), now: now)
+		XCTAssertNil(board.headline)
+		XCTAssertNil(board.briefTitle)
+	}
+
 	// MARK: - Section 1 day-gate (WP-136)
 	// The brief is shown ONLY on the Oslo calendar day of its `generatedAt`. Its
 	// language is day-relative ("i kveld"/"i morgen"), so a brief that outlives its

@@ -60,7 +60,8 @@ struct SportivistaTimelineProvider: TimelineProvider {
         let interests = dataStore.loadInterests() ?? Interests()
         let entries = WidgetTimelineBuilder.buildEntries(
             events: events, interests: interests, now: now,
-            resultSnapshot: dataStore.loadWidgetResultSnapshot()
+            resultSnapshot: dataStore.loadWidgetResultSnapshot(),
+            briefSnapshot: dataStore.loadWidgetBriefSnapshot()
         ).map { SportivistaWidgetEntry(date: $0.date, content: $0) }
 
         // No network call here either way — this just tells WidgetKit when to
@@ -81,7 +82,8 @@ struct SportivistaTimelineProvider: TimelineProvider {
         let interests = dataStore.loadInterests() ?? Interests()
         let content = WidgetTimelineBuilder.buildEntries(
             events: events, interests: interests, now: now,
-            resultSnapshot: dataStore.loadWidgetResultSnapshot()
+            resultSnapshot: dataStore.loadWidgetResultSnapshot(),
+            briefSnapshot: dataStore.loadWidgetBriefSnapshot()
         ).first
             ?? WidgetTimelineBuilder.Entry(date: now, hasHighlight: false, timeLabel: "–", title: "Ingenting i dag", channelLabel: "–", isMustSee: false)
         return SportivistaWidgetEntry(date: now, content: content)
@@ -144,16 +146,28 @@ struct SportivistaWidgetEntryView: View {
                 .foregroundStyle(SportivistaTokens.secondaryLabel)
                 .lineLimit(1)
             }
-            // WP-176: «siste resultat» — medium only. The small variant stays ONE
-            // answer (ro); the lock-screen families have no room for a second line
-            // that isn't the highlight itself.
-            if family == .systemMedium, let line = resultLine {
-                Divider().overlay(SportivistaTokens.separator)
-                Text(line)
-                    .font(.sportivista(.caption2))
-                    .foregroundStyle(SportivistaTokens.secondaryLabel)
-                    .lineLimit(1)
-                    .accessibilityLabel("Siste resultat: \(line)")
+            // WP-181 + WP-176: the medium widget's ONE companion line under the
+            // highlight. In the Morgenbriefen window it mirrors the day's brief
+            // (which already summarises recent results in its own words), so the
+            // brief takes the slot over «siste resultat»; the rest of the day it is
+            // the last result (WP-176). The small variant stays ONE answer (ro);
+            // the lock-screen families have no room for a second line.
+            if family == .systemMedium {
+                if let brief = entry.content.briefLine, !brief.isEmpty {
+                    Divider().overlay(SportivistaTokens.separator)
+                    Text(brief)
+                        .font(.sportivista(.caption2))
+                        .foregroundStyle(SportivistaTokens.secondaryLabel)
+                        .lineLimit(2)
+                        .accessibilityLabel("Morgenbriefen: \(brief)")
+                } else if let line = resultLine {
+                    Divider().overlay(SportivistaTokens.separator)
+                    Text(line)
+                        .font(.sportivista(.caption2))
+                        .foregroundStyle(SportivistaTokens.secondaryLabel)
+                        .lineLimit(1)
+                        .accessibilityLabel("Siste resultat: \(line)")
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)

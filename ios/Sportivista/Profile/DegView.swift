@@ -51,6 +51,10 @@ struct DegView: View {
     @AppStorage(ThemeOverride.storageKey) private var themeRaw = ThemeOverride.system.rawValue
     /// Mirrors `NotificationLeadPreference` (the toggle writes straight through).
     @State private var leadTimeOn = NotificationLeadPreference.isLeadTimeEnabled()
+    /// WP-181 — the opt-in daily brief ping («Morgenbriefen er klar», AV som
+    /// default). Mirrors `BriefAlertPreference`; flipping it reconciles the
+    /// repeating local notification (schedule when on, cancel when off).
+    @State private var briefAlertOn = BriefAlertPreference.isEnabled()
     @State private var memoryShown = false
     @State private var shareShown = false
     #if DEBUG
@@ -156,6 +160,23 @@ struct DegView: View {
             }
             .tint(SportivistaTokens.accent)
             .accessibilityIdentifier("deg.leadTime")
+
+            // WP-181: the daily brief ritual ping — AV som default (opt-in). The
+            // notification carries NO content (always «Morgenbriefen er klar»,
+            // never a result or a spoiler); flipping it schedules/cancels the
+            // repeating 06:45-Oslo local notification (BriefNotificationPlanner).
+            Toggle(isOn: Binding(
+                get: { briefAlertOn },
+                set: { on in
+                    briefAlertOn = on
+                    BriefAlertPreference.setEnabled(on)
+                    Task { await BriefNotificationPlanner().reconcile(enabled: on) }
+                }
+            )) {
+                rowLabelContent("sun.horizon", "Varsel om Morgenbriefen")
+            }
+            .tint(SportivistaTokens.accent)
+            .accessibilityIdentifier("deg.briefAlert")
 
             // Utseende: cycle system → mørk → lys → system (the same three-step
             // ThemeOverride the header glyph used to drive). The a11y label cycles

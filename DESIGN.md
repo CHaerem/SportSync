@@ -389,12 +389,49 @@ Tavla fra Claude Design-handoffen (2b «For deg») — bygget mot VISJON v3/WP-1
 kilder ut (↗) · relativ tid. ALDRI innbakt artikkeltekst, aldri AI-sammendrag
 av én enkelt kilde (DSM art. 15) — pekerne sender trafikken ut.
 
-- **Fire seksjoner, ferdig — tavla er endelig:** I DIN VERDEN I DAG
-  (editorial-tverrsnitt over egne data, proveniens-ⓘ) · NYTT (linse-matchede
-  pekere) · RESULTAT (alltid bak «Vis resultat» når spoilervern gjelder,
-  `eye.slash`) · FREMOVER (forvarsler utover dagens horisont).
+- **Fire seksjoner, ferdig — tavla er endelig:** MORGENBRIEFEN / KVELDSBRIEFEN
+  (den navngitte briefen — WP-181, se § Briefen som rituale; editorial-tverrsnitt
+  over egne data, proveniens-ⓘ) · NYTT (linse-matchede pekere) · RESULTAT (alltid
+  bak «Vis resultat» når spoilervern gjelder, `eye.slash`) · FREMOVER (forvarsler
+  utover dagens horisont).
 - Ingen uleste-tellere, ingen engasjements-mekanikk. Stille «Det du følger»-
   lenke øverst.
+
+### Briefen som rituale (WP-181 — navngir WP-174-motoren)
+
+«Min brief» (WP-174) komponerer 2–3 rolige norske setninger on-device («I din
+verden i dag …»). WP-181 gir den et NAVN og et rituale — stemmen er aktivumet ingen
+konkurrent har, men den rendret uten navn. Ingen endring i MOTOREN (`brief.js` ↔
+`MinBrief.swift` + brief-vektorene er WP-174s frosne kontrakt); dette er drakten.
+
+- **Navnet (bestemt form):** **«Morgenbriefen»** før tidsgrensa, **«Kveldsbriefen»**
+  etter — en stille seksjonsoverskrift over briefteksten, i SAMME grå
+  footnote-semibold uppercase som tavlas andre seksjonshoder (iOS: Nyheter-tavlas
+  brief-slot; web: heroens brief-linje). Ingen ramme-pynt utover overskriften,
+  ingen bilder, ingen kort-støy — fortsatt bare de 2–3 setningene. Vises kun når det
+  FINNES en brief (personlig eller fersk editorial); aldri over den generiske
+  fallback-linja (iOS skjuler da hele seksjonen, web dropper tittelen).
+- **Tidsgrensa (Oslo, delt definisjon):** kl. **15:00 Oslo**. Før → Morgenbriefen,
+  fra og med → Kveldsbriefen. ÉN kilde på tvers av flatene —
+  `BriefRitual.eveningHour` (iOS) ↔ `SS_BRIEF_EVENING_HOUR` / `ssBriefRitualName`
+  (web/`shared-constants.js`), tvilling-testet. «Før ~12» er trivielt morgen,
+  «etter ~15» vipper til kveld; 12–15 løses til morgen (kvelds-editorialen ferskner
+  uansett ikke før 17:00 Oslo).
+- **Valgfri daglig varsel (opt-in, AV som default):** ett rolig lokalt varsel
+  **«Morgenbriefen er klar»** (kropp: «Åpne når du vil.») ~**06:45 Oslo** — ETTER
+  06:30-editorialen (WP-173) med margin. Teksten er ALLTID den samme og GENERISK:
+  aldri et resultat, en stilling eller en spoiler i varselet (det er poenget med et
+  varsel uten innhold). Bryteren bor i Deg › APP («Varsel om Morgenbriefen»); egen
+  per-enhet-preferanse (`BriefAlertPreference`), aldri i synk-profilen, aldri rørt av
+  en nullstilling. Repeterende lokal planlegging (`BriefNotificationPlanner`,
+  UNCalendarNotificationTrigger); tillatelse spørres kun ved PÅ-slåing.
+- **Widget-speiling (medium):** medium-widgetens ENE følgelinje under høydepunktet
+  er briefen OM MORGENEN (Morgenbrief-vinduet, samme 15:00-grense), ellers «siste
+  resultat» (WP-176). Briefen oppsummerer allerede resultater i sin egen tekst, så
+  den tar plassen om morgenen. PRE-RENDRET av appen (`WidgetBriefSnapshot`, samme
+  mønster som `widget-result.json`) — widget-targetet kjører ikke brief-motoren; og
+  dag-gatet (en dag-relativ brief overlever aldri sin egen Oslo-dag på widgeten).
+  INGEN ny widget-familie.
 
 ## Deg-skjermen
 
@@ -405,7 +442,9 @@ verdi + chevron trailing). Grupper:
   «Slutt å følge», + **Legg til**-søk mot entitets-indeksen med Følg-knapper)
   · Sett opp på nytt.
 - **DATA OM MEG:** Hva jeg vet om deg (n) · Det jeg ikke forsto (n) · Del profil (QR).
-- **APP:** Varsel før start (leadMinutes) · Utseende (tema) · Merker og kilder ·
+- **APP:** Varsel før start (leadMinutes) · **Varsel om Morgenbriefen** (WP-181 —
+  opt-in daglig brief-varsel, `sun.horizon`, AV som default; se § Briefen som
+  rituale) · Utseende (tema) · Merker og kilder ·
   **Personvern** (WP-190 — én rolig rad som åpner `sportivista.com/personvern.html`
   i Safari; erklæringen bor på nett fordi den må være offentlig lesbar og finnes i
   ÉN versjon, aldri som modal ved oppstart) · Nullstill.

@@ -22,6 +22,11 @@ import Foundation
 
 struct NewsBoard: Equatable {
 	var headline: String?
+	/// WP-181 — the ritual NAME for the brief slot's header («Morgenbriefen» /
+	/// «Kveldsbriefen», bestemt form), computed at build `now` via BriefRitual.
+	/// nil exactly when `headline` is nil (the section is then hidden), so the
+	/// title and the line always appear and disappear together.
+	var briefTitle: String? = nil
 	var news: [NewsItem]
 	var results: [NewsResultRow]
 	var forward: [NewsForwardRow]
@@ -59,16 +64,21 @@ struct NewsBoard: Equatable {
 			.sorted { ($0.publishedAt ?? .distantPast) > ($1.publishedAt ?? .distantPast) }
 			.prefix(maxNews)
 
+		// WP-174: the DETERMINISTIC personal brief («I din verden i dag …»,
+		// composed on-device from your feed) fills the brief slot when the
+		// profile has follows; it falls back — gracefully, never an empty
+		// «I din verden» — to the editorial headline when there is nothing
+		// personal to say, and the whole branch is skipped for an EMPTY profile
+		// so the slot shows the editorial line byte-for-byte as before.
+		let headline = brief(profile: profile, events: events, results: results, news: news,
+		                     lens: lens, index: index, shield: shield, now: now)
+			?? freshHeadline(featured, now: now)
+
 		return NewsBoard(
-			// WP-174: the DETERMINISTIC personal brief («I din verden i dag …»,
-			// composed on-device from your feed) fills the brief slot when the
-			// profile has follows; it falls back — gracefully, never an empty
-			// «I din verden» — to the editorial headline when there is nothing
-			// personal to say, and the whole branch is skipped for an EMPTY profile
-			// so the slot shows the editorial line byte-for-byte as before.
-			headline: brief(profile: profile, events: events, results: results, news: news,
-			                lens: lens, index: index, shield: shield, now: now)
-				?? freshHeadline(featured, now: now),
+			headline: headline,
+			// WP-181: the ritual header — computed only when there IS a brief to
+			// crown, so title and line share the section's visibility.
+			briefTitle: headline == nil ? nil : BriefRitual.name(at: now),
 			news: Array(matchedNews),
 			results: resultRows(results, lens: lens, index: index, shield: shield),
 			forward: forwardRows(events, lens: lens, index: index, now: now, max: maxForward)
