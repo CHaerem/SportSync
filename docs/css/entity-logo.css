@@ -9,8 +9,11 @@
    SAME 24px box WP-185 defined for the flag and the monogram (no layout change)
    and lets the artwork sit inside it at its own aspect ratio. */
 .ev-logo {
-	/* Inherits .ev-avatar's 24px box; this just governs what sits inside it. */
-	padding: 1px;
+	/* Inherits .ev-avatar's border-box 24px slot; the padding is the WP-187 "air"
+	   that keeps a mark off the slot edges (so a wide oval never reads as a sliver
+	   jammed against the title). box-sizing:border-box (base.css) keeps the OUTER
+	   slot at 24px — no layout change, same footprint as the flag and monogram. */
+	padding: 2px;
 }
 /* «Merker og kilder» (js/logo-attribution.js) — a quiet credit list, borrowing
    the «Dette dekker vi» disclosure's own chrome (.followed) so it adds no new
@@ -21,11 +24,16 @@
 .marks-list strong { color: var(--fg-2); font-weight: 600; }
 
 .ev-logo img {
-	max-width: 100%;
-	max-height: 100%;
-	width: auto;
-	height: auto;
-	/* contain, never cover: cover would CROP the mark. */
+	/* WP-187 — aspect-fit the WHOLE mark INTO the slot. Fill the padded box on both
+	   axes and let object-fit:contain scale the artwork DOWN to fit, centered: a
+	   wide oval (Brann) fills the width and sits centred with air above/below; a
+	   round crest (Man Utd) fills the square. Deterministic AND bounded — the old
+	   `width/height:auto` let the 96px source render at its intrinsic size and
+	   OVERFLOW the 24px slot (Man Utd spilled past its box, a wide mark read as a
+	   sliver), so the identity column had no consistent size. contain, never cover:
+	   cover would CROP the mark, and WP-186 shows every mark unmodified. */
+	width: 100%;
+	height: 100%;
 	object-fit: contain;
 	display: block;
 }
