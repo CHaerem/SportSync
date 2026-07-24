@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-24T07:29:22.561Z",
+  "generatedAt": "2026-07-24T10:14:24.447Z",
   "windowDays": 14,
   "ports": {
     "coverage": "green",
@@ -32,22 +32,15 @@
     "gaps": []
   },
   "amendRate": {
-    "nearTermRate": 0,
-    "nearTermChecked": 2,
-    "nearTermAmended": 0,
-    "verifyRunAt": "2026-07-23T07:55:46Z",
-    "windowRate": 0.19,
-    "windowChecks": 62,
-    "windowAmendments": 12,
-    "windowCorrections": 2,
+    "nearTermRate": 0.09,
+    "nearTermChecked": 11,
+    "nearTermAmended": 1,
+    "verifyRunAt": "2026-07-24T07:45:00Z",
+    "windowRate": 0.14,
+    "windowChecks": 69,
+    "windowAmendments": 10,
+    "windowCorrections": 3,
     "byDay": [
-      {
-        "date": "2026-07-10",
-        "checks": 4,
-        "amendments": 2,
-        "corrections": 0,
-        "rate": 0.5
-      },
       {
         "date": "2026-07-11",
         "checks": 4,
@@ -138,31 +131,38 @@
         "amendments": 0,
         "corrections": 0,
         "rate": 0
+      },
+      {
+        "date": "2026-07-24",
+        "checks": 11,
+        "amendments": 0,
+        "corrections": 1,
+        "rate": 0
       }
     ]
   },
   "silentStops": {
     "buildOk": true,
-    "buildCheckedAt": "2026-07-24T07:29:17.566Z",
+    "buildCheckedAt": "2026-07-24T10:14:19.175Z",
     "buildAgeHours": 0,
-    "manifestGeneratedAt": "2026-07-24T05:43:32.545Z",
-    "manifestAgeHours": 1.76,
+    "manifestGeneratedAt": "2026-07-24T07:29:23.913Z",
+    "manifestAgeHours": 2.75,
     "staleFiles": [
       {
         "file": "esports.json",
         "sourceLastUpdated": "2026-07-22T17:14:23.351Z",
-        "ageHours": 38.25
+        "ageHours": 41
       },
       {
         "file": "football.json",
         "sourceLastUpdated": "2026-07-19T17:56:30.377Z",
-        "ageHours": 109.55
+        "ageHours": 112.3
       }
     ]
   },
   "participantStatus": {
-    "checkedAt": "2026-07-23T07:55:46Z",
-    "verifyAgeHours": 23.56,
+    "checkedAt": "2026-07-24T07:45:00Z",
+    "verifyAgeHours": 2.49,
     "corrections": 0,
     "unresolved": 0,
     "signals": []
